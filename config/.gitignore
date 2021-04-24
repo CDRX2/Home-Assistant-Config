@@ -1,0 +1,37 @@
+# You can whitelist files/folders with !, these will not be ignored.
+!*.yaml
+!.gitignore
+!*.md
+!/frontent/remote.yaml
+
+# Ignore folders.
+.storage
+.cloud
+.google.token
+.google_maps_location_sharing.cookies.cdrxtracker_gmail_com
+.HA_VERSION
+image/
+tts/
+
+# Ensure these YAML files are ignored, otherwise your secret data/credentials will leak.
+ip_bans.yaml
+secrets.yaml
+known_devices.yaml
+tests.yaml
+mobile.yaml
+remote.yaml
+clear.yaml
+dark.yaml
+slate-compact-header.yaml
+th_gauge_3.yaml
+dev.yaml
+google_calendars.yaml
+home-assistant_v2.db
+home-assistant.log
+sabnzbd.conf
+webostv.conf
+CDRX.png
+Nanne_home.png
+Nanne_not_home.png
+CDRX_home.png
+CDRX_not_home.png

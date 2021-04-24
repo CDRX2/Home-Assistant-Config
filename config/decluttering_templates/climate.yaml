@@ -1,0 +1,171 @@
+#########################    TEMPERATURE CONTROL STATE LABELS    #########################
+
+#  Used to create state labels and popups for each room, referring to temperature sensors
+#  and thermostat control.
+#
+#  browser_mod.popup is used for a tap and hold for a custom popup card
+
+climate_image:
+  element:
+    type: image
+    image: /local/ui/climate/climat.png
+    tap_action:
+      action: fire-dom-event
+      browser_mod:
+        command: popup
+        card:
+          type: 'custom:stack-in-card'
+          mode: vertical
+          cards:
+            - type: 'custom:mini-graph-card'
+              tap_action:
+                action: none
+              color_thresholds:      
+                - color: '#03a8f4'
+                  value: 10
+                - color: '#ffa31a'
+                  value: 20
+                - color: '#ff1a1a'
+                  value: 30
+              entities:
+                - entity: '[[temp]]'
+                  name: Température
+                  show_state: true
+              points_per_hour: 1
+              show:
+                name: true
+                legend: true
+                icon: false
+              hour24: true 
+              card_mod:                   
+                style: |
+                  ha-card {
+                    box-shadow: none !important;
+                  }
+            - type: 'custom:mini-graph-card'
+              tap_action:
+                action: none
+              color_thresholds:
+                - color: '#0b0385'
+                  value: 60
+                - color: '#4991fc'
+                  value: 50    
+                - color: '#03a8f4'
+                  value: 40
+                - color: '#ffa31a'
+                  value: 30
+                - color: '#ff1a1a'
+                  value: 20
+              entities:
+              - entity: '[[humidity]]'
+                name: Humidité
+                show_state: true                     
+              points_per_hour: 1
+              show:
+                name: true
+                legend: true
+                icon: false
+              hour24: true
+              card_mod:
+                style: |
+                  ha-card {
+                    box-shadow: none !important;
+                  }
+        title: '[[title]]'
+        style: |
+          ha-card {
+            border-radius: 0.8vw;
+            opacity: 0.9;
+          }
+          mwc-icon-button {
+            margin: 0 0 .35em 0;
+          }
+    hold_action:
+      action: none    
+    style:
+      top: '[[top]]'
+      left: '[[left]]'
+      width: 13%     
+
+climate_state_label:
+  element:
+    type: state-label
+    entity: '[[sensor]]'
+    tap_action:
+      action: fire-dom-event
+      browser_mod:
+        command: popup
+        card:
+          type: 'custom:stack-in-card'
+          mode: vertical
+          cards:
+            - type: 'custom:mini-graph-card'
+              tap_action:
+                action: none
+              color_thresholds:      
+                - color: '#03a8f4'
+                  value: 10
+                - color: '#ffa31a'
+                  value: 20
+                - color: '#ff1a1a'
+                  value: 30
+              entities:
+                - entity: '[[temp]]'
+                  name: Température
+                  show_state: true
+              points_per_hour: 1
+              show:
+                name: true
+                legend: true
+                icon: false
+              hour24: true 
+              card_mod:                     
+                style: |
+                  ha-card {
+                    box-shadow: none !important;
+                  }
+            - type: 'custom:mini-graph-card'
+              tap_action:
+                action: none
+              color_thresholds:
+                - color: '#0b0385'
+                  value: 60
+                - color: '#4991fc'
+                  value: 50    
+                - color: '#03a8f4'
+                  value: 40
+                - color: '#ffa31a'
+                  value: 30
+                - color: '#ff1a1a'
+                  value: 20
+              entities:
+              - entity: '[[humidity]]'
+                name: Humidité
+                show_state: true                     
+              points_per_hour: 1
+              show:
+                name: true
+                legend: true
+                icon: false
+              hour24: true
+              card_mod:
+                style: |
+                  ha-card {
+                    box-shadow: none !important;
+                  }
+        title: '[[title]]'
+        style: |
+          ha-card {
+            border-radius: 0.8vw;
+            opacity: 0.9;
+          }
+          mwc-icon-button {
+            margin: 0 0 .35em 0;
+          }
+    hold_action:
+      action: none
+    style:
+      left: '[[left]]'
+      top: '[[top]]'
+      color: lightgrey
+      font-size: 1vw

@@ -1,0 +1,82 @@
+Cuisine:
+  name: Cuisine
+  entities:
+  - light.cuisine_deco
+  - light.cuisine_plafonnier
+
+Salle_a_manger:
+  name: Salle à manger
+  entities:
+  - light.manger_lampe
+  - light.manger_plafonnier
+
+Salon:
+  name: Salon
+  entities:
+  - light.grand_totem
+  - light.petit_totem
+  - light.salon_plafonnier
+
+Salon_deco:
+  name: Salon déco
+  entities:
+  - light.grand_totem_deco
+  - light.panneau_lumineux
+  - light.petit_totem_deco
+  - light.tv
+  - light.vinyles
+  - light.bar
+
+Terrasse:
+  name: Terrasse
+  entities:
+  - light.terrasse_sol
+  - light.terrasse_3
+
+Chambre_parents:
+  name: Chambre parents
+  entities:
+  - light.lit_parents_blanc
+  - light.lit_parents_couleur
+  - light.chevet_cdrx_4
+  - light.chevet_nanne_3
+
+Chambre_Charles:
+  name: Chambre Charles
+  entities:
+  - light.plafond_charles_exterieur_white
+  - light.plafond_charles_interieur_white
+
+Salon_couleur:
+  name: Salon couleur
+  entities:
+  - light.petit_totem_deco
+  - light.grand_totem_deco
+  - light.tv
+  - light.bar
+
+Lumieres_maison:
+  name: Toute la maison
+  entities:
+  - light.cuisine_deco
+  - light.cuisine_plafonnier
+  - light.manger_lampe
+  - light.manger_plafonnier
+  - light.grand_totem
+  - light.grand_totem_deco
+  - light.petit_totem
+  - light.petit_totem_deco
+  - light.salon_plafonnier
+  - light.panneau_lumineux
+  - light.tv
+  - light.vinyles
+  - light.bar
+  - light.terrasse_sol
+  - light.terrasse_3
+  - light.lit_parents_blanc
+  - light.lit_parents_couleur
+  - light.chevet_cdrx_4
+  - light.chevet_nanne_3
+  - light.plafond_charles_exterieur_white
+  - light.plafond_charles_interieur_white
+  - light.imprimante

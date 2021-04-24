@@ -1,0 +1,429 @@
+###################   Picture Elements Card    #####################
+type: picture-elements
+image: /local/ui/floorplan/Rez_nuit.png
+card_mod:
+  style: |
+    ha-card:first-child {
+      background: rgba(42, 46, 48, 1);
+    }
+
+elements:
+
+    #########################    DAY BASE FLOORPLAN OVERLAY    #########################
+
+  - action: none
+    entity: sun.sun
+    hold_action:
+      action: none
+    state_image:
+      above_horizon: /local/ui/floorplan/Rez_jour.png
+      below_horizon: /local/transparent.png
+    style:
+      height: 100%
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: '${ states[''sensor.sunlight_opacity''].state }'
+      top: 50%
+      width: 100%
+    tap_action:
+      action: none
+    type: image
+
+    #########################    INDIVIDUAL LIGHTS - BLENDED IMAGE OVERLAYS    #########################
+
+
+  - action: none
+    entity: light.bar
+    hold_action:
+      action: none
+    image: /local/ui/floorplan/lights/rez/Bar.png
+    style:
+      filter: >-
+        ${ "hue-rotate(" + 10 + (states['light.bar'].attributes.hs_color ? states['light.bar'].attributes.hs_color[0] : 0) + "deg) saturate(100%)"}
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.bar'].state === 'on' ? (states['light.bar'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
+    tap_action:
+      action: none
+    type: image
+  - action: none
+    entity: light.grand_totem_deco
+    hold_action:
+      action: none
+    image: /local/ui/floorplan/lights/rez/Totem_grand_couleur.png
+    style:
+      filter: >-
+        ${ "hue-rotate(" + 10 + (states['light.grand_totem_deco'].attributes.hs_color ? states['light.grand_totem_deco'].attributes.hs_color[0] : 0) + "deg) saturate(100%)"}
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.grand_totem_deco'].state === 'on' ? (states['light.grand_totem_deco'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
+    tap_action:
+      action: none
+    type: image
+  - action: none
+    entity: light.petit_totem_deco
+    hold_action:
+      action: none
+    image: /local/ui/floorplan/lights/rez/Totem_petit_couleur.png
+    style:
+      filter: >-
+        ${ "hue-rotate(" + 10 + (states['light.petit_totem_deco'].attributes.hs_color ? states['light.petit_totem_deco'].attributes.hs_color[0] : 0) + "deg) saturate(100%)"}
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.petit_totem_deco'].state === 'on' ? (states['light.petit_totem_deco'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
+    tap_action:
+      action: none
+    type: image
+  - action: none
+    entity: light.tv
+    hold_action:
+      action: none
+    image: /local/ui/floorplan/lights/rez/TV.png
+    style:
+      filter: >-
+        ${ "hue-rotate(" + 10 + (states['light.tv'].attributes.hs_color ? states['light.tv'].attributes.hs_color[0] : 0) + "deg) saturate(100%)"}
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.tv'].state === 'on' ? (states['light.tv'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
+    tap_action:
+      action: none
+    type: image                
+  - action: none
+    entity: light.cuisine_deco
+    hold_action:
+      action: none
+    image: /local/ui/floorplan/lights/rez/Cuisine_deco.png
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.cuisine_deco'].state === 'on' ? (states['light.cuisine_deco'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
+    tap_action:
+      action: none
+    type: image              
+  - action: none
+    entity: light.panneau_lumineux
+    hold_action:
+      action: none
+    image: /local/ui/floorplan/lights/rez/Letterbox.png
+    state_filter:
+      'off': opacity(0%)
+      'on': opacity(100%)
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      top: 50%
+      width: 100%
+    tap_action:
+      action: none
+    type: image
+  - action: none
+    entity: light.terrasse_sol
+    hold_action:
+      action: none
+    image: /local/ui/floorplan/lights/rez/Terrasse_sol.png
+    state_filter:
+      'off': opacity(0%)
+      'on': opacity(100%)
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      top: 50%
+      width: 100%
+    tap_action:
+      action: none
+    type: image 
+  - action: none
+    entity: light.grand_totem
+    hold_action:
+      action: none
+    image: /local/ui/floorplan/lights/rez/Totem_grand.png
+    state_filter:
+      'off': opacity(0%)
+      'on': opacity(100%)
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      top: 50%
+      width: 100%
+    tap_action:
+      action: none
+    type: image  
+  - action: none
+    entity: light.petit_totem
+    hold_action:
+      action: none
+    image: /local/ui/floorplan/lights/rez/Totem_petit.png
+    state_filter:
+      'off': opacity(0%)
+      'on': opacity(100%)
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      top: 50%
+      width: 100%
+    tap_action:
+      action: none
+    type: image
+  - action: none
+    entity: light.vinyles
+    hold_action:
+      action: none
+    image: /local/ui/floorplan/lights/rez/Vinyles.png
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.vinyles'].state === 'on' ? (states['light.vinyles'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
+    tap_action:
+      action: none
+    type: image
+  # - action: none
+  #   entity: light.salon_plafonnier
+  #   hold_action:
+  #     action: none
+  #   image: /local/ui/floorplan/lights/rez/Salon_plafond.png
+  #   style:
+  #     left: 50%
+  #     mix-blend-mode: lighten
+  #     opacity: "${states['light.salon_plafonnier'].state === 'on' ? (states['light.salon_plafonnier'].attributes.brightness / 255) : '0'}"
+  #     top: 50%
+  #     width: 100%
+  #   tap_action:
+  #     action: none
+  #   type: image
+  # - action: none
+  #   entity: light.salle_a_manger_2
+  #   hold_action:
+  #     action: none
+  #   image: /local/ui/floorplan/lights/rez/Manger_plafond.png
+  #   style:
+  #     left: 50%
+  #     mix-blend-mode: lighten
+  #     opacity: "${states['light.salle_a_manger_2'].state === 'on' ? (states['light.salle_a_manger_2'].attributes.brightness / 255) : '0'}"
+  #     top: 50%
+  #     width: 100%
+  #   tap_action:
+  #     action: none
+  #   type: image
+  # - action: none
+  #   entity: light.terrasse_3
+  #   hold_action:
+  #     action: none
+  #   image: /local/ui/floorplan/lights/rez/Terrasse_mur.png
+  #   style:
+  #     left: 50%
+  #     mix-blend-mode: lighten
+  #     opacity: "${states['light.terrasse_3'].state === 'on' ? (states['light.terrasse_3'].attributes.brightness / 255) : '0'}"
+  #     top: 50%
+  #     width: 100%
+  #   tap_action:
+  #     action: none
+  #   type: image    
+  # - action: none
+  #   entity: light.cuisine_plafonnier
+  #   hold_action:
+  #     action: none
+  #   image: /local/ui/floorplan/lights/rez/Cuisine_plafond.png
+  #   state_filter:
+  #     'off': opacity(0%)
+  #     'on': opacity(100%)
+  #   style:
+  #     left: 50%
+  #     mix-blend-mode: lighten
+  #     top: 50%
+  #     width: 100%
+  #   tap_action:
+  #     action: none
+  #   type: image 
+  # - action: none
+  #   entity: light.lampe_salle_a_manger
+  #   hold_action:
+  #     action: none
+  #   image: /local/ui/floorplan/lights/rez/Manger_lampe.png
+  #   state_filter:
+  #     'off': opacity(0%)
+  #     'on': opacity(100%)
+  #   style:
+  #     left: 50%
+  #     mix-blend-mode: lighten
+  #     top: 50%
+  #     width: 100%
+  #   tap_action:
+  #     action: none
+  #   type: image
+
+    #########################    TEMPERATURE CONTROL STATE LABELS    #########################
+
+  - type: 'custom:decluttering-card'
+    template: climate_image
+    variables:
+      - temp: sensor.temperature_salon
+      - humidity: sensor.humidity_salon
+      - title: Salon
+      - top: 52%
+      - left: 68%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label
+    variables:
+      - sensor: sensor.temperature_salon
+      - temp: sensor.temperature_salon
+      - humidity: sensor.humidity_salon
+      - title: Salon
+      - top: 52%
+      - left: 65.75%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label
+    variables:
+      - sensor: sensor.humidity_salon
+      - temp: sensor.temperature_salon
+      - humidity: sensor.humidity_salon
+      - title: Salon
+      - top: 52%
+      - left: 71.75%
+
+  - type: 'custom:decluttering-card'
+    template: climate_image
+    variables:
+      - temp: sensor.temperature_guest
+      - humidity: sensor.humidity_guest
+      - title: Chambre d'amis
+      - top: 21%
+      - left: 35.5%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label
+    variables:
+      - sensor: sensor.temperature_guest
+      - temp: sensor.temperature_guest
+      - humidity: sensor.humidity_guest
+      - title: Chambre d'amis
+      - top: 21%
+      - left: 33.25%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label
+    variables:
+      - sensor: sensor.humidity_guest
+      - temp: sensor.temperature_guest
+      - humidity: sensor.humidity_guest
+      - title: Chambre d'amis
+      - top: 21%
+      - left: 39.25%
+
+  - type: 'custom:decluttering-card'
+    template: climate_image
+    variables:
+      - temp: sensor.temperature_entrance
+      - humidity: sensor.humidity_entrance
+      - title: Entrée
+      - top: 19%
+      - left: 64%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label
+    variables:
+      - sensor: sensor.temperature_entrance
+      - temp: sensor.temperature_entrance
+      - humidity: sensor.humidity_entrance
+      - title: Entrée
+      - top: 19%
+      - left: 61.75%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label
+    variables:
+      - sensor: sensor.humidity_entrance
+      - temp: sensor.temperature_entrance
+      - humidity: sensor.humidity_entrance
+      - title: Entrée
+      - top: 19%
+      - left: 67.75%
+
+  - type: 'custom:decluttering-card'
+    template: climate_image
+    variables:
+      - temp: sensor.temperature_guest_bathroom
+      - humidity: sensor.humidity_guest_bathroom
+      - title: Salle d'eau
+      - top: 16%
+      - left: 84%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label
+    variables:
+      - sensor: sensor.temperature_guest_bathroom
+      - temp: sensor.temperature_guest_bathroom
+      - humidity: sensor.humidity_guest_bathroom
+      - title: Salle d'eau
+      - top: 16%
+      - left: 81.75%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label
+    variables:
+      - sensor: sensor.humidity_guest_bathroom
+      - temp: sensor.temperature_guest_bathroom
+      - humidity: sensor.humidity_guest_bathroom
+      - title: Salle d'eau
+      - top: 16%
+      - left: 87.75%
+
+  - type: 'custom:decluttering-card'
+    template: climate_image
+    variables:
+      - temp: sensor.openweathermap_temperature_round
+      - humidity: sensor.openweathermap_humidity_round
+      - title: Météo
+      - top: 76%
+      - left: 35.5%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label
+    variables:
+      - sensor: sensor.openweathermap_temperature_round
+      - temp: sensor.openweathermap_temperature_round
+      - humidity: sensor.openweathermap_humidity_round
+      - title: Météo
+      - top: 76%
+      - left: 33.25%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label
+    variables:
+      - sensor: sensor.openweathermap_humidity_round
+      - temp: sensor.openweathermap_temperature_round
+      - humidity: sensor.openweathermap_humidity_round
+      - title: Météo
+      - top: 76%
+      - left: 39.25%
+
+    #########################    INDIVIDUAL SHUTTER ICONS    #########################
+
+    #  These are the white state icons that appear over the floorplan to control shades, 
+    #  shutters and window openings.
+    #
+    #  browser_mod.popup is used for a tap and hold for a custom popup card, custom styling
+    #  of the icon to make it appear white, etc.
+
+  #windows
+
+  #shades
+  
+  #shutters
+
+    #########################    NOW PLAYING ON TV IN FLOORPLAN    #########################
+
+    # custom card to show whats playing on the screen when its playing (plex)
+
+  - type: 'custom:decluttering-card'
+    template: media_player_image
+    style:
+      left: 80%
+      top: 57%
+      transform: >-
+        rotateZ(90deg) rotateX(-90deg) translateY(-70px)
+      width: 11%
+      '--ha-card-border-radius': 0vw 0vw 0vw 0vw

@@ -1,0 +1,177 @@
+###################   config-template-card    #####################
+#########################   IMPORTANT!    #########################
+
+# To use the styling templates for individual lights, I have used
+# Config Template Card. Config template card passes the entities it
+# uses into the card. Make sure you change these entities below to
+# your own and include any light entities you use above.
+
+# To understand why, check: https://github.com/iantrich/config-template-card
+
+swiper_config_template:
+  card:
+    type: 'custom:mod-card'
+    card_mod:
+      style: 
+        layout-card$: 
+          grid-layout$: |
+            :host {
+              padding: 0px !important;
+            }
+            #root {
+              margin: 0px !important;
+            }
+            #root > * {
+              margin: 0px !important;
+            }
+    card:
+      type: 'custom:layout-card'
+      layout_type: grid
+      layout_options:
+        grid-template-rows: 100%
+        grid-template-columns: 25% 75%
+        grid-gap: 0
+        grid-template-areas: |
+          "sidebar main"
+      cards:
+        - '[[sidebar]]'
+        - type: 'custom:swipe-card'
+          parameters:
+            effect: 'cube'
+            cubeEffect: 
+              shadow: false
+              slideShadows: false
+          cards:
+            - type: 'custom:config-template-card'
+              view_layout:
+                grid-area: main
+              entities:
+                - light.cuisine_deco
+                - light.cuisine_plafonnier
+                - light.manger_lampe
+                - light.manger_plafonnier
+                - light.grand_totem
+                - light.grand_totem_deco
+                - light.petit_totem
+                - light.petit_totem_deco
+                - light.salon_plafonnier
+                - light.panneau_lumineux
+                - light.tv
+                - light.vinyles
+                - light.bar
+                - light.salon_3
+                - light.cuisine_3
+                - light.terrasse_sol
+                - light.terrasse_3
+                - light.couleur_rez
+                - light.lit_parents_blanc
+                - light.lit_parents_couleur
+                - light.chevet_cdrx_4
+                - light.chevet_nanne_3
+                - light.plafond_charles_exterieur_white
+                - light.plafond_charles_interieur_white
+                - light.imprimante        
+                - sensor.pully_temperature
+                - sensor.temperature_salon
+                - sensor.humidity_salon
+                - sensor.temperature_charles
+                - sensor.humidity_charles
+                - sensor.temperature_chambre_parents
+                - sensor.humidity_chambre_parents
+                - sensor.temperature_dressing
+                - sensor.humidity_dressing
+                - sensor.temperature_bathroom
+                - sensor.humidity_bathroom
+                - sensor.temperature_office
+                - sensor.humidity_office
+                - sensor.temperature_guest
+                - sensor.humidity_guest
+                - sensor.temperature_entrance
+                - sensor.humidity_entrance
+                - sensor.temperature_guest_bathroom
+                - sensor.humidity_guest_bathroom
+                - sensor.pully_temperature
+                - sensor.pully_humidity
+              card:
+                '[[card_rez]]'
+            - type: 'custom:config-template-card'
+              gridrow: 1 / 1
+              gridcol: 2 / 2
+              entities:
+                - light.cuisine_deco
+                - light.cuisine_plafonnier
+                - light.manger_lampe
+                - light.manger_plafonnier
+                - light.grand_totem
+                - light.grand_totem_deco
+                - light.petit_totem
+                - light.petit_totem_deco
+                - light.salon_plafonnier
+                - light.panneau_lumineux
+                - light.tv
+                - light.vinyles
+                - light.bar
+                - light.salon_3
+                - light.cuisine_3
+                - light.terrasse_sol
+                - light.terrasse_3
+                - light.couleur_rez
+                - light.lit_parents_blanc
+                - light.lit_parents_couleur
+                - light.chevet_cdrx_4
+                - light.chevet_nanne_3
+                - light.plafond_charles_exterieur_white
+                - light.plafond_charles_interieur_white
+                - light.imprimante        
+                - sensor.pully_temperature
+                - sensor.temperature_salon
+                - sensor.humidity_salon
+                - sensor.temperature_charles
+                - sensor.humidity_charles
+                - sensor.temperature_chambre_parents
+                - sensor.humidity_chambre_parents
+                - sensor.temperature_dressing
+                - sensor.humidity_dressing
+                - sensor.temperature_bathroom
+                - sensor.humidity_bathroom
+                - sensor.temperature_office
+                - sensor.humidity_office
+                - sensor.temperature_guest
+                - sensor.humidity_guest
+                - sensor.temperature_entrance
+                - sensor.humidity_entrance
+                - sensor.temperature_guest_bathroom
+                - sensor.humidity_guest_bathroom
+                - sensor.pully_temperature
+                - sensor.pully_humidity
+              card:
+                '[[card_1er]]'
+
+simple_grid:
+  card:
+    type: 'custom:mod-card'
+    card_mod:
+      style: 
+        layout-card$: 
+          grid-layout$: |
+            :host {
+              padding: 0px !important;
+            }
+            #root {
+              margin: 0px !important;
+            }
+            #root > * {
+              margin: 0px !important;
+            }
+    card:
+      type: 'custom:layout-card'
+      layout_type: grid
+      layout_options:
+        grid-template-rows: 100%
+        grid-template-columns: 25% 75%
+        grid-gap: 0
+        grid-template-areas: |
+          "sidebar main"
+      cards:
+        - '[[sidebar]]'
+        - '[[card]]'

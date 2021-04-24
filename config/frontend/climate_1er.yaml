@@ -1,0 +1,308 @@
+###################   Picture Elements Card    #####################
+type: picture-elements
+image: /local/ui/floorplan/1er_nuit.png
+card_mod:
+  style: |
+    ha-card:first-child {
+      background: rgba(42, 46, 48, 1);
+    }
+elements:
+
+    #########################    DAY BASE FLOORPLAN OVERLAY    #########################
+
+  - action: none
+    entity: sun.sun
+    hold_action:
+      action: none
+    state_image:
+      above_horizon: /local/ui/floorplan/1er_jour.png
+      below_horizon: /local/transparent.png
+    style:
+      height: 100%
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: '${ states[''sensor.sunlight_opacity''].state }'
+      top: 50%
+      width: 100%
+    tap_action:
+      action: none
+    type: image
+
+
+    #########################    INDIVIDUAL LIGHTS - BLENDED IMAGE OVERLAYS    #########################
+
+
+  - action: none
+    entity: light.lit_parents_couleur
+    hold_action:
+      action: none
+    image: /local/ui/floorplan/lights/1er/lit_parents_couleur.png
+    style:
+      filter: >-
+        ${ "hue-rotate(" + 10 + (states['light.lit_parents_couleur'].attributes.hs_color ? states['light.lit_parents_couleur'].attributes.hs_color[0] : 0) + "deg) saturate(100%)"}
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.lit_parents_couleur'].state === 'on' ? (states['light.lit_parents_couleur'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
+    tap_action:
+      action: none
+    type: image
+  - action: none
+    entity: light.lit_parents_blanc
+    hold_action:
+      action: none
+    image: /local/ui/floorplan/lights/1er/lit_parents_blanc.png
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.lit_parents_blanc'].state === 'on' ? (states['light.lit_parents_blanc'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
+    tap_action:
+      action: none
+    type: image              
+  - action: none
+    entity: light.chevet_cdrx_4
+    hold_action:
+      action: none
+    image: /local/ui/floorplan/lights/1er/chevet_cdrx.png
+    state_filter:
+      'off': opacity(0%)
+      'on': opacity(100%)
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      top: 50%
+      width: 100%
+    tap_action:
+      action: none
+    type: image
+  - action: none
+    entity: light.chevet_nanne_3
+    hold_action:
+      action: none
+    image: /local/ui/floorplan/lights/1er/chevet_nanne.png
+    state_filter:
+      'off': opacity(0%)
+      'on': opacity(100%)
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      top: 50%
+      width: 100%
+    tap_action:
+      action: none
+    type: image
+  - action: none
+    entity: light.plafond_charles_exterieur_white
+    hold_action:
+      action: none
+    image: /local/ui/floorplan/lights/1er/plafond_charles_exterieur_white.png
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.plafond_charles_exterieur_white'].state === 'on' ? (states['light.plafond_charles_exterieur_white'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
+    tap_action:
+      action: none
+    type: image 
+  - action: none
+    entity: light.plafond_charles_interieur_white
+    hold_action:
+      action: none
+    image: /local/ui/floorplan/lights/1er/plafond_charles_interieur_white.png
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.plafond_charles_interieur_white'].state === 'on' ? (states['light.plafond_charles_interieur_white'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
+    tap_action:
+      action: none
+    type: image
+
+    #########################    TEMPERATURE CONTROL STATE LABELS    #########################
+
+    #  Used to create state labels and popups for each room, referring to temperature sensors
+    #  and thermostat control.
+    #
+    #  browser_mod.popup is used for a tap and hold for a custom popup card
+
+  - type: 'custom:decluttering-card'
+    template: climate_image
+    variables:
+      - temp: sensor.temperature_charles
+      - humidity: sensor.humidity_charles
+      - title: Chambre Charles
+      - top: 55%
+      - left: 29%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label
+    variables:
+      - sensor: sensor.temperature_charles
+      - temp: sensor.temperature_charles
+      - humidity: sensor.humidity_charles
+      - title: Chambre Charles
+      - top: 55%
+      - left: 26.75%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label
+    variables:
+      - sensor: sensor.humidity_charles
+      - temp: sensor.temperature_charles
+      - humidity: sensor.humidity_charles
+      - title: Chambre Charles
+      - top: 55%
+      - left: 32.75%
+
+  - type: 'custom:decluttering-card'
+    template: climate_image
+    variables:
+      - temp: sensor.temperature_chambre_parents
+      - humidity: sensor.humidity_chambre_parents
+      - title: Chambre parents
+      - top: 64%
+      - left: 63%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label
+    variables:
+      - sensor: sensor.temperature_chambre_parents
+      - temp: sensor.temperature_chambre_parents
+      - humidity: sensor.humidity_chambre_parents
+      - title: Chambre parents
+      - top: 64%
+      - left: 60.75%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label
+    variables:
+      - sensor: sensor.humidity_chambre_parents
+      - temp: sensor.temperature_chambre_parents
+      - humidity: sensor.humidity_chambre_parents
+      - title: Chambre parents
+      - top: 64%
+      - left: 66.75%
+
+  - type: 'custom:decluttering-card'
+    template: climate_image
+    variables:
+      - temp: sensor.temperature_bathroom
+      - humidity: sensor.humidity_bathroom
+      - title: Salle de bain
+      - top: 22%
+      - left: 73%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label
+    variables:
+      - sensor: sensor.temperature_bathroom
+      - temp: sensor.temperature_bathroom
+      - humidity: sensor.humidity_bathroom
+      - title: Salle de bain
+      - top: 22%
+      - left: 70.75%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label
+    variables:
+      - sensor: sensor.humidity_bathroom
+      - temp: sensor.temperature_bathroom
+      - humidity: sensor.humidity_bathroom
+      - title: Salle de bain
+      - top: 22%
+      - left: 76.75%
+
+  - type: 'custom:decluttering-card'
+    template: climate_image
+    variables:
+      - temp: sensor.temperature_dressing
+      - humidity: sensor.humidity_dressing
+      - title: Dressing
+      - top: 24%
+      - left: 28%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label
+    variables:
+      - sensor: sensor.temperature_dressing
+      - temp: sensor.temperature_dressing
+      - humidity: sensor.humidity_dressing
+      - title: Dressing
+      - top: 24%
+      - left: 25.75%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label
+    variables:
+      - sensor: sensor.humidity_dressing
+      - temp: sensor.temperature_dressing
+      - humidity: sensor.humidity_dressing
+      - title: Dressing
+      - top: 24%
+      - left: 31.75%
+
+  - type: 'custom:decluttering-card'
+    template: climate_image
+    variables:
+      - temp: sensor.temperature_office
+      - humidity: sensor.humidity_office
+      - title: Bureau
+      - top: 35%
+      - left: 55%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label
+    variables:
+      - sensor: sensor.temperature_office
+      - temp: sensor.temperature_office
+      - humidity: sensor.humidity_office
+      - title: Bureau
+      - top: 35%
+      - left: 52.75%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label
+    variables:
+      - sensor: sensor.humidity_office
+      - temp: sensor.temperature_office
+      - humidity: sensor.humidity_office
+      - title: Bureau
+      - top: 35%
+      - left: 58.75%
+
+  - type: 'custom:decluttering-card'
+    template: climate_image
+    variables:
+      - temp: sensor.openweathermap_temperature_round
+      - humidity: sensor.openweathermap_humidity_round
+      - title: Météo
+      - top: 81%
+      - left: 33%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label
+    variables:
+      - sensor: sensor.openweathermap_temperature_round
+      - temp: sensor.openweathermap_temperature_round
+      - humidity: sensor.openweathermap_humidity_round
+      - title: Météo
+      - top: 81%
+      - left: 30.75%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label
+    variables:
+      - sensor: sensor.openweathermap_humidity_round
+      - temp: sensor.openweathermap_temperature_round
+      - humidity: sensor.openweathermap_humidity_round
+      - title: Météo
+      - top: 81%
+      - left: 36.75%
+
+
+    #########################    INDIVIDUAL SHUTTER ICONS    #########################
+
+    #  These are the white state icons that appear over the floorplan to control shades, 
+    #  shutters and window openings.
+    #
+    #  browser_mod.popup is used for a tap and hold for a custom popup card, custom styling
+    #  of the icon to make it appear white, etc.
+
+  #windows
+
+  #shades
+  
+  #shutters

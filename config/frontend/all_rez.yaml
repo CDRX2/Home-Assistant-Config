@@ -1,0 +1,316 @@
+type: picture-elements
+image: /local/ui/floorplan/blurredFloorplanRez.png
+view_layout:
+  grid-area: main
+card_mod:
+  style: |
+    ha-card {
+      background: rgba(42, 46, 48, 1);
+    }
+    mod-card.element {
+      top: 50%;
+      left: 50%;
+      height: 100%;
+      width: 100%;
+    }
+elements:  
+  - type: 'custom:mod-card'
+    card:
+      type: 'custom:layout-card'
+      layout_type: custom:grid-layout
+      layout:
+        grid-template-columns: 5% 1fr 1fr 1fr 1fr 5%
+        grid-template-rows: 5% auto
+        grid-template-areas: |
+          ". . . . . ."
+          ". a b c d ."
+          ". e f g h ."
+          ". i j k l ."
+          ". m n o p ."
+          ". q r s t ."
+          ". . . . . ."
+      cards:
+        - type: 'custom:button-card'
+          template: dimmable_lights
+          variables:
+            entity: light.salon_plafonnier
+            gridarea: '"i consumption ." "n n n" "slider slider slider"'
+          entity: light.salon_plafonnier
+          icon: 'mdi:lightbulb'
+          custom_fields:
+            consumption:
+              card:
+                type: sensor
+                entity: sensor.salon_plafonnier_consumption
+                card_mod:
+                  style: |
+                    ha-card {
+                      box-shadow: none;
+                      pointer-events: none;
+                    }   
+                    .name {
+                      display: none;
+                    }  
+                    .icon {
+                      display: none;
+                    }   
+                    .header {
+                      padding: 0 !important;
+                    } 
+                    .info {
+                      padding: 0 !important;
+                    }
+                    .value {
+                      font-size: 1.2vw !important;
+                    }    
+                    .measurement {
+                      font-size: 0.8vw !important;
+                    }
+          view_layout:
+            grid-area: a
+        - type: 'custom:button-card'
+          template: on_off_lights
+          variables:
+            gridarea: '"i . ." "n n n" ". . ."'
+          entity: light.salon_totems_2
+          icon: 'mdi:floor-lamp'
+          name: Totems
+          view_layout:
+            grid-area: e
+        - type: 'custom:button-card'
+          template: color_lights
+          variables:
+            entity: light.couleur_rez
+            title: Couleur rez
+            gridarea: '"i . color" "n n n" "slider slider slider"'
+          entity: light.couleur_rez
+          icon: 'mdi:led-strip-variant'
+          view_layout:
+            grid-area: i
+        - type: 'custom:button-card'
+          template: dimmable_lights
+          variables:
+            entity: light.vinyles
+            gridarea: '"i . ." "n n n" "slider slider slider"'
+          entity: light.vinyles
+          icon: 'mdi:led-strip-variant'
+          name: Meuble vinyles
+          view_layout:
+            grid-area: m
+        - type: 'custom:button-card'
+          template: on_off_lights
+          variables:
+            gridarea: '"i . ." "n n n" ". . ."'
+          entity: light.panneau_lumineux
+          icon: 'mdi:television-ambient-light'
+          name: Panneau déco
+          view_layout:
+            grid-area: q
+        - type: 'custom:button-card'
+          template: on_off_lights
+          variables:
+            gridarea: '"i consumption ." "n n n" ". . ."'
+          entity: light.lampe_salle_a_manger
+          icon: 'mdi:globe-light'
+          name: Table
+          custom_fields:
+            consumption:
+              card:
+                type: sensor
+                entity: sensor.cuisine_lustre_consumption
+                card_mod:
+                  style: |
+                    ha-card {
+                      box-shadow: none;
+                      pointer-events: none;
+                    }   
+                    .name {
+                      display: none;
+                    }  
+                    .icon {
+                      display: none;
+                    }   
+                    .header {
+                      padding: 0 !important;
+                    } 
+                    .info {
+                      padding: 0 !important;
+                    }
+                    .value {
+                      font-size: 1.2vw !important;
+                    }    
+                    .measurement {
+                      font-size: 0.8vw !important;
+                    }
+          view_layout:
+            grid-area: b
+        - type: 'custom:button-card'
+          template: dimmable_lights
+          variables:
+            entity: light.manger_plafonnier
+            gridarea: '"i consumption ." "n n n" "slider slider slider"'
+          entity: light.manger_plafonnier
+          icon: 'mdi:lightbulb'
+          name: Salle à manger
+          custom_fields:
+            consumption:
+              card:
+                type: sensor
+                entity: sensor.manger_plafonnier_consumption
+                card_mod:
+                  style: |
+                    ha-card {
+                      box-shadow: none;
+                      pointer-events: none;
+                    }   
+                    .name {
+                      display: none;
+                    }  
+                    .icon {
+                      display: none;
+                    }   
+                    .header {
+                      padding: 0 !important;
+                    } 
+                    .info {
+                      padding: 0 !important;
+                    }
+                    .value {
+                      font-size: 1.2vw !important;
+                    }    
+                    .measurement {
+                      font-size: 0.8vw !important;
+                    }
+          view_layout:
+            grid-area: f
+        - type: 'custom:button-card'
+          template: on_off_lights
+          variables:
+            gridarea: '"i consumption ." "n n n" ". . ."'
+          entity: light.cuisine_plafonnier
+          icon: 'mdi:lightbulb'
+          name: Cuisine
+          custom_fields:
+            consumption:
+              card:
+                type: sensor
+                entity: sensor.cuisine_lustre_consumption
+                card_mod:
+                  style: |
+                    ha-card {
+                      box-shadow: none;
+                      pointer-events: none;
+                    }   
+                    .name {
+                      display: none;
+                    }  
+                    .icon {
+                      display: none;
+                    }   
+                    .header {
+                      padding: 0 !important;
+                    } 
+                    .info {
+                      padding: 0 !important;
+                    }
+                    .value {
+                      font-size: 1.2vw !important;
+                    }    
+                    .measurement {
+                      font-size: 0.8vw !important;
+                    }
+          view_layout:
+            grid-area: c
+        - type: 'custom:button-card'
+          template: dimmable_lights
+          variables:
+            entity: light.cuisine_deco
+            gridarea: '"i . ." "n n n" "slider slider slider"'
+          entity: light.cuisine_deco
+          icon: 'mdi:led-strip-variant'
+          name: Cuisine déco
+          view_layout:
+            grid-area: g
+        - type: 'custom:button-card'
+          template: dimmable_lights
+          variables:
+            entity: light.terrasse_3
+            gridarea: '"i consumption ." "n n n" "slider slider slider"'
+          entity: light.terrasse_3
+          icon: 'mdi:lightbulb'
+          name: Terrasse
+          custom_fields:
+            consumption:
+              card:
+                type: sensor
+                entity: sensor.terrasse_consumption
+                card_mod:
+                  style: |
+                    ha-card {
+                      box-shadow: none;
+                      pointer-events: none;
+                    }   
+                    .name {
+                      display: none;
+                    }  
+                    .icon {
+                      display: none;
+                    }   
+                    .header {
+                      padding: 0 !important;
+                    } 
+                    .info {
+                      padding: 0 !important;
+                    }
+                    .value {
+                      font-size: 1.2vw !important;
+                    }    
+                    .measurement {
+                      font-size: 0.8vw !important;
+                    }
+          view_layout:
+            grid-area: d
+        - type: 'custom:button-card'
+          template: on_off_lights
+          variables:
+            gridarea: '"i . ." "n n n" ". . ."'
+          entity: light.terrasse_sol
+          icon: 'mdi:lightbulb'
+          name: Terrasse sol
+          view_layout:
+            grid-area: h
+        # - type: 'custom:button-card'
+        #   template: on_off_lights
+        #   variables:
+        #     gridarea: '"i . ." "n n n" ". . ."'
+        #   entity: light.spare_switch_1
+        #   icon: 'mdi:flash'
+        #   name: Temporaire 1
+        #   view_layout:
+        #     grid-area: l
+        # - type: 'custom:button-card'
+        #   template: on_off_lights
+        #   variables:
+        #     gridarea: '"i . ." "n n n" ". . ."'
+        #   entity: light.spare_switch_2
+        #   icon: 'mdi:flash'
+        #   name: Temporaire 2
+        #   view_layout:
+        #     grid-area: p
+      style:
+        left: 50%
+        top: 50%
+        width: 100%
+        height: 100%
+    card_mod:
+      style: 
+        layout-card$:
+          grid-layout$: |
+            #root {
+              height: 100%;
+            }
+        .: |
+          ha-card {
+            height: 100%;
+            width: 100%;
+          }

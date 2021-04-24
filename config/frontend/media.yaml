@@ -1,0 +1,984 @@
+view_layout:
+  grid-area: main
+elements:
+
+    ##########################################################################################
+    #                                                                                        #
+    #          IF NO MEDIA PLAYING, SHOW UPCOMING TV & MOVIES, BUTTONS TO LAUNCH MEDIA       #
+    #                                                                                        #
+    ##########################################################################################
+
+
+  - type: conditional 
+    conditions:
+      - entity: media_player.living_room_tv
+        state: 'off'
+      - entity: media_player.pioneer_avr
+        state: 'off'
+    elements:
+      - type: 'custom:mod-card'
+        card:
+          type: 'custom:layout-card'
+          layout_type: custom:grid-layout
+          layout:
+            grid-template-columns: 30% 70%
+            grid-template-rows: 25% 25% 25% 25%
+            grid-template-areas: |
+              "remote recentseries"
+              "remote recentfilms"
+              "remote upcomingseries"
+              "remote upcomingfilms"
+          cards:
+            - !include remote.yaml
+  
+        # Upcoming Media Card:
+        # https://github.com/custom-cards/upcoming-media-card
+    
+        # Enabled by, Plex Recently Added Sensor:
+        # https://github.com/custom-components/sensor.plex_recently_added
+    
+            - type: 'custom:upcoming-media-card'
+              entity: sensor.recently_added_tv
+              max: 8
+              flag: false
+              date: ddmm
+              clock: 24
+              title_text: $empty
+              line1_text: $number
+              line2_text: $episode
+              line3_text: 'Durée: $runtime'
+              line4_text: $empty
+              line1_size: large
+              line2_size: medium
+              line3_size: medium
+              card_mod:
+                style: |
+                  upcoming-media-card ha-card{
+                    background: none;
+                    box-shadow: none !important;
+                  }
+                  upcoming-media-card ha-card div:nth-child(2) {
+                    padding: 0 !important;
+                  }
+                  .card-header{
+                    font-size: 1.5vw;
+                    padding: 0;
+                  }
+                  .rece_poster{
+                    width: 11% !important;
+                    display: inline-block !important;
+                    margin: 0% 0.2% !important;
+                  }
+                  .rece_svg_poster{
+                    position: absolute !important;
+                    bottom: -5%;
+                    left: 0;
+                    width: 100% !important;
+                  }
+                  .rece_container_poster{
+                    width: 100% !important;
+                    outline: none !important;
+                    margin: 1% 1% !important;
+                    overflow: hidden;
+                  }
+                  .rece_svg_poster > rect{
+                   fill: none !important;
+                  }
+              view_layout:
+                grid-area: recentseries
+              title: Séries récentes
+            - type: 'custom:upcoming-media-card'
+              entity: sensor.recently_added_movies
+              max: 8
+              date: ddmm
+              flag: false
+              clock: 24
+              title_text: $empty
+              line1_text: $empty
+              line2_text: $empty
+              line3_text: 'Durée: $runtime'
+              line4_text: $empty
+              line3_size: medium
+              view_layout:
+                grid-area: recentfilms
+              title: Films récents
+            - type: 'custom:upcoming-media-card'
+              entity: sensor.sonarr_upcoming_media
+              max: 8
+              flag: false
+              date: ddmm
+              clock: 24
+              title_text: $empty
+              line1_text: $number
+              line2_text: $episode
+              line3_text: 'Durée: $runtime'
+              line4_text: $empty
+              line1_size: large
+              line2_size: medium
+              line3_size: medium
+              card_mod:
+                style: |
+                  .sona_poster{
+                    width: 11% !important;
+                    display: inline-block !important;
+                    margin: 0% 0.2% !important;
+                  }
+                  .sona_svg_poster{
+                    position: absolute !important;
+                    bottom: -5%;
+                    left: 0;
+                    width: 100% !important;
+                  }
+                  .sona_container_poster{
+                    width: 100% !important;
+                    outline: none !important;
+                    margin: 1% 1% !important;
+                    overflow: hidden;
+                  }
+                  .sona_svg_poster > rect{
+                   fill:none !important;
+                  }
+              view_layout:
+                grid-area: upcomingseries
+              title: Prochaines séries
+            - type: 'custom:upcoming-media-card'
+              entity: sensor.radarr_upcoming_media
+              max: 8
+              date: ddmm
+              flag: false
+              clock: 24
+              title_text: $empty
+              line1_text: $empty
+              line2_text: $empty
+              line3_text: 'Durée: $runtime'
+              line4_text: $empty
+              line3_size: medium
+              card_mod:
+                style: |
+                  .rada_poster{
+                    width: 11% !important;
+                    display: inline-block !important;
+                    margin: 0% 0.2% !important;
+                  }
+                  .rada_svg_poster{
+                    position: absolute !important;
+                    bottom: -5%;
+                    left: 0;
+                    width: 100% !important;
+                  }
+                  .rada_container_poster{
+                    width: 100% !important;
+                    outline: none !important;
+                    margin: 1% 1% !important;
+                    overflow: hidden;
+                  }
+                  .rada_svg_poster > rect{
+                   fill:none !important;
+                  }
+              view_layout:
+                grid-area: upcomingfilms
+              title: Prochains films
+        card_mod:
+          style: 
+            layout-card$:
+              grid-layout$: |
+                #root {
+                  height: 100%;
+                }
+            .: |
+              ha-card {
+                height: 100%;
+                width: 100%;
+              }
+
+    ###########################################################################
+    #                                                                         #
+    #          IF PLEX IS ON, SHOW POSTER, RECENTLY ADDED & REMOTE            #
+    #                                                                         #
+    ###########################################################################
+
+    # Mini Media Player Card:
+    # https://github.com/kalkih/mini-media-player
+
+  - type: conditional
+    conditions:
+      - entity: sensor.living_room_tv_source
+        state: 'Plex'
+    elements:
+      - type: 'custom:mod-card'
+        card:
+          type: 'custom:layout-card'
+          layout_type: custom:grid-layout
+          layout:
+            grid-template-columns: 30% 47% 23%
+            grid-template-rows: 1fr 1fr 1fr 1fr
+            grid-template-areas: |
+              "remote player recentseries"
+              "remote player recentfilms"
+              "remote player upcomingseries"
+              "remote player upcomingfilms"
+          cards:
+            - !include remote.yaml
+            - entity: media_player.plex_plex_for_lg_lg_oled77w7v_z
+              group: false
+              hide:
+                controls: true
+                name: true
+                power: true
+                source: true
+                volume: true
+                icon: true
+                state_label: true
+              tap_action:
+                action: none
+              hold_action:
+                action: none
+              info: short
+              artwork: full-cover
+              card_mod:
+                style: |
+                  :host {
+                    border-radius: 1vw;
+                    overflow: hidden;
+                    box-shadow: none !important;
+                    place-self: center;
+                    height: 75%;
+                    width: 90%;
+                  }
+                  ha-card {
+                    border-radius: 1vw;
+                    overflow: hidden !important;
+                    box-shadow: none !important;
+                    height: 100% !important;
+                  }
+              view_layout:
+                grid-area: player
+              type: 'custom:mini-media-player'
+  
+        # Upcoming Media Card:
+        # https://github.com/custom-cards/upcoming-media-card
+    
+        # Enabled by, Plex Recently Added Sensor:
+        # https://github.com/custom-components/sensor.plex_recently_added
+    
+            - type: 'custom:upcoming-media-card'
+              entity: sensor.recently_added_tv
+              max: 8
+              flag: false
+              date: ddmm
+              clock: 24
+              title_text: $empty
+              line1_text: $number
+              line2_text: $episode
+              line3_text: 'Durée: $runtime'
+              line4_text: $empty
+              line1_size: large
+              line2_size: medium
+              line3_size: medium
+              card_mod:
+                style: |
+                  upcoming-media-card ha-card{
+                    background: none;
+                    box-shadow: none !important;
+                  }
+                  upcoming-media-card ha-card div:nth-child(2) {
+                    padding: 0 !important;
+                  }
+                  .card-header{
+                    font-size: 1vw;
+                    padding: 0;
+                    line-height: 1.6vw;
+                  }
+                  .rece_poster{
+                    width: 22% !important;
+                    display: inline-block !important;
+                    margin: 0% 0.2% !important;
+                  }
+                  .rece_svg_poster{
+                    position: absolute !important;
+                    bottom: -5%;
+                    left: 0;
+                    width: 100% !important;
+                  }
+                  .rece_container_poster{
+                    width: 100% !important;
+                    outline: none !important;
+                    margin: 1% 1% !important;
+                    overflow: hidden;
+                  }
+                  .rece_svg_poster > rect{
+                   fill: none !important;
+                  }
+              view_layout:
+                grid-area: recentseries
+              title: Séries récentes
+            - type: 'custom:upcoming-media-card'
+              entity: sensor.recently_added_movies
+              max: 8
+              date: ddmm
+              flag: false
+              clock: 24
+              title_text: $empty
+              line1_text: $empty
+              line2_text: $empty
+              line3_text: 'Durée: $runtime'
+              line4_text: $empty
+              line3_size: medium
+              view_layout:
+                grid-area: recentfilms
+              title: Films récents
+            - type: 'custom:upcoming-media-card'
+              entity: sensor.sonarr_upcoming_media
+              max: 8
+              flag: false
+              date: ddmm
+              clock: 24
+              title_text: $empty
+              line1_text: $number
+              line2_text: $episode
+              line3_text: 'Durée: $runtime'
+              line4_text: $empty
+              line1_size: large
+              line2_size: medium
+              line3_size: medium
+              card_mod:
+                style: |
+                  .sona_poster{
+                    width: 22% !important;
+                    display: inline-block !important;
+                    margin: 0% 0.2% !important;
+                  }
+                  .sona_svg_poster{
+                    position: absolute !important;
+                    bottom: -5%;
+                    left: 0;
+                    width: 100% !important;
+                  }
+                  .sona_container_poster{
+                    width: 100% !important;
+                    outline: none !important;
+                    margin: 1% 1% !important;
+                    overflow: hidden;
+                  }
+                  .sona_svg_poster > rect{
+                   fill:none !important;
+                  }
+              view_layout:
+                grid-area: upcomingseries
+              title: Prochaines séries
+            - type: 'custom:upcoming-media-card'
+              entity: sensor.radarr_upcoming_media
+              max: 8
+              date: ddmm
+              flag: false
+              clock: 24
+              title_text: $empty
+              line1_text: $empty
+              line2_text: $empty
+              line3_text: 'Durée: $runtime'
+              line4_text: $empty
+              line3_size: medium
+              card_mod:
+                style: |
+                  .rada_poster{
+                    width: 22% !important;
+                    display: inline-block !important;
+                    margin: 0% 0.2% !important;
+                  }
+                  .rada_svg_poster{
+                    position: absolute !important;
+                    bottom: -5%;
+                    left: 0;
+                    width: 100% !important;
+                  }
+                  .rada_container_poster{
+                    width: 100% !important;
+                    outline: none !important;
+                    margin: 1% 1% !important;
+                    overflow: hidden;
+                  }
+                  .rada_svg_poster > rect{
+                   fill:none !important;
+                  }
+              view_layout:
+                grid-area: upcomingfilms
+              title: Prochains films
+        card_mod:
+          style: 
+            layout-card$:
+              grid-layout$: |
+                #root {
+                  height: 100%;
+                }
+            .: |
+              ha-card {
+                height: 100%;
+                width: 100%;
+              }
+
+    ###########################################################################
+    #                                                                         #
+    #                   IF SCREEN SHARE IS ON, SHOW LOGO & REMOTE             #
+    #                                                                         #
+    ###########################################################################
+
+  - type: conditional
+    conditions:
+      - entity: sensor.living_room_tv_source
+        state: 'Screen Share'
+    elements:
+      - type: 'custom:mod-card'
+        card:
+          type: 'custom:layout-card'
+          layout_type: custom:grid-layout
+          layout:
+            grid-template-columns: 10% 30% 10% 40% 10%
+            grid-template-rows: auto
+            grid-template-areas: |
+              ". remote . image ."
+          cards:
+            - !include remote.yaml
+            - type: picture
+              image: /local/ui/media/screenshare.png
+              tap_action:
+                action: none
+              card_mod:
+                style: |
+                  :host {
+                    align-self: center;
+                  }
+                  ha-card {
+                    background: none;
+                  }
+              view_layout:
+                grid-area: image
+        card_mod:
+          style: 
+            layout-card$:
+              grid-layout$: |
+                #root {
+                  height: 100%;
+                }
+            .: |
+              ha-card {
+                height: 100%;
+                width: 100%;
+              }
+          
+    ###########################################################################
+    #                                                                         #
+    #                   IF YOUTUBE IS ON, SHOW LOGO & REMOTE                  #
+    #                                                                         #
+    ###########################################################################
+
+  - type: conditional
+    conditions:
+      - entity: sensor.living_room_tv_source
+        state: 'YouTube'
+    elements:
+      - type: 'custom:mod-card'
+        card:
+          type: 'custom:layout-card'
+          layout_type: custom:grid-layout
+          layout:
+            grid-template-columns: 10% 30% 10% 40% 10%
+            grid-template-rows: auto
+            grid-template-areas: |
+              ". remote . image ."
+          cards:
+            - !include remote.yaml
+            - type: picture
+              image: /local/ui/media/youtube.png
+              tap_action:
+                action: none
+              card_mod:
+                style: |
+                  :host {
+                    align-self: center;
+                  }
+                  ha-card {
+                    background: none;
+                  }
+              view_layout:
+                grid-area: image
+        card_mod:
+          style: 
+            layout-card$:
+              grid-layout$: |
+                #root {
+                  height: 100%;
+                }
+            .: |
+              ha-card {
+                height: 100%;
+                width: 100%;
+              }
+ 
+    ###########################################################################
+    #                                                                         #
+    #                   IF YOUTUBE KIDS IS ON, SHOW LOGO & REMOTE             #
+    #                                                                         #
+    ###########################################################################
+
+  - type: conditional
+    conditions:
+      - entity: sensor.living_room_tv_source
+        state: 'YouTube Kids'
+    elements:
+      - type: 'custom:mod-card'
+        card:
+          type: 'custom:layout-card'
+          layout_type: custom:grid-layout
+          layout:
+            grid-template-columns: 10% 30% 10% 40% 10%
+            grid-template-rows: auto
+            grid-template-areas: |
+              ". remote . image ."
+          cards:
+            - !include remote.yaml
+            - type: picture
+              image: /local/ui/media/youtube-kids.png
+              tap_action:
+                action: none
+              card_mod:
+                style: |
+                  :host {
+                    align-self: center;
+                  }
+                  ha-card {
+                    background: none;
+                  }
+              view_layout:
+                grid-area: image
+        card_mod:
+          style: 
+            layout-card$:
+              grid-layout$: |
+                #root {
+                  height: 100%;
+                }
+            .: |
+              ha-card {
+                height: 100%;
+                width: 100%;
+              }
+
+    ###########################################################################
+    #                                                                         #
+    #                   IF RADIO IS ON, SHOW REMOTE & PLAYER                  #
+    #                                                                         #
+    ###########################################################################
+ 
+  - type: conditional
+    conditions:
+      - entity: sensor.pioneer_avr_source
+        state: 'INTERNET RADIO'
+    elements:
+      - type: 'custom:mod-card'
+        card:    
+          type: 'custom:layout-card'
+          layout_type: custom:grid-layout
+          layout:
+            grid-template-columns: 5% 30% 5% 55% 5%
+            grid-template-rows: auto
+            grid-template-areas: |
+              ". remote . player ."
+          cards:
+            - !include remote.yaml
+            - type: 'custom:stack-in-card'
+              mode: vertical
+              keep:
+                background: false
+                box_shadow: false
+                border_radius: false
+                margin: false
+                outer_padding: false
+              card_mod:
+                style: |
+                  :host {
+                    align-self: center;
+                  }
+                  ha-card {
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.0);
+                    box-shadow: 0px 0px rgba(0,0,0,0);
+                  }
+              view_layout:
+                grid-area: player
+              cards:
+                - type: picture
+                  image: /local/ui/media/disc.png
+                  card_mod:
+                    style: |
+                      :host {
+                        top: 50%;
+                        left: 50%;
+                        z-index: 1;
+                      }
+                      ha-card {
+                        animation: rotation 2.5s infinite linear;
+                      }
+                      @keyframes rotation {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                      }
+                  tap_action:
+                    action: none
+                  double_tap_action:
+                    action: none
+                  hold_action:
+                    action: none
+                - type: picture
+                  image: /local/ui/media/couleur3_disc.png
+                  card_mod:
+                    style: |
+                      :host {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        width: 35%;
+                        transform: translate(-50%, -50%);
+                        z-index: 2;
+                      }
+                      ha-card {
+                        animation: rotation 2.5s infinite linear;
+                      }
+                      @keyframes rotation {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                      }  
+                - type: picture
+                  image: /local/ui/media/spindle.png
+                  card_mod:
+                    style: |
+                      :host {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        width: 2%;
+                        transform: translate(-50%, -50%);
+                        z-index: 3;
+                      }
+                      ha-card {
+                        animation: rotation 2.5s infinite linear;
+                      }
+                      @keyframes rotation {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                      }      
+        card_mod:
+          style: 
+            layout-card$:
+              grid-layout$: |
+                #root {
+                  height: 100%;
+                }
+            .: |
+              ha-card {
+                height: 100%;
+                width: 100%;
+              }
+
+    ######################################################################
+    #                                                                    #
+    #          IF PLAYING TIDAL, SHOW REMOTE & PLAYER                    #
+    #                                                                    #
+    ######################################################################
+
+  - type: conditional
+    conditions:
+      - entity: sensor.pioneer_avr_source
+        state: 'MEDIA SERVER'
+    elements:
+      - type: 'custom:mod-card'
+        card:    
+          type: 'custom:layout-card'
+          layout_type: custom:grid-layout
+          layout:
+            grid-template-columns: 5% 30% 5% 55% 5%
+            grid-template-rows: auto
+            grid-template-areas: |
+              ". remote . player ."
+          cards:
+            - !include remote.yaml
+            - type: 'custom:stack-in-card'
+              mode: vertical
+              keep:
+                background: false
+                box_shadow: false
+                border_radius: false
+                margin: false
+                outer_padding: false
+              card_mod:
+                style: |
+                  :host {
+                    align-self: center;
+                  }
+                  ha-card {
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.0);
+                    box-shadow: 0px 0px rgba(0,0,0,0);
+                  }
+              view_layout:
+                grid-area: player
+              cards:
+                - type: picture
+                  image: /local/ui/media/disc.png
+                  card_mod:
+                    style: |
+                      :host {
+                        top: 50%;
+                        left: 50%;
+                        z-index: 1;
+                      }
+                      ha-card {
+                        {% if is_state('media_player.bubble', 'playing') %} animation: rotation 2.5s infinite linear {% endif %};
+                      }
+                      @keyframes rotation {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                      }
+                  tap_action:
+                    action: call-service
+                    service: media_player.media_play_pause
+                    service_data:
+                      entity_id: media_player.bubble
+                  double_tap_action:
+                    action: call-service
+                    service: media_player.media_next_track
+                    service_data:
+                      entity_id: media_player.bubble
+                  hold_action:
+                    action: none
+                - type: markdown
+                  content: >
+                    <img src="http://192.168.251.50:8123{{ state_attr('media_player.bubble', 'entity_picture') }}"></img>
+                  card_mod:
+                    style: |
+                      :host {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        width: 42%;
+                        transform: translate(-50%, -50%);
+                        z-index: 2;
+                      }
+                      ha-card {
+                        clip-path: circle(40% at 50% 50%);
+                        {% if is_state('media_player.bubble', 'playing') %} animation: rotation 2.5s infinite linear {% endif %};
+                      }
+                      @keyframes rotation {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                      }  
+                - type: picture
+                  image: /local/ui/media/spindle.png
+                  card_mod:
+                    style: |
+                      :host {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        width: 2%;
+                        transform: translate(-50%, -50%);
+                        z-index: 3;
+                      }
+                      ha-card {
+                        {% if is_state('media_player.bubble', 'playing') %} animation: rotation 2.5s infinite linear {% endif %};
+                      }
+                      @keyframes rotation {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                      }      
+        card_mod:
+          style: 
+            layout-card$:
+              grid-layout$: |
+                #root {
+                  height: 100%;
+                }
+            .: |
+              ha-card {
+                height: 100%;
+                width: 100%;
+              }
+
+    ########################################################################
+    #                                                                      #
+    #          IF PLAYING BT AUDIO, SHOW REMOTE & PLAYER                   #
+    #                                                                      #
+    ########################################################################
+
+  - type: conditional
+    conditions:
+      - entity: sensor.pioneer_avr_source
+        state: 'BT AUDIO'
+    elements:
+      - type: 'custom:mod-card'
+        card:    
+          type: 'custom:layout-card'
+          layout_type: custom:grid-layout
+          layout:
+            grid-template-columns: 5% 30% 5% 55% 5%
+            grid-template-rows: auto
+            grid-template-areas: |
+              ". remote . player ."
+          cards:
+            - !include remote.yaml
+            - type: 'custom:stack-in-card'
+              mode: vertical
+              keep:
+                background: false
+                box_shadow: false
+                border_radius: false
+                margin: false
+                outer_padding: false
+              card_mod:
+                style: |
+                  :host {
+                    align-self: center;
+                  }
+                  ha-card {
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.0);
+                    box-shadow: 0px 0px rgba(0,0,0,0);
+                  }
+              view_layout:
+                grid-area: player
+              cards:
+                - type: picture
+                  image: /local/ui/media/disc.png
+                  card_mod:
+                    style: |
+                      :host {
+                        top: 50%;
+                        left: 50%;
+                        z-index: 1;
+                      }
+                      ha-card {
+                        animation: rotation 2.5s infinite linear;
+                      }
+                      @keyframes rotation {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                      }
+                  tap_action:
+                    action: call-service
+                    service: media_player.media_play_pause
+                    service_data:
+                      entity_id: media_player.pioneer_avr
+                  double_tap_action:
+                    action: call-service
+                    service: media_player.media_next_track
+                    service_data:
+                      entity_id: media_player.pioneer_avr
+                  hold_action:
+                    action: none
+                - type: picture
+                  image: /local/ui/media/bluetooth_disc.png
+                  card_mod:
+                    style: |
+                      :host {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        width: 30%;
+                        transform: translate(-50%, -50%);
+                        z-index: 2;
+                      }
+                      ha-card {
+                        animation: rotation 2.5s infinite linear;
+                      }
+                      @keyframes rotation {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                      }  
+                - type: picture
+                  image: /local/ui/media/spindle.png
+                  card_mod:
+                    style: |
+                      :host {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        width: 2%;
+                        transform: translate(-50%, -50%);
+                        z-index: 3;
+                      }
+                      ha-card {
+                        animation: rotation 2.5s infinite linear;
+                      }
+                      @keyframes rotation {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                      }      
+        card_mod:
+          style: 
+            layout-card$:
+              grid-layout$: |
+                #root {
+                  height: 100%;
+                }
+            .: |
+              ha-card {
+                height: 100%;
+                width: 100%;
+              }
+
+    ###########################################################################
+    #                                                                         #
+    #                   IF HDMI1 IS ON, REMOTE & CHANNELS                     #
+    #                                                                         #
+    ###########################################################################
+
+  - type: conditional
+    conditions:
+      - entity: sensor.living_room_tv_source
+        state: 'HDMI1'
+    elements:
+      - type: 'custom:mod-card'
+        card: 
+          type: 'custom:layout-card'
+          layout_type: custom:grid-layout
+          layout:
+            grid-template-columns: 5% 30% 5% 55% 5%
+            grid-template-rows: auto
+            grid-template-areas: |
+              ". remote . channels ."
+          cards:
+            - !include remote.yaml
+            - !include tv_channels.yaml
+          style:
+            left: 50%
+            top: 50%
+            height: 100%
+            width: 100%
+        card_mod:
+          style: 
+            layout-card$:
+              grid-layout$: |
+                #root {
+                  height: 100%;
+                }
+            .: |
+              ha-card {
+                height: 100%;
+                width: 100%;
+              }
+
+image: /local/ui/floorplan/blurredFloorplanRez.png
+card_mod:
+  style: |
+    ha-card {
+      background: rgba(42, 46, 48, 1);
+    }
+    mod-card.element {
+      top: 50%;
+      left: 50%;
+      height: 100%;
+      width: 100%;
+    }
+type: picture-elements

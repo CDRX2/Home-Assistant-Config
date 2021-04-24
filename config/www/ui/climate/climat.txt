@@ -1,0 +1,4 @@
+Couleur: #d3d3d3
+Taille actuelle: 5000x1417
+Taille nouvelle: 6000x1500
+Décaler humidité vers la droite

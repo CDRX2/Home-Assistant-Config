@@ -1,0 +1,134 @@
+view_layout:
+  grid-area: main
+elements:
+  - current: true
+    details: true
+    entity: weather.openweathermap
+    forecast: true
+    number_of_forecasts: 8
+    name: Météo
+    card_mod:
+      style: |
+        :host {
+          left: 50%;
+          top: 30%;
+          width: 90%;
+          overflow: hidden;
+          height: 60%;
+          background: none !important;
+          box-shadow: none !important;
+        }
+        .current {
+          margin-bottom: 7vw;
+        }
+        .variations {
+          margin-bottom: 4vw;
+        }
+        ha-card {
+          height: 100%;
+          background: none  !important;
+          box-shadow: none !important;
+          border-radius: 1vw;
+          font-size: 1.2vw !important;
+        }
+        .forecast{
+          padding: 0 2.5%;
+          width: 95%;
+        }
+        .forecast .day:first-child{
+          border-left: 0.1em solid #d9d9d9;
+        }
+        .forecast .day:last-child{
+          border-right: 0.1em solid #d9d9d9;
+        }
+    type: 'custom:weather-card'
+
+  - type: 'custom:apexcharts-card'
+    graph_span: 7d12h
+    span:
+      start: day
+      offset: +12h
+    apex_config:
+      dataLabels:
+        enabled: false
+      chart:
+        height: 100%
+      legend:
+        position: 'top'
+      stroke:
+        colors: ['#ffa31a', '#03a8f4', 'none']
+      fill:
+        type: ['gradient', 'gradient', 'solid']
+        gradient:
+          type: 'vertical'
+          shade: 'dark'
+          inverseColors: true
+          opacityFrom: 0.8
+          opacityTo: 0.1
+          stops: [20, 100]
+        opacity: 0.85
+      plotOptions:
+        area:
+          fillTo: 'origin'
+        bar:
+          columnWidth: '150%'
+    series:
+      - entity: weather.openweathermap
+        type: area
+        curve: smooth
+        color: '#ffa31a'
+        name: 'Température'
+        extend_to_end: true
+        fill_raw: last
+        show:
+          legend_value: false
+        data_generator: |
+          return entity.attributes.forecast.map((entry) => {
+            return [new Date(entry.datetime), entry.temperature];
+          });
+      - entity: weather.openweathermap
+        type: area
+        curve: smooth
+        name: 'Température min.'
+        extend_to_end: true
+        color: '#03a8f4'
+        fill_raw: last
+        show:
+          legend_value: false
+        data_generator: |
+          return entity.attributes.forecast.map((entry) => {
+            return [new Date(entry.datetime), entry.templow];
+          });
+      - entity: weather.openweathermap
+        type: column
+        color: '#0b0385'
+        name: 'Précipitations'
+        fill_raw: last
+        show:
+          legend_value: false
+        data_generator: |
+          return entity.attributes.forecast.map((entry) => {
+            return [new Date(entry.datetime), entry.precipitation];
+          });
+    card_mod:
+      style: |
+        :host {
+          left: 50%;
+          top: 75%;
+          width: 90%;
+          height: 40%;
+        }
+        ha-card {
+          background: none !important;
+          height: 100%;
+        }
+        .wrapper.with-header {
+          height: 100%;
+        }
+image: /local/ui/floorplan/blurredFloorplanRez.png
+card_mod:
+  style: |
+    ha-card {
+      background: rgba(42, 46, 48, 1);
+    }
+type: picture-elements

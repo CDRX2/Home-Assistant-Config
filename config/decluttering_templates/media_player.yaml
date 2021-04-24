@@ -1,0 +1,244 @@
+#########################    NOW PLAYING ON TV IN FLOORPLAN    #########################
+
+# custom card to show whats playing on the screen when its playing (plex)
+
+media_player_image:
+  card:
+    type: 'custom:state-switch'
+    entity: sensor.living_room_tv_now_playing
+    default: "off"
+    states:
+      Plex:
+        type: 'custom:mini-media-player'
+        entity: media_player.plex_plex_for_lg_lg_oled77w7v_z
+        artwork: full-cover
+        hide:
+          name: true
+          icon: true
+          info: true
+          power: true
+          source: true
+          sound_mode: true
+          controls: true
+          prev: true
+          next: true
+          play_pause: true
+          play_stop: true
+          volume: true
+          volume_level: true
+          mute: true
+          progress: true
+          runtime: true
+          artwork_border: true
+          power_state: true
+          icon_state: true
+          shuffle: true
+        tap_action:
+          action: fire-dom-event
+          browser_mod:
+            command: popup
+            card: !include ../frontend/media_player.yaml
+            style: |
+              :host .content {
+                width:
+                {% if is_state('sensor.now_playing', 'Plex') or is_state('sensor.now_playing', 'bubble') %}
+                  60vw
+                {% else %}
+                  25vw
+                {% endif %};
+              }
+              ha-card {
+                border-radius: 0.8vw;
+                opacity: 0.9;
+                z-index: 5;
+              }
+            title: Multimédia
+      Other:
+        type: 'custom:mini-media-player'
+        entity: media_player.living_room_tv
+        artwork: full-cover
+        hide:
+          name: true
+          icon: true
+          info: true
+          power: true
+          source: true
+          sound_mode: true
+          controls: true
+          prev: true
+          next: true
+          play_pause: true
+          play_stop: true
+          volume: true
+          volume_level: true
+          mute: true
+          progress: true
+          runtime: true
+          artwork_border: true
+          power_state: true
+          icon_state: true
+          shuffle: true 
+        tap_action:
+          action: fire-dom-event
+          browser_mod:
+            command: popup
+            card: !include ../frontend/media_player.yaml
+            style: |
+              :host .content {
+                width:
+                {% if is_state('sensor.now_playing', 'Plex') or is_state('sensor.now_playing', 'bubble') %}
+                  60vw
+                {% else %}
+                  25vw
+                {% endif %};
+              }
+              ha-card {
+                border-radius: 0.8vw;
+                opacity: 0.9;
+                z-index: 5;
+              }
+            title: Multimédia
+      "off":
+        entity: media_player.living_room_tv
+        tap_action:
+          action: fire-dom-event
+          browser_mod:
+            command: popup
+            card: !include ../frontend/media_player.yaml
+            style: |
+              :host .content {
+                width:
+                {% if is_state('sensor.now_playing', 'Plex') or is_state('sensor.now_playing', 'bubble') %}
+                  60vw
+                {% else %}
+                  25vw
+                {% endif %};
+              }
+              ha-card {
+                border-radius: 0.8vw;
+                opacity: 0.9;
+                z-index: 5;
+              }
+            title: Multimédia
+        type: picture
+        image: /local/ui/btns/power-standby.png  
+
+media_player_sidebar:
+  card:
+    entity: '[[media_player]]'
+    hide:
+      controls: true
+      name: true
+      power: true
+      source: true
+      volume: true
+      progress: true
+      state_label: true
+    idle_view:
+      after: 0.1
+      when_idle: true
+      when_paused: false
+      when_standby: true
+    card_mod:
+      style: 
+        .: |
+          :host {
+            border-radius: 5vw;
+            overflow: hidden;
+            box-shadow: none !important;
+            height: 5.5vw;
+          }
+          ha-card {
+            border-radius: 5vw;
+            overflow: hidden !important;
+            box-shadow: none !important;
+            padding-left: 9% !important;
+            padding-right: 8% !important;
+            height: 100%;
+          }
+          ha-card.--inactive .mmp-player {
+            opacity: 0 !important;
+            padding: 0vw !important;
+          }
+          #primaryProgress {
+            background: #474A52 !important;
+          }
+          div.mmp__bg{
+            background: #1E2022;
+          }
+          ha-card.--inactive div.mmp__bg{
+            background: none;
+          }
+          div.mmp-player {
+            padding: 0vw;
+            height: 100%;
+          }
+          .mmp-player__core {
+            width: 100%;
+            height: 100%;
+            position: absolute !important;
+            display: block !important;
+          }
+          .entity__icon {
+            float: right;
+            width: 3vw !important;
+            height: 3vw !important;
+            min-width: 0 !important;
+            min-height: 0 !important;
+            margin:0 !important;
+            top: 25%;
+          } 
+          .entity__info {
+            height: 100% !important;
+            width: 75% !important;
+            max-height: 20vw !important;
+            font-size: 0.9vw !important;
+            text-overflow: unset !important;
+            white-space: unset !important;
+            word-wrap: normal !important;
+            line-height: 1.1em !important;
+            vertical-align: middle !important;
+            margin-left: 0;
+          }
+          .entity__info__media {
+            max-height: 21vw !important;
+            text-overflow: unset !important;
+            white-space: unset !important;
+            word-wrap: normal !important;
+          }
+          .attr__media_title {
+            color: white;
+            font-weight: 350;
+            font-size: 1.3vw !important;
+            text-overflow: unset !important;
+            white-space: unset !important;
+            word-wrap: normal !important;
+            line-height: 1.1em;
+          }
+          .attr__media_artist {
+            font-size: 1.1vw !important;
+            font-weight: 300;
+            color: white;
+            text-overflow: unset !important;
+            white-space: unset !important;
+            word-wrap: normal !important;
+            line-height: 1.1em;
+          }
+          .entity__artwork {
+            float: right;
+            width: 3vw !important;
+            height: 3vw !important;
+            min-width: 0 !important;
+            min-height: 0 !important;
+            top: 25%; 
+            margin-right: 0 !important;
+          }
+        ha-icon$: |
+          ha-svg-icon {
+            height: 2vw;
+            width: 2vw;
+          }
+    tap_action:
+      action: navigate
+      navigation_path: /lovelace-visual/media
+    type: 'custom:mini-media-player' 

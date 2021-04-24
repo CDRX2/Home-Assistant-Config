@@ -1,0 +1,15 @@
+- platform: template
+  sensors:
+    trash:
+      value_template: >-
+        {% if states('sensor.poubelle_compost_papier') == 'tomorrow' and states('sensor.verre') != 'tomorrow' %}
+          tomorrow
+        {% elif states('sensor.poubelle_compost_papier') == 'today' and states('sensor.verre') != 'today' %}
+          today
+        {%elif states('sensor.poubelle_compost_papier') == 'tomorrow' and states('sensor.verre') == 'tomorrow' %}
+          verre tomorrow
+        {%elif states('sensor.poubelle_compost_papier') == 'today' and states('sensor.verre') == 'today' %}
+          verre today
+        {% else %}
+          normal
+        {% endif %}

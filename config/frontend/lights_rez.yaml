@@ -1,0 +1,483 @@
+###################   Picture Elements Card    #####################
+type: picture-elements
+image: /local/ui/floorplan/Rez_nuit.png
+card_mod:
+  style: |
+    ha-card:first-child {
+      background: rgba(42, 46, 48, 1);
+    }
+elements:
+
+    #########################    DAY BASE FLOORPLAN OVERLAY    #########################
+
+  - action: none
+    entity: sun.sun
+    hold_action:
+      action: none
+    state_image:
+      above_horizon: /local/ui/floorplan/Rez_jour.png
+      below_horizon: /local/transparent.png
+    style:
+      height: 100%
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: '${ states[''sensor.sunlight_opacity''].state }'
+      top: 50%
+      width: 100%
+    tap_action:
+      action: none
+    type: image
+
+
+    #########################    INDIVIDUAL LIGHTS - BLENDED IMAGE OVERLAYS    #########################
+
+
+  - action: none
+    entity: light.bar
+    hold_action:
+      action: none
+    image: /local/ui/floorplan/lights/rez/Bar.png
+    style:
+      filter: >-
+        ${ "hue-rotate(" + 10 + (states['light.bar'].attributes.hs_color ? states['light.bar'].attributes.hs_color[0] : 0) + "deg) saturate(100%)"}
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.bar'].state === 'on' ? (states['light.bar'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
+    tap_action:
+      action: none
+    type: image
+  - action: none
+    entity: light.grand_totem_deco
+    hold_action:
+      action: none
+    image: /local/ui/floorplan/lights/rez/Totem_grand_couleur.png
+    style:
+      filter: >-
+        ${ "hue-rotate(" + 10 + (states['light.grand_totem_deco'].attributes.hs_color ? states['light.grand_totem_deco'].attributes.hs_color[0] : 0) + "deg) saturate(100%)"}
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.grand_totem_deco'].state === 'on' ? (states['light.grand_totem_deco'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
+    tap_action:
+      action: none
+    type: image
+  - action: none
+    entity: light.petit_totem_deco
+    hold_action:
+      action: none
+    image: /local/ui/floorplan/lights/rez/Totem_petit_couleur.png
+    style:
+      filter: >-
+        ${ "hue-rotate(" + 10 + (states['light.petit_totem_deco'].attributes.hs_color ? states['light.petit_totem_deco'].attributes.hs_color[0] : 0) + "deg) saturate(100%)"}
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.petit_totem_deco'].state === 'on' ? (states['light.petit_totem_deco'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
+    tap_action:
+      action: none
+    type: image
+  - action: none
+    entity: light.tv
+    hold_action:
+      action: none
+    image: /local/ui/floorplan/lights/rez/TV.png
+    style:
+      filter: >-
+        ${ "hue-rotate(" + 10 + (states['light.tv'].attributes.hs_color ? states['light.tv'].attributes.hs_color[0] : 0) + "deg) saturate(100%)"}
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.tv'].state === 'on' ? (states['light.tv'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
+    tap_action:
+      action: none
+    type: image                
+  - action: none
+    entity: light.cuisine_deco
+    hold_action:
+      action: none
+    image: /local/ui/floorplan/lights/rez/Cuisine_deco.png
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.cuisine_deco'].state === 'on' ? (states['light.cuisine_deco'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
+    tap_action:
+      action: none
+    type: image              
+  - action: none
+    entity: light.panneau_lumineux
+    hold_action:
+      action: none
+    image: /local/ui/floorplan/lights/rez/Letterbox.png
+    state_filter:
+      'off': opacity(0%)
+      'on': opacity(100%)
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      top: 50%
+      width: 100%
+    tap_action:
+      action: none
+    type: image
+  - action: none
+    entity: light.terrasse_sol
+    hold_action:
+      action: none
+    image: /local/ui/floorplan/lights/rez/Terrasse_sol.png
+    state_filter:
+      'off': opacity(0%)
+      'on': opacity(100%)
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      top: 50%
+      width: 100%
+    tap_action:
+      action: none
+    type: image 
+  - action: none
+    entity: light.grand_totem
+    hold_action:
+      action: none
+    image: /local/ui/floorplan/lights/rez/Totem_grand.png
+    state_filter:
+      'off': opacity(0%)
+      'on': opacity(100%)
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      top: 50%
+      width: 100%
+    tap_action:
+      action: none
+    type: image  
+  - action: none
+    entity: light.petit_totem
+    hold_action:
+      action: none
+    image: /local/ui/floorplan/lights/rez/Totem_petit.png
+    state_filter:
+      'off': opacity(0%)
+      'on': opacity(100%)
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      top: 50%
+      width: 100%
+    tap_action:
+      action: none
+    type: image
+  - action: none
+    entity: light.vinyles
+    hold_action:
+      action: none
+    image: /local/ui/floorplan/lights/rez/Vinyles.png
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.vinyles'].state === 'on' ? (states['light.vinyles'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
+    tap_action:
+      action: none
+    type: image
+  # - action: none
+  #   entity: light.salon_plafonnier
+  #   hold_action:
+  #     action: none
+  #   image: /local/ui/floorplan/lights/rez/Salon_plafond.png
+  #   style:
+  #     left: 50%
+  #     mix-blend-mode: lighten
+  #     opacity: "${states['light.salon_plafonnier'].state === 'on' ? (states['light.salon_plafonnier'].attributes.brightness / 255) : '0'}"
+  #     top: 50%
+  #     width: 100%
+  #   tap_action:
+  #     action: none
+  #   type: image
+  # - action: none
+  #   entity: light.salle_a_manger_2
+  #   hold_action:
+  #     action: none
+  #   image: /local/ui/floorplan/lights/rez/Manger_plafond.png
+  #   style:
+  #     left: 50%
+  #     mix-blend-mode: lighten
+  #     opacity: "${states['light.salle_a_manger_2'].state === 'on' ? (states['light.salle_a_manger_2'].attributes.brightness / 255) : '0'}"
+  #     top: 50%
+  #     width: 100%
+  #   tap_action:
+  #     action: none
+  #   type: image
+  # - action: none
+  #   entity: light.terrasse_3
+  #   hold_action:
+  #     action: none
+  #   image: /local/ui/floorplan/lights/rez/Terrasse_mur.png
+  #   style:
+  #     left: 50%
+  #     mix-blend-mode: lighten
+  #     opacity: "${states['light.terrasse_3'].state === 'on' ? (states['light.terrasse_3'].attributes.brightness / 255) : '0'}"
+  #     top: 50%
+  #     width: 100%
+  #   tap_action:
+  #     action: none
+  #   type: image    
+  # - action: none
+  #   entity: light.cuisine_plafonnier
+  #   hold_action:
+  #     action: none
+  #   image: /local/ui/floorplan/lights/rez/Cuisine_plafond.png
+  #   state_filter:
+  #     'off': opacity(0%)
+  #     'on': opacity(100%)
+  #   style:
+  #     left: 50%
+  #     mix-blend-mode: lighten
+  #     top: 50%
+  #     width: 100%
+  #   tap_action:
+  #     action: none
+  #   type: image 
+  # - action: none
+  #   entity: light.lampe_salle_a_manger
+  #   hold_action:
+  #     action: none
+  #   image: /local/ui/floorplan/lights/rez/Manger_lampe.png
+  #   state_filter:
+  #     'off': opacity(0%)
+  #     'on': opacity(100%)
+  #   style:
+  #     left: 50%
+  #     mix-blend-mode: lighten
+  #     top: 50%
+  #     width: 100%
+  #   tap_action:
+  #     action: none
+  #   type: image 
+
+    #########################    ROOM/GROUP CONTROL TRANSPARENT IMAGES    #########################
+
+  - type: 'custom:decluttering-card'
+    template: Light_room
+    variables:
+      - light: light.salon
+      - title: Salon
+      - color_picker: true
+      - hide_header: false
+      - left: 75.2%
+      - width: 32%
+      - top: 63.2%
+      - height: 35.6%
+
+  - type: 'custom:decluttering-card'
+    template: Light_room
+    variables:
+      - light: light.cuisine
+      - title: Cuisine
+      - color_picker: false
+      - hide_header: false
+      - left: 29%
+      - width: 22%
+      - top: 51.5%
+      - height: 33.6%
+
+ 
+  - type: 'custom:decluttering-card'
+    template: Light_room
+    variables:
+      - light: light.terrasse
+      - title: Terrasse
+      - color_picker: false
+      - hide_header: false
+      - left: 35%
+      - width: 42.6%
+      - top: 84%
+      - height: 27.5%
+
+
+    #########################    INDIVIDUAL LIGHT ICONS    #########################
+
+  #on-off lights
+  #cuisine
+  # - type: 'custom:decluttering-card'
+  #   template: Light_icon_on_off
+  #   variables:
+  #     - light: light.cuisine_plafonnier
+  #     - title: Cuisine plafonnier
+  #     - icon: lightbulb
+  #     - left: 36%
+  #     - top: 56%
+
+  #manger
+  # - type: 'custom:decluttering-card'
+  #   template: Light_icon_on_off
+  #   variables:
+  #     - light: light.lampe_salle_a_manger
+  #     - title: Lampe manger
+  #     - icon: globe-light
+  #     - left: 51%
+  #     - top: 56%
+
+  #salon
+  - type: 'custom:decluttering-card'
+    template: Light_icon_on_off
+    variables:
+      - light: light.grand_totem
+      - title: Grand totem
+      - icon: floor-lamp
+      - left: 88%
+      - top: 77%
+
+  - type: 'custom:decluttering-card'
+    template: Light_icon_on_off
+    variables:
+      - light: light.petit_totem
+      - title: Petit totem
+      - icon: floor-lamp
+      - left: 85%
+      - top: 47% 
+
+  - type: 'custom:decluttering-card'
+    template: Light_icon_on_off
+    variables:
+      - light: light.panneau_lumineux
+      - title: Panneau lumineux
+      - icon: television-ambient-light
+      - left: 75.5%
+      - top: 47%
+
+  #terrasse  
+  - type: 'custom:decluttering-card'
+    template: Light_icon_on_off
+    variables:
+      - light: light.terrasse_sol
+      - title: Terasse sol
+      - icon: wall-sconce-round-variant
+      - left: 41.5%
+      - top: 94.4%
+
+  #color lights
+  #salon
+  - type: 'custom:decluttering-card'
+    template: Light_icon_full
+    variables:
+      - light: light.grand_totem_deco
+      - title: Grand totem couleur
+      - icon: wall-sconce-round-variant
+      - hide_header: true
+      - color_picker: true
+      - left: 83%
+      - top: 75%
+
+  - type: 'custom:decluttering-card'
+    template: Light_icon_full
+    variables:
+      - light: light.petit_totem_deco
+      - title: Petit totem couleur
+      - icon: wall-sconce-round-variant
+      - hide_header: true
+      - color_picker: true
+      - left: 80.25%
+      - top: 47%
+
+  - type: 'custom:decluttering-card'
+    template: Light_icon_full
+    variables:
+      - light: light.tv
+      - title: Meuble TV
+      - icon: led-strip-variant
+      - hide_header: true
+      - color_picker: true
+      - left: 83.5%
+      - top: 61%
+
+  - type: 'custom:decluttering-card'
+    template: Light_icon_full
+    variables:
+      - light: light.bar
+      - title: Bar
+      - icon: led-strip-variant
+      - hide_header: true
+      - color_picker: true
+      - left: 53.8%
+      - top: 38%
+
+#dimming lights
+#Cuisine
+  - type: 'custom:decluttering-card'
+    template: Light_icon_full
+    variables:
+      - light: light.cuisine_deco
+      - title: Cuisine déco
+      - icon: led-strip-variant
+      - hide_header: true
+      - color_picker: false
+      - left: 22%
+      - top: 52%
+
+    #salon
+  - type: 'custom:decluttering-card'
+    template: Light_icon_full
+    variables:
+      - light: light.vinyles
+      - title: Meuble vinyles
+      - icon: led-strip-variant
+      - hide_header: true
+      - color_picker: false
+      - left: 70.75%
+      - top: 47%
+
+  # - type: 'custom:decluttering-card'
+  #   template: Light_icon_full
+  #   variables:
+  #     - light: light.salon_plafonnier
+  #     - title: Salon plafonnier
+  #     - icon: lightbulb
+  #     - hide_header: true
+  #     - color_picker: false
+  #     - left: 73.75%
+  #     - top: 61.75%
+
+  # - type: 'custom:decluttering-card'
+  #   template: Light_icon_full
+  #   variables:
+  #     - light: light.salle_a_manger_2
+  #     - title: Salle à manger
+  #     - icon: lightbulb
+  #     - hide_header: true
+  #     - color_picker: false
+  #     - left: 51%
+  #     - top: 45%
+
+    #terrasse
+  # - type: 'custom:decluttering-card'
+  #   template: Light_icon_full
+  #   variables:
+  #     - light: light.terrasse_3
+  #     - title: Terrasse
+  #     - icon: coach-lamp
+  #     - hide_header: true
+  #     - color_picker: false
+  #     - left: 38%
+  #     - top: 73.5%
+
+    #########################    NOW PLAYING ON TV IN FLOORPLAN    #########################
+
+  - type: 'custom:decluttering-card'
+    template: media_player_image
+    style: 
+        left: 80%
+        top: 57%
+        transform: >-
+          rotateZ(90deg) rotateX(-90deg) translateY(-70px)
+        width: 11%
+        --ha-card-border-radius: 0vw 0vw 0vw 0vw
+        

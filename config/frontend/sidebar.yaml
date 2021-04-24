@@ -1,0 +1,818 @@
+type: picture-elements
+image: /local/ui/sidebar/sidebarBG.png
+view_layout:
+  grid-area: sidebar
+card_mod:
+  style: | 
+    ha-card {
+      padding: 0 !important;
+      overflow: hidden;
+      background: none !important;
+      width: 100%;
+      --animation-ciboulette: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %} blink 1s linear infinite alternate {% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} spin 1s linear infinite {% else %} none {% endif %};
+      --color-ciboulette: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %} #ff1a1a {% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} var(--accent-color) {% else %} lightgrey {% endif %};
+    }
+    @keyframes spin {
+      0% { transform: translate(-50%, -50%) scale(1.4) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) scale(1.4) rotate(360deg); }
+    }
+    @keyframes blink {
+      0% { opacity: 0.5; }
+      100% { opacity 1; }
+    }
+elements:
+
+    #################################################################
+    #                                                               #
+    #                             SIDEBAR                           #
+    #                                                               #
+    #################################################################
+
+    #########################    TIME AND DATE    #########################
+
+  - type: 'custom:decluttering-card'
+    template: statelabel
+    variables:
+      - entity: sensor.time
+      - color: lightgrey
+      - size: 4vw
+      - weight: 200
+      - left: 50%
+      - top: 4%
+
+  - type: 'custom:decluttering-card'
+    template: statelabel
+    variables:
+      - entity: sensor.date_string
+      - color: darkgrey
+      - size: 1.3vw
+      - weight: 300
+      - left: 50%
+      - top: 9%
+
+    #########################    MENU BUTTONS    #########################
+
+  #all rooms
+  - type: 'custom:button-card'
+    template: navigation
+    variables:
+      navigation: /lovelace-visual/lights
+    entity_picture: >
+      [[[ return (window.location.pathname == '/lovelace-visual/lights') ? '/local/ui/sidebar/lumieres_on.png' : '/local/ui/sidebar/lumieres_off.png'; ]]]
+    card_mod:
+      style: |
+        :host {
+          top: 14%;
+          left: 50%;
+          width: 88%;
+        }
+       
+  # #Climate
+  - type: 'custom:button-card'
+    template: navigation
+    variables:
+      navigation: /lovelace-visual/climate
+    entity_picture: >
+      [[[ return (window.location.pathname == '/lovelace-visual/climate') ? '/local/ui/sidebar/climat_on.png' : '/local/ui/sidebar/climat_off.png'; ]]]
+    card_mod:
+      style: |
+        :host {
+          top: 21%;
+          left: 50%;
+          width: 88%;
+        }
+
+  #all devices
+  - type: 'custom:button-card'
+    template: navigation
+    variables:
+      navigation: /lovelace-visual/all-devices
+    entity_picture: >
+      [[[ return (window.location.pathname == '/lovelace-visual/all-devices') ? '/local/ui/sidebar/classique_on.png' : '/local/ui/sidebar/classique_off.png'; ]]]
+    card_mod:
+      style: |
+        :host {
+          top: 28%;
+          left: 50%;
+          width: 88%;
+          z-index: 1;
+        }
+
+  #media
+  - type: 'custom:button-card'
+    template: navigation
+    variables:
+      navigation: /lovelace-visual/media
+    entity_picture: >
+      [[[ return (window.location.pathname == '/lovelace-visual/media') ? '/local/ui/sidebar/multimedia_on.png' : '/local/ui/sidebar/multimedia_off.png'; ]]]
+    card_mod:
+      style: |
+        :host {
+          top: 35%;
+          left: 50%;
+          width: 88%;
+        }
+
+    ##########################    Icons for taking out the trash    ##########################
+
+  - type: conditional
+    conditions:
+      - entity: sensor.trash
+        state: 'tomorrow'
+    elements:
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: delete-restore
+          - color: '#ffa31a'
+          - left: 22.5%
+          - top: 45%
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: trash-can
+          - color: lightgrey
+          - left: 42.5%
+          - top: 45%
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: newspaper-variant-multiple
+          - color: lightgrey
+          - left: 62.5%
+          - top: 45%
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: leaf
+          - color: lightgrey
+          - left: 82.5%
+          - top: 45%
+
+  - type: conditional
+    conditions:
+      - entity: sensor.trash
+        state: 'today'
+    elements:
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: delete-empty
+          - color: '#ff1a1a'
+          - left: 22.5%
+          - top: 45%
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: trash-can
+          - color: lightgrey
+          - left: 42.5%
+          - top: 45%
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: newspaper-variant-multiple
+          - color: lightgrey
+          - left: 62.5%
+          - top: 45%
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: leaf
+          - color: lightgrey
+          - left: 82.5%
+          - top: 45%
+
+  - type: conditional
+    conditions:
+      - entity: sensor.trash
+        state: 'verre tomorrow'
+    elements:
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: delete-restore
+          - color: '#ffa31a'
+          - left: 17.5%
+          - top: 45%
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: trash-can
+          - color: lightgrey
+          - left: 35%
+          - top: 45%
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: newspaper-variant-multiple
+          - color: lightgrey
+          - left: 52.5%
+          - top: 45%
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: leaf
+          - color: lightgrey
+          - left: 70%
+          - top: 45%
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: bottle-wine
+          - color: lightgrey
+          - left: 87.5%
+          - top: 45%
+
+  - type: conditional
+    conditions:
+      - entity: sensor.trash
+        state: 'verre today'
+    elements:
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: delete-empty
+          - color: '#ff1a1a'
+          - left: 17.5%
+          - top: 45%
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: trash-can
+          - color: lightgrey
+          - left: 35%
+          - top: 45%
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: newspaper-variant-multiple
+          - color: lightgrey
+          - left: 52.5%
+          - top: 45%
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: leaf
+          - color: lightgrey
+          - left: 70%
+          - top: 45%
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: bottle-wine
+          - color: lightgrey
+          - left: 87.5%
+          - top: 45%
+
+    ##########################    Icons for alerts   ##########################
+
+  - type: conditional
+    conditions:
+      - entity: sensor.battery_alert
+        state: 'alert'
+    elements:
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: battery-alert
+          - color: '#ff1a1a'
+          - left: 30%
+          - top: 52%
+          - action: navigate
+          - type: navigation_path
+          - data: /lovelace-visual/systems
+
+  - type: conditional
+    conditions:
+      - entity: sensor.cdrxstation_alert
+        state: 'alert'
+    elements:
+      - type: 'custom:decluttering-card'
+        template: icons_nas_popup
+        variables:
+          - icon: nas
+          - left: 52.5%
+  - type: conditional
+    conditions:
+      - entity: sensor.cdrxstation1_alert
+        state: 'alert'
+    elements:
+      - type: 'custom:decluttering-card'
+        template: text
+        variables:
+          - text: "1"
+          - top: 47.5%
+          - left: 43%
+  - type: conditional
+    conditions:
+      - entity: sensor.cdrxstation2_alert
+        state: 'alert'
+    elements:
+      - type: 'custom:decluttering-card'
+        template: text
+        variables:
+          - text: "2"
+          - top: 47.5%
+          - left: 56%
+  - type: conditional
+    conditions:
+      - entity: sensor.cdrxstation3_alert
+        state: 'alert'
+    elements:
+      - type: 'custom:decluttering-card'
+        template: text
+        variables:
+          - text: "3"
+          - top: 52.5%
+          - left: 43%
+  - type: conditional
+    conditions:
+      - entity: sensor.backupstation_alert
+        state: 'alert'
+    elements:
+      - type: 'custom:decluttering-card'
+        template: text
+        variables:
+          - text: "B"
+          - top: 52.5%
+          - left: 56%
+
+  - type: conditional
+    conditions:
+      - entity: sensor.cdrxstation_update
+        state: 'update'
+    elements:
+      - type: 'custom:decluttering-card'
+        template: icons_nas_popup
+        variables:
+          - icon: update
+          - left: 75%
+  - type: conditional
+    conditions:
+      - entity: binary_sensor.cdrxstation1_update_available
+        state: 'on'
+    elements:
+      - type: 'custom:decluttering-card'
+        template: text
+        variables:
+          - text: "1"
+          - top: 47.5%
+          - left: 65.5%
+  - type: conditional
+    conditions:
+      - entity: binary_sensor.cdrxstation2_update_available
+        state: 'on'
+    elements:
+      - type: 'custom:decluttering-card'
+        template: text
+        variables:
+          - text: "2"
+          - top: 47.5%
+          - left: 78.5%
+  - type: conditional
+    conditions:
+      - entity: binary_sensor.cdrxstation3_update_available
+        state: 'on'
+    elements:
+      - type: 'custom:decluttering-card'
+        template: text
+        variables:
+          - text: "3"
+          - top: 52.5%
+          - left: 65.5%
+  - type: conditional
+    conditions:
+      - entity: binary_sensor.backupstation_update_available
+        state: 'on'
+    elements:
+      - type: 'custom:decluttering-card'
+        template: text
+        variables:
+          - text: "B"
+          - top: 52.5%
+          - left: 78.5%
+
+    #########################    Next bus departure    #########################
+
+  - type: 'custom:decluttering-card'
+    template: statelabel
+    variables:
+      - entity: sensor.depuis_maison_1
+      - color: lightgrey
+      - size: 1.3vw
+      - weight: 300
+      - left: 40%
+      - top: 59%
+      - action: url
+      - type: url_path
+      - data: !secret TL_URL
+  - type: 'custom:decluttering-card'
+    template: statelabel
+    variables:
+      - entity: sensor.depuis_maison_2
+      - color: lightgrey
+      - size: 1.3vw
+      - weight: 300
+      - left: 62.5%
+      - top: 59%
+      - action: url
+      - type: url_path
+      - data: !secret TL_URL
+  - type: 'custom:decluttering-card'
+    template: statelabel
+    variables:
+      - entity: sensor.depuis_maison_3
+      - color: lightgrey
+      - size: 1.3vw
+      - weight: 300
+      - left: 85%
+      - top: 59%
+      - action: url
+      - type: url_path
+      - data: !secret TL_URL
+  - type: 'custom:decluttering-card'
+    template: icons
+    variables:
+      - icon: bus-clock
+      - color: lightgrey
+      - left: 17.5%
+      - top: 59.5%
+      - action: url
+      - type: url_path
+      - data: !secret TL_URL
+
+    #########################    People at home    #########################
+  
+  - type: 'custom:decluttering-card'
+    template: image
+    variables:
+      - entity: !secret CDRX
+      - imagehome: CDRX_home.png
+      - imageaway: CDRX_not_home.png
+      - left: 20%
+  - type: 'custom:decluttering-card'
+    template: stateicon
+    variables:
+      - entity: sensor.battery_realme
+      - left: 9%
+  - type: 'custom:decluttering-card'
+    template: statelabel
+    variables:
+      - entity: sensor.battery_realme
+      - color: lightgrey
+      - size: 0.8vw
+      - weight: 300
+      - left: 13%
+      - top: 74.2%
+      - action: navigate
+      - type: navigation_path
+      - data: /lovelace-visual/systems
+
+  - type: 'custom:decluttering-card'
+    template: image
+    variables:
+      - entity: !secret Nanne
+      - imagehome: Nanne_home.png
+      - imageaway: Nanne_not_home.png
+      - left: 50%
+  - type: 'custom:decluttering-card'
+    template: stateicon
+    variables:
+      - entity: sensor.battery_realme
+      - left: 39%
+  - type: 'custom:decluttering-card'
+    template: statelabel
+    variables:
+      - entity: sensor.battery_huawei
+      - color: lightgrey
+      - size: 0.8vw
+      - weight: 300
+      - left: 43%
+      - top: 74.2%
+      - action: navigate
+      - type: navigation_path
+      - data: /lovelace-visual/systems
+
+  - type: image
+    entity: person.ciboulette
+    state_image:
+      "home": /local/ui/sidebar/Ciboulette_home.png
+      "not_home": /local/ui/sidebar/Ciboulette_not_home.png
+    style:
+      top: 69%
+      left: 80%
+      width: 6vw
+      height: 6vw
+      border-radius: 100%
+    tap_action:
+      action: fire-dom-event
+      browser_mod:
+        command: popup
+        card: !include ciboulette.yaml
+        style: |
+          :host .content {
+            width: 80vw !important;
+          }
+          ha-card {
+            border-radius: 0.8vw;
+            opacity: 0.9;
+          }
+          mwc-icon-button {
+            margin: 0 0 .35em 0;
+          }
+        title: Ciboulette
+    hold_action:
+      action: none
+  - type: state-icon
+    entity: sensor.ciboulette_heating_cooling_status
+    style:
+      '--mdc-icon-size': 1.3vw
+      '--paper-item-icon-color': var(--color-ciboulette)
+      align-items: center
+      display: flex
+      height: 2.1vw
+      justify-content: center
+      left: 74%
+      margin-left: '-1.5vw'
+      margin-top: '-1.5vw'
+      top: 66.5%
+      width: 2.1vw
+      transform: 'translate(-50%, -50%) scale(1.4)'
+      padding: 0 0 0.6% 0
+      animation: var(--animation-ciboulette)
+    tap_action:
+      action: fire-dom-event
+      browser_mod:
+        command: popup
+        card: !include ciboulette.yaml
+        style: |
+          :host .content {
+            width: 80vw !important;
+          }
+          ha-card {
+            border-radius: 0.8vw;
+            opacity: 0.9;
+          }
+          mwc-icon-button {
+            margin: 0 0 .35em 0;
+          }
+        title: Ciboulette 
+    hold_action:
+      action: none
+  - type: conditional
+    conditions:
+      - entity: binary_sensor.ciboulette_doors_locked
+        state: 'off'
+    elements:
+      - type: 'custom:decluttering-card'
+        template: icons_ciboulette_popup
+        variables:
+          - icon: lock
+          - color: lightgrey
+  - type: conditional
+    conditions:
+      - entity: binary_sensor.ciboulette_doors_locked
+        state: 'on'
+    elements:
+      - type: 'custom:decluttering-card'
+        template: icons_ciboulette_popup
+        variables:
+          - icon: lock-open
+          - color: '#ff1a1a'
+  - type: state-icon
+    entity: binary_sensor.ciboulette_vehicle_moving
+    icon: 'mdi:car-side'
+    style:
+      '--mdc-icon-size': 1.3vw
+      '--paper-item-icon-color': lightgrey
+      align-items: center
+      display: flex
+      height: 2.1vw
+      justify-content: center
+      left: 93%
+      margin-left: '-1.5vw'
+      margin-top: '-1.5vw'
+      top: 74.2%
+      transform: scale(1.4)
+      width: 2.1vw
+    tap_action:
+      action: fire-dom-event
+      browser_mod:
+        command: popup
+        card: !include ciboulette.yaml
+        style: |
+          :host .content {
+            width: 80vw !important;
+          }
+          ha-card {
+            border-radius: 0.8vw;
+            opacity: 0.9;
+          }
+          mwc-icon-button {
+            margin: 0 0 .35em 0;
+          }
+        title: Ciboulette 
+    hold_action:
+      action: none
+
+    #########################    Minigraph to show temperature inside and out    #########################
+
+  - color_thresholds:
+      - color: '#03a8f4'
+        value: 10
+      - color: '#ffa31a'
+        value: 20
+      - color: '#ff1a1a'
+        value: 30
+    entities:
+      - sensor.temperature_salon
+      - sensor.openweathermap_temperature      
+    icon: 'mdi:home-thermometer-outline'
+    show:
+      icon: true
+      legend: false
+      name: false
+    hour24: true
+    points_per_hour: 1
+    card_mod:
+      style: |
+        :host {
+          left: 50%;
+          top:  92.9%;
+          width: 100%;
+          overflow: hidden;
+          height: 15%;
+          background: none  !important;
+          box-shadow: none !important;
+        }
+        .header {
+          font-size: 1vw;
+          position: absolute !important;
+          width: 5% !important;
+          padding: 0 !important;
+          right: 20% !important;
+          top: 15% !important;
+        }
+        ha-card {
+          background: none  !important;
+          padding: 0 !important;
+        }
+        .icon > ha-icon {
+          width:1.8vw !important;
+          height:1.8vw !important;
+        }
+        .state__time{
+          font-size:0.9vw !important;
+          margin-top: 0.2vw;
+          font-weight: 300 !important;
+          opacity: 0.4 !important;
+        }
+        .states {
+          font-size: 0.5vw !important;
+          padding: 1vw 0vw 0vw 0vw  !important;
+          margin: auto !important;
+          width: 68%;
+        }
+    tap_action:
+      action: navigate
+      navigation_path: /lovelace-visual/weather
+    type: 'custom:mini-graph-card'
+
+    #########################    Mini Weather card    #########################
+
+  - backdrop: false
+    entity: weather.openweathermap
+    name: ' '
+    card_mod:
+      style: |
+        :host {
+          left: 48.5%;
+          top:  85.5%;
+          width: 69%;
+          height: 7% !important;
+          overflow: hidden;
+          height: 8.5vw;
+          background: none  !important;
+          box-shadow: none !important;
+          font-size: 1vw !important;
+        }
+        ha-card {
+          background: none  !important;
+          box-shadow: none !important;
+          flex-flow: row-reverse !important;
+          padding: 0 !important;
+        }
+        .weather__info--add{
+          display : none !important;
+        }
+        .weather__info{
+          flex-grow: 1;
+          min-height: 0 !important;
+          height: 2.4vw;
+          margin-left: 0.6vw;
+        }
+        .weather__icon{
+          margin-right:0.5% !important;
+          margin-top: -3%;
+          width: 2vw !important;
+          height: 2vw !important;
+          flex: 0 0 2vw !important;
+        }
+    tap_action:
+      action: navigate
+      navigation_path: /lovelace-visual/weather
+    type: 'custom:simple-weather-card'
+
+    #########################    Overlay shadow images    #########################
+
+  - action: none
+    image: /local/ui/sidebar/sideShadow.png
+    style:
+      height: 20%
+      left: 80%
+      pointer-events: none
+      top: 90%
+      width: 40%      
+    type: image
+  - action: none
+    image: /local/ui/sidebar/sidebarInnerShadow.png
+    style:
+      left: 97.5%
+      opacity: 0.7
+      pointer-events: none
+      top: 50%
+      width: 5%
+      height: 100%
+    type: image
+
+    #########################   Styled now playing Media Player    #########################
+
+    # when the media player is playing, this overlaps the "Media" menu button
+
+  - type: 'custom:decluttering-card'
+    template: media_player_sidebar
+    variables:
+      - media_player: media_player.plex_plex_for_lg_lg_oled77w7v_z
+    style:
+      left: 50%
+      top:  35%
+      width: 88%
+      border-radius: 5vw
+      overflow: hidden
+      height: 5.5vw
+      box-shadow: none !important
+  
+  - type: conditional
+    conditions:
+      - entity: sensor.pioneer_avr_source
+        state: INTERNET RADIO
+    elements:
+      - type: 'custom:decluttering-card'
+        template: media_player_sidebar
+        variables:
+          - media_player: media_player.pioneer_avr
+        style:
+          left: 50%
+          top: 35%
+          width: 88%
+          border-radius: 5vw
+          overflow: hidden
+          height: 5.5vw
+          box-shadow: none !important
+
+  - type: conditional
+    conditions:
+      - entity: sensor.pioneer_avr_source
+        state: BT AUDIO
+    elements:
+      - type: 'custom:decluttering-card'
+        template: media_player_sidebar
+        variables:
+          - media_player: media_player.pioneer_avr
+        style:
+          left: 50%
+          top: 35%
+          width: 88%
+          border-radius: 5vw
+          overflow: hidden
+          height: 5.5vw
+          box-shadow: none !important
+
+  - type: conditional
+    conditions:
+      - entity: sensor.pioneer_avr_source
+        state: MEDIA SERVER
+    elements:
+      - type: 'custom:decluttering-card'
+        template: media_player_sidebar
+        variables:
+          - media_player: media_player.bubble
+        style:
+          left: 50%
+          top: 35%
+          width: 88%
+          border-radius: 5vw
+          overflow: hidden
+          height: 5.5vw
+          box-shadow: none !important

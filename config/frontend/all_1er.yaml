@@ -1,0 +1,182 @@
+type: picture-elements
+image: /local/ui/floorplan/blurredFloorplanRez.png
+view_layout:
+  grid-area: main
+card_mod:
+  style: |
+    ha-card {
+      background: rgba(42, 46, 48, 1);
+    }
+    mod-card.element {
+      top: 50%;
+      left: 50%;
+      height: 100%;
+      width: 100%;
+    }
+elements:  
+  - type: 'custom:mod-card'
+    card:
+      type: 'custom:layout-card'
+      layout_type: custom:grid-layout
+      layout:
+        grid-template-columns: 5% 1fr 1fr 1fr 1fr 5%
+        grid-template-rows: 5% auto
+        grid-template-areas: |
+          ". . . . . ."
+          ". a b c d ."
+          ". e f g h ."
+          ". i j k l ."
+          ". m n o p ."
+          ". q r s t ."
+          ". . . . . ."
+      cards:
+        - type: 'custom:button-card'
+          template: dimmable_lights
+          variables:
+            entity: light.lit_parents_blanc
+            gridarea: '"i . ." "n n n" "slider slider slider"'
+          entity: light.lit_parents_blanc
+          icon: 'mdi:led-strip-variant'
+          name: Parents
+          view_layout:
+            grid-area: a
+        - type: 'custom:button-card'
+          template: color_lights
+          variables:
+            entity: light.lit_parents_couleur
+            title: Parents couleur
+            gridarea: '"i . color" "n n n" "slider slider slider"'
+          entity: light.lit_parents_couleur
+          icon: 'mdi:led-strip-variant'
+          view_layout:
+            grid-area: e
+        - type: 'custom:button-card'
+          template: on_off_lights
+          variables:
+            gridarea: '"i consumption ." "n n n" ". . ."'
+          entity: light.chevet_cdrx_4
+          icon: 'mdi:desk-lamp'
+          name: Chevet CDRX
+          custom_fields:
+            consumption:
+              card:
+                type: sensor
+                entity: sensor.chevet_cdrx_consumption
+                card_mod:
+                  style: |
+                    ha-card {
+                      box-shadow: none;
+                      pointer-events: none;
+                    }   
+                    .name {
+                      display: none;
+                    }  
+                    .icon {
+                      display: none;
+                    }   
+                    .header {
+                      padding: 0 !important;
+                    } 
+                    .info {
+                      padding: 0 !important;
+                    }
+                    .value {
+                      font-size: 1.2vw !important;
+                    }    
+                    .measurement {
+                      font-size: 0.8vw !important;
+                    }
+          view_layout:
+            grid-area: i
+        - type: 'custom:button-card'
+          template: on_off_lights
+          variables:
+            gridarea: '"i consumption ." "n n n" ". . ."'
+          entity: light.chevet_nanne_3
+          icon: 'mdi:desk-lamp'
+          name: Chevet Nanne
+          custom_fields:
+            consumption:
+              card:
+                type: sensor
+                entity: sensor.chevet_nanne_consumption
+                card_mod:
+                  style: |
+                    ha-card {
+                      box-shadow: none;
+                      pointer-events: none;
+                    }   
+                    .name {
+                      display: none;
+                    }  
+                    .icon {
+                      display: none;
+                    }   
+                    .header {
+                      padding: 0 !important;
+                    } 
+                    .info {
+                      padding: 0 !important;
+                    }
+                    .value {
+                      font-size: 1.2vw !important;
+                    }    
+                    .measurement {
+                      font-size: 0.8vw !important;
+                    }
+          view_layout:
+            grid-area: m
+        - type: 'custom:button-card'
+          template: dimmable_lights
+          variables:
+            entity: light.chambre_charles
+            gridarea: '"i . ." "n n n" "slider slider slider"'
+          entity: light.chambre_charles
+          icon: 'mdi:led-strip-variant'
+          name: Charles
+          view_layout:
+            grid-area: b
+        - type: 'custom:button-card'
+          template: on_off_lights
+          variables:
+            gridarea: '"i . ." "n n n" ". . ."'
+          entity: light.printer
+          icon: 'mdi:printer'
+          name: Imprimante
+          view_layout:
+            grid-area: c
+        # - type: 'custom:button-card'
+        #   template: on_off_lights
+        #   variables:
+        #     gridarea: '"i . ." "n n n" ". . ."'
+        #   entity: switch.spare_switch_1
+        #   icon: 'mdi:flash'
+        #   name: Temporaire 1
+        #   view_layout:
+        #     grid-area: l
+        # - type: 'custom:button-card'
+        #   template: on_off_lights
+        #   variables:
+        #     gridarea: '"i . ." "n n n" ". . ."'
+        #   entity: switch.spare_switch_2
+        #   icon: 'mdi:flash'
+        #   name: Temporaire 2
+        #   view_layout:
+        #     grid-area: p
+      style:
+        left: 50%
+        top: 50%
+        width: 100%
+        height: 100%
+    card_mod:
+      style: 
+        layout-card$:
+          grid-layout$: |
+            #root {
+              height: 100%;
+            }
+        .: |
+          ha-card {
+            height: 100%;
+            width: 100%;
+          }

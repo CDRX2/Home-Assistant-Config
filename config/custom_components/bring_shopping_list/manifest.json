@@ -1,0 +1,10 @@
+{
+    "domain": "bring_shopping_list",
+    "name": "Bring Shopping List",
+    "documentation": "https://www.example.com",
+    "dependencies": [],
+    "codeowners": [
+        "@krad"
+    ],
+    "requirements": []
+}

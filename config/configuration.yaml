@@ -1,0 +1,347 @@
+
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+# Uncomment this if you are using SSL/TLS, running in Docker container, etc.
+# http:
+#   base_url: example.duckdns.org:8123
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+lovelace:
+  mode: storage
+  dashboards:
+    lovelace-visual:
+      mode: yaml
+      title: Visual
+      icon: mdi:floor-plan
+      show_in_sidebar: true
+      filename: visual.yaml
+    lovelace-dev:
+      mode: yaml
+      title: Dev
+      icon: mdi:github
+      show_in_sidebar: true
+      filename: dev.yaml
+    lovelace-remote:
+      mode: yaml
+      title: Remote
+      icon: mdi:remote-tv
+      show_in_sidebar: true
+      filename: remote.yaml
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+sensor: !include_dir_merge_list sensors/
+
+homeassistant:
+  customize: !include customize.yaml
+
+browser_mod:
+  devices:
+    7cd8f43d-f1e2fb4d:
+      name: CDRXPS_chrome
+    1ca3e9c8 29c5fdd7:
+      name: CDRX2_App
+    89534705-fa304c6a:
+      name: NanneHuawei_App
+    eae7e411-f2908d51:
+      name: NanneHuawei_chrome
+    2c088d82-ca71ed40:
+      name: CDRX2_chrome
+    9e06779f-8aa8373e:
+      name: Tab_rez
+      force_stay_awake: true
+    86f66e1b-f1dcabf4:
+      name: Tab_remote
+      force_stay_awake: true
+
+discovery:
+media_player:
+  - platform: openhome
+
+  - platform: asyncpioneer
+    host: !secret AVR_Host
+    port: !secret AVR_Port
+
+webostv:
+  - host: !secret TV_Host
+    name: Living_Room_TV
+    turn_on_action:
+      service: wake_on_lan.send_magic_packet
+      data:
+        mac: !secret TV_MAC
+
+wake_on_lan:
+
+frontend:
+  themes: !include_dir_merge_named themes/
+
+sabnzbd:
+  api_key: !secret SABNzbd_API
+  host: !secret SABNzbd_Host
+  port: !secret SABNzbd_Port
+  sensors:
+    - current_status
+    - speed
+    - queue_size
+    - queue_remaining
+    - queue_count
+    - day_size
+    - week_size
+    - month_size
+    - total_size
+
+garbage_collection:
+  sensors:
+  - name: "Poubelle, Compost, Papier"
+    frequency: "weekly"
+    icon_today: mdi:delete-empty
+    icon_tomorrow: mdi:delete-restore
+    collection_days: "wed"
+    verbose_state: true
+    verbose_format: '{date}'
+    date_format: '%A %-d %B'
+    move_country_holidays: CH
+  - name: "Verre"
+    frequency: "monthly"
+    collection_days: "wed"
+    weekday_order_number:
+    - 2
+    - 4
+    icon_normal: mdi:bottle-wine
+    icon_today: mdi:delete-empty
+    icon_tomorrow: mdi:delete-restore
+    verbose_state: true
+    verbose_format: '{date}'    
+    date_format: '%A %-d %B'
+    move_country_holidays: CH  
+
+skodaconnect:
+  username: !secret Skoda_Username
+  password: !secret Skoda_Password
+  spin: !secret Skoda_PIN
+  scandinavian_miles: false
+  scan_interval:
+    minutes: 5
+  name:
+    !secret Skoda_VIN: 'Ciboulette'
+
+google:
+  client_id: !secret Google_Client_Id
+  client_secret: !secret Google_Client_Secret
+
+remote:
+  - platform: itach
+    host: !secret itach_host
+    devices:
+      - name: swisscom
+        connaddr: 3
+        commands:
+          - name: Power
+            data: "0000 006D 0000 000C 000B 0017 0017 0017 0017 0017 0017 000B 000B 0017 0017 0017 000B 000B 000B 000B 0017 0017 0017 000B 000B 0017 000B 0D37"
+          - name: Up
+            data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 0018 000C 000C 0018 000C 000C 0018 0D64"
+          - name: Down
+            data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 0018 000C 000C 0018 0018 0018 000C 0D58"
+          - name: Left
+            data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 0018 000C 000C 000C 000C 0018 0018 0D64"
+          - name: Right
+            data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 0018 0018 000C 000C 000C 000C 000C 000C 0018 0D64"
+          - name: Back
+            data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 0018 000C 000C 000C 000C 0018 0018 0018 000C 0D57"
+          - name: +30sec
+            data: "0000 006B 0000 000B 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 0018 0018 000C 000C 0018 0018 000C 000C 0018 0D65"
+          - name: -10sec
+            data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 0018 0018 000C 000C 000C 000C 000C 000C 0018 0018 000C 0D58"
+          - name: Option
+            data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 0018 000C 0D58"
+          - name: Menu
+            data: "0000 006B 0000 000B 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 0D58"
+          - name: Ok
+            data: "0000 006B 0000 000D 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 0018 000C 000C 000C 000C 000C 000C 0018 000C 0D58"
+          - name: Play/Pause
+            data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 0018 000C 000C 0018 0018 000C 000C 0018 000C 0D58"
+          - name: Rec
+            data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 0018 000C 000C 000C 000C 0018 000C 000C 0018 0D65"
+          - name: Channel+
+            data: "0000 006B 0000 000B 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 0018 0018 0018 0018 000C 000C 0018 0D64"
+          - name: Channel-
+            data: "0000 006B 0000 000B 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 0018 0018 0D64"
+          - name: Tv guide
+            data: "0000 006B 0000 000D 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 0018 000C 000C 000C 000C 000C 000C 000C 000C 0018 000C 0D58"
+          - name: Forward
+            data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 0018 0018 000C 000C 000C 000C 0018 000C 000C 0018 000C 0D58"
+          - name: Rewind
+            data: "0000 006B 0000 000B 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 0018 0018 000C 000C 000C 000C 0018 0018 0018 0D64"
+          - name: 0
+            data: "0000 006B 0000 000B 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 0018 0018 0018 0018 0018 0D64"
+          - name: 1
+            data: "0000 006B 0000 000D 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 000C 000C 000C 000C 000C 000C 0018 0018 000C 0D58"
+          - name: 2
+            data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 000C 000C 000C 000C 0018 0018 0018 0D64"
+          - name: 3
+            data: "0000 006B 0000 000D 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 000C 000C 000C 000C 0018 000C 000C 0018 000C 0D58"
+          - name: 4
+            data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 000C 000C 0018 0018 000C 000C 0018 0D64"
+          - name: 5
+            data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 000C 000C 0018 0018 0018 0018 000C 0D58"
+          - name: 6
+            data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 000C 000C 0018 000C 000C 0018 0018 0D64"
+          - name: 7
+            data: "0000 006B 0000 000D 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 000C 000C 0018 000C 000C 000C 000C 0018 000C 0D58"
+          - name: 8
+            data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 0018 0018 000C 000C 000C 000C 0018 0D64"
+          - name: 9
+            data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 0018 0018 000C 000C 0018 0018 000C 0D58"
+
+light:
+  - platform: switch
+    name: Cuisine plafonnier
+    entity_id: switch.cuisine_plafonnier
+
+  - platform: switch
+    name: Lampe salle à manger
+    entity_id: switch.manger_lampe
+
+  - platform: switch
+    name: Panneau lumineux
+    entity_id: switch.panneau_lumineux
+
+  - platform: switch
+    name: Terrasse Sol
+    entity_id: switch.terrasse_sol
+
+  - platform: switch
+    name: Chevet Nanne
+    entity_id: switch.chevet_nanne
+
+  - platform: switch
+    name: Chevet CDRX
+    entity_id: switch.chevet_cdrx
+
+  - platform: switch
+    name: Imprimante
+    entity_id: switch.imprimante   
+
+  - platform: switch
+    name: Grand totem
+    entity_id: switch.grand_totem
+
+  - platform: switch
+    name: Petit totem
+    entity_id: switch.petit_totem
+
+  - platform: switch
+    name: Spare switch 1
+    entity_id: switch.spare_switch_1
+
+  - platform: switch
+    name: Spare switch 2
+    entity_id: switch.spare_switch_2 
+
+  - platform: group
+    name: Cuisine
+    entities:
+    - light.cuisine_deco
+    - light.cuisine_plafonnier
+
+  - platform: group
+    name: Salle à manger
+    entities:
+    - light.manger_lampe
+    - light.manger_plafonnier
+
+  - platform: group
+    name: Salon blanc
+    entities:
+    - light.grand_totem
+    - light.petit_totem
+    - light.salon_plafonnier
+
+  - platform: group
+    name: Totems blanc
+    entities:
+    - light.petit_totem
+    - light.grand_totem
+
+  - platform: group
+    name: Salon
+    entities:
+    - light.salon_plafonnier
+    - light.totems_blanc
+    - light.couleur_rez
+    - light.vinyles
+    - light.panneau_lumineux
+
+  - platform: group
+    name: Salon déco
+    entities:
+    - light.grand_totem_deco
+    - light.panneau_lumineux
+    - light.petit_totem_deco
+    - light.tv
+    - light.vinyles
+    - light.bar
+    - light.spare_switch_1
+    - light.spare_switch_2
+
+  - platform: group
+    name: Terrasse
+    entities:
+    - light.terrasse_sol
+    - light.terrasse_3
+
+  - platform: group
+    name: Chambre parents
+    entities:
+    - light.lit_parents_blanc
+    - light.lit_parents_couleur
+    - light.chevet_cdrx_4
+    - light.chevet_nanne_3
+
+  - platform: group
+    name: Chambre Charles
+    entities:
+    - light.plafond_charles_exterieur_white
+    - light.plafond_charles_interieur_white
+
+  - platform: group
+    name: Couleur Rez
+    entities:
+    - light.tv
+    - light.petit_totem_deco
+    - light.grand_totem_deco
+    - light.bar
+
+  - platform: group
+    name: All lights
+    entities:
+    - light.cuisine_deco
+    - light.cuisine_plafonnier
+    - light.manger_lampe
+    - light.manger_plafonnier
+    - light.grand_totem
+    - light.grand_totem_deco
+    - light.petit_totem
+    - light.petit_totem_deco
+    - light.salon_plafonnier
+    - light.panneau_lumineux
+    - light.tv
+    - light.vinyles
+    - light.bar
+    - light.terrasse_sol
+    - light.terrasse_3
+    - light.lit_parents_blanc
+    - light.lit_parents_couleur
+    - light.chevet_cdrx_4
+    - light.chevet_nanne_3
+    - light.plafond_charles_exterieur_white
+    - light.plafond_charles_interieur_white
+    - light.spare_switch_1
+    - light.spare_switch_2
+
+

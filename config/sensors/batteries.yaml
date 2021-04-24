@@ -1,0 +1,67 @@
+- platform: template
+  sensors:
+    battery_huawei:
+      unit_of_measurement: '%'
+      value_template: >-
+          {% if states('sensor.lya_l29_battery_level') %}
+              {{ states('sensor.lya_l29_battery_level') | round }}
+          {% else %}
+              {{ states('sensor.battery_huawei') }}
+          {% endif %}
+      icon_template: >-
+        {% if is_state('sensor.battery_huawei', 'unknown') %}
+          mdi:battery-unknown
+        {% elif is_state('sensor.lya_l29_battery_state', 'charging') %}
+          mdi:battery-charging
+        {% elif states('sensor.lya_l29_battery_level')|float <= 5 %}
+          mdi:battery-outline
+        {% elif states('sensor.lya_l29_battery_level')|float >= 95 %}
+          mdi:battery          
+        {% else %}
+          mdi:battery-{{(states('sensor.lya_l29_battery_level')|float / 10)|round*10}}
+        {% endif %}
+
+- platform: template
+  sensors:
+    battery_realme:
+      unit_of_measurement: '%'
+      value_template: >-
+          {% if states('sensor.cdrx2pro_battery_level') %}
+              {{ states('sensor.cdrx2pro_battery_level') | round }}
+          {% else %}
+              {{ states('sensor.battery_realme') }}
+          {% endif %}
+      icon_template: >-
+        {% if is_state('sensor.battery_realme', 'unknown') %}
+          mdi:battery-unknown
+        {% elif is_state('sensor.cdrx2pro_battery_state', 'charging') %}
+          mdi:battery-charging
+        {% elif states('sensor.cdrx2pro_battery_level')|float <= 5 %}
+          mdi:battery-outline
+        {% elif states('sensor.cdrx2pro_battery_level')|float >= 95 %}
+          mdi:battery          
+        {% else %}
+          mdi:battery-{{(states('sensor.cdrx2pro_battery_level')|float / 10)|round*10}}
+        {% endif %}
+
+- platform: template
+  sensors:
+    battery_alert:
+      value_template: >-
+        {% if states('sensor.lya_l29_battery_level')|float < 10 or
+          states('sensor.rmx1931_battery_level')|float < 10 or
+          states('sensor.tab_rez_battery_level')|float < 10 or
+          states('sensor.tablet_remote_battery_level')|float < 10 or
+          states('sensor.temp_salon_battery_level')|float < 10 or
+          states('sensor.temp_guest_bathroom_battery_level')|float < 10 or
+          states('sensor.temp_entrance_battery_level')|float < 10 or
+          states('sensor.temp_guest_battery_level')|float < 10 or
+          states('sensor.temp_office_battery_level')|float < 10 or
+          states('sensor.temp_bathroom_battery_level')|float < 10 or
+          states('sensor.temp_dressing_battery_level')|float < 10 or
+          states('sensor.temp_charles_battery_level')|float < 10 or
+          states('sensor.temp_chambre_parents_battery_level')|float < 10 %}
+          alert
+        {% else %}
+          normal
+        {% endif %}
