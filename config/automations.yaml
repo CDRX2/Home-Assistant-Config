@@ -31,7 +31,6 @@
   description: ''
   trigger:
   - entity_id: media_player.living_room_tv
-    from: 'off'
     platform: state
     to: 'on'
   condition: []
@@ -45,7 +44,6 @@
   description: ''
   trigger:
   - entity_id: media_player.living_room_tv
-    from: 'on'
     platform: state
     to: 'off'
   condition: []

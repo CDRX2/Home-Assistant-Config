@@ -2,7 +2,7 @@
 !*.yaml
 !.gitignore
 !*.md
-!/frontent/remote.yaml
+!/frontend/remote.yaml
 
 # Ignore folders.
 .storage
