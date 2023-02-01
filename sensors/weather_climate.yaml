@@ -1,0 +1,48 @@
+- platform: template
+  sensors:
+    sunlight_pct:
+      value_template: >-
+        {%- set elevation = state_attr('sun.sun','elevation') | float(default=0) %}
+        {%- set cloud_coverage = states('sensor.openweathermap_cloud_coverage') | float(default=0) %}
+        {%- set cloud_factor = (1 - (0.75 * ( cloud_coverage / 100) ** 3 )) %}
+        {%- set min_elevation = -6 %}
+        {%- set max_elevation = 90 %}
+        {%- set adjusted_elevation = elevation - min_elevation %}
+        {%- set adjusted_elevation = [adjusted_elevation,0] | max %}
+        {%- set adjusted_elevation = [adjusted_elevation,max_elevation - min_elevation] | min %}
+        {%- set adjusted_elevation = adjusted_elevation / (max_elevation - min_elevation) %}
+        {%- set adjusted_elevation = adjusted_elevation %}
+        {%- set adjusted_elevation = adjusted_elevation * 100 %}
+        {%- set brightness = adjusted_elevation * cloud_factor %}
+        {{ brightness | round }}
+      unit_of_measurement: '%'
+      device_class: 'illuminance'
+
+
+    ## Daylight brightness converted to opacity for CSS
+    sunlight_opacity:
+      value_template: >-
+        {%- set sunpct = states('sensor.sunlight_pct') | float(default=0) %}
+        {%- set opacity = sunpct / 100 | float(default=0) %}
+        {{ opacity }}
+
+- platform: template
+  sensors:
+    openweathermap_humidity_round:
+      value_template: >-
+        {{ states('sensor.openweathermap_humidity') | round(1) }}
+      unit_of_measurement: '%'
+
+- platform: template
+  sensors:
+    openweathermap_temperature_round:
+      value_template: >-
+        {{ states('sensor.openweathermap_temperature') | round(1) }}
+      unit_of_measurement: '°C'
+
+- platform: template
+  sensors:
+    master_bedroom_temperature_round:
+      value_template: >-
+        {{ states('sensor.master_bedroom_temperature') | round(1) }}
+      unit_of_measurement: '°C'

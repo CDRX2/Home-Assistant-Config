@@ -1,0 +1,27 @@
+ciboulette_temp:
+  card:
+    type: 'custom:mini-graph-card'
+    color_thresholds:
+      - color: '#03a8f4'
+        value: 10
+      - color: '#ffa31a'
+        value: 20
+      - color: '#ff1a1a'
+        value: 30
+    entities:
+      - sensor.ciboulette_outside_temperature      
+    icon: 'mdi:thermometer-lines'
+    show:
+      icon: true
+      legend: false
+      name: false
+    hour24: true
+    points_per_hour: 1 
+    card_mod: 
+      style: |
+        ha-card {
+          box-shadow: none !important;
+        } 
+        .graph {
+          margin-top: 0 !important;
+        }

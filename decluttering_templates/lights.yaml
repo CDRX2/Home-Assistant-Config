@@ -1,0 +1,330 @@
+#########################    LIGHTS GLANCE CARD    #########################
+
+# glance card showing which lights are currently on, tap to turn off
+
+lights_glance:
+  card:
+    card:
+      title: Lumières allumées
+      type: glance
+    entities:
+      - entity: light.bar
+        tap_action:
+          action: toggle
+      - entity: light.grand_totem_deco
+        tap_action:
+          action: toggle
+      - entity: light.petit_totem_deco
+        tap_action:
+          action: toggle
+      - entity: light.vinyles
+        tap_action:
+          action: toggle
+      - entity: light.tv
+        tap_action:
+          action: toggle
+      - entity: switch.panneau_lumineux
+        tap_action:
+          action: toggle
+      - entity: light.grand_totem
+        tap_action:
+          action: toggle
+      - entity: light.petit_totem
+        tap_action:
+          action: toggle
+      - entity: light.salon_plafonnier
+        tap_action:
+          action: toggle
+      - entity: light.manger_plafonnier
+        tap_action:
+          action: toggle
+      - entity: switch.manger_lampe
+        tap_action:
+          action: toggle
+      - entity: light.cuisine_deco
+        tap_action:
+          action: toggle
+      - entity: switch.cuisine_plafonnier
+        tap_action:
+          action: toggle
+      - entity: switch.terrasse_sol
+        tap_action:
+          action: toggle
+      - entity: light.terrasse_3
+        tap_action:
+          action: toggle
+      - entity: light.lit_parents_couleur
+        tap_action:
+          action: toggle
+      - entity: light.lit_parents_blanc
+        tap_action:
+          action: toggle
+      - entity: switch.chevet_cdrx
+        tap_action:
+          action: toggle
+      - entity: switch.chevet_nanne
+        tap_action:
+          action: toggle
+      - entity: light.plafond_enfant_exterieur
+        tap_action:
+          action: toggle
+      - entity: light.plafond_enfant_interieur
+        tap_action:
+          action: toggle
+      - entity: switch.imprimante
+        tap_action:
+          action: toggle
+      - entity: switch.spare_switch_1
+        tap_action:
+          action: toggle
+      - entity: switch.spare_switch_2
+        tap_action:
+          action: toggle
+    show_empty: false
+    state_filter:
+      - 'on'
+    type: entity-filter
+
+#########################    ROOM/GROUP CONTROL TRANSPARENT IMAGES    #########################
+
+#  Used to create tap areas and popups for each room, referring to light groups.
+#  Because the above images overlap each other, I used seperate transparent images
+#. to handle the control of the room, so you always tap the right room.
+#
+#  browser_mod.popup is used for a tap and hold for a custom popup card
+
+Light_room:
+  element:
+    entity: '[[light]]'
+    hold_action:
+      action: fire-dom-event
+      browser_mod:
+        service: browser_mod.popup
+        data:
+          content:
+            cards:
+              - entities:
+                  - entity: '[[light]]'
+                    secondary_info: last-changed
+                style:
+                  z-index: 5
+                type: entities
+              - brightness: true
+                color_picker: '[[color_picker]]'
+                color_temp: '[[color_temp]]'
+                effects_list: false
+                entity: '[[light]]'
+                brightness_icon: network-strength-outline
+                full_width_sliders: true
+                header: false
+                hide_header: '[[hide_header]]'
+                persist_features: true
+                show_slider_percent: true
+                smooth_color_wheel: true
+                type: 'custom:light-entity-card'
+                card_mod:
+                  style: |
+                      ha-card {
+                        box-shadow: none !important;
+                      }
+            mode: vertical
+            type: 'custom:stack-in-card'
+          title: '[[title]]'
+    image: /local/transparent.png
+    style:
+      height: '[[height]]'
+      left: '[[left]]'
+      top: '[[top]]'
+      width: '[[width]]'
+    tap_action:
+      action: call-service
+      service: homeassistant.toggle
+      service_data:
+          entity_id: '[[light]]'
+    type: image
+
+Light_room_position:
+  element:
+    entity: '[[light]]'
+    hold_action:
+      action: fire-dom-event
+      browser_mod:
+        service: browser_mod.popup
+        data:
+          content:
+            cards:
+              - entities:
+                  - entity: '[[light]]'
+                    secondary_info: last-changed
+                style:
+                  z-index: 5
+                type: entities
+              - brightness: true
+                color_picker: '[[color_picker]]'
+                color_temp: false
+                effects_list: false
+                entity: '[[light]]'
+                brightness_icon: network-strength-outline
+                full_width_sliders: true
+                header: false
+                hide_header: '[[hide_header]]'
+                persist_features: true
+                show_slider_percent: true
+                smooth_color_wheel: true
+                type: 'custom:light-entity-card'
+                card_mod:
+                  style: |
+                      ha-card {
+                        box-shadow: none !important;
+                      }
+            mode: vertical
+            type: 'custom:stack-in-card'
+          title: '[[title]]'
+    image: /local/transparent.png
+    style:
+      height: '[[height]]'
+      left: '[[left]]'
+      top: '[[top]]'
+      width: '[[width]]'
+    tap_action:
+      action: call-service
+      service: homeassistant.toggle
+      service_data:
+          entity_id: '[[light]]'
+    type: image
+
+#########################    INDIVIDUAL LIGHT ICONS    #########################
+
+#  These are the white state icons that appear over the floorplan.
+#  They are the same as above, but instead of "areas" to control a group, they only
+#. control individual lights
+#
+#  browser_mod.popup is used for a tap and hold for a custom popup card, custom styling
+#  of the icon to make it appear white, etc.
+
+Light_icon_on_off:
+  element:
+    entity: '[[light]]'
+    hold_action:
+      action: fire-dom-event
+      browser_mod:
+        service: browser_mod.popup
+        data:
+          content:
+            cards:
+              - entities:
+                  - entity: '[[light]]'
+                    secondary_info: last-changed
+                style:
+                  z-index: 5
+                type: entities
+              - type: 'custom:button-card'
+                template: light_timer
+                variables:
+                  entity: '[[light]]'
+            mode: vertical
+            type: 'custom:stack-in-card'
+          title: '[[title]]'
+    icon: '[[icon]]'
+    style:
+      '--mdc-icon-size': 1.4vw
+      '--paper-item-icon-active-color': '#000000'
+      '--paper-item-icon-color': lightgrey
+      align-items: center
+      background-color: 'rgba(255, 255, 255, 0.3)'
+      border-radius: 100%
+      # box-shadow: '0px 0px 28px 0px rgba(0,0,0,0.39)'
+      display: flex
+      height: 3vw
+      justify-content: center
+      left: '[[left]]'
+      margin-left: '-1.5vw'
+      margin-top: '-1.5vw'
+      top: '[[top]]'
+      transform: scale(1.2)
+      width: 3vw
+    tap_action:
+      action: toggle
+    type: state-icon
+
+Light_icon_full:
+  element:
+    entity: '[[light]]'
+    hold_action:
+      action: fire-dom-event
+      browser_mod:
+        service: browser_mod.popup
+        data:
+          content:
+            cards:
+              - entities:
+                  - entity: '[[light]]'
+                    secondary_info: last-changed
+                style:
+                  z-index: 5
+                type: entities
+              - brightness: true
+                color_picker: '[[color_picker]]'
+                color_temp: '[[color_temp]]'
+                effects_list: false
+                entity: '[[light]]'
+                brightness_icon: network-strength-outline
+                full_width_sliders: true
+                header: false
+                hide_header: '[[hide_header]]'
+                persist_features: true
+                show_slider_percent: true
+                smooth_color_wheel: true
+                type: 'custom:light-entity-card'
+                card_mod:
+                  style: |
+                      ha-card {
+                        box-shadow: none !important;
+                      }
+              - type: 'custom:button-card'
+                template: light_timer
+                variables:
+                  entity: '[[light]]'
+            mode: vertical
+            type: 'custom:stack-in-card'
+          title: '[[title]]'
+    icon: '[[icon]]'
+    style:
+      '--mdc-icon-size': 1.4vw
+      '--paper-item-icon-active-color': '#000000'
+      '--paper-item-icon-color': lightgrey
+      align-items: center
+      background-color: 'rgba(255, 255, 255, 0.3)'
+      border-radius: 100%
+      # box-shadow: '0px 0px 28px 0px rgba(0,0,0,0.39)'
+      display: flex
+      height: 3vw
+      justify-content: center
+      left: '[[left]]'
+      margin-left: '-1.5vw'
+      margin-top: '-1.5vw'
+      top: '[[top]]'
+      transform: 'scale(-1.2, 1.2)'
+      width: 3vw
+    tap_action:
+      action: toggle
+    type: state-icon
+
+light_overlay:
+  element:
+    action: none
+    entity: '[[entity]]'
+    hold_action:
+      action: none
+    image: /local/ui/floorplan/lights/[[image]]
+    state_filter:
+      'off': opacity(0%)
+      'on': opacity(100%)
+    tap_action:
+      action: none
+    type: image
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      top: 50%
+      width: 100%

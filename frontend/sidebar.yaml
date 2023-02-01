@@ -1,0 +1,1161 @@
+type: picture-elements
+image: /local/ui/sidebar/sidebarBG.png
+view_layout:
+  grid-area: sidebar
+card_mod:
+  style: | 
+    ha-card {
+      padding: 0 !important;
+      overflow: hidden;
+      background: none !important;
+      width: 100%;
+      --animation-ciboulette: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %} blink 1s linear infinite alternate {% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} spin 1s linear infinite {% else %} none {% endif %};
+      --color-ciboulette: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %} #ff1a1a {% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} var(--accent-color) {% else %} lightgrey {% endif %};
+      --color-cat-flap: {{ iif (is_state('lock.entree_locked_all', 'locked') or is_state('lock.entree_locked_in', 'locked') or is_state('lock.entree_locked_out', 'locked'), 'var(--accent-color)', 'lightgrey') }};
+    }
+    @keyframes spin {
+      0% { transform: translate(-50%, -50%) scale(1.4) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) scale(1.4) rotate(360deg); }
+    }
+    @keyframes blink {
+      0% { opacity: 0.5; }
+      100% { opacity 1; }
+    }
+elements:
+
+    #################################################################
+    #                                                               #
+    #                             SIDEBAR                           #
+    #                                                               #
+    #################################################################
+
+    #########################    TIME AND DATE    #########################
+
+  - type: 'custom:decluttering-card'
+    template: statelabel
+    variables:
+      - entity: sensor.time
+      - color: lightgrey
+      - size: 4vw
+      - weight: 200
+      - left: 50%
+      - top: 4%
+
+  - type: 'custom:decluttering-card'
+    template: statelabel
+    variables:
+      - entity: sensor.date_string
+      - color: darkgrey
+      - size: 1.3vw
+      - weight: 300
+      - left: 50%
+      - top: 9%
+
+    #########################    MENU BUTTONS    #########################
+
+  #all rooms
+  - type: 'custom:button-card'
+    template: navigation
+    variables:
+      navigation: /lovelace-visual/lights
+    entity_picture: >
+      [[[ return (window.location.pathname == '/lovelace-visual/lights') ? '/local/ui/sidebar/lumieres_on.png' : '/local/ui/sidebar/lumieres_off.png'; ]]]
+    card_mod:
+      style: |
+        :host {
+          top: 14%;
+          left: 50%;
+          width: 88%;
+        }
+       
+  # #Climate
+  - type: 'custom:button-card'
+    template: navigation
+    variables:
+      navigation: /lovelace-visual/climate
+    entity_picture: >
+      [[[ return (window.location.pathname == '/lovelace-visual/climate') ? '/local/ui/sidebar/climat_on.png' : '/local/ui/sidebar/climat_off.png'; ]]]
+    card_mod:
+      style: |
+        :host {
+          top: 21%;
+          left: 50%;
+          width: 88%;
+        }
+
+  #all devices
+  - type: 'custom:button-card'
+    template: navigation
+    variables:
+      navigation: /lovelace-visual/all-devices
+    entity_picture: >
+      [[[ return (window.location.pathname == '/lovelace-visual/all-devices') ? '/local/ui/sidebar/classique_on.png' : '/local/ui/sidebar/classique_off.png'; ]]]
+    card_mod:
+      style: |
+        :host {
+          top: 28%;
+          left: 50%;
+          width: 88%;
+          z-index: 1;
+        }
+
+  #media
+  - type: 'custom:button-card'
+    template: navigation
+    variables:
+      navigation: /lovelace-visual/media
+    entity_picture: >
+      [[[ return (window.location.pathname == '/lovelace-visual/media') ? '/local/ui/sidebar/multimedia_on.png' : '/local/ui/sidebar/multimedia_off.png'; ]]]
+    card_mod:
+      style: |
+        :host {
+          top: 35%;
+          left: 50%;
+          width: 88%;
+        }
+
+    ##########################    Icons for taking out the trash    ##########################
+
+  - type: conditional
+    conditions:
+      - entity: sensor.trash
+        state: 'tomorrow'
+    elements:
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: delete-restore
+          - color: '#ffa31a'
+          - left: 22.5%
+          - top: 45%
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: trash-can
+          - color: lightgrey
+          - left: 42.5%
+          - top: 45%
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: newspaper-variant-multiple
+          - color: lightgrey
+          - left: 62.5%
+          - top: 45%
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: leaf
+          - color: lightgrey
+          - left: 82.5%
+          - top: 45%
+
+  - type: conditional
+    conditions:
+      - entity: sensor.trash
+        state: 'today'
+    elements:
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: delete-empty
+          - color: '#ff1a1a'
+          - left: 22.5%
+          - top: 45%
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: trash-can
+          - color: lightgrey
+          - left: 42.5%
+          - top: 45%
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: newspaper-variant-multiple
+          - color: lightgrey
+          - left: 62.5%
+          - top: 45%
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: leaf
+          - color: lightgrey
+          - left: 82.5%
+          - top: 45%
+
+  - type: conditional
+    conditions:
+      - entity: sensor.trash
+        state: 'verre tomorrow'
+    elements:
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: delete-restore
+          - color: '#ffa31a'
+          - left: 17.5%
+          - top: 45%
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: trash-can
+          - color: lightgrey
+          - left: 35%
+          - top: 45%
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: newspaper-variant-multiple
+          - color: lightgrey
+          - left: 52.5%
+          - top: 45%
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: leaf
+          - color: lightgrey
+          - left: 70%
+          - top: 45%
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: bottle-wine
+          - color: lightgrey
+          - left: 87.5%
+          - top: 45%
+
+  - type: conditional
+    conditions:
+      - entity: sensor.trash
+        state: 'verre today'
+    elements:
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: delete-empty
+          - color: '#ff1a1a'
+          - left: 17.5%
+          - top: 45%
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: trash-can
+          - color: lightgrey
+          - left: 35%
+          - top: 45%
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: newspaper-variant-multiple
+          - color: lightgrey
+          - left: 52.5%
+          - top: 45%
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: leaf
+          - color: lightgrey
+          - left: 70%
+          - top: 45%
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: bottle-wine
+          - color: lightgrey
+          - left: 87.5%
+          - top: 45%
+
+    ##########################    Icons for alerts   ##########################
+
+  - type: conditional
+    conditions:
+      - entity: sensor.battery_alert
+        state: 'alert'
+    elements:
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: battery-alert
+          - color: '#ff1a1a'
+          - left: 22.5%
+          - top: 52%
+          - action: navigate
+          - type: navigation_path
+          - data: /lovelace-visual/systems
+
+  - type: conditional
+    conditions:
+      - entity: sensor.cdrxstation_alert
+        state: 'alert'
+    elements:
+      - type: 'custom:decluttering-card'
+        template: icons_nas_popup
+        variables:
+          - icon: nas
+          - left: 42.5%
+  - type: conditional
+    conditions:
+      - entity: sensor.cdrxstation3_alert
+        state: 'alert'
+    elements:
+      - type: 'custom:decluttering-card'
+        template: text
+        variables:
+          - text: "3"
+          - top: 52.5%
+          - left: 33%
+  - type: conditional
+    conditions:
+      - entity: sensor.backupstation_alert
+        state: 'alert'
+    elements:
+      - type: 'custom:decluttering-card'
+        template: text
+        variables:
+          - text: "B"
+          - top: 52.5%
+          - left: 46%
+
+  - type: conditional
+    conditions:
+      - entity: sensor.cdrxstation_update
+        state: 'update'
+    elements:
+      - type: 'custom:decluttering-card'
+        template: icons_nas_popup
+        variables:
+          - icon: update
+          - left: 62.5%
+  - type: conditional
+    conditions:
+      - entity: update.cdrxstation3_dsm_update
+        state: 'on'
+    elements:
+      - type: 'custom:decluttering-card'
+        template: text
+        variables:
+          - text: "3"
+          - top: 52.5%
+          - left: 53%
+  - type: conditional
+    conditions:
+      - entity: update.backupstation_dsm_update
+        state: 'on'
+    elements:
+      - type: 'custom:decluttering-card'
+        template: text
+        variables:
+          - text: "B"
+          - top: 52.5%
+          - left: 66%
+
+  - type: conditional
+    conditions:
+      - entity: sensor.hass_alert
+        state: 'alert'
+    elements:
+      - type: 'custom:decluttering-card'
+        template: icons
+        variables:
+          - icon: home-assistant
+          - color: '#ff1a1a'
+          - left: 82.5%
+          - top: 52%
+          - action: navigate
+          - type: navigation_path
+          - data: /hassio/dashboard
+  - type: conditional
+    conditions:
+      - entity: sensor.hacs
+        state_not: '0'
+    elements:
+      - type: 'custom:decluttering-card'
+        template: text
+        variables:
+          - text: "HACS"
+          - top: 54%
+          - left: 75%
+  - type: conditional
+    conditions:
+      - entity: sensor.hass_alert_2
+        state: 'alert'
+    elements:
+      - type: 'custom:decluttering-card'
+        template: text
+        variables:
+          - text: "HA"
+          - top: 47%
+          - left: 72%
+
+    #########################    Next bus departure    #########################
+
+  - type: 'custom:decluttering-card'
+    template: statelabel
+    variables:
+      - entity: sensor.depuis_maison_1
+      - color: lightgrey
+      - size: 1.3vw
+      - weight: 300
+      - left: 40%
+      - top: 59%
+      - action: url
+      - type: url_path
+      - data: !secret TL_URL
+  - type: 'custom:decluttering-card'
+    template: statelabel
+    variables:
+      - entity: sensor.depuis_maison_2
+      - color: lightgrey
+      - size: 1.3vw
+      - weight: 300
+      - left: 62.5%
+      - top: 59%
+      - action: url
+      - type: url_path
+      - data: !secret TL_URL
+  - type: 'custom:decluttering-card'
+    template: statelabel
+    variables:
+      - entity: sensor.depuis_maison_3
+      - color: lightgrey
+      - size: 1.3vw
+      - weight: 300
+      - left: 85%
+      - top: 59%
+      - action: url
+      - type: url_path
+      - data: !secret TL_URL
+  - type: 'custom:decluttering-card'
+    template: icons
+    variables:
+      - icon: bus-clock
+      - color: lightgrey
+      - left: 17.5%
+      - top: 59.5%
+      - action: url
+      - type: url_path
+      - data: !secret TL_URL
+
+    #########################    People at home    #########################
+  
+  - type: 'custom:decluttering-card'
+    template: image
+    variables:
+      - entity: !secret CDRX
+      - imagehome: CDRX_home.png
+      - imageaway: CDRX_not_home.png
+      - left: 15%
+  - type: 'custom:decluttering-card'
+    template: stateicon
+    variables:
+      - entity: sensor.battery_realme
+      - left: 8%
+  - type: 'custom:decluttering-card'
+    template: statelabel
+    variables:
+      - entity: sensor.battery_realme
+      - color: lightgrey
+      - size: 0.8vw
+      - weight: 300
+      - left: 12%
+      - top: 70.7%
+      - action: navigate
+      - type: navigation_path
+      - data: /lovelace-visual/systems
+
+  - type: 'custom:decluttering-card'
+    template: image
+    variables:
+      - entity: !secret Nanne
+      - imagehome: Nanne_home.png
+      - imageaway: Nanne_not_home.png
+      - left: 40%
+  - type: 'custom:decluttering-card'
+    template: stateicon
+    variables:
+      - entity: sensor.battery_huawei
+      - left: 33%
+  - type: 'custom:decluttering-card'
+    template: statelabel
+    variables:
+      - entity: sensor.battery_huawei
+      - color: lightgrey
+      - size: 0.8vw
+      - weight: 300
+      - left: 37%
+      - top: 70.7%
+      - action: navigate
+      - type: navigation_path
+      - data: /lovelace-visual/systems
+
+  - type: image
+    entity: person.charlie
+    state_image:
+      "home": /local/ui/sidebar/Charlie_home.png
+      "not_home": /local/ui/sidebar/Charlie_not_home.png
+    style:
+      top: 67%
+      left: 60%
+      width: 4vw
+      height: 4vw
+      border-radius: 100%
+    tap_action:
+      action: fire-dom-event
+      browser_mod:
+        service: browser_mod.popup
+        data:
+          content:
+            type: 'custom:decluttering-card'
+            template: cats_popup
+          title: Chatière
+  - type: state-icon
+    entity: sensor.cat_flap_status
+    style:
+      '--mdc-icon-size': 1vw
+      '--paper-item-icon-color': var(--color-cat-flap)
+      align-items: center
+      display: flex
+      height: 2.1vw
+      justify-content: center
+      left: 53%
+      margin-left: '-1.5vw'
+      margin-top: '-1.5vw'
+      top: 71%
+      width: 2.1vw
+      transform: scale(1.2)
+    tap_action:
+      action: fire-dom-event
+      browser_mod:
+        service: browser_mod.popup
+        data:
+          content:
+            type: 'custom:decluttering-card'
+            template: cats_popup
+          title: Chatière   
+
+  - type: image
+    entity: person.ciboulette
+    state_image:
+      "home": /local/ui/sidebar/Ciboulette_home.png
+      "not_home": /local/ui/sidebar/Ciboulette_not_home.png
+    style:
+      top: 67%
+      left: 85%
+      width: 4vw
+      height: 4vw
+      border-radius: 100%
+    tap_action:
+      action: fire-dom-event
+      browser_mod:
+        service: browser_mod.popup
+        data:
+          content: !include ciboulette.yaml
+          title: Ciboulette
+          size: fullscreen
+    hold_action:
+      action: none
+  - type: state-icon
+    entity: sensor.ciboulette_heating_cooling_status
+    style:
+      '--mdc-icon-size': 1vw
+      '--paper-item-icon-color': var(--color-ciboulette)
+      align-items: center
+      display: flex
+      height: 2.1vw
+      justify-content: center
+      left: 82%
+      margin-left: '-1.5vw'
+      margin-top: '-1.5vw'
+      top: 66%
+      width: 2.1vw
+      transform: 'translate(-50%, -50%) scale(1.4)'
+      padding: 0 0 0.6% 0
+      animation: var(--animation-ciboulette)
+    tap_action:
+      action: fire-dom-event
+      browser_mod:
+        service: browser_mod.popup
+        data:
+          content:
+            type: 'custom:stack-in-card'
+            mode: vertical
+            cards:
+              - type: entities
+                entities:
+                  - type: 'custom:paper-buttons-row'
+                    base_config:
+                      style:
+                        button:
+                          background-color: 'rgba(255, 255, 255, 0.4)'
+                          color: lightgrey
+                          border-radius: 10%
+                    buttons:
+                      - tap_action:
+                          action: call-service
+                          service: skodaconnect.set_pheater_duration
+                          service_data:
+                            device_id: 7efc8d0d37ec5c716e63bc19d81e390b
+                            duration: 10
+                        name: 10 min.
+                        style:
+                          button:
+                            background-color: >-
+                              {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '10'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}
+                      - tap_action:
+                          action: call-service
+                          service: skodaconnect.set_pheater_duration
+                          service_data:
+                            device_id: 7efc8d0d37ec5c716e63bc19d81e390b
+                            duration: 20
+                        name: 20 min.
+                        style:
+                          button:
+                            background-color: >-
+                              {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '20'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}    
+                      - tap_action:
+                          action: call-service
+                          service: skodaconnect.set_pheater_duration
+                          service_data:
+                            device_id: 7efc8d0d37ec5c716e63bc19d81e390b
+                            duration: 30
+                        name: 30 min.
+                        style:
+                          button:
+                            background-color: >-
+                              {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '30'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }} 
+                      - tap_action:
+                          action: call-service
+                          service: skodaconnect.set_pheater_duration
+                          service_data:
+                            device_id: 7efc8d0d37ec5c716e63bc19d81e390b
+                            duration: 40
+                        name: 40 min.
+                        style:
+                          button:
+                            background-color: >-
+                              {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '40'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}
+                  - entity: sensor.ciboulette_heating_cooling_status
+                    type: 'custom:multiple-entity-row'
+                    name: Préchauffage/Ventilation
+                    toggle: true
+                    secondary_info: last-updated
+                    show_state: false
+                    tap_action:
+                      action: none
+                    hold_action:
+                      action: none
+                    entities:
+                      - entity: sensor.ciboulette_outside_temperature
+                        name: Temp extérieure 
+                        tap_action:
+                          action: none
+                        hold_action:
+                          action: none
+                      - entity: switch.ciboulette_parking_heater_ventilation
+                        name: Ventilation
+                        toggle: true
+                      - entity: switch.ciboulette_parking_heater_heating
+                        name: Préchauffage
+                        toggle: true
+                    card_mod:
+                      style:
+                        hui-generic-entity-row$: |
+                          state-badge {
+                            color: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %}#ff1a1a{% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} var(--accent-color) {% else %} var(--paper-item-icon-color){% endif %};
+                            animation: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %} blink 1s linear infinite alternate {% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} spin 1s linear infinite {% else %} none {% endif %};
+                          }         
+                          @keyframes blink {
+                            0% {opacity: 0.5;}
+                            100% {opacity: 1;}
+                          }  
+                          @keyframes spin {
+                            0% { transform: rotate(0deg); }
+                            100% { transform: rotate(360deg); }
+                          }   
+              - type: 'custom:decluttering-card'
+                template: ciboulette_temp    
+            card_mod: 
+              style: |
+                ha-card {
+                  margin-bottom: -24px;
+                }
+          # style: |
+          #   - margin-bottom: -24px;
+          title: Préchauffage/Ventilation 
+    hold_action:
+      action: none
+  - type: conditional
+    conditions:
+      - entity: binary_sensor.ciboulette_doors_locked
+        state: 'off'
+    elements:
+      - type: 'custom:decluttering-card'
+        template: icons_ciboulette_popup
+        variables:
+          - icon: lock
+          - color: lightgrey
+  - type: conditional
+    conditions:
+      - entity: binary_sensor.ciboulette_doors_locked
+        state: 'on'
+    elements:
+      - type: 'custom:decluttering-card'
+        template: icons_ciboulette_popup
+        variables:
+          - icon: lock-open
+          - color: '#ff1a1a'
+  - type: state-icon
+    entity: binary_sensor.ciboulette_vehicle_moving
+    icon: 'mdi:car-side'
+    style:
+      '--mdc-icon-size': 1vw
+      '--paper-item-icon-color': lightgrey
+      align-items: center
+      display: flex
+      height: 2.1vw
+      justify-content: center
+      left: 95%
+      margin-left: '-1.5vw'
+      margin-top: '-1.5vw'
+      top: 71%
+      transform: scale(1.4)
+      width: 2.1vw
+    tap_action:
+      action: fire-dom-event
+      browser_mod:
+        service: browser_mod.popup
+        data:
+          content: !include ciboulette.yaml
+          title: Ciboulette 
+          size: fullscreen
+    hold_action:
+      action: none
+
+    #########################    Minigraph to show temperature inside and out    #########################
+  - color_thresholds:
+      - color: '#03a8f4'
+        value: 10
+      - color: '#ffa31a'
+        value: 20
+      - color: '#ff1a1a'
+        value: 30
+    entities:
+      - sensor.temperature_salon
+      - sensor.openweathermap_temperature      
+    icon: 'mdi:home-thermometer-outline'
+    show:
+      icon: true
+      legend: false
+      name: false
+    hour24: true
+    points_per_hour: 1
+    card_mod:
+      style: |
+        :host {
+          left: 50%;
+          top:  92.9%;
+          width: 100%;
+          overflow: hidden;
+          height: 15%;
+          background: none  !important;
+          box-shadow: none !important;
+        }
+        .header {
+          font-size: 1vw;
+          position: absolute !important;
+          width: 5% !important;
+          padding: 0 !important;
+          right: 20% !important;
+          top: 15% !important;
+        }
+        ha-card {
+          background: none  !important;
+          padding: 0 !important;
+        }
+        .icon > ha-icon {
+          width:1.8vw !important;
+          height:1.8vw !important;
+        }
+        .state__time{
+          font-size:0.9vw !important;
+          margin-top: 0.2vw;
+          font-weight: 300 !important;
+          opacity: 0.4 !important;
+        }
+        .states {
+          font-size: 0.5vw !important;
+          padding: 1vw 0vw 0vw 0vw  !important;
+          margin: auto !important;
+          width: 68%;
+        }
+    tap_action:
+      action: navigate
+      navigation_path: /lovelace-visual/weather
+    type: 'custom:mini-graph-card'
+
+    #########################    Mini Weather card    #########################
+
+  - backdrop: false
+    entity: weather.openweathermap
+    name: ' '
+    card_mod:
+      style: |
+        :host {
+          left: 48.5%;
+          top:  84%;
+          width: 69%;
+          height: 7% !important;
+          overflow: hidden;
+          background: none  !important;
+          box-shadow: none !important;
+          font-size: 1vw !important;
+        }
+        ha-card {
+          background: none  !important;
+          box-shadow: none !important;
+          flex-flow: row-reverse !important;
+          padding: 0 !important;
+          height: 100%;
+        }
+        .weather__info--add{
+          display: none !important;
+        }
+        .weather__info{
+          flex-grow: 1;
+          min-height: 0 !important;
+          height: 2.4vw;
+          line-height: 1vw;
+          margin-left: 0.6vw;
+        }
+        .weather__icon{
+          margin-right: 0.5% !important;
+          margin-top: -3%;
+          width: 2vw !important;
+          height: 2vw !important;
+          flex: 0 0 2vw !important;
+        }
+    tap_action:
+      action: navigate
+      navigation_path: /lovelace-visual/weather
+    type: 'custom:simple-weather-card'
+
+    #########################    Overlay shadow images    #########################
+
+  - action: none
+    image: /local/ui/sidebar/sideShadow.png
+    style:
+      height: 20%
+      left: 80%
+      pointer-events: none
+      top: 90%
+      width: 40%      
+    type: image
+  - action: none
+    image: /local/ui/sidebar/sidebarInnerShadow.png
+    style:
+      left: 97.5%
+      opacity: 0.7
+      pointer-events: none
+      top: 50%
+      width: 5%
+      height: 100%
+    type: image
+
+    #########################   Styled now playing media button    #########################
+
+    # when the media player is playing, this overlaps the "Media" menu button
+
+  - type: conditional
+    conditions:
+      - entity: sensor.pioneer_avr_source
+        state: INTERNET RADIO
+    elements:
+      - type: image
+        image: /local/ui/sidebar/sidebarBG.png
+        style:
+          width: 88%
+          height: 10%
+          left: 50%
+          top: 35%
+      - type: 'custom:button-card'
+        template: media_sidebar_state
+        entity: media_player.pioneer_avr
+        state_display: >
+          [[[
+            if (entity) {
+              let elt = this.shadowRoot,
+                await = setTimeout(marquee, 0),
+                title = entity.attributes.media_title,
+                output = title !== undefined
+                  ? title
+                  : variables.translate_idle;
+              function marquee() {
+                let state = elt.getElementById("state"),
+                  container = elt.getElementById("container");
+                if (state && container) {
+                  state.innerHTML = output;
+                  let ro = new ResizeObserver(entries => {
+                    let spacer = "&nbsp;".repeat(3),
+                      s = entries[0],
+                      c = entries[1],
+                      r = s && s.contentRect &&
+                          c && c.contentRect &&
+                          s.contentRect.width !== 0 &&
+                          c.contentRect.width !== 0;
+                    if (r && s.contentRect.width < c.contentRect.width) {
+                      state.classList.remove("marquee");
+                    }
+                    else if (r && s.contentRect.width >= c.contentRect.width) {
+                      state.innerHTML = `${output} ${spacer} ${output} ${spacer}&nbsp;`;
+                      state.classList.add("marquee");
+                    }
+                  });
+                  ro.observe(state);
+                  ro.observe(container);
+                }
+              }
+              return output;
+            }
+            return variables.translate_unknown;
+          ]]]
+        extra_styles: |
+          .marquee {
+            animation: marquee 20s linear infinite;
+          }
+          @keyframes marquee {
+            from {
+              transform: translateX(0%);
+            }
+            to {
+              transform: translateX(-50%);
+            }
+          }
+      - type: 'custom:button-card'
+        template: media_sidebar_picture
+        entity_picture: /local/ui/media/couleur3.png
+
+  - type: conditional
+    conditions:
+      - entity: sensor.pioneer_avr_source
+        state: BT AUDIO
+    elements:
+      - type: 'custom:button-card'
+        template: media_sidebar
+        entity_picture: /local/ui/media/bluetooth-audio.png
+        label: Bluetooth
+
+  - type: conditional
+    conditions:
+      - entity: sensor.pioneer_avr_source
+        state: MEDIA SERVER
+    elements:
+      - type: image
+        image: /local/ui/sidebar/sidebarBG.png
+        style:
+          width: 88%
+          height: 10%
+          left: 50%
+          top: 35%
+      - type: 'custom:button-card'
+        template: media_sidebar_state
+        entity: media_player.bubble
+        state_display: >
+          [[[
+            if (entity) {
+              let elt = this.shadowRoot,
+                await = setTimeout(marquee, 0),
+                artist = entity.attributes.media_artist,
+                title = entity.attributes.media_title,
+                output = artist === undefined && title !== undefined
+                  ? title
+                  : title === undefined && artist !== undefined
+                    ? artist
+                    : title !== undefined && artist !== undefined
+                      ? `${artist} - ${title}`
+                      : variables.translate_idle;
+              function marquee() {
+                let state = elt.getElementById("state"),
+                  container = elt.getElementById("container");
+                if (state && container) {
+                  state.innerHTML = output;
+                  let ro = new ResizeObserver(entries => {
+                    let spacer = "&nbsp;".repeat(3),
+                      s = entries[0],
+                      c = entries[1],
+                      r = s && s.contentRect &&
+                          c && c.contentRect &&
+                          s.contentRect.width !== 0 &&
+                          c.contentRect.width !== 0;
+                    if (r && s.contentRect.width < c.contentRect.width) {
+                      state.classList.remove("marquee");
+                    }
+                    else if (r && s.contentRect.width >= c.contentRect.width) {
+                      state.innerHTML = `${output} ${spacer} ${output} ${spacer}&nbsp;`;
+                      state.classList.add("marquee");
+                    }
+                  });
+                  ro.observe(state);
+                  ro.observe(container);
+                }
+              }
+              return output;
+            }
+            return variables.translate_unknown;
+          ]]]
+        extra_styles: |
+          .marquee {
+            animation: marquee 20s linear infinite;
+          }
+          @keyframes marquee {
+            from {
+              transform: translateX(0%);
+            }
+            to {
+              transform: translateX(-50%);
+            }
+          }
+      - type: 'custom:button-card'
+        template: media_sidebar_picture
+        entity_picture: '[[[ return states["media_player.bubble"].attributes["entity_picture"]; ]]]'
+
+  - type: conditional
+    conditions:
+      - entity: sensor.living_room_tv_source
+        state: Plex
+    elements:
+      - type: image
+        image: /local/ui/sidebar/sidebarBG.png
+        style:
+          width: 88%
+          height: 10%
+          left: 50%
+          top: 35%
+      - type: 'custom:button-card'
+        template: media_sidebar_state
+        entity: media_player.plex_plex_for_lg_lg_oled77w7v_z
+        state_display: >
+          [[[
+            if (entity) {
+              let elt = this.shadowRoot,
+                await = setTimeout(marquee, 0),
+                series_title = entity.attributes.media_series_title,
+                series_season = ` - S` + entity.attributes.media_season,
+                series_episode = ` E` + entity.attributes.media_episode,
+                episode_title = ` - ` + entity.attributes.media_title,
+                tvshow = series_title + series_season + series_episode + episode_title,
+                movie = entity.attributes.media_title,
+                output = states['sensor.living_room_tv_source'].state == 'Plex' && entity.attributes.media_content_type == 'tvshow'
+                  ? `${tvshow}`
+                  : states['sensor.living_room_tv_source'].state == 'Plex' && entity.attributes.media_content_type == 'movie'
+                    ? `${movie}`
+                    : states['sensor.living_room_tv_source'].state == 'Plex' && entity.attributes.media_content_type != 'movie' && entity.attributes.media_content_type != 'tvshow'
+                      ? `Plex`
+                      : variables.translate_idle;
+              function marquee() {
+                let state = elt.getElementById("state"),
+                  container = elt.getElementById("container");
+                if (state && container) {
+                  state.innerHTML = output;
+                  let ro = new ResizeObserver(entries => {
+                    let spacer = "&nbsp;".repeat(3),
+                      s = entries[0],
+                      c = entries[1],
+                      r = s && s.contentRect &&
+                          c && c.contentRect &&
+                          s.contentRect.width !== 0 &&
+                          c.contentRect.width !== 0;
+                    if (r && s.contentRect.width < c.contentRect.width) {
+                      state.classList.remove("marquee");
+                    }
+                    else if (r && s.contentRect.width >= c.contentRect.width) {
+                      state.innerHTML = `${output} ${spacer} ${output} ${spacer}&nbsp;`;
+                      state.classList.add("marquee");
+                    }
+                  });
+                  ro.observe(state);
+                  ro.observe(container);
+                }
+              }
+              return output;
+            }
+            return variables.translate_unknown;
+          ]]]
+        extra_styles: |
+          .marquee {
+            animation: marquee 20s linear infinite;
+          }
+          @keyframes marquee {
+            from {
+              transform: translateX(0%);
+            }
+            to {
+              transform: translateX(-50%);
+            }
+          }
+      - type: 'custom:button-card'
+        template: media_sidebar_picture
+        entity_picture: >
+          [[[ if (states['media_player.plex_plex_for_lg_lg_oled77w7v_z'].state != 'idle') return states['media_player.plex_plex_for_lg_lg_oled77w7v_z'].attributes['entity_picture'];
+          else return '/local/ui/media/plex.png'; ]]]
+        styles:
+          entity_picture:
+            - width: >
+                [[[ if (states['media_player.plex_plex_for_lg_lg_oled77w7v_z'].state != 'idle') return '100%';
+                else return '40%'; ]]]
+            - height: 100%
+            - clip-path: >
+                [[[ if (states['media_player.plex_plex_for_lg_lg_oled77w7v_z'].state != 'idle') return 'circle(42% at 37% 50%)';
+                else return 'none'; ]]]
+
+  - type: conditional
+    conditions:
+      - entity: sensor.living_room_tv_source
+        state: Screen Share
+    elements:
+      - type: 'custom:button-card'
+        template: media_sidebar
+        entity_picture: /local/ui/media/screenshare.png
+        label: "Partage d'écran"
+        styles:
+          entity_picture:
+            - width: 100%
+
+  - type: conditional
+    conditions:
+      - entity: sensor.living_room_tv_source
+        state: YouTube
+    elements:
+      - type: 'custom:button-card'
+        template: media_sidebar
+        entity_picture: /local/ui/media/youtube.png
+        label: "YouTube"
+        styles:
+          entity_picture:
+            - width: 100%
+
+  - type: conditional
+    conditions:
+      - entity: sensor.living_room_tv_source
+        state: YouTube Kids
+    elements:
+      - type: 'custom:button-card'
+        template: media_sidebar
+        entity_picture: /local/ui/media/youtube-kids.png
+        label: "YouTube Kids"
+        styles:
+          entity_picture:
+            - width: 100%
+
+  - type: conditional
+    conditions:
+      - entity: sensor.living_room_tv_source
+        state: HDMI1
+    elements:
+      - type: 'custom:button-card'
+        template: media_sidebar
+        entity_picture: /local/ui/media/swisscomTV_transparent.png
+        label: "Blue TV"
+        styles:
+          entity_picture:
+            - height: 100%

@@ -1,0 +1,258 @@
+##########################    Icons for taking out the trash    ##########################
+
+icons:
+  element:
+    type: icon
+    icon: 'mdi:[[icon]]'
+    style:
+      '--mdc-icon-size': 1.4vw
+      color: '[[color]]'
+      align-items: center
+      background-color: 'rgba(255, 255, 255, 0.4)'
+      border-radius: 100%
+      display: flex
+      height: 2.1vw
+      justify-content: center
+      left: '[[left]]'
+      margin-left: '-1.5vw'
+      margin-top: '-1.5vw'
+      top: '[[top]]'
+      transform: scale(1.6)
+      width: 2.1vw
+    tap_action:
+      action: '[[action]]'
+      '[[type]]': '[[data]]'
+
+##########################    Icons for alerts   ##########################
+
+icons_nas_popup:
+  element:
+    type: icon
+    icon: 'mdi:[[icon]]'
+    tap_action:
+      action: fire-dom-event
+      browser_mod:
+        service: browser_mod.popup
+        data:
+          content: 
+            type: 'custom:swipe-card'
+            cards: 
+              - !include ../frontend/station3.yaml
+              - !include ../frontend/stationB.yaml
+          title: Synology NAS
+          size: fullscreen
+    style:
+      color: '#ff1a1a'
+      align-items: center
+      background-color: 'rgba(255, 255, 255, 0.4)'
+      border-radius: 100%
+      display: flex
+      height: 2.1vw
+      justify-content: center
+      margin-left: '-1.5vw'
+      margin-top: '-1.5vw'
+      top: 52%
+      transform: scale(1.6)
+      width: 2.1vw
+      '--mdc-icon-size': 1.4vw
+      left: '[[left]]'
+
+text:
+  element:
+    type: 'custom:text-action-element'
+    text: '[[text]]'
+    style:
+      color: '#ff1a1a'
+      top: '[[top]]'
+      left: '[[left]]'
+      font-size: 1vw
+      transform: translate(0%, 0%)
+
+statelabel:
+  element:
+    entity: '[[entity]]'
+    hold_action:
+      action: none
+    style:
+      color: '[[color]]'
+      font-size: '[[size]]'
+      font-weight: '[[weight]]'
+      left: '[[left]]'
+      letter-spacing: '-0.05vw'
+      top: '[[top]]'
+    tap_action:
+      action: '[[action]]'
+      '[[type]]': '[[data]]'
+    type: state-label
+
+#########################    People at home    #########################
+image:
+  element:
+    type: image
+    entity: '[[entity]]'
+    state_image:
+      "home": '/local/ui/sidebar/[[imagehome]]'
+      "not_home": '/local/ui/sidebar/[[imageaway]]'
+    style:
+      top: 67%
+      left: '[[left]]'
+      width: 4vw
+      height: 4vw
+      pointer-events: none
+      border-radius: 100%
+
+stateicon:
+  element:
+    type: state-icon
+    entity: '[[entity]]'
+    tap_action:
+      action: navigate
+      navigation_path: /lovelace-visual/systems
+    style:
+      '--mdc-icon-size': 1vw
+      '--paper-item-icon-color': lightgrey
+      align-items: center
+      display: flex
+      height: 2.1vw
+      justify-content: center
+      left: '[[left]]'
+      margin-left: '-1.5vw'
+      margin-top: '-1.5vw'
+      top: 71%
+      transform: scale(1.2)
+      width: 2.1vw
+
+icons_ciboulette_popup:
+  element:
+    type: icon
+    icon: 'mdi:[[icon]]'
+    style:
+      '--mdc-icon-size': 1vw
+      color: '[[color]]'
+      align-items: center
+      display: flex
+      height: 2.1vw
+      justify-content: center
+      left: 78%
+      margin-left: '-1.5vw'
+      margin-top: '-1.5vw'
+      top: 71%
+      transform: scale(1.2)
+      width: 2.1vw
+    tap_action:
+      action: fire-dom-event
+      browser_mod:
+        service: browser_mod.popup
+        data:
+          content: !include ../frontend/ciboulette.yaml
+          title: Ciboulette
+          size: fullscreen
+    hold_action:
+      action: none
+
+cats_popup:
+  card:
+    type: entities
+    show_header_toggle: false
+    entities:
+      - type: 'custom:paper-buttons-row'
+        base_config:
+          style:
+            button:
+              color: lightgrey
+              border-radius: 10%
+        buttons:
+          - icon: 'mdi:location-enter'
+            tap_action:
+              action: call-service
+              service: surepetcare.set_lock_state
+              service_data:
+                flap_id: !secret Entree_flap_id
+                lock_state: locked_in
+            style:
+              button:
+                background-color: >-
+                  {{ iif (is_state('lock.entree_locked_in', 'locked'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}
+          - icon: 'mdi:location-exit'
+            tap_action:
+              action: call-service
+              service: surepetcare.set_lock_state
+              service_data:
+                flap_id: !secret Entree_flap_id
+                lock_state: locked_out
+            style:
+              button:
+                background-color: >-
+                  {{ iif (is_state('lock.entree_locked_out', 'locked'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}     
+          - icon: 'mdi:lock'
+            tap_action:
+              action: call-service
+              service: surepetcare.set_lock_state
+              service_data:
+                flap_id: !secret Entree_flap_id
+                lock_state: locked_all
+            style:
+              button:
+                background-color: >-
+                  {{ iif (is_state('lock.entree_locked_all', 'locked'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}
+          - icon: 'mdi:lock-open'
+            tap_action:
+              action: call-service
+              service: surepetcare.set_lock_state
+              service_data:
+                flap_id: !secret Entree_flap_id
+                lock_state: unlocked
+            style:
+              button:
+                background-color: >-
+                  {{ iif (is_state('lock.entree_locked_all', 'unlocked') and is_state('lock.entree_locked_in', 'unlocked') and is_state('lock.entree_locked_out', 'unlocked'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}
+      - type: section
+        label: Charlie
+      - type: 'custom:paper-buttons-row'
+        base_config:
+          style:
+            button:
+              color: lightgrey
+              border-radius: 10%
+        buttons:
+          - image: /local/ui/sidebar/Charlie_home.png
+            style:
+              button:
+                padding: 0px
+              icon:
+                width: 4vw
+                height: 4vw
+          - icon: 'mdi:home-export-outline'
+            tap_action:
+              action: call-service
+              service: surepetcare.set_pet_location
+              service_data:
+                pet_name: Charlie
+                location: Outside
+            style:
+              button:
+                background-color: >-
+                  {{ iif (is_state('person.charlie', 'not_home'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}
+          - icon: 'mdi:home-import-outline'      
+            tap_action:
+              action: call-service
+              service: surepetcare.set_pet_location
+              service_data:
+                pet_name: Charlie
+                location: Inside
+            style:
+              button:
+                background-color: >-
+                  {{ iif (is_state('person.charlie', 'home'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}
+    card_mod:
+      style: 
+        hui-section-row$: |
+          .label {
+            font-size: 1.2vw;
+            text-align: center;
+            margin-top: 5% !important;
+            margin-bottom: 3% !important;
+          }
+          .divider {
+            display: none;
+          }

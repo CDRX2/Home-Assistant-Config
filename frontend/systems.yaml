@@ -1,0 +1,417 @@
+type: picture-elements
+image: /local/ui/floorplan/blurredFloorplanRez.png
+view_layout:
+  grid-area: main
+card_mod:
+ style: |
+   ha-card {
+     background: rgba(42, 46, 48, 1);
+   }
+elements:  
+  - type: 'custom:layout-card'
+    layout_type: vertical
+    layout_options:
+      max_cols: 3
+    cards:
+      - type: 'custom:apexcharts-card'
+        config_templates: default
+        graph_span: 2d
+        update_interval: 1min
+        update_delay: 3s
+        header:
+          show: true
+          show_states: true
+        all_series_config:
+          type: column
+          group_by:
+            func: max
+            duration: 2h
+          header_actions:
+            tap_action:
+              action: fire-dom-event
+              browser_mod:
+                service: browser_mod.popup
+                data:
+                  content:
+                    cards:
+                      - cards:
+                          - type: 'custom:apexcharts-card'
+                            config_templates: default
+                            graph_span: 2d
+                            update_interval: 1min
+                            update_delay: 3s
+                            header:
+                              show: true
+                              show_states: true
+                            all_series_config:
+                              type: column
+                              group_by:
+                                func: max
+                                duration: 2h
+                              show:
+                                in_header: raw
+                            series:
+                              - entity: sensor.swisscom_internet_box_kib_s_received
+                                color: "#ffa31a"
+                                transform: "return x / 1024;"
+                                name: Download ISP
+                                unit: MB/s
+                              - entity: sensor.swisscom_internet_box_kib_s_sent
+                                color: "#424F96"
+                                transform: "return x / 1024;"
+                                name: Upload ISP
+                                unit: MB/s
+                                invert: true
+                              - entity: sensor.deluge_down_speed
+                                color: "#FF5401"
+                                transform: "return x / 1024;"
+                                name: Download Deluge
+                                unit: MB/s
+                              - entity: sensor.deluge_up_speed
+                                color: "#03a8f4"
+                                transform: "return x*-1 / 1024;"
+                                name: Upload Deluge
+                                unit: MB/s
+                                invert: true
+                              - entity: sensor.sabnzbd_speed
+                                color: "#ff1a1a"
+                                name: SABnzbd
+                            apex_config:
+                              legend:
+                                show: false
+                            card_mod:
+                              style: |
+                                ha-card {
+                                  box-shadow: none !important;
+                                }                    
+                          - type: 'custom:stack-in-card'
+                            mode: horizontal
+                            cards:
+                              - type: entities
+                                entities:
+                                  - entity: sensor.sabnzbd_daily_total
+                                    icon: 'mdi:calendar-today'
+                                    name: 'Day'
+                                    tap_action:
+                                      action: url
+                                      url_path: !secret SABNzbd_URL
+                                  - entity: sensor.sabnzbd_weekly_total
+                                    icon: 'mdi:calendar-range'
+                                    name: 'Week'
+                                    tap_action:
+                                      action: url
+                                      url_path: !secret SABNzbd_URL
+                                  - entity: sensor.sabnzbd_left
+                                    icon: 'mdi:folder-download'
+                                    name: 'Left'
+                                    tap_action:
+                                      action: url
+                                      url_path: !secret SABNzbd_URL
+                              - type: entities
+                                entities:
+                                  - entity: sensor.sabnzbd_monthly_total
+                                    icon: 'mdi:calendar-month'
+                                    name: 'Month'
+                                    tap_action:
+                                      action: url
+                                      url_path: !secret SABNzbd_URL
+                                  - entity: sensor.sabnzbd_total
+                                    icon: 'mdi:folder-download'
+                                    name: 'Total'
+                                    tap_action:
+                                      action: url
+                                      url_path: !secret SABNzbd_URL 
+                                  - entity: sensor.sabnzbd_queue 
+                                    icon: 'mdi:tray-full'
+                                    name: 'Queue'
+                                    tap_action:
+                                      action: url
+                                      url_path: !secret SABNzbd_URL
+                            card_mod:
+                              style: |
+                                ha-card {
+                                  box-shadow: none !important;
+                                }
+                        mode: vertical
+                        type: 'custom:stack-in-card'
+                        card_mod:
+                          style: |
+                            ha-card {
+                              box-shadow: none !important;
+                            }
+                      - cards:
+                          - type: 'custom:apexcharts-card'
+                            config_templates: default
+                            graph_span: 2d
+                            update_interval: 1min
+                            update_delay: 3s
+                            header:
+                              show: true
+                              show_states: true
+                            all_series_config:
+                              type: column
+                              group_by:
+                                func: max
+                                duration: 2h
+                              show:
+                                in_header: raw
+                            series:
+                              - entity: sensor.swisscom_internet_box_packets_s_received
+                                color: "#ffa31a"
+                                name: Download
+                                unit: Pkts/s
+                              - entity: sensor.swisscom_internet_box_packets_s_sent
+                                color: "#03a8f4"
+                                name: Upload
+                                unit: Pkts/s
+                                invert: true
+                            apex_config:
+                              legend:
+                                show: false
+                            card_mod:
+                              style: |
+                                ha-card {
+                                  box-shadow: none !important;
+                                }
+                          - type: 'custom:apexcharts-card'
+                            config_templates: default
+                            graph_span: 2d
+                            update_interval: 1min
+                            update_delay: 3s
+                            header:
+                              show: true
+                              show_states: true
+                            all_series_config:
+                              type: column
+                              group_by:
+                                func: max
+                                duration: 2h
+                            series:
+                              - entity: sensor.swisscom_internet_box_b_received
+                                color: "#ffa31a"
+                                transform: "return x / 1000000000;"
+                                name: Download
+                                unit: GB
+                              - entity: sensor.swisscom_internet_box_b_sent
+                                color: "#03a8f4"
+                                transform: "return x / 1000000000;"
+                                name: Upload
+                                unit: GB
+                                invert: true
+                            apex_config:
+                              legend:
+                                show: false
+                            card_mod:
+                              style: |
+                                ha-card {
+                                  box-shadow: none !important;
+                                }
+                        mode: vertical
+                        type: 'custom:stack-in-card'
+                    mode: horizontal
+                    type: 'custom:stack-in-card'
+                    card_mod: 
+                      style: |
+                        ha-card {
+                          width: 60vw !important;
+                          min-width: 400px;
+                          padding-left: 15vw;
+                        }
+                  title: Internet speed
+                  size: wide
+        series:
+          - entity: sensor.swisscom_internet_box_kib_s_received
+            color: "#ffa31a"
+            transform: "return x / 1024;"
+            name: Download ISP
+            unit: MB/s
+          - entity: sensor.swisscom_internet_box_kib_s_sent
+            color: "#424F96"
+            transform: "return x / 1024;"
+            name: Upload ISP
+            unit: MB/s
+            invert: true
+          - entity: sensor.deluge_down_speed
+            color: "#FF5401"
+            transform: "return x / 1024;"
+            name: Download Deluge
+            unit: MB/s
+          - entity: sensor.deluge_up_speed
+            color: "#03a8f4"
+            transform: "return x*-1 / 1024;"
+            name: Upload Deluge
+            unit: MB/s
+            invert: true
+          - entity: sensor.sabnzbd_speed
+            color: "#ff1a1a"
+            name: SABnzbd
+        apex_config:
+          legend:
+            show: false
+        view_layout:
+          column: 1
+        card_mod:
+          style: |
+            .apexcharts-tooltip {
+              border: none !important;
+              border-radius: 0.2vw !important;
+            }
+            .apexcharts-tooltip-title {
+              border: none !important;
+              padding-bottom: none;
+              margin-bottom: none;
+            }
+      - type: 'custom:mod-card'
+        card:
+          type: 'custom:layout-card'
+          layout_type: custom:grid-layout
+          layout:
+            grid-template-columns: 50% 50%
+            grid-template-rows: auto
+            grid-template-areas: |
+              " st1 stb "
+            grid-gap: 0px
+          cards:
+            - type: 'custom:mod-card'
+              card:
+                type: 'custom:decluttering-card'
+                template: NAS_Volumes
+                variables:
+                  - title: CDRXStation3
+                  - sensor_1: sensor.cdrxstation3_volume_1_volume_used
+                  - name_1: Volume 1
+              card_mod:
+                style: 
+                  decluttering-card$: |
+                    div#root {
+                      height: 100%;
+                    }
+                  .: |
+                    :host {
+                      --masonry-view-card-margin: 0px !important;
+                      height: 100%;
+                    }
+                    ha-card {
+                      height: 100%;
+                      box-shadow: none;
+                    }       
+              view_layout:
+                grid-area: st1
+            - type: 'custom:mod-card'
+              card:
+                type: 'custom:decluttering-card'
+                template: NAS_Volumes
+                variables:
+                  - title: BackupStation
+                  - sensor_1: sensor.backupstation_volume_1_volume_used
+                  - name_1: Volume 1
+              card_mod:
+                style: 
+                  decluttering-card$: |
+                    div#root {
+                      height: 100%;
+                    }
+                  .: |
+                    :host {
+                      --masonry-view-card-margin: 0px !important;
+                      height: 100%;
+                    }
+                    ha-card {
+                      height: 100%;
+                      box-shadow: none;
+                    } 
+              view_layout:
+                grid-area: stb
+        card_mod:
+          style: 
+            layout-card$:
+              grid-layout$: |
+                #root {
+                  margin-left: 0px !important;
+                  margin-right: 0px !important;
+                }
+            .: |
+              ha-card {
+                height: 100%;
+              }
+              :host {
+                height: 60%;
+              }
+        view_layout:
+          column: 1       
+      - type: 'custom:battery-state-card'
+        color_gradient:
+          - '#ff1a1a'
+          - '#ffa31a'
+          - '#03a8f4'
+        collapse:
+          - name: Mobiles et tablettes
+            icon: 'mdi:tablet-cellphone'
+            group_id: group.mobiles_tablets_battery
+            min: 20
+          - name: Température et humidité
+            icon: 'mdi:thermometer'
+            group_id: group.temp_sensors_battery
+            min: 20
+          - name: Autres
+            icon: 'mdi:battery'
+            entities:
+              - sensor.movement_driveway_battery_level
+              - sensor.cat_flap_entree_battery_level
+            min: 20
+        entities:
+          - entity: sensor.lya_l29_battery_level
+            name: 'Huawei Nanne'
+            charging_state:
+              entity_id: binary_sensor.lya_l29_is_charging
+              state: 'on'
+          - entity: sensor.cdrx2pro_battery_level
+            name: 'Realme CDRX'
+            charging_state:
+              entity_id: binary_sensor.cdrx2pro_is_charging
+              state: 'on'
+          - entity: sensor.tablet_rez_battery_level
+            name: Tablet rez
+            charging_state:
+              entity_id: binary_sensor.tablet_rez_plugged_in
+              state: 'on'
+          - entity: sensor.tablet_mobile_battery_level
+            name: Tablet mobile
+            charging_state:
+              entity_id: binary_sensor.tablet_mobile_plugged_in
+              state: 'on'
+          - entity: sensor.tablet_remote_battery_level
+            name: Tablet remote
+            charging_state:
+              entity_id: binary_sensor.tablet_remote_plugged_in
+              state: 'on'
+          - entity: sensor.salon_battery
+            name: 'Climate living room'
+          - entity: sensor.temperature_guest_bathroom_battery_level
+            name: 'Temp and humidity guest bathroom'
+          - entity: sensor.temperature_entrance_battery_level
+            name: 'Temp and humidity entrance'
+          - entity: sensor.temperature_guest_battery_level
+            name: 'Temp and humidity guest bedroom'
+          - entity: sensor.office_battery
+            name: 'Climate office'
+          - entity: sensor.temperature_bathroom_battery_level
+            name: 'Temp and humidity bathroom'
+          - entity: sensor.twins_battery
+            name: 'Climate twins'
+          - entity: sensor.temperature_charles_battery_level
+            name: 'Temp and humidity Charles'
+          - entity: sensor.bottom_stairs_battery
+            name: 'Climate bottom stairs'
+          - entity: sensor.movement_driveway_battery_level
+            name: 'Movement driveway'
+          - entity: sensor.cat_flap_entree_battery_level
+            name: 'Cat flap'
+        title: Batteries
+        view_layout:
+          column: 2
+    style:
+      height: 98%
+      left: 50%
+      top: 50%
+      width: 98%

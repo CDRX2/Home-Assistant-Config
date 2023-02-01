@@ -1,0 +1,625 @@
+type: picture-elements
+image: /local/ui/systems/RS820+.png
+card_mod:
+  style: |
+    ha-card {
+      width: 98vw !important;
+      padding-left: 1vw;
+    }
+    decluttering-card.element {
+      top: 0px !important;
+      left: 0px !important;
+    }
+
+elements:
+  
+  - type: 'custom:text-action-element'
+    text: "CDRXStation 3"
+    style:
+      top: 73%
+      left: 50%
+      height: 10%
+      font-size: 5vw
+
+  - type: 'custom:decluttering-card'
+    template: HDD_button
+    variables:
+      - name: Main 1
+      - below_min: binary_sensor.cdrxstation3_drive_1_below_min_remaining_life
+      - bad_sectors: binary_sensor.cdrxstation3_drive_1_exceeded_max_bad_sectors
+      - status: sensor.cdrxstation3_drive_1_status
+      - smart: sensor.cdrxstation3_drive_1_status_smart
+      - temperature: sensor.cdrxstation3_drive_1_temperature
+      - top: 7.5vw
+      - left: 7.5vw
+
+  - type: 'custom:decluttering-card'
+    template: HDD_button
+    variables:
+      - name: Main 2
+      - below_min: binary_sensor.cdrxstation3_drive_2_below_min_remaining_life
+      - bad_sectors: binary_sensor.cdrxstation3_drive_2_exceeded_max_bad_sectors
+      - status: sensor.cdrxstation3_drive_2_status
+      - smart: sensor.cdrxstation3_drive_2_status_smart
+      - temperature: sensor.cdrxstation3_drive_2_temperature
+      - top: 7.5vw
+      - left: 22vw
+
+  - type: 'custom:decluttering-card'
+    template: HDD_button
+    variables:
+      - name: Main 3
+      - below_min: binary_sensor.cdrxstation3_drive_3_below_min_remaining_life
+      - bad_sectors: binary_sensor.cdrxstation3_drive_3_exceeded_max_bad_sectors
+      - status: sensor.cdrxstation3_drive_3_status
+      - smart: sensor.cdrxstation3_drive_3_status_smart
+      - temperature: sensor.cdrxstation3_drive_3_temperature
+      - top: 7.5vw
+      - left: 36.5vw
+
+  - type: 'custom:decluttering-card'
+    template: HDD_button
+    variables:
+      - name: Main 4
+      - below_min: binary_sensor.cdrxstation3_drive_4_below_min_remaining_life
+      - bad_sectors: binary_sensor.cdrxstation3_drive_4_exceeded_max_bad_sectors
+      - status: sensor.cdrxstation3_drive_4_status
+      - smart: sensor.cdrxstation3_drive_4_status_smart
+      - temperature: sensor.cdrxstation3_drive_4_temperature
+      - top: 7.5vw
+      - left: 51vw
+
+  - type: 'custom:decluttering-card'
+    template: HDD_button
+    variables:
+      - name: Ext. 1
+      - below_min: binary_sensor.cdrxstation3_drive_1_rx415_1_below_min_remaining_life
+      - bad_sectors: binary_sensor.cdrxstation3_drive_1_rx415_1_exceeded_max_bad_sectors
+      - status: sensor.cdrxstation3_drive_1_rx415_1_status
+      - smart: sensor.cdrxstation3_drive_1_rx415_1_status_smart
+      - temperature: sensor.cdrxstation3_drive_1_rx415_1_temperature
+      - top: 22vw
+      - left: 7.5vw
+
+  - type: 'custom:decluttering-card'
+    template: HDD_button
+    variables:
+      - name: Ext. 2
+      - below_min: binary_sensor.cdrxstation3_drive_2_rx415_1_below_min_remaining_life
+      - bad_sectors: binary_sensor.cdrxstation3_drive_2_rx415_1_exceeded_max_bad_sectors
+      - status: sensor.cdrxstation3_drive_2_rx415_1_status
+      - smart: sensor.cdrxstation3_drive_2_rx415_1_status_smart
+      - temperature: sensor.cdrxstation3_drive_2_rx415_1_temperature
+      - top: 22vw
+      - left: 22vw
+
+  - type: 'custom:decluttering-card'
+    template: HDD_button
+    variables:
+      - name: Ext. 3
+      - below_min: binary_sensor.cdrxstation3_drive_3_rx415_1_below_min_remaining_life
+      - bad_sectors: binary_sensor.cdrxstation3_drive_3_rx415_1_exceeded_max_bad_sectors
+      - status: sensor.cdrxstation3_drive_3_rx415_1_status
+      - smart: sensor.cdrxstation3_drive_3_rx415_1_status_smart
+      - temperature: sensor.cdrxstation3_drive_3_rx415_1_temperature
+      - top: 22vw
+      - left: 36.5vw
+  
+  - type: 'custom:decluttering-card'
+    template: HDD_button
+    variables:
+      - name: Ext. 4
+      - below_min: binary_sensor.cdrxstation3_drive_4_rx415_1_below_min_remaining_life
+      - bad_sectors: binary_sensor.cdrxstation3_drive_4_rx415_1_exceeded_max_bad_sectors
+      - status: sensor.cdrxstation3_drive_4_rx415_1_status
+      - smart: sensor.cdrxstation3_drive_4_rx415_1_status_smart
+      - temperature: sensor.cdrxstation3_drive_4_rx415_1_temperature
+      - top: 22vw
+      - left: 51vw
+
+  - type: 'custom:group-element'
+    toggle_tap: false
+    elements:
+      - type: state-icon
+        entity: update.cdrxstation3_dsm_update
+        icon: 'mdi:update'
+        style:
+          top: 50%
+          right: 2.5%
+          '--rgb-state-update-color': '#ff1a1a'
+      - type: conditional
+        conditions:
+          - entity: update.cdrxstation3_dsm_update
+            state: 'off'
+        elements:
+          - type: 'custom:text-action-element'
+            text: "No update available"
+            style:
+              top: 50%
+              left: 2.5%
+              transform: translate(0%, -50%)
+              padding-left: 8px
+      - type: conditional
+        conditions:
+          - entity: update.cdrxstation3_dsm_update
+            state: 'on'
+        elements:
+          - type: 'custom:text-action-element'
+            text: "Update available"
+            style:
+              top: 50%
+              left: 2.5%
+              transform: translate(0%, -50%)
+              padding-left: 8px
+              color: '#ff1a1a'
+              font-weight: bold
+    style:
+      top: 1%
+      right: 0.75%
+      width: 20%
+      height: 5%
+      justify-content: left
+      display: flex
+      align-items: left
+      background-color: 'rgba(255, 255, 255, 0.2)'
+      border-radius: 0.2vw
+
+  - type: 'custom:group-element'
+    toggle_tap: false
+    elements:
+      - type: 'custom:text-action-element'
+        text: "Security status:"
+        style:
+          top: 12%
+          left: 2.5%
+          transform: translate(0%, -50%)
+          padding-left: 8px
+          font-weight: bold
+      - type: state-icon
+        entity: binary_sensor.cdrxstation3_security_status
+        icon: 'mdi:security'
+        style:
+          top: 12.5%
+          right: 2.5%
+          '--paper-item-icon-active-color': '#ff1a1a'
+      - type: conditional
+        conditions:
+          - entity: sensor.cdrxstation3_security_malware
+            state: 'safe'
+        elements:
+          - type: state-label
+            entity: sensor.cdrxstation3_security_malware
+            prefix: 'Malware: '
+            style:
+              top: 20%
+              left: 2.5%
+              transform: translate(0%, 0%)
+      - type: conditional
+        conditions:
+          - entity: sensor.cdrxstation3_security_malware
+            state_not: 'safe'
+        elements:
+          - type: state-label
+            entity: sensor.cdrxstation3_security_malware
+            prefix: 'Malware: '
+            style:
+              top: 20%
+              left: 2.5%
+              transform: translate(0%, 0%)     
+              color: '#ff1a1a'
+              font-weight: bold   
+      - type: conditional
+        conditions:
+          - entity: sensor.cdrxstation3_security_network
+            state: 'safe'
+        elements:
+          - type: state-label
+            entity: sensor.cdrxstation3_security_network
+            prefix: 'Network: '
+            style:
+              top: 32.5%
+              left: 2.5%
+              transform: translate(0%, 0%)
+      - type: conditional
+        conditions:
+          - entity: sensor.cdrxstation3_security_network
+            state_not: 'safe'
+        elements:
+          - type: state-label
+            entity: sensor.cdrxstation3_security_network
+            prefix: 'Network: '
+            style:
+              top: 32.5%
+              left: 2.5%
+              transform: translate(0%, 0%)     
+              color: '#ff1a1a'
+              font-weight: bold   
+      - type: conditional
+        conditions:
+          - entity: sensor.cdrxstation3_security_setting
+            state: 'safe'
+        elements:
+          - type: state-label
+            entity: sensor.cdrxstation3_security_setting
+            prefix: 'Security setting: '
+            style:
+              top: 45%
+              left: 2.5%
+              transform: translate(0%, 0%)
+      - type: conditional
+        conditions:
+          - entity: sensor.cdrxstation3_security_setting
+            state_not: 'safe'
+        elements:
+          - type: state-label
+            entity: sensor.cdrxstation3_security_setting
+            prefix: 'Security setting: '
+            style:
+              top: 45%
+              left: 2.5%
+              transform: translate(0%, 0%)     
+              color: '#ff1a1a'
+              font-weight: bold
+      - type: conditional
+        conditions:
+          - entity: sensor.cdrxstation3_security_system_check
+            state: 'safe'
+        elements:
+          - type: state-label
+            entity: sensor.cdrxstation3_security_system_check
+            prefix: 'System check: '
+            style:
+              top: 57.5%
+              left: 2.5%
+              transform: translate(0%, 0%)
+      - type: conditional
+        conditions:
+          - entity: sensor.cdrxstation3_security_system_check
+            state_not: 'safe'
+        elements:
+          - type: state-label
+            entity: sensor.cdrxstation3_security_system_check
+            prefix: 'System check: '
+            style:
+              top: 57.5%
+              left: 2.5%
+              transform: translate(0%, 0%)     
+              color: '#ff1a1a'
+              font-weight: bold
+      - type: conditional
+        conditions:
+          - entity: sensor.cdrxstation3_security_user_info
+            state: 'safe'
+        elements:
+          - type: state-label
+            entity: sensor.cdrxstation3_security_user_info
+            prefix: 'User info: '
+            style:
+              top: 70%
+              left: 2.5%
+              transform: translate(0%, 0%)
+      - type: conditional
+        conditions:
+          - entity: sensor.cdrxstation3_security_user_info
+            state_not: 'safe'
+        elements:
+          - type: state-label
+            entity: sensor.cdrxstation3_security_user_info
+            prefix: 'User info: '
+            style:
+              top: 70%
+              left: 2.5%
+              transform: translate(0%, 0%)     
+              color: '#ff1a1a'
+              font-weight: bold
+    style:
+      top: 7%
+      right: 0.75%
+      width: 20%
+      height: 24.5%
+      justify-content: left
+      display: flex
+      align-items: left
+      background-color: 'rgba(255, 255, 255, 0.2)'
+      border-radius: 0.2vw
+
+  - type: 'custom:mini-graph-card'
+    tap_action:
+      action: none
+    color_thresholds:      
+      - color: '#03a8f4'
+        value: 20
+      - color: '#ffa31a'
+        value: 40
+      - color: '#ff1a1a'
+        value: 60
+    entities:
+      - entity: sensor.cdrxstation3_temperature
+        name: Température NAS
+        show_state: true
+    points_per_hour: 1
+    font_size: 60
+    show:
+      name: true
+      legend: true
+      icon: false
+    hour24: true 
+    card_mod:                   
+      style: |
+        :host {
+          top: 32.5%;
+          right: 0.75%;
+          width: 20%;
+          transform: translate(0%, 0%) !important;
+          height: 20%;
+        }
+        .header {
+          padding: 0 !important;
+          padding-left: 1vw !important;
+        }
+        ha-card {
+          background-color: rgba(255, 255, 255, 0.2) !important;
+          border-radius: 0.2vw !important;
+          padding-top: 8px !important;
+        }
+        .states {     
+          padding: 0 !important;
+          padding-left: 1vw !important;
+        }
+        .graph__legend {
+          padding-bottom: 0px !important;
+        }
+
+  - type: 'custom:decluttering-card'
+    template: Volume_button
+    variables:
+      - volume_status: sensor.cdrxstation3_volume_1_status
+      - volume_percentage: sensor.cdrxstation3_volume_1_volume_used
+      - volume_used: sensor.cdrxstation3_volume_1_used_space
+      - volume_total: sensor.cdrxstation3_volume_1_total_size
+      - average_temp: sensor.cdrxstation3_volume_1_average_disk_temp
+      - max_temp: sensor.cdrxstation3_volume_1_maximum_disk_temp
+      - name: Volume 1
+      - top: 7.5vw
+      - left: 67.3vw
+
+  - type: 'custom:mini-graph-card'
+    tap_action:
+      action: none
+    name: CPU load time  
+    entities:
+      - entity: sensor.cdrxstation3_cpu_load_1_min
+        name: 1 min.
+        show_state: false
+        color: '#ffa31a'
+      - entity: sensor.cdrxstation3_cpu_load_5_min
+        name: 5 min.
+        show_state: false
+        color: '#03a8f4'
+      - entity: sensor.cdrxstation3_cpu_load_15_min
+        name: 15 min.
+        show_state: false
+        color: '#0b0385'
+    points_per_hour: 1
+    font_size: 60
+    show:
+      name: true
+      legend: true
+      icon: false
+    hour24: true   
+    card_mod:                 
+      style: |
+        :host {
+          bottom: 1%;
+          left: 0.75%;
+          width: 25%;
+          height: 20%;
+          transform: translate(0%, 0%) !important;
+        }
+        .header {
+          padding: 0 !important;
+          padding-left: 1vw !important;
+        }
+        ha-card {
+          background-color: rgba(255, 255, 255, 0.2) !important;
+          border-radius: 0.2vw !important;
+          padding-top: 8px !important;
+        }
+        .states {     
+          padding: 0 !important;
+          padding-left: 1vw !important;
+        }
+        .graph__legend {
+          padding-bottom: 0px !important;
+        }
+
+  - type: 'custom:mini-graph-card'
+    tap_action:
+      action: none
+    name: CPU load type  
+    entities:
+      - entity: sensor.cdrxstation3_cpu_load_other
+        name: Other
+        show_state: false
+        color: '#03a8f4'
+      - entity: sensor.cdrxstation3_cpu_load_system
+        name: System
+        show_state: false
+        color: '#ff1a1a'
+      - entity: sensor.cdrxstation3_cpu_load_user
+        name: User
+        show_state: false
+        color: '#ffa31a'
+      - entity: sensor.cdrxstation3_cpu_load_total
+        name: Total
+        show_state: false
+        color: '#0b0385'
+    points_per_hour: 1
+    font_size: 60
+    show:
+      name: true
+      legend: true
+      icon: false
+    hour24: true 
+    card_mod:                   
+      style: |
+        :host {
+          bottom: 1%;
+          left: 26.75%;
+          width: 25%;
+          height: 20%;
+          transform: translate(0%, 0%) !important;
+        }
+        .header {
+          padding: 0 !important;
+          padding-left: 1vw !important;
+        }
+        ha-card {
+          background-color: rgba(255, 255, 255, 0.2) !important;
+          border-radius: 0.2vw !important;
+          padding-top: 8px !important;
+        }
+        .states {     
+          padding: 0 !important;
+          padding-left: 1vw !important;
+        }
+        .graph__legend {
+          padding-bottom: 0px !important;
+        }
+
+  - type: 'custom:mini-graph-card'
+    tap_action:
+      action: none
+    name: Network
+    entities:
+      - entity: sensor.cdrxstation3_network_down
+        name: Download
+        show_state: false
+        color: '#ffa31a'
+      - entity: sensor.cdrxstation3_network_up
+        name: Upload
+        show_state: false
+        color: '#03a8f4'
+    points_per_hour: 1
+    font_size: 60
+    show:
+      name: true
+      legend: true
+      icon: false
+    hour24: true    
+    card_mod:                
+      style: |
+        :host {
+          bottom: 1%;
+          right: 0.75%;
+          width: 25%;
+          transform: translate(0%, 0%) !important;
+          height: 20%;
+        }
+        .header {
+          padding: 0 !important;
+          padding-left: 1vw !important;
+        }
+        ha-card {
+          background-color: rgba(255, 255, 255, 0.2) !important;
+          border-radius: 0.2vw !important;
+          padding-top: 8px !important;
+        }
+        .states {     
+          padding: 0 !important;
+          padding-left: 1vw !important;
+        }
+        .graph__legend {
+          padding-bottom: 0px !important;
+        }
+
+  - type: 'custom:config-template-card'
+    entities:
+      - sensor.cdrxstation3_memory_available_real
+      - sensor.cdrxstation3_memory_available_swap
+      - sensor.cdrxstation3_memory_total_real
+      - sensor.cdrxstation3_memory_total_swap
+      - sensor.cdrxstation3_memory_usage_real
+      - sensor.cdrxstation3_memory_cached
+      - sensor.cdrxstation3_memory_size
+    card:
+      type: 'custom:bar-card'
+      entities:
+      - entity: sensor.cdrxstation3_memory_available_real
+        name: 'Real available'
+        min: 0
+        max: "${states['sensor.cdrxstation3_memory_total_real'].state}"
+        color: '#03a8f4'
+      - entity: sensor.cdrxstation3_memory_usage_real
+        name: 'Real usage'
+        min: 0
+        max: 100
+        color: '#03a8f4'
+      - entity: sensor.cdrxstation3_memory_available_swap
+        name: 'Swap available'
+        min: 0
+        max: "${states['sensor.cdrxstation3_memory_total_swap'].state}"
+        color: '#03a8f4'
+      - entity: sensor.cdrxstation3_memory_cached
+        name: 'Cached'
+        min: 0
+        max: "${states['sensor.cdrxstation3_memory_size'].state}"
+        color: '#03a8f4'
+      direction: up
+      stack: horizontal
+      height: 500px
+      positions:
+        icon: 'off'
+        indicator: 'off'
+        value: inside
+        minmax: inside
+      card_mod:
+        style: |
+          ha-card {
+            background-color: rgba(255, 255, 255, 0.2) !important;
+            border-radius: 0.2vw !important;
+            color: #e0e1e1 !important;
+          }
+          bar-card-background {
+            display: flex !important;
+            height: 1.5vw !important;
+          }
+          div#states.card-content {
+            padding: 8px !important;
+          }
+          .contentbar-direction-right {
+           flex-direction: column;
+          }
+            bar-card-value {
+            margin: 0px;
+            font-size: 0.7vw;
+            top: 25%;
+            position: absolute;
+          }
+          bar-card-name {
+            margin: 0px;
+            text-align: center;
+            font-size: 0.7vw;
+            top: 50%;
+            position: absolute;
+            line-height: 1rem !important;
+          }
+          bar-card-max {
+            margin: 0px;
+            top: 2%;
+            position: absolute;
+          }
+          bar-card-divider {
+            display: none;
+          }
+    style:
+      bottom: 1%
+      left: 52.75%
+      width: 20.5%
+      height: 20%
+      transform: translate(0%, 0%)
+    card_mod:
+      style: |
+          div#card {
+            height: 100%;
+          }

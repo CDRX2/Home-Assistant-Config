@@ -1,0 +1,74 @@
+{
+  "title": "Skoda Connect",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Konfiguracja Skoda Connect",
+        "description": "Wypełnij informacje dla Skoda Connect\n\nS-PIN jest wymagany w przypadku niektórych opcji, takich jak blokowanie/odblokowywanie auta i włączanie/wyłączanie silnika",
+        "data": {
+          "username": "Email",
+          "password": "Hasło"
+        }
+      },
+      "vehicle": {
+        "title": "Samochód",
+        "description": "Znaleziono następujące pojazdy. Wybierz pojazd, który chcesz monitorować i jego ustawienia.\n\nKod S-PIN jest wymagany tylko do niektórych określonych operacji, takich jak blokowanie/odblokowywanie i operacje, które aktywują ogrzewanie silnika spalinowego.\nMożesz pozostawić to pole puste.",
+        "data": {
+          "vehicle": "Numer VIN",
+          "spin": "S-PIN",
+          "store_tokens": "Save session tokens in configuration. Allows for faster startup.",
+          "mutable": "Usuń zaznaczenie, aby samochód był „tylko do odczytu”. Jeśli je zostawisz będziesz mógł wejść w interakcję z samochodem"
+        }
+      },
+      "monitoring": {
+        "title": "Ustawienia monitorowania",
+        "description": "Określ dodatkowe ustawienia monitorowania.",
+        "data": {
+          "resources": "Zasoby do dodania",
+          "convert": "Wybierz, jeśli chcesz dokonać konwersji jednostek odległości",
+          "scan_interval": "Częstotliwość sondowania (sekundy).",
+          "debug": "Pełne rejestrowanie debugowania interfejsu API (wymaga włączenia rejestrowania debugowania w pliku configuration.yaml)"
+        }
+      },
+      "reauth_confirm": {
+        "data": {
+          "description": "Ponownie uwierzytelnij się do swojego konta Skoda Connect. Przed kontynuowaniem należy zaakceptować każdą nową umowę EULA w portalu Skoda Connect (https://www.skoda-connect.com/).",
+          "username": "Email",
+          "password": "Hasło"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "Samochód z tym VIN jest już skonfigurowany",
+      "reauth_successful": "Ponowne uwierzytelnienie powiodło się"
+    },
+    "error": {
+      "cannot_connect": "Nie można zalogować się do Skoda Connect, sprawdź wpisane dane logowania i sprawdź, czy usługa działa",
+      "cannot_update": "Nie można zaktualizować danych Skoda Connect",
+      "unknown": "[%key:common::config_flow::error::unknown%]"
+    },
+    "progress": {
+      "task_login": "Logowanie do Skoda Connect",
+      "task_update": "Pobieranie listy pojazdów"
+    }
+  },
+  "options": {
+    "step": {
+      "user": {
+        "title": "Opcje Skoda Connect",
+        "description": "Skonfiguruj opcje monitorowania pojazdu Skoda Connect.",
+        "data": {
+          "scan_interval": "Częstotliwość aktualizacji czujników (sekundy)",
+          "spin": "S-PIN",
+          "mutable": "Usuń zaznaczenie, aby samochód był „tylko do odczytu”. Jeśli je zostawisz będziesz mógł wejść w interakcję z samochodem",
+          "store_tokens": "Save session tokens in configuration. Allows for faster startup.",
+          "convert": "Wybierz, jeśli chcesz dokonać konwersji jednostek odległości",
+          "resources": "Zasoby do dodania",
+          "debug": "Włącz pełne dzienniki debugowania z interfejsu API (wymaga włączenia rejestrowania debugowania w konfiguracji)"
+        }
+      }
+    }
+  }
+}
+
+

@@ -1,0 +1,26 @@
+- platform: template
+  sensors:
+    hass_alert:
+      value_template: >-
+        {{ iif (states('update.samba_share_update') != 'off' or
+          states('update.file_editor_update') != 'off' or
+          states('update.ssh_web_terminal_update') != 'off' or
+          states('update.appdaemon_update') != 'off' or
+          states('update.samba_backup_update') != 'off' or
+          states('update.home_assistant_core_update') != 'off' or
+          states('update.home_assistant_operating_system_update') != 'off' or
+          states('update.home_assistant_supervisor_update') != 'off' or
+          states('sensor.hacs') > '0', 'alert', 'normal') }}
+
+- platform: template
+  sensors:
+    hass_alert_2:
+      value_template: >-
+        {{ iif (states('update.samba_share_update') != 'off' or
+          states('update.file_editor_update') != 'off' or
+          states('update.ssh_web_terminal_update') != 'off' or
+          states('update.appdaemon_update') != 'off' or
+          states('update.samba_backup_update') != 'off' or
+          states('update.home_assistant_core_update') != 'off' or
+          states('update.home_assistant_operating_system_update') != 'off' or
+          states('update.home_assistant_supervisor_update') != 'off', 'alert', 'normal') }}

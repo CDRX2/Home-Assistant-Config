@@ -1,0 +1,31 @@
+
+CDRX:
+  modes:
+    dark:
+      ha-card-border-width: 0px
+      ha-card-border-radius: 0px
+      paper-item-icon-color: '#9da0a2'
+      app-header-background-color: "var(--card-background-color)"
+      # Dialogs
+      dialog-backdrop-filter: blur(17px)
+      mdc-dialog-box-shadow: 0 0 1vw 0 black
+      mdc-shape-medium: 0.7vw
+      # new drowpdown variables 2022.3
+      input-idle-line-color: 'transparent'
+      input-hover-line-color: "var(--paper-item-icon-active-color)"
+      input-disabled-line-color: "var(--disabled-text-color)"
+      input-outlined-idle-border-color: "var(--disabled-text-color)"
+      input-outlined-hover-border-color: "var(--disabled-text-color)"
+      input-outlined-disabled-border-color: "var(--disabled-text-color)"
+      input-fill-color: "var(--card-background-color)"
+      input-disabled-fill-color: "var(--card-background-color)"
+      input-ink-color: "var(--primary-text-color)"
+      input-label-ink-color: "var(--secondary-text-color)"
+      input-disabled-ink-color: "var(--disabled-text-color)"
+      input-dropdown-icon-color: "var(--primary-text-color)"
+      # Correct closing button placement
+      card-mod-more-info-yaml: |
+        mwc-icon-button$: |
+          .mdc-icon-button {
+              padding-top: calc( (var(--mdc-icon-button-size, 48px) - var(--mdc-icon-size, 24px)) / 4 ) !important;
+            }

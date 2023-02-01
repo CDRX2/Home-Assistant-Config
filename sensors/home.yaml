@@ -1,0 +1,36 @@
+- platform: template
+  sensors:
+    trash:
+      value_template: >-
+        {% if states('sensor.poubelle_compost_papier') == 'tomorrow' and states('sensor.verre') != 'tomorrow' %}
+          tomorrow
+        {% elif states('sensor.poubelle_compost_papier') == 'today' and states('sensor.verre') != 'today' %}
+          today
+        {%elif states('sensor.poubelle_compost_papier') == 'tomorrow' and states('sensor.verre') == 'tomorrow' %}
+          verre tomorrow
+        {%elif states('sensor.poubelle_compost_papier') == 'today' and states('sensor.verre') == 'today' %}
+          verre today
+        {% else %}
+          normal
+        {% endif %}
+
+- platform: template
+  sensors:
+    cat_flap_status:
+      friendly_name: "Chatière"
+      value_template: >-
+        {{ iif (is_state('lock.entree_locked_all', 'locked') or
+              is_state('lock.entree_locked_in', 'locked') or
+              is_state('lock.entree_locked_out', 'locked'), 'locked', 'unlocked') }}         
+      icon_template: >-
+        {% if is_state('lock.entree_locked_all', 'locked') %}
+          mdi:lock
+        {% elif is_state('lock.entree_locked_in', 'locked') %}
+          mdi:location-enter
+        {% elif is_state('lock.entree_locked_out', 'locked' ) %}
+          mdi:location-exit
+        {% elif is_state('lock.entree_locked_all', 'unlocked') and
+                is_state('lock.entree_locked_in', 'unlocked') and
+                is_state('lock.entree_locked_out', 'unlocked') %}
+          mdi:lock-open
+        {% endif %}

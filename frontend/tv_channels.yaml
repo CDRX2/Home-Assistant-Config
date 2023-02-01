@@ -1,0 +1,104 @@
+type: 'custom:mod-card'
+card:
+  type: 'custom:layout-card'
+  layout_type: custom:grid-layout
+  layout:
+    grid-template-columns: 25% 25% 25% 25%
+    grid-template-rows: auto
+    grid-template-areas: |
+      "m6 rts1 rts2 tf1"
+      "w9 natfr natwfr natde"
+      "srf1 srf2 srfinfo dmax"
+  cards:
+    - type: 'custom:button-card'
+      template: media_channels
+      variables:
+        service: script.m6
+        picture: /local/ui/media/m6.png
+      view_layout:
+        grid-area: m6
+    - type: 'custom:button-card'
+      template: media_channels
+      variables:
+        service: script.rts1
+        picture: /local/ui/media/rts1.png
+      view_layout:
+        grid-area: rts1
+    - type: 'custom:button-card'
+      template: media_channels
+      variables:
+        service: script.rts2
+        picture: /local/ui/media/rts2.png
+      view_layout:
+        grid-area: rts2
+    - type: 'custom:button-card'
+      template: media_channels
+      variables:
+        service: script.tf1
+        picture: /local/ui/media/tf1.png
+      view_layout:
+        grid-area: tf1
+    - type: 'custom:button-card'
+      template: media_channels
+      variables:
+        service: script.w9
+        picture: /local/ui/media/w9.png
+      view_layout:
+        grid-area: w9
+    - type: 'custom:button-card'
+      template: media_channels
+      variables:
+        service: script.nat_geo_fr
+        picture: /local/ui/media/natfr.png
+      view_layout:
+        grid-area: natfr
+    - type: 'custom:button-card'
+      template: media_channels
+      variables:
+        service: script.nat_geo_wild_fr
+        picture: /local/ui/media/natwfr.png
+      view_layout:
+        grid-area: natwfr
+    - type: 'custom:button-card'
+      template: media_channels
+      variables:
+        service: script.nat_geo_de
+        picture: /local/ui/media/natde.png
+      view_layout:
+        grid-area: natde
+    - type: 'custom:button-card'
+      template: media_channels
+      variables:
+        service: script.srf1
+        picture: /local/ui/media/srf1.png
+      view_layout:
+        grid-area: srf1
+    - type: 'custom:button-card'
+      template: media_channels
+      variables:
+        service: script.srf2
+        picture: /local/ui/media/srf2.png
+      view_layout:
+        grid-area: srf2
+    - type: 'custom:button-card'
+      template: media_channels
+      variables:
+        service: script.srfinfo
+        picture: /local/ui/media/srfinfo.png
+      view_layout:
+        grid-area: srfinfo
+    - type: 'custom:button-card'
+      template: media_channels
+      variables:
+        service: script.dmax
+        picture: /local/ui/media/dmax.png
+      view_layout:
+        grid-area: dmax
+
+view_layout:
+  grid-area: channels
+card_mod:
+style: |
+  :host {
+    align-self: center;
+  }

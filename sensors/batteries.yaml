@@ -1,0 +1,61 @@
+- platform: template
+  sensors:
+    battery_huawei:
+      unit_of_measurement: '%'
+      value_template: >-
+          {% if states('sensor.lya_l29_battery_level') %}
+              {{ states('sensor.lya_l29_battery_level') | round }}
+          {% else %}
+              {{ states('sensor.battery_huawei') }}
+          {% endif %}
+      icon_template: >-
+        {% if is_state('sensor.battery_huawei', 'unknown') %}
+          mdi:battery-unknown
+        {% elif is_state('sensor.lya_l29_battery_state', 'charging') %}
+          mdi:battery-charging
+        {% elif states('sensor.lya_l29_battery_level')|float(default=0) <= 5 %}
+          mdi:battery-outline
+        {% elif states('sensor.lya_l29_battery_level')|float(default=0) >= 95 %}
+          mdi:battery          
+        {% else %}
+          mdi:battery-{{(states('sensor.lya_l29_battery_level')|float(default=0) / 10)|round*10}}
+        {% endif %}
+
+- platform: template
+  sensors:
+    battery_realme:
+      unit_of_measurement: '%'
+      value_template: >-
+          {% if states('sensor.cdrx2pro_battery_level') %}
+              {{ states('sensor.cdrx2pro_battery_level') | round }}
+          {% else %}
+              {{ states('sensor.battery_realme') }}
+          {% endif %}
+      icon_template: >-
+        {% if is_state('sensor.battery_realme', 'unknown') %}
+          mdi:battery-unknown
+        {% elif is_state('sensor.cdrx2pro_battery_state', 'charging') %}
+          mdi:battery-charging
+        {% elif states('sensor.cdrx2pro_battery_level')|float(default=0) <= 5 %}
+          mdi:battery-outline
+        {% elif states('sensor.cdrx2pro_battery_level')|float(default=0) >= 95 %}
+          mdi:battery          
+        {% else %}
+          mdi:battery-{{(states('sensor.cdrx2pro_battery_level')|float(default=0) / 10)|round*10}}
+        {% endif %}
+
+- platform: template
+  sensors:
+    battery_alert:
+      value_template: >-
+        {{ iif (states('sensor.salon_battery')|float(default=0) < 10 or
+          states('sensor.temperature_guest_bathroom_battery_level')|float(default=0) < 10 or
+          states('sensor.temperature_entrance_battery_level')|float(default=0) < 10 or
+          states('sensor.temperature_guest_battery_level')|float(default=0) < 10 or
+          states('sensor.office_battery')|float(default=0) < 10 or
+          states('sensor.temperature_bathroom_battery_level')|float(default=0) < 10 or
+          states('sensor.twins_battery')|float(default=0) < 10 or
+          states('sensor.temperature_charles_battery_level')|float(default=0) < 10 or
+          states('sensor.bottom_stairs_battery')|float(default=0) < 10 or
+          states('sensor.movement_driveway_battery_level')|float(default=0) < 10 or
+          states('sensor.cat_flap_entree_battery_level')|float(default=0) < 10, 'alert', 'normal') }}

@@ -1,0 +1,442 @@
+
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+# Uncomment this if you are using SSL/TLS, running in Docker container, etc.
+# http:
+#   base_url: example.duckdns.org:8123
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+# logger:
+#   default: warning
+#   logs:
+#     custom_components.asyncpioneer: debug
+
+lovelace:
+  mode: storage
+  dashboards:
+    lovelace-visual:
+      mode: yaml
+      title: Visual
+      icon: mdi:floor-plan
+      show_in_sidebar: true
+      filename: visual.yaml
+    lovelace-remote:
+      mode: yaml
+      title: Remote
+      icon: mdi:remote-tv
+      show_in_sidebar: true
+      filename: remote-main.yaml
+    lovelace-dev:
+      mode: yaml
+      title: Dev
+      icon: mdi:github
+      show_in_sidebar: true
+      filename: dev.yaml
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+sensor: !include_dir_merge_list sensors/
+
+homeassistant:
+  customize: !include customize.yaml
+  auth_providers:
+    - type: homeassistant
+    - type: trusted_networks
+      trusted_networks:
+        - 10.81.19.0/24
+      trusted_users:
+        10.81.19.91: b10394b57f24478ba674a837f57158be
+        10.81.19.92: b10394b57f24478ba674a837f57158be
+        10.81.19.93: b10394b57f24478ba674a837f57158be
+        10.81.19.94: b10394b57f24478ba674a837f57158be
+      allow_bypass_login: true
+
+# browser_mod:
+#   devices:
+#     7cd8f43d-f1e2fb4d:
+#       name: CDRXPS_chrome
+#     1ca3e9c8 29c5fdd7:
+#       name: CDRX2_App
+#     89534705-fa304c6a:
+#       name: NanneHuawei_App
+#     eae7e411-f2908d51:
+#       name: NanneHuawei_chrome
+#     2c088d82-ca71ed40:
+#       name: CDRX2_chrome
+#     9e06779f-8aa8373e:
+#       name: Tab_rez
+#       force_stay_awake: true
+#     86f66e1b-f1dcabf4:
+#       name: Tab_mobile
+#       force_stay_awake: true
+#     a87a25ad-d83a08ab:
+#       name: Tab_remote
+#       force_stay_awake: true
+#     ed9d0359-407e4340:
+#       name: CDRXPS_Vivaldi
+#   disable:
+#     - all
+
+discovery:
+
+media_player:
+  - platform: openhome
+
+  - platform: asyncpioneer
+    host: !secret AVR_Host
+    port: !secret AVR_Port
+
+wake_on_lan:
+
+frontend:
+  themes: !include_dir_merge_named themes/
+  extra_module_url:
+    - /hacsfiles/hass-hue-icons/hass-hue-icons.js
+    - /hacsfiles/lovelace-card-mod/card-mod.js
+
+# google:
+#   client_id: !secret Google_Client_Id
+#   client_secret: !secret Google_Client_Secret
+
+remote:
+  - platform: itach
+    host: !secret itach_host
+    devices:
+      - name: swisscom
+        connaddr: 3
+        commands:
+          - name: Power
+            data: "0000 006D 0000 000C 000B 0017 0017 0017 0017 0017 0017 000B 000B 0017 0017 0017 000B 000B 000B 000B 0017 0017 0017 000B 000B 0017 000B 0D37"
+          - name: Up
+            data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 0018 000C 000C 0018 000C 000C 0018 0D64"
+          - name: Down
+            data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 0018 000C 000C 0018 0018 0018 000C 0D58"
+          - name: Left
+            data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 0018 000C 000C 000C 000C 0018 0018 0D64"
+          - name: Right
+            data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 0018 0018 000C 000C 000C 000C 000C 000C 0018 0D64"
+          - name: Back
+            data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 0018 000C 000C 000C 000C 0018 0018 0018 000C 0D57"
+          - name: +30sec
+            data: "0000 006B 0000 000B 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 0018 0018 000C 000C 0018 0018 000C 000C 0018 0D65"
+          - name: -10sec
+            data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 0018 0018 000C 000C 000C 000C 000C 000C 0018 0018 000C 0D58"
+          - name: Option
+            data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 0018 000C 0D58"
+          - name: Menu
+            data: "0000 006B 0000 000B 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 0D58"
+          - name: Ok
+            data: "0000 006B 0000 000D 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 0018 000C 000C 000C 000C 000C 000C 0018 000C 0D58"
+          - name: Play/Pause
+            data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 0018 000C 000C 0018 0018 000C 000C 0018 000C 0D58"
+          - name: Rec
+            data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 0018 000C 000C 000C 000C 0018 000C 000C 0018 0D65"
+          - name: Channel+
+            data: "0000 006B 0000 000B 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 0018 0018 0018 0018 000C 000C 0018 0D64"
+          - name: Channel-
+            data: "0000 006B 0000 000B 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 0018 0018 0D64"
+          - name: Tv guide
+            data: "0000 006B 0000 000D 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 0018 000C 000C 000C 000C 000C 000C 000C 000C 0018 000C 0D58"
+          - name: Forward
+            data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 0018 0018 000C 000C 000C 000C 0018 000C 000C 0018 000C 0D58"
+          - name: Rewind
+            data: "0000 006B 0000 000B 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 0018 0018 000C 000C 000C 000C 0018 0018 0018 0D64"
+          - name: 0
+            data: "0000 006B 0000 000B 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 0018 0018 0018 0018 0018 0D64"
+          - name: 1
+            data: "0000 006B 0000 000D 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 000C 000C 000C 000C 000C 000C 0018 0018 000C 0D58"
+          - name: 2
+            data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 000C 000C 000C 000C 0018 0018 0018 0D64"
+          - name: 3
+            data: "0000 006B 0000 000D 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 000C 000C 000C 000C 0018 000C 000C 0018 000C 0D58"
+          - name: 4
+            data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 000C 000C 0018 0018 000C 000C 0018 0D64"
+          - name: 5
+            data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 000C 000C 0018 0018 0018 0018 000C 0D58"
+          - name: 6
+            data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 000C 000C 0018 000C 000C 0018 0018 0D64"
+          - name: 7
+            data: "0000 006B 0000 000D 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 000C 000C 0018 000C 000C 000C 000C 0018 000C 0D58"
+          - name: 8
+            data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 0018 0018 000C 000C 000C 000C 0018 0D64"
+          - name: 9
+            data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 0018 0018 000C 000C 0018 0018 000C 0D58"
+
+cover:
+  - platform: template
+    covers:
+      store_terrasse_reversed:
+        friendly_name: "Store terrasse reversed"
+        position_template: "{{ 100 - state_attr('cover.store_terrasse', 'current_position') | int(100) }}"
+        open_cover:
+          service: cover.close_cover
+          data: {}
+          target:
+            entity_id: cover.store_terrasse
+        close_cover:
+          service: cover.open_cover
+          data: {}
+          target:
+            entity_id: cover.store_terrasse
+        set_cover_position:
+          service: cover.set_cover_position
+          data:
+            position: "{{100-position}}"
+            entity_id: cover.store_terrasse
+        icon_template: >-
+          {% if is_state('cover.store_terrasse', 'closed') %}
+            mdi:awning
+          {% else %}
+            mdi:awning-outline
+          {% endif %}
+
+  # - platform: template
+  #   covers:
+  #     tableau_tv_reversed:
+  #       friendly_name: "Tableau TV reversed"
+  #       position_template: "{{ 100 - state_attr('cover.tableau_tv', 'current_position') | int(100) }}"
+  #       open_cover:
+  #         service: cover.close_cover
+  #         data: {}
+  #         target:
+  #           entity_id: cover.tableau_tv
+  #       close_cover:
+  #         service: cover.open_cover
+  #         data: {}
+  #         target:
+  #           entity_id: cover.tableau_tv
+  #       stop_cover:
+  #         service: cover.stop_cover
+  #         data: {}
+  #         target:
+  #           entity_id: cover.tableau_tv
+  #       set_cover_position:
+  #         service: cover.set_cover_position
+  #         data:
+  #           position: "{{100-position}}"
+  #           entity_id: cover.tableau_tv
+  #       icon_template: >-
+  #         {% if is_state('cover.tableau_tv', 'closed') %}
+  #           mdi:door-sliding-open
+  #         {% else %}
+  #           mdi:door-sliding
+  #         {% endif %}
+
+light:
+
+  - platform: switch
+    name: Panneau lumineux
+    entity_id: switch.panneau_lumineux
+
+  - platform: switch
+    name: Terrasse Sol
+    entity_id: switch.terrasse_sol
+
+  - platform: switch
+    name: Chevet Nanne
+    entity_id: switch.chevet_nanne
+
+  - platform: switch
+    name: Chevet CDRX
+    entity_id: switch.chevet_cdrx
+
+  - platform: switch
+    name: Imprimante
+    entity_id: switch.imprimante   
+
+  - platform: switch
+    name: Grand totem
+    entity_id: switch.grand_totem
+
+  - platform: switch
+    name: Petit totem
+    entity_id: switch.petit_totem
+
+  - platform: switch
+    name: Spare switch 1
+    entity_id: switch.spare_switch_1
+
+  - platform: switch
+    name: Spare switch 2
+    entity_id: switch.spare_switch_2
+
+  - platform: switch
+    name: Spare switch 3
+    entity_id: switch.spare_switch_3
+
+  - platform: switch
+    name: Spare switch 4
+    entity_id: switch.spare_switch_4
+
+  - platform: switch
+    name: Manger Lampe
+    entity_id: switch.manger_lampe
+
+  - platform: switch
+    name: Cuisine plafonnier
+    entity_id: switch.cuisine_plafonnier
+  
+  - platform: switch
+    name: Jumeaux prises
+    entity_id: switch.jumeaux_prises
+
+  - platform: switch
+    name: Guest bathroom
+    entity_id: switch.guest_bathroom
+
+  - platform: switch
+    name: Bathroom door
+    entity_id: switch.bathroom_door
+
+  - platform: switch
+    name: Bathroom mirror
+    entity_id: switch.bathroom_mirror
+
+  - platform: switch
+    name: Escalier cave
+    entity_id: switch.escalier_cave
+
+  # - platform: switch
+  #   name: Amis prises
+  #   entity_id: switch.amis_prises
+
+  - platform: group
+    name: Cuisine
+    entities:
+    - light.cuisine_deco
+    - light.cuisine_plafonnier
+
+  - platform: group
+    name: Salle à manger
+    entities:
+    - light.manger_lampe
+    - light.manger_plafonnier
+
+  - platform: group
+    name: Salon blanc
+    entities:
+    - light.grand_totem
+    - light.petit_totem
+    - light.salon_plafonnier
+
+  - platform: group
+    name: Totems blanc
+    entities:
+    - light.petit_totem
+    - light.grand_totem
+
+  - platform: group
+    name: Salon
+    entities:
+    - light.salon_plafonnier
+    - light.totems_blanc
+    - light.couleur_rez
+    - light.vinyles
+    - light.panneau_lumineux
+
+  - platform: group
+    name: Salon déco
+    entities:
+    - light.grand_totem_deco
+    - light.panneau_lumineux
+    - light.petit_totem_deco
+    - light.tv
+    - light.vinyles
+    - light.bar
+    # - light.spare_switch_1
+    # - light.spare_switch_2
+    # - light.spare_switch_3
+
+  - platform: group
+    name: Noel
+    entities:
+      - light.spare_switch_1
+      - light.spare_switch_2
+      - light.spare_switch_3
+
+  - platform: group
+    name: Terrasse
+    entities:
+    - light.terrasse_sol
+    - light.terrasse_3
+
+  - platform: group
+    name: Chambre parents
+    entities:
+    - light.lit_parents_blanc
+    - light.lit_parents_couleur
+    - light.chevet_cdrx
+    - light.chevet_nanne
+
+  - platform: group
+    name: Chambre Charles
+    entities:
+    - light.plafond_charles_exterieur_white
+    - light.plafond_charles_interieur_white
+
+  - platform: group
+    name: Couleur Rez
+    entities:
+    - light.tv
+    - light.petit_totem_deco
+    - light.grand_totem_deco
+    - light.bar
+
+  - platform: group
+    name: Amis
+    entities:
+    - light.chevet_amis_geneve
+    - light.chevet_amis_valais
+    # - light.amis_prises
+    # - light.amis_plafonnier
+
+  - platform: group
+    name: Jumeaux
+    entities:
+    - light.jumeaux_prises
+    - light.lustre_jumeaux
+    - light.jumeaux_armoires_blanc
+  
+  - platform: group
+    name: Chevet amis
+    entities:
+    - light.chevet_amis_geneve
+    - light.chevet_amis_valais
+
+  - platform: group
+    name: Salle de bains
+    entities:
+    - light.bathroom_door
+    - light.bathroom_mirror
+
+  - platform: group
+    name: All lights
+    entities:
+    - light.cuisine_deco
+    - light.cuisine_plafonnier
+    - light.manger_lampe
+    - light.manger_plafonnier
+    - light.grand_totem
+    - light.grand_totem_deco
+    - light.petit_totem
+    - light.petit_totem_deco
+    - light.salon_plafonnier
+    - light.panneau_lumineux
+    - light.tv
+    - light.vinyles
+    - light.bar
+    - light.terrasse_sol
+    - light.terrasse_3
+    - light.lit_parents_blanc
+    - light.lit_parents_couleur
+    - light.chevet_cdrx_4
+    - light.chevet_nanne_3
+    - light.plafond_charles_exterieur_white
+    - light.plafond_charles_interieur_white
+    - light.spare_switch_1
+    - light.spare_switch_2

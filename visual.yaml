@@ -1,0 +1,132 @@
+title: Home
+
+button_card_templates: !include_dir_merge_named button_templates/
+
+decluttering_templates: !include_dir_merge_named decluttering_templates/
+
+apexcharts_card_templates: !include_dir_merge_named apexcharts_templates/
+
+views:
+
+  #############################################################################################################################################
+  #                                                                                                                                           #
+  #                                                              Floorplan View                                                               #
+  #                                                                                                                                           #
+  #############################################################################################################################################
+
+- title: Lumières
+  icon: 'mdi:lightbulb-group'
+  panel: true
+  badges: []
+  path: lights
+  cards:
+    - type: 'custom:decluttering-card'
+      template: swiper_config_template
+      variables:
+        - sidebar: !include frontend/sidebar.yaml
+        - card_rez: !include frontend/lights_rez.yaml
+        - card_1er: !include frontend/lights_1er.yaml
+
+
+  #############################################################################################################################################
+  #                                                                                                                                           #
+  #                                                            Climate View                                                                   #
+  #                                                                                                                                           #
+  #############################################################################################################################################
+
+- title: Climat
+  icon: 'mdi:water-outline'
+  panel: true
+  badges: []
+  path: climate
+  cards:
+    - type: 'custom:decluttering-card'
+      template: swiper_config_template
+      variables:
+        - sidebar: !include frontend/sidebar.yaml
+        - card_rez: !include frontend/climate_rez.yaml
+        - card_1er: !include frontend/climate_1er.yaml
+  
+
+  #############################################################################################################################################
+  #                                                                                                                                           #
+  #                                                   All Devices (Entities) Classical Style View                                             #
+  #                                                                                                                                           #
+  #############################################################################################################################################
+
+- title: Standard
+  icon: 'mdi:floor-plan'
+  path: all-devices
+  panel: true
+  cards:
+    - type: 'custom:decluttering-card'
+      template: simple_grid
+      variables:
+        - sidebar: !include frontend/sidebar.yaml
+        - card:
+            type: 'custom:swipe-card'
+            parameters:
+              effect: 'cube'
+              cubeEffect:
+                shadow: false
+                slideShadows: false
+              grabCursor: true
+            cards:
+              - !include frontend/all_rez.yaml
+              - !include frontend/all_1er.yaml
+
+
+  #############################################################################################################################################
+  #                                                                                                                                           #
+  #                                                            Now Playing Media View                                                         #
+  #                                                                                                                                           #
+  #############################################################################################################################################
+
+- title: Media
+  icon: 'mdi:play-circle'
+  path: media
+  panel: true
+  badges: []
+  cards:
+    - type: 'custom:decluttering-card'
+      template: simple_grid
+      variables:
+        - sidebar: !include frontend/sidebar.yaml
+        - card: !include frontend/media.yaml
+    
+  #############################################################################################################################################
+  #                                                                                                                                           #
+  #                                                               Weather View                                                                #
+  #                                                                                                                                           #
+  #############################################################################################################################################
+
+- title: Weather
+  icon: 'mdi:weather-pouring'
+  path: weather
+  panel: true
+  badges: []
+  cards:
+    - type: 'custom:decluttering-card'
+      template: simple_grid
+      variables:
+        - sidebar: !include frontend/sidebar.yaml
+        - card: !include frontend/weather.yaml
+
+      
+  #############################################################################################################################################
+  #                                                                                                                                           #
+  #                                                            Systems View                                                                   #
+  #                                                                                                                                           #
+  #############################################################################################################################################
+
+- title: Systems
+  icon: 'mdi:chart-line'
+  path: systems
+  panel: true
+  badges: []
+  cards:
+    - type: 'custom:decluttering-card'
+      template: simple_grid
+      variables:
+        - sidebar: !include frontend/sidebar.yaml
+        - card: !include frontend/systems.yaml

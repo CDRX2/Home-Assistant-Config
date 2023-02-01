@@ -1,0 +1,42 @@
+# You can whitelist files/folders with !, these will not be ignored.
+!*.yaml
+!.gitignore
+!*.md
+
+# Ignore folders.
+.storage
+.cloud
+.google.token
+.google_maps_location_sharing.cookies.cdrxtracker_gmail_com
+.HA_VERSION
+image/
+tts/
+archive/
+deps/
+
+# Ensure these YAML files are ignored, otherwise your secret data/credentials will leak.
+ip_bans.yaml
+secrets.yaml
+known_devices.yaml
+tests.yaml
+mobile.yaml
+remote-main.yaml
+clear.yaml
+dark.yaml
+slate-compact-header.yaml
+th_gauge_3.yaml
+dev.yaml
+google_calendars.yaml
+home-assistant_v2.db
+home-assistant_v2.db-wal
+home-assistant_v2.db-shm
+home-assistant.log
+home-assistant.log.fault
+home-assistant.log.1
+sabnzbd.conf
+webostv.conf
+CDRX.png
+Nanne_home.png
+Nanne_not_home.png
+CDRX_home.png
+CDRX_not_home.png

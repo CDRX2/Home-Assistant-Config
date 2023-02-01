@@ -1,0 +1,101 @@
+- platform: plex_recently_added
+  name: Recently added TV
+  token: !secret Plex_Token
+  host: !secret Plex_Host
+  port: !secret Plex_Port
+  max: 10
+  section_types:
+  - show
+   
+- platform: plex_recently_added
+  name: Recently added movies
+  token: !secret Plex_Token
+  host: !secret Plex_Host
+  port: !secret Plex_Port
+  max: 10
+  section_types:
+  - movie
+
+- platform: sonarr_upcoming_media
+  api_key: !secret Sonarr_API
+  host: !secret Plex_Host
+  port: !secret Sonarr_Port
+  days: 60
+  max: 10
+
+- platform: radarr_upcoming_media
+  api_key: !secret Radarr_API
+  host: !secret Plex_Host
+  port: !secret Radarr_Port
+  days: 360
+  max: 10
+
+- platform: template
+  sensors:
+    living_room_tv_now_playing:
+      value_template: >-
+        {% if is_state('media_player.living_room_TV', 'off') %}
+          {{ states('media_player.living_room_TV') }}
+        {% elif is_state('media_player.plex_plex_for_lg_lg_oled77w7v_z', 'playing') or is_state('media_player.plex_plex_for_lg_lg_oled77w7v_z', 'paused') %}
+          Plex
+        {% else %}
+          Other
+        {% endif %}    
+
+- platform: template
+  sensors:
+    living_room_tv_source:
+      value_template: "{{ state_attr('media_player.living_room_tv', 'source') }}"
+      friendly_name: 'Living Room TV Source'
+
+- platform: template
+  sensors:
+    pioneer_avr_source:
+      value_template: "{{ state_attr('media_player.pioneer_avr', 'source') }}"
+      friendly_name: 'Pioneer AVR Source'
+
+- platform: template
+  sensors:
+    now_playing:
+      value_template: >-
+        {% if states('media_player.living_room_tv') != 'off' %}
+          {{ state_attr('media_player.living_room_tv', 'source') }}
+        {% elif states('media_player.bubble') != 'idle' %}
+          bubble
+        {% elif states('media_player.pioneer_avr') != 'off' %}
+          {{ state_attr('media_player.pioneer_avr', 'source')}}
+        {% endif %}
+
+- platform: template
+  sensors:
+    pioneer_sound_mode:
+      friendly_name: "Mode audio actuel"
+      value_template: "{{ state_attr('media_player.pioneer_avr', 'current_sound_mode')|title }}"
+
+- platform: template
+  sensors:
+    pioneer_volume:
+      value_template: >-
+        {% if is_state_attr('media_player.pioneer_avr', 'is_volume_muted', true) %}
+          MUTE
+        {% else %}
+          {{ states('sensor.pioneer_avr_volume')}}
+        {% endif %}
+
+- platform: template 
+  sensors:
+    remote_select:
+      value_template: >-
+        {% if is_state('media_player.pioneer_avr', 'off') and is_state('media_player.living_room_tv', 'off') %}
+          off
+        {% elif is_state_attr('media_player.pioneer_avr', 'source', 'INTERNET RADIO') %}
+          radio
+        {% elif is_state_attr('media_player.pioneer_avr', 'source', 'MEDIA SERVER') %}
+          music
+        {% elif is_state_attr('media_player.pioneer_avr', 'source', 'BT AUDIO') %}
+          bluetooth
+        {% elif is_state_attr('media_player.living_room_tv', 'source', 'HDMI1') %}
+          tv
+        {% else %}
+          other
+        {% endif %}
