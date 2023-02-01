@@ -21,10 +21,7 @@ known_devices.yaml
 tests.yaml
 mobile.yaml
 remote-main.yaml
-clear.yaml
-dark.yaml
 slate-compact-header.yaml
-th_gauge_3.yaml
 dev.yaml
 google_calendars.yaml
 home-assistant_v2.db
