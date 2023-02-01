@@ -1,0 +1,555 @@
+#########################    HARD DISK BUTTON    #########################
+
+# Button to show status of drives in NAS popup
+
+HDD_button:
+  card:
+    type: 'custom:button-card'
+    entity_picture: /local/ui/systems/HDD.png
+    show_entity_picture: true
+    custom_fields:
+      below_life:
+        card:
+          type: 'custom:state-switch'
+          entity: '[[below_min]]'
+          default: 'off'
+          states:
+            'off':
+              type: 'custom:decluttering-card'
+              template: HDD_markdown
+              variables:
+                - icon: disc
+                - text-align: left
+                - text: Min. life
+                - font_color: '#e0e1e1'            
+            'on':
+              type: 'custom:decluttering-card'
+              template: HDD_markdown
+              variables:
+                - icon: disc-alert
+                - text-align: left
+                - text: Min. life
+                - font_color: '#ff1a1a'             
+      bad_sectors:
+        card:
+          type: 'custom:state-switch'
+          entity: '[[bad_sectors]]'
+          default: 'off'
+          states:
+            'off':
+              type: 'custom:decluttering-card'
+              template: HDD_markdown
+              variables:
+                - icon: file-outline
+                - text-align: right
+                - text: Bad sectors
+                - font_color: '#e0e1e1' 
+            'on':
+              type: 'custom:decluttering-card'
+              template: HDD_markdown
+              variables:
+                - icon: file-alert-outline
+                - text-align: right
+                - text: Bad sectors
+                - font_color: '#ff1a1a'  
+      drive_status:
+        card:
+          type: 'custom:state-switch'
+          entity: '[[status]]'
+          default: 'other'
+          states:
+            'normal':
+              type: 'custom:decluttering-card'
+              template: HDD_markdown
+              variables:
+                - icon: harddisk
+                - text-align: left
+                - text: Status
+                - font_color: '#e0e1e1' 
+            'other':
+              type: 'custom:decluttering-card'
+              template: HDD_markdown
+              variables:
+                - icon: harddisk-remove
+                - text-align: left
+                - text: Status
+                - font_color: '#ff1a1a'       
+      smart_status:
+        card:
+          type: 'custom:state-switch'
+          entity: '[[smart]]'
+          default: 'other'
+          states:
+            'normal':
+              type: 'custom:decluttering-card'
+              template: HDD_markdown
+              variables:
+                - icon: content-save
+                - text-align: right
+                - text: Smart
+                - font_color: '#e0e1e1' 
+            'other':
+              type: 'custom:decluttering-card'
+              template: HDD_markdown
+              variables:
+                - icon: content-save-alert
+                - text-align: right
+                - text: Smart
+                - font_color: '#ff1a1a'     
+      graph:
+        card:
+          type: 'custom:mini-graph-card'
+          name: '[[name]]'
+          tap_action:
+            action: none
+          color_thresholds:      
+            - color: '#03a8f4'
+              value: 15
+            - color: '#ffa31a'
+              value: 30
+            - color: '#ff1a1a'
+              value: 45
+          entities:
+            - entity: '[[temperature]]'
+              show_state: true
+              show_legend: false
+              name: '[[name]]'
+          points_per_hour: 1
+          show:
+            name: true
+            legend: true
+            icon: true
+          hour24: true
+          font_size: 50   
+          card_mod:                
+            style: |
+              :host {
+                color: #e0e1e1 !important;
+              }
+              .name {
+                color: #e0e1e1 !important;
+              }
+              ha-card {
+                box-shadow: none !important;
+                background: none !important;
+                padding: 0 !important;
+                color: #e0e1e1 !important;
+              }
+              .header {
+                position: absolute !important;
+                width: 50% !important;
+                padding: 0 !important;
+                right: 12.5% !important;
+                color': #e0e1e1 !important;
+              }
+              .icon > ha-icon {
+                width:1.8vw !important;
+                height:1.8vw !important;
+              }   
+    styles:
+      card:
+        - top: '[[top]]'
+        - left: '[[left]]'
+        - width: 13.5vw
+        - height: 14vw
+        - background-color: 'rgba(255, 255, 255, 0.2)'
+        - border-radius: 0.2vw
+        - box-shadow: none
+        - padding: 0
+      entity_picture:
+        - width: 40%
+        - height: 40%
+        - position: absolute
+        - top: 0%
+      img_cell:
+        - margin: none
+        - overflow: unset
+        - position: absolute
+        - left: 0%
+        - top: 5%
+      grid:
+        - position: relative
+      custom_fields:
+        bad_sectors:
+          - position: absolute
+          - right: 5%
+          - top: 30%
+        below_life:
+          - position: absolute
+          - left: 5%
+          - top: 30%
+        drive_status:
+          - position: absolute
+          - left: 5%
+          - top: 5%
+        smart_status:
+          - position: absolute
+          - right: 5%
+          - top: 5%
+        graph:
+          - overflow: unset
+          - position: absolute
+          - left: 0%
+          - bottom: 0%
+
+#########################    HARD DISK MARKDOWN    #########################
+
+# Markdown to display icons and text inside the Hard disk buttons on NAS Popup
+
+HDD_markdown:
+  card:
+    type: 'custom:stack-in-card'
+    mode: vertical
+    cards:
+      - type: markdown
+        content: |
+          <font color=[[font_color]]><ha-icon icon="mdi:[[icon]]"></ha-icon></font>
+        card_mod:
+          style: |
+            ha-card {
+              box-shadow: none;
+              background: none;
+              text-align: [[text-align]] ;
+            } 
+            ha-markdown {
+              padding: 0 !important;
+            }   
+      - type: markdown
+        content: |
+          <font size=2 color=[[font_color]]>[[text]]</font>
+        card_mod:
+          style: |
+            ha-card {
+              box-shadow: none;
+              background: none;
+              text-align: [[text-align]];
+            } 
+            ha-markdown {
+              padding: 0 !important;
+            } 
+    card_mod:
+      style: |
+        ha-card {
+          box-shadow: none;
+          background: none;
+        }  
+
+#########################    STORAGE VOLUME BUTTON    #########################
+
+# Button to show status of storage volumes in NAS popup
+
+Volume_button:
+  card:
+    type: 'custom:button-card'
+    custom_fields:
+      volume_status:
+        card:
+          type: 'custom:state-switch'
+          entity: '[[volume_status]]'
+          default: 'other'
+          states:
+            'normal':
+              type: markdown
+              content: |
+                <ha-icon icon="mdi:checkbox-marked-circle-outline"></ha-icon>
+              card_mod:
+                style: |
+                  ha-card {
+                    box-shadow: none;
+                    background: none;
+                    text-align: center ;
+                  } 
+                  ha-markdown {
+                    padding: 0 !important;
+                  }  
+            'other':
+              type: markdown
+              content: |
+                <font color='#ff1a1a'><ha-icon icon="mdi:close-circle-outline"></ha-icon></font>
+              card_mod:
+                style: |
+                  ha-card {
+                    box-shadow: none;
+                    background: none;
+                    text-align: center ;
+                  } 
+                  ha-markdown {
+                    padding: 0 !important;
+                  }                                 
+      percentage:
+        card:
+          type: 'custom:bar-card'
+          entity: '[[volume_percentage]]'
+          name: '% used'
+          min: 0
+          max: 100
+          severity:
+            - from: 0
+              to: 60
+              color: '#03a8f4'
+            - from: 60
+              to: 85
+              color: '#ffa31a'
+            - from: 85
+              to: 100
+              color: '#ff1a1a'
+          positions:
+            icon: 'off'
+            indicator: 'off'
+            value: inside
+            minmax: inside
+          card_mod:
+            style: |
+              ha-card {
+                box-shadow: none !important;
+                background: none !important;
+                padding: 0 !important;
+                color: #e0e1e1 !important;
+              }
+              bar-card-background {
+                display: flex !important;
+                height: 1.5vw !important;
+              }
+              div#states.card-content {
+                padding: 8px !important;
+              }
+              .contentbar-direction-right {
+               flex-direction: column;
+              }
+              .min-direction-right {
+                margin: 0px;
+                left: 2%;
+                top: 20%;
+                position: absolute;
+              }
+                bar-card-value {
+                margin: 0px;
+                font-size: 1vw;
+                top: 10%;
+                align-self: end;
+                right: 25%;
+                position: absolute;
+              }
+              bar-card-name {
+                margin: 0px;
+                align-self: start;
+                font-size: 1vw;
+                top: 10%;
+                left: 15%;
+                position: absolute;
+              }
+              bar-card-max {
+                margin: 0px;
+                right: 2%;
+                top: 20%;
+                position: absolute;
+              }
+              bar-card-divider {
+                display: none;
+              } 
+      space:         
+        card:
+          type: 'custom:config-template-card'
+          entities:
+            - '[[volume_used]]'
+            - '[[volume_total]]'
+          card:
+            type: 'custom:bar-card'
+            entity: '[[volume_used]]'
+            name: 'Space used'
+            min: 0
+            max: "${states['[[volume_total]]'].state}"
+            color: '#03a8f4'
+            positions:
+              icon: 'off'
+              indicator: 'off'
+              value: inside
+              minmax: inside
+            card_mod:
+              style: |
+                ha-card {
+                  box-shadow: none !important;
+                  background: none !important;
+                  padding: 0 !important;
+                  color: #e0e1e1 !important;
+                }
+                bar-card-background {
+                  display: flex !important;
+                  height: 1.5vw !important;
+                }
+                div#states.card-content {
+                  padding: 8px !important;
+                }
+                .contentbar-direction-right {
+                 flex-direction: column;
+                }
+                .min-direction-right {
+                  margin: 0px;
+                  left: 2%;
+                  top: 20%;
+                  position: absolute;
+                }
+                  bar-card-value {
+                  margin: 0px;
+                  font-size: 1vw;
+                  top: 10%;
+                  align-self: end;
+                  right: 25%;
+                  position: absolute;
+                }
+                bar-card-name {
+                  margin: 0px;
+                  align-self: start;
+                  font-size: 1vw;
+                  top: 10%;
+                  left: 15%;
+                  position: absolute;
+                }
+                bar-card-max {
+                  margin: 0px;
+                  right: 2%;
+                  top: 20%;
+                  position: absolute;
+                }
+                bar-card-divider {
+                  display: none;
+                }   
+      graph:
+        card:
+          type: 'custom:mini-graph-card'
+          name: '[[name]]'
+          tap_action:
+            action: none
+          entities:
+            - entity: '[[average_temp]]'
+              show_state: true
+              show_legend: true
+              name: Average
+              color: '#03a8f4'
+            - entity: '[[max_temp]]'
+              show_state: false
+              show_legend: true
+              name: Max
+              color: '#ffa31a'
+          points_per_hour: 1
+          show:
+            name: true
+            legend: true
+            icon: true
+          hour24: true
+          font_size: 50  
+          card_mod:                 
+            style: |
+              :host {
+                color: #e0e1e1 !important;
+              }
+              .name {
+                color: #e0e1e1 !important;
+              }
+              ha-card {
+                box-shadow: none !important;
+                background: none !important;
+                padding: 0 !important;
+                color: #e0e1e1 !important;
+              }
+              .header {
+                position: absolute !important;
+                width: 50% !important;
+                padding: 0 !important;
+                right: 12.5% !important;
+                color': #e0e1e1 !important;
+              }
+              .icon > ha-icon {
+                width:1.8vw !important;
+                height:1.8vw !important;
+              }  
+    styles:
+      card:
+        - top: '[[top]]'
+        - left: '[[left]]'
+        - width: 18vw
+        - height: 14vw
+        - background-color: 'rgba(255, 255, 255, 0.2)'
+        - border-radius: 0.2vw
+        - box-shadow: none
+        - padding: 0
+      grid:
+        - position: relative
+      custom_fields:
+        volume_status:
+          - position: absolute
+          - left: 23.5%
+          - top: 39%
+        space:
+          - overflow: unset
+          - position: absolute
+          - left: 0%
+          - top: 0%
+          - width: 100%
+        percentage:
+          - overflow: unset
+          - position: absolute
+          - left: 0%
+          - top: 15%
+          - width: 100%
+        graph:
+          - overflow: unset
+          - position: absolute
+          - left: 0%
+          - bottom: 0%
+          - width: 100%
+
+NAS_Volumes:
+  card:
+    type: 'custom:apexcharts-card'
+    config_templates: radial_bar
+    header:
+      show: true
+      title: '[[title]]'
+      title_actions:
+        tap_action:
+          action: fire-dom-event
+          browser_mod:
+            service: browser_mod.popup
+            data:
+              content:
+                type: 'custom:swipe-card'
+                cards: 
+                  - !include ../frontend/station3.yaml
+                  - !include ../frontend/stationB.yaml
+              title: Synology NAS   
+              size: fullscreen     
+    apex_config:
+      title:
+        margin: 0
+      legend:
+        horizontalAlign: left
+      plotOptions:
+        radialBar:
+          dataLabels:
+            show: false
+    series:
+      - entity: '[[sensor_1]]'
+        name: '[[name_1]]'
+        color: '#03a8f4'
+    card_mod:
+      style: |
+        :host {
+          height: 100%;
+        }
+        ha-card {
+          box-shadow: none !important;
+          height: 100%;
+        }
+        .wrapper.with-header {
+          height: 100%;
+        }
+        .apexcharts-inner.apexcharts-graphical {
+          transform: translate(-22.5%, -5%);
+        }
+        .apexcharts-legend {
+          width: 50%;
+        }
+        div#graph-wrapper {
+          transform: translate(0, -5%);
+        }

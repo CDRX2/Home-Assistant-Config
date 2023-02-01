@@ -1,0 +1,413 @@
+###################   Picture Elements Card    #####################
+type: picture-elements
+image: /local/ui/floorplan/1er_nuit.png
+card_mod:
+  style: |
+    ha-card:first-child {
+      background: rgba(42, 46, 48, 1);
+    }
+view_layout:
+  grid-area: main
+elements:
+
+    #########################    DAY BASE FLOORPLAN OVERLAY    #########################
+
+  - type: 'custom:config-template-card'
+    entities:
+      - sun.sun
+      - sensor.sunlight_opacity
+    element:
+      action: none
+      entity: sun.sun
+      hold_action:
+        action: none
+      state_image:
+        above_horizon: /local/ui/floorplan/1er_jour.png
+        below_horizon: /local/transparent.png
+      tap_action:
+        action: none
+      type: image
+    style:
+      left: 50%
+      top: 50%
+      height: 100%
+      width: 100%
+      mix-blend-mode: lighten
+      opacity: '${ states[''sensor.sunlight_opacity''].state }'
+
+    #########################    WEATHER ANIMATION OVERLAYS    #########################
+
+  - type: 'custom:decluttering-card'
+    template: climate_overlay_rain
+    variables:
+      - state: pouring
+
+  - type: 'custom:decluttering-card'
+    template: climate_overlay_rain
+    variables:
+      - state: rainy
+
+  - type: 'custom:decluttering-card'
+    template: climate_overlay_rain
+    variables:
+      - state: lightning-rainy
+
+  - type: 'custom:decluttering-card'
+    template: climate_overlay_snow
+    variables:
+      - state: snowy
+
+  - type: 'custom:decluttering-card'
+    template: climate_overlay_snow
+    variables:
+      - state: snowy-rainy
+
+    #########################    INDIVIDUAL LIGHTS - BLENDED IMAGE OVERLAYS    #########################
+
+  - type: 'custom:config-template-card'
+    entities:
+      - light.lit_parents_couleur
+    element:
+      action: none
+      entity: light.lit_parents_couleur
+      hold_action:
+        action: none
+      image: /local/transparent.png
+      state_image:
+        'on': /local/ui/floorplan/lights/1er/lit_parents_couleur.png
+      tap_action:
+        action: none
+      type: image
+    style:
+      filter: >-
+        ${ "hue-rotate(" + (states['light.lit_parents_couleur'].attributes.hs_color ? states['light.lit_parents_couleur'].attributes.hs_color[0] : 0) + "deg) saturate(100%)"}
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.lit_parents_couleur'].state === 'on' ? (states['light.lit_parents_couleur'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
+  - type: 'custom:config-template-card'
+    entities:
+      - light.lit_parents_blanc
+    element:
+      action: none
+      entity: light.lit_parents_blanc
+      hold_action:
+        action: none
+      image: /local/transparent.png
+      state_image:
+        'on': /local/ui/floorplan/lights/1er/lit_parents_blanc.png
+      tap_action:
+        action: none
+      type: image   
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.lit_parents_blanc'].state === 'on' ? (states['light.lit_parents_blanc'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100% 
+  - type: 'custom:decluttering-card'
+    template: light_overlay
+    variables:
+      - entity: light.chevet_cdrx
+      - image: 1er/chevet_cdrx.png
+  - type: 'custom:decluttering-card'
+    template: light_overlay
+    variables:
+      - entity: light.chevet_nanne
+      - image: 1er/chevet_nanne.png
+  - type: 'custom:config-template-card'
+    entities:
+      - light.plafond_charles_exterieur_white
+    element:
+      action: none
+      entity: light.plafond_charles_exterieur_white
+      hold_action:
+        action: none
+      image: /local/transparent.png
+      state_image:
+        'on': /local/ui/floorplan/lights/1er/plafond_charles_exterieur_white.png
+      tap_action:
+        action: none
+      type: image 
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.plafond_charles_exterieur_white'].state === 'on' ? (states['light.plafond_charles_exterieur_white'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
+  - type: 'custom:config-template-card'
+    entities: 
+      - light.plafond_charles_interieur_white
+    element:
+      action: none
+      entity: light.plafond_charles_interieur_white
+      hold_action:
+        action: none
+      image: /local/transparent.png
+      state_image:
+        'on': /local/ui/floorplan/lights/1er/plafond_charles_interieur_white.png
+      tap_action:
+        action: none
+      type: image
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.plafond_charles_interieur_white'].state === 'on' ? (states['light.plafond_charles_interieur_white'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
+  - type: 'custom:config-template-card'
+    entities:
+      - light.jumeaux_armoires_blanc
+    element:
+      action: none
+      entity: light.jumeaux_armoires_blanc
+      hold_action:
+        action: none
+      image: /local/transparent.png
+      state_image:
+        'on': /local/ui/floorplan/lights/1er/twins_armoire.png
+      tap_action:
+        action: none
+      type: image   
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.jumeaux_armoires_blanc'].state === 'on' ? (states['light.jumeaux_armoires_blanc'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100% 
+  - type: 'custom:config-template-card'
+    entities:
+      - light.lustre_jumeaux
+    element:
+      action: none
+      entity: light.lustre_jumeaux
+      hold_action:
+        action: none
+      image: /local/transparent.png
+      state_image:
+        'on': /local/ui/floorplan/lights/1er/twins_lampe.png
+      tap_action:
+        action: none
+      type: image   
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.lustre_jumeaux'].state === 'on' ? (states['light.lustre_jumeaux'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100% 
+  - type: 'custom:decluttering-card'
+    template: light_overlay
+    variables:
+      - entity: light.bathroom_door
+      - image: 1er/salle_bains.png
+  - type: 'custom:decluttering-card'
+    template: light_overlay
+    variables:
+      - entity: light.bathroom_mirror
+      - image: 1er/salle_bains_mirroir.png
+      
+    #########################    TEMPERATURE CONTROL STATE LABELS    #########################
+
+    #  Used to create state labels and popups for each room, referring to temperature sensors
+    #  and thermostat control.
+    #
+    #  browser_mod.popup is used for a tap and hold for a custom popup card
+
+  - type: 'custom:decluttering-card'
+    template: climate_image
+    variables:
+      - temp: sensor.temperature_charles
+      - humidity: sensor.humidity_charles
+      - title: Chambre Charles
+      - top: 55%
+      - left: 29%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label
+    variables:
+      - sensor: sensor.temperature_charles
+      - temp: sensor.temperature_charles
+      - humidity: sensor.humidity_charles
+      - title: Chambre Charles
+      - top: 55%
+      - left: 26.75%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label
+    variables:
+      - sensor: sensor.humidity_charles
+      - temp: sensor.temperature_charles
+      - humidity: sensor.humidity_charles
+      - title: Chambre Charles
+      - top: 55%
+      - left: 32.75%
+
+  - type: 'custom:decluttering-card'
+    template: fan_image
+    variables:
+      - temp: sensor.master_bedroom_temperature
+      - humidity: sensor.master_bedroom_humidity
+      - volatile_organic_compounds: sensor.master_bedroom_volatile_organic_compounds
+      - nitrogen_dioxide: sensor.master_bedroom_nitrogen_dioxide
+      - particulate_matter_2_5: sensor.master_bedroom_pm_2_5
+      - particulate_matter_10: sensor.master_bedroom_pm_10
+      - title: Chambre parents
+      - top: 64%
+      - left: 63%
+  - type: 'custom:decluttering-card'
+    template: fan_state_label
+    variables:
+      - sensor: sensor.master_bedroom_temperature_round
+      - temp: sensor.master_bedroom_temperature
+      - humidity: sensor.master_bedroom_humidity
+      - volatile_organic_compounds: sensor.master_bedroom_volatile_organic_compounds
+      - nitrogen_dioxide: sensor.master_bedroom_nitrogen_dioxide
+      - particulate_matter_2_5: sensor.master_bedroom_pm_2_5
+      - particulate_matter_10: sensor.master_bedroom_pm_10
+      - title: Chambre parents
+      - top: 64%
+      - left: 60.75%
+  - type: 'custom:decluttering-card'
+    template: fan_state_label
+    variables:
+      - sensor: sensor.master_bedroom_humidity
+      - temp: sensor.master_bedroom_temperature
+      - humidity: sensor.master_bedroom_humidity
+      - volatile_organic_compounds: sensor.master_bedroom_volatile_organic_compounds
+      - nitrogen_dioxide: sensor.master_bedroom_nitrogen_dioxide
+      - particulate_matter_2_5: sensor.master_bedroom_pm_2_5
+      - particulate_matter_10: sensor.master_bedroom_pm_10
+      - title: Chambre parents
+      - top: 64%
+      - left: 66.75%
+
+  - type: 'custom:decluttering-card'
+    template: climate_image
+    variables:
+      - temp: sensor.temperature_bathroom
+      - humidity: sensor.humidity_bathroom
+      - title: Salle de bain
+      - top: 22%
+      - left: 73%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label
+    variables:
+      - sensor: sensor.temperature_bathroom
+      - temp: sensor.temperature_bathroom
+      - humidity: sensor.humidity_bathroom
+      - title: Salle de bain
+      - top: 22%
+      - left: 70.75%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label
+    variables:
+      - sensor: sensor.humidity_bathroom
+      - temp: sensor.temperature_bathroom
+      - humidity: sensor.humidity_bathroom
+      - title: Salle de bain
+      - top: 22%
+      - left: 76.75%
+
+  - type: 'custom:decluttering-card'
+    template: climate_image_v2
+    variables:
+      - temp: sensor.temperature_twins
+      - humidity: sensor.humidity_twins
+      - pressure: sensor.pressure_twins
+      - title: Jumeaux
+      - top: 24%
+      - left: 28%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label_v2
+    variables:
+      - sensor: sensor.temperature_twins
+      - temp: sensor.temperature_twins
+      - humidity: sensor.humidity_twins
+      - pressure: sensor.pressure_twins
+      - title: Jumeaux
+      - top: 24%
+      - left: 25.75%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label_v2
+    variables:
+      - sensor: sensor.humidity_twins
+      - temp: sensor.temperature_twins
+      - humidity: sensor.humidity_twins
+      - pressure: sensor.pressure_twins
+      - title: Jumeaux
+      - top: 24%
+      - left: 31.75%
+
+  - type: 'custom:decluttering-card'
+    template: climate_image_v2
+    variables:
+      - temp: sensor.temperature_office
+      - humidity: sensor.humidity_office
+      - pressure: sensor.pressure_office
+      - title: Bureau
+      - top: 35%
+      - left: 55%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label_v2
+    variables:
+      - sensor: sensor.temperature_office
+      - temp: sensor.temperature_office
+      - humidity: sensor.humidity_office
+      - pressure: sensor.pressure_office
+      - title: Bureau
+      - top: 35%
+      - left: 52.75%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label_v2
+    variables:
+      - sensor: sensor.humidity_office
+      - temp: sensor.temperature_office
+      - humidity: sensor.humidity_office
+      - pressure: sensor.pressure_office
+      - title: Bureau
+      - top: 35%
+      - left: 58.75%
+
+  - type: 'custom:decluttering-card'
+    template: climate_image_v2
+    variables:
+      - temp: sensor.openweathermap_temperature
+      - humidity: sensor.openweathermap_humidity
+      - pressure: sensor.openweathermap_pressure
+      - title: Météo
+      - top: 81%
+      - left: 33%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label_v2
+    variables:
+      - sensor: sensor.openweathermap_temperature_round
+      - temp: sensor.openweathermap_temperature
+      - humidity: sensor.openweathermap_humidity
+      - pressure: sensor.openweathermap_pressure
+      - title: Météo
+      - top: 81%
+      - left: 30.75%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label_v2
+    variables:
+      - sensor: sensor.openweathermap_humidity_round
+      - temp: sensor.openweathermap_temperature
+      - humidity: sensor.openweathermap_humidity
+      - pressure: sensor.openweathermap_pressure
+      - title: Météo
+      - top: 81%
+      - left: 36.75%
+
+
+    #########################    INDIVIDUAL SHUTTER ICONS    #########################
+
+    #  These are the white state icons that appear over the floorplan to control shades, 
+    #  shutters and window openings.
+    #
+    #  browser_mod.popup is used for a tap and hold for a custom popup card, custom styling
+    #  of the icon to make it appear white, etc.
+
+  #windows
+
+  #shades
+  
+  #shutters

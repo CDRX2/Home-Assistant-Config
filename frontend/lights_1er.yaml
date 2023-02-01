@@ -1,0 +1,393 @@
+###################   Picture Elements Card    #####################
+type: picture-elements
+image: /local/ui/floorplan/1er_nuit.png
+card_mod:
+  style: |
+    ha-card:first-child {
+      background: rgba(42, 46, 48, 1);
+    }
+view_layout:
+  grid-area: main
+elements:
+
+    #########################    DAY BASE FLOORPLAN OVERLAY    #########################
+
+  - type: 'custom:config-template-card'
+    entities:
+      - sun.sun
+      - sensor.sunlight_opacity
+    element:
+      action: none
+      entity: sun.sun
+      hold_action:
+        action: none
+      state_image:
+        above_horizon: /local/ui/floorplan/1er_jour.png
+        below_horizon: /local/transparent.png
+      tap_action:
+        action: none
+      type: image
+    style:
+      left: 50%
+      top: 50%
+      height: 100%
+      width: 100%
+      mix-blend-mode: lighten
+      opacity: '${ states[''sensor.sunlight_opacity''].state }'
+
+    #########################    WEATHER ANIMATION OVERLAYS    #########################
+
+  - type: 'custom:decluttering-card'
+    template: climate_overlay_rain
+    variables:
+      - state: pouring
+
+  - type: 'custom:decluttering-card'
+    template: climate_overlay_rain
+    variables:
+      - state: rainy
+
+  - type: 'custom:decluttering-card'
+    template: climate_overlay_rain
+    variables:
+      - state: lightning-rainy
+
+  - type: 'custom:decluttering-card'
+    template: climate_overlay_snow
+    variables:
+      - state: snowy
+
+  - type: 'custom:decluttering-card'
+    template: climate_overlay_snow
+    variables:
+      - state: snowy-rainy
+
+    #########################    INDIVIDUAL LIGHTS - BLENDED IMAGE OVERLAYS    #########################
+
+  - type: 'custom:config-template-card'
+    entities:
+      - light.lit_parents_couleur
+    element:
+      action: none
+      entity: light.lit_parents_couleur
+      hold_action:
+        action: none
+      image: /local/transparent.png
+      state_image:
+        'on': /local/ui/floorplan/lights/1er/lit_parents_couleur.png
+      tap_action:
+        action: none
+      type: image
+    style:
+      filter: >-
+        ${ "hue-rotate(" + (states['light.lit_parents_couleur'].attributes.hs_color ? states['light.lit_parents_couleur'].attributes.hs_color[0] : 0) + "deg) saturate(100%)"}
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.lit_parents_couleur'].state === 'on' ? (states['light.lit_parents_couleur'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
+  - type: 'custom:config-template-card'
+    entities:
+      - light.lit_parents_blanc
+    element:
+      action: none
+      entity: light.lit_parents_blanc
+      hold_action:
+        action: none
+      image: /local/transparent.png
+      state_image:
+        'on': /local/ui/floorplan/lights/1er/lit_parents_blanc.png
+      tap_action:
+        action: none
+      type: image   
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.lit_parents_blanc'].state === 'on' ? (states['light.lit_parents_blanc'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100% 
+  - type: 'custom:decluttering-card'
+    template: light_overlay
+    variables:
+      - entity: light.chevet_cdrx
+      - image: 1er/chevet_cdrx.png
+  - type: 'custom:decluttering-card'
+    template: light_overlay
+    variables:
+      - entity: light.chevet_nanne
+      - image: 1er/chevet_nanne.png
+  - type: 'custom:config-template-card'
+    entities:
+      - light.plafond_charles_exterieur_white
+    element:
+      action: none
+      entity: light.plafond_charles_exterieur_white
+      hold_action:
+        action: none
+      image: /local/transparent.png
+      state_image:
+        'on': /local/ui/floorplan/lights/1er/plafond_charles_exterieur_white.png
+      tap_action:
+        action: none
+      type: image 
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.plafond_charles_exterieur_white'].state === 'on' ? (states['light.plafond_charles_exterieur_white'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
+  - type: 'custom:config-template-card'
+    entities: 
+      - light.plafond_charles_interieur_white
+    element:
+      action: none
+      entity: light.plafond_charles_interieur_white
+      hold_action:
+        action: none
+      image: /local/transparent.png
+      state_image:
+        'on': /local/ui/floorplan/lights/1er/plafond_charles_interieur_white.png
+      tap_action:
+        action: none
+      type: image
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.plafond_charles_interieur_white'].state === 'on' ? (states['light.plafond_charles_interieur_white'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
+  - type: 'custom:config-template-card'
+    entities:
+      - light.jumeaux_armoires_blanc
+    element:
+      action: none
+      entity: light.jumeaux_armoires_blanc
+      hold_action:
+        action: none
+      image: /local/transparent.png
+      state_image:
+        'on': /local/ui/floorplan/lights/1er/twins_armoire.png
+      tap_action:
+        action: none
+      type: image   
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.jumeaux_armoires_blanc'].state === 'on' ? (states['light.jumeaux_armoires_blanc'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100% 
+  # - type: 'custom:config-template-card'
+  #   entities:
+  #     - light.lustre_jumeaux
+  #   element:
+  #     action: none
+  #     entity: light.lustre_jumeaux
+  #     hold_action:
+  #       action: none
+  #     image: /local/transparent.png
+  #     state_image:
+  #       'on': /local/ui/floorplan/lights/1er/twins_lampe.png
+  #     tap_action:
+  #       action: none
+  #     type: image   
+  #   style:
+  #     left: 50%
+  #     mix-blend-mode: lighten
+  #     opacity: "${states['light.lustre_jumeaux'].state === 'on' ? (states['light.lustre_jumeaux'].attributes.brightness / 255) : '0'}"
+  #     top: 50%
+  #     width: 100% 
+  - type: 'custom:decluttering-card'
+    template: light_overlay
+    variables:
+      - entity: light.bathroom_door
+      - image: 1er/salle_bains.png
+  - type: 'custom:decluttering-card'
+    template: light_overlay
+    variables:
+      - entity: light.bathroom_mirror
+      - image: 1er/salle_bains_mirroir.png
+
+
+    #########################    ROOM/GROUP CONTROL TRANSPARENT IMAGES    #########################
+
+  - type: 'custom:decluttering-card'
+    template: Light_room
+    variables:
+      - light: light.chambre_parents
+      - title: Chambre parents
+      - color_picker: true
+      - color_temp: false
+      - hide_header: false
+      - left: 73.2%
+      - width: 35.5%
+      - top: 68%
+      - height: 41%
+
+  - type: 'custom:decluttering-card'
+    template: Light_room
+    variables:
+      - light: light.chambre_parents
+      - title: Chambre parents
+      - color_picker: true
+      - color_temp: false
+      - hide_header: false
+      - left: 50.7%
+      - width: 9.4%
+      - top: 61%
+      - height: 27%
+
+  - type: 'custom:decluttering-card'
+    template: Light_room
+    variables:
+      - light: light.chambre_charles
+      - title: Chambre Charles
+      - color_picker: false
+      - color_temp: false
+      - hide_header: false
+      - left: 27.5%
+      - width: 35.2%
+      - top: 55.7%
+      - height: 37.5%
+
+  - type: 'custom:decluttering-card'
+    template: Light_room
+    variables:
+      - light: light.jumeaux
+      - title: Jumeaux
+      - color_picker: false
+      - color_temp: false
+      - hide_header: false
+      - left: 27.5%
+      - width: 35%
+      - top: 20.2%
+      - height: 31%
+
+  - type: 'custom:decluttering-card'
+    template: Light_room
+    variables:
+      - light: light.salle_de_bains
+      - title: Salle de bain
+      - color_picker: false
+      - color_temp: false
+      - hide_header: false
+      - left: 75.6%
+      - width: 30.7%
+      - top: 15%
+      - height: 20.5%
+
+    #########################    INDIVIDUAL LIGHT ICONS    #########################
+
+  #on-off lights
+  #office
+  - type: 'custom:decluttering-card'
+    template: Light_icon_on_off
+    variables:
+      - light: light.imprimante
+      - title: Imprimante
+      - icon: mdi:printer
+      - left: 55%
+      - top: 15%
+
+  #parents bedroom
+  - type: 'custom:decluttering-card'
+    template: Light_icon_on_off
+    variables:
+      - light: light.chevet_cdrx
+      - title: Chevet CDRX
+      - icon: mdi:desk-lamp
+      - left: 82%
+      - top: 79.5%
+
+  - type: 'custom:decluttering-card'
+    template: Light_icon_on_off
+    variables:
+      - light: light.chevet_nanne
+      - title: Chevet Nanne
+      - icon: mdi:desk-lamp
+      - left: 82%
+      - top: 59.5%
+
+  #bathroom
+  - type: 'custom:decluttering-card'
+    template: Light_icon_on_off
+    variables:
+      - light: light.bathroom_door
+      - title: Salle de bain
+      - icon: hue:ceiling-fugato-two
+      - left: 70%
+      - top: 23%
+
+  - type: 'custom:decluttering-card'
+    template: Light_icon_on_off
+    variables:
+      - light: light.bathroom_mirror
+      - title: Mirroir
+      - icon: mdi:led-strip-variant
+      - left: 78%
+      - top: 14%
+
+  #dimming lights
+  #chambre Charles
+  - type: 'custom:decluttering-card'
+    template: Light_icon_full
+    variables:
+      - light: group.chambre_charles
+      - title: Chambre Charles
+      - icon: mdi:led-strip-variant
+      - hide_header: true
+      - color_picker: false
+      - color_temp: false
+      - left: 31%
+      - top: 56%
+
+  #chambre parents
+  - type: 'custom:decluttering-card'
+    template: Light_icon_full
+    variables:
+      - light: light.lit_parents_blanc
+      - title: Lit parents blanc
+      - icon: mdi:led-strip-variant
+      - hide_header: true
+      - color_picker: false
+      - color_temp: false
+      - left: 68%
+      - top: 69.5%
+
+  #chambre twins
+  - type: 'custom:decluttering-card'
+    template: Light_icon_full
+    variables:
+      - light: light.jumeaux_armoires_blanc
+      - title: Chambre jumeaux
+      - icon: mdi:led-strip-variant
+      - hide_header: true
+      - color_picker: false
+      - color_temp: false
+      - left: 43%
+      - top: 18%
+
+  # - type: 'custom:decluttering-card'
+  #   template: Light_icon_full
+  #   variables:
+  #     - light: light.lustre_jumeaux
+  #     - title: Lampe jumeaux
+  #     - icon: hue:bulb-filament
+  #     - hide_header: true
+  #     - color_picker: false
+  #     - color_temp: false
+  #     - left: 18%
+  #     - top: 28%
+
+  #color lights
+  #chambre parents
+  - type: 'custom:decluttering-card'
+    template: Light_icon_full
+    variables:
+      - light: light.lit_parents_couleur
+      - title: Lit parents couleur
+      - icon: mdi:led-strip-variant
+      - hide_header: true
+      - color_picker: true
+      - color_temp: false
+      - left: 82%
+      - top: 69.5%

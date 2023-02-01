@@ -1,0 +1,647 @@
+###################   Picture Elements Card    #####################
+type: picture-elements
+image: /local/ui/floorplan/Rez_nuit.png
+card_mod:
+  style: |
+    ha-card:first-child {
+      background: rgba(42, 46, 48, 1);
+    }
+view_layout:
+  grid-area: main
+elements:
+
+    #########################    DAY BASE FLOORPLAN OVERLAY    #########################
+
+  - type: 'custom:config-template-card'
+    entities:
+      - sun.sun
+      - sensor.sunlight_opacity
+    element:
+      action: none
+      entity: sun.sun
+      hold_action:
+        action: none
+      state_image:
+        above_horizon: /local/ui/floorplan/Rez_jour.png
+        below_horizon: /local/transparent.png
+      tap_action:
+        action: none
+      type: image
+    style:
+      left: 50%
+      top: 50%
+      height: 100%
+      width: 100%
+      mix-blend-mode: lighten
+      opacity: '${ states[''sensor.sunlight_opacity''].state }'
+
+    #########################    WEATHER ANIMATION OVERLAYS    #########################
+
+  - type: 'custom:decluttering-card'
+    template: climate_overlay_rain
+    variables:
+      - state: pouring
+
+  - type: 'custom:decluttering-card'
+    template: climate_overlay_rain
+    variables:
+      - state: rainy
+
+  - type: 'custom:decluttering-card'
+    template: climate_overlay_rain
+    variables:
+      - state: lightning-rainy
+
+  - type: 'custom:decluttering-card'
+    template: climate_overlay_snow
+    variables:
+      - state: snowy
+
+  - type: 'custom:decluttering-card'
+    template: climate_overlay_snow
+    variables:
+      - state: snowy-rainy
+
+    #########################    INDIVIDUAL LIGHTS - BLENDED IMAGE OVERLAYS    #########################
+
+  - type: 'custom:config-template-card'
+    entities:
+      - light.bar
+    element:
+      action: none
+      entity: light.bar
+      hold_action:
+        action: none
+      image: /local/transparent.png
+      state_image:
+        'on': /local/ui/floorplan/lights/rez/Bar.png
+      tap_action:
+        action: none
+      type: image
+    style:
+      left: 50%
+      top: 50%
+      width: 100%
+      filter: >-
+        ${ "hue-rotate(" + (states['light.bar'].attributes.hs_color ? states['light.bar'].attributes.hs_color[0] : 0) + "deg) saturate(100%)"}
+      mix-blend-mode: lighten
+      opacity: "${states['light.bar'].state === 'on' ? (states['light.bar'].attributes.brightness / 255) : '0'}"
+  - type: 'custom:config-template-card'
+    entities: 
+      - light.grand_totem_deco
+    element:
+      action: none
+      entity: light.grand_totem_deco
+      hold_action:
+        action: none
+      image: /local/transparent.png
+      state_image:
+        'on': /local/ui/floorplan/lights/rez/Totem_grand_couleur.png
+      tap_action:
+        action: none
+      type: image
+    style:
+      filter: >-
+        ${ "hue-rotate(" + (states['light.grand_totem_deco'].attributes.hs_color ? states['light.grand_totem_deco'].attributes.hs_color[0] : 0) + "deg) saturate(100%)"}
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.grand_totem_deco'].state === 'on' ? (states['light.grand_totem_deco'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
+  - type: 'custom:config-template-card'
+    entities: 
+      - light.petit_totem_deco
+    element:
+      action: none
+      entity: light.petit_totem_deco
+      hold_action:
+        action: none
+      image: /local/transparent.png
+      state_image:
+        'on': /local/ui/floorplan/lights/rez/Totem_petit_couleur.png
+      tap_action:
+        action: none
+      type: image
+    style:
+      filter: >-
+        ${ "hue-rotate(" + (states['light.petit_totem_deco'].attributes.hs_color ? states['light.petit_totem_deco'].attributes.hs_color[0] : 0) + "deg) saturate(100%)"}
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.petit_totem_deco'].state === 'on' ? (states['light.petit_totem_deco'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
+  - type: 'custom:config-template-card'
+    entities: 
+      - light.tv
+    element:
+      action: none
+      entity: light.tv
+      hold_action:
+        action: none
+      image: /local/transparent.png
+      state_image:
+        'on': /local/ui/floorplan/lights/rez/TV.png
+      tap_action:
+        action: none
+      type: image 
+    style:
+      filter: >-
+        ${ "hue-rotate(" + (states['light.tv'].attributes.hs_color ? states['light.tv'].attributes.hs_color[0] : 0) + "deg) saturate(100%)"}
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.tv'].state === 'on' ? (states['light.tv'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100% 
+  - type: 'custom:config-template-card'
+    entities: 
+      - light.cuisine_deco
+    element:              
+      action: none
+      entity: light.cuisine_deco
+      hold_action:
+        action: none
+      image: /local/transparent.png
+      state_image:
+        'on': /local/ui/floorplan/lights/rez/Cuisine_deco.png
+      tap_action:
+        action: none
+      type: image 
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.cuisine_deco'].state === 'on' ? (states['light.cuisine_deco'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%   
+  - type: 'custom:decluttering-card'
+    template: light_overlay
+    variables:
+      - entity: light.panneau_lumineux
+      - image: rez/Letterbox.png
+  - type: 'custom:decluttering-card'
+    template: light_overlay
+    variables:
+      - entity: light.terrasse_sol
+      - image: rez/Terrasse_sol.png
+  - type: 'custom:decluttering-card'
+    template: light_overlay
+    variables:
+      - entity: light.grand_totem
+      - image: rez/Totem_grand.png
+  - type: 'custom:decluttering-card'
+    template: light_overlay
+    variables:
+      - entity: light.petit_totem
+      - image: rez/Totem_petit.png
+  - type: 'custom:config-template-card'
+    entities:
+      - light.vinyles
+    element:
+      action: none
+      entity: light.vinyles
+      hold_action:
+        action: none
+      image: /local/transparent.png
+      state_image:
+        'on': /local/ui/floorplan/lights/rez/Vinyles.png
+      tap_action:
+        action: none
+      type: image
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.vinyles'].state === 'on' ? (states['light.vinyles'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
+  - type: 'custom:config-template-card'
+    entities:
+      - light.carport
+    element:
+      action: none
+      entity: light.carport
+      hold_action:
+        action: none
+      image: /local/transparent.png
+      state_image:
+        'on': /local/ui/floorplan/lights/rez/Carport.png
+      tap_action:
+        action: none
+      type: image
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.carport'].state === 'on' ? (states['light.carport'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
+  - type: 'custom:config-template-card'
+    entities:
+      - light.salon_plafonnier
+    element:
+      action: none
+      entity: light.salon_plafonnier
+      hold_action:
+        action: none
+      image: /local/transparent.png
+      state_image:
+        'on': /local/ui/floorplan/lights/rez/Salon_plafond.png
+      tap_action:
+        action: none
+      type: image
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.salon_plafonnier'].state === 'on' ? (states['light.salon_plafonnier'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
+  - type: 'custom:config-template-card'
+    entities:
+      - light.manger_plafonnier
+    element:
+      action: none
+      entity: light.manger_plafonnier
+      hold_action:
+        action: none
+      image: /local/transparent.png
+      state_image:
+        'on': /local/ui/floorplan/lights/rez/Manger_plafond.png
+      tap_action:
+        action: none
+      type: image
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.manger_plafonnier'].state === 'on' ? (states['light.manger_plafonnier'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
+  - type: 'custom:config-template-card'
+    entities:
+      - light.terrasse_3
+    element:
+      action: none
+      entity: light.terrasse_3
+      hold_action:
+        action: none
+      image: /local/transparent.png
+      state_image:
+        'on': /local/ui/floorplan/lights/rez/Terrasse_mur.png
+      tap_action:
+        action: none
+      type: image 
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.terrasse_3'].state === 'on' ? (states['light.terrasse_3'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
+  - type: 'custom:decluttering-card'
+    template: light_overlay
+    variables:
+      - entity: light.cuisine_plafonnier
+      - image: rez/Cuisine_plafond.png
+  - type: 'custom:decluttering-card'
+    template: light_overlay
+    variables:
+      - entity: light.manger_lampe
+      - image: rez/Manger_lampe.png
+  - type: 'custom:config-template-card'
+    entities:
+      - light.chevet_amis_geneve
+    element:
+      action: none
+      entity: light.chevet_amis_geneve
+      hold_action:
+        action: none
+      image: /local/transparent.png
+      state_image:
+        'on': /local/ui/floorplan/lights/rez/Amis_chevet_geneve.png
+      tap_action:
+        action: none
+      type: image
+    style:
+      left: 50%
+      top: 50%
+      width: 100%
+      filter: >-
+        ${ "hue-rotate(" + (states['light.chevet_amis_geneve'].attributes.hs_color ? states['light.chevet_amis_geneve'].attributes.hs_color[0] : 0) + "deg) saturate(100%)"}
+      mix-blend-mode: lighten
+      opacity: "${states['light.chevet_amis_geneve'].state === 'on' ? (states['light.chevet_amis_geneve'].attributes.brightness / 255) : '0'}"
+  - type: 'custom:config-template-card'
+    entities:
+      - light.chevet_amis_valais
+    element:
+      action: none
+      entity: light.chevet_amis_valais
+      hold_action:
+        action: none
+      image: /local/transparent.png
+      state_image:
+        'on': /local/ui/floorplan/lights/rez/Amis_chevet_valais.png
+      tap_action:
+        action: none
+      type: image
+    style:
+      left: 50%
+      top: 50%
+      width: 100%
+      filter: >-
+        ${ "hue-rotate(" + (states['light.chevet_amis_valais'].attributes.hs_color ? states['light.chevet_amis_valais'].attributes.hs_color[0] : 0) + "deg) saturate(100%)"}
+      mix-blend-mode: lighten
+      opacity: "${states['light.chevet_amis_valais'].state === 'on' ? (states['light.chevet_amis_valais'].attributes.brightness / 255) : '0'}"
+  - type: 'custom:decluttering-card'
+    template: light_overlay
+    variables:
+      - entity: light.guest_bathroom
+      - image: rez/Douche.png
+  - type: 'custom:decluttering-card'
+    template: light_overlay
+    variables:
+      - entity: light.escalier_cave
+      - image: rez/Escalier_bas.png
+  # - type: 'custom:config-template-card'
+  #   entities:
+  #     - light.amis_plafonnier
+  #   element:
+  #     action: none
+  #     entity: light.amis_plafonnier
+  #     hold_action:
+  #       action: none
+  #     image: /local/transparent.png
+  #     state_image:
+  #       'on': /local/ui/floorplan/lights/rez/Amis.png
+  #     tap_action:
+  #       action: none
+  #     type: image 
+  #   style:
+  #     left: 50%
+  #     mix-blend-mode: lighten
+  #     opacity: "${states['light.amis_plafonnier'].state === 'on' ? (states['light.amis_plafonnier'].attributes.brightness / 255) : '0'}"
+  #     top: 50%
+  #     width: 100%
+  # - type: 'custom:decluttering-card'
+  #   template: light_overlay
+  #   variables:
+  #     - entity: light.amis_prises
+  #     - image: rez/Amis_dressing.png
+  
+    #########################    TEMPERATURE CONTROL STATE LABELS    #########################
+
+  - type: 'custom:decluttering-card'
+    template: climate_image_v2
+    variables:
+      - temp: sensor.temperature_salon
+      - humidity: sensor.humidity_salon
+      - pressure: sensor.pressure_salon
+      - title: Salon
+      - top: 52%
+      - left: 68%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label_v2
+    variables:
+      - sensor: sensor.temperature_salon
+      - temp: sensor.temperature_salon
+      - humidity: sensor.humidity_salon
+      - pressure: sensor.pressure_salon
+      - title: Salon
+      - top: 52%
+      - left: 65.75%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label_v2
+    variables:
+      - sensor: sensor.humidity_salon
+      - temp: sensor.temperature_salon
+      - humidity: sensor.humidity_salon
+      - pressure: sensor.pressure_salon
+      - title: Salon
+      - top: 52%
+      - left: 71.75%
+
+  - type: 'custom:decluttering-card'
+    template: climate_image_v2
+    variables:
+      - pressure: sensor.pressure_bottom_stairs  
+      - temp: sensor.temperature_bottom_stairs
+      - humidity: sensor.humidity_bottom_stairs
+      - title: Escaliers cave
+      - top: 30%
+      - left: 78%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label_v2
+    variables:
+      - sensor: sensor.temperature_bottom_stairs
+      - temp: sensor.temperature_bottom_stairs
+      - humidity: sensor.humidity_bottom_stairs
+      - pressure: sensor.pressure_bottom_stairs
+      - title: Escaliers cave
+      - top: 30%
+      - left: 75.75%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label_v2
+    variables:
+      - sensor: sensor.humidity_bottom_stairs
+      - temp: sensor.temperature_bottom_stairs
+      - humidity: sensor.humidity_bottom_stairs
+      - pressure: sensor.pressure_bottom_stairs
+      - title: Escaliers cave
+      - top: 30%
+      - left: 81.75%
+
+  - type: 'custom:decluttering-card'
+    template: climate_image
+    variables:
+      - temp: sensor.temperature_guest
+      - humidity: sensor.humidity_guest
+      - title: Chambre d'amis
+      - top: 21%
+      - left: 35.5%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label
+    variables:
+      - sensor: sensor.temperature_guest
+      - temp: sensor.temperature_guest
+      - humidity: sensor.humidity_guest
+      - title: Chambre d'amis
+      - top: 21%
+      - left: 33.25%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label
+    variables:
+      - sensor: sensor.humidity_guest
+      - temp: sensor.temperature_guest
+      - humidity: sensor.humidity_guest
+      - title: Chambre d'amis
+      - top: 21%
+      - left: 39.25%
+
+  - type: 'custom:decluttering-card'
+    template: climate_image_v2
+    variables:
+      - temp: sensor.temperature_movement_driveway
+      - humidity: sensor.openweathermap_humidity
+      - pressure: sensor.openweathermap_pressure
+      - title: Carport
+      - top: 2%
+      - left: 64%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label_v2
+    variables:
+      - sensor: sensor.temperature_movement_driveway
+      - temp: sensor.temperature_movement_driveway
+      - humidity: sensor.openweathermap_humidity
+      - pressure: sensor.openweathermap_pressure
+      - title: Carport
+      - top: 2%
+      - left: 61.75%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label_v2
+    variables:
+      - sensor: sensor.openweathermap_humidity_round
+      - temp: sensor.temperature_movement_driveway
+      - humidity: sensor.openweathermap_humidity
+      - pressure: sensor.openweathermap_pressure
+      - title: Carport
+      - top: 2%
+      - left: 67.75%
+
+  - type: 'custom:decluttering-card'
+    template: climate_image
+    variables:
+      - temp: sensor.temperature_entrance
+      - humidity: sensor.humidity_entrance
+      - title: Entrée
+      - top: 19%
+      - left: 64%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label
+    variables:
+      - sensor: sensor.temperature_entrance
+      - temp: sensor.temperature_entrance
+      - humidity: sensor.humidity_entrance
+      - title: Entrée
+      - top: 19%
+      - left: 61.75%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label
+    variables:
+      - sensor: sensor.humidity_entrance
+      - temp: sensor.temperature_entrance
+      - humidity: sensor.humidity_entrance
+      - title: Entrée
+      - top: 19%
+      - left: 67.75%
+
+  - type: 'custom:decluttering-card'
+    template: climate_image
+    variables:
+      - temp: sensor.temperature_guest_bathroom
+      - humidity: sensor.humidity_guest_bathroom
+      - title: Salle d'eau
+      - top: 16%
+      - left: 84%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label
+    variables:
+      - sensor: sensor.temperature_guest_bathroom
+      - temp: sensor.temperature_guest_bathroom
+      - humidity: sensor.humidity_guest_bathroom
+      - title: Salle d'eau
+      - top: 16%
+      - left: 81.75%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label
+    variables:
+      - sensor: sensor.humidity_guest_bathroom
+      - temp: sensor.temperature_guest_bathroom
+      - humidity: sensor.humidity_guest_bathroom
+      - title: Salle d'eau
+      - top: 16%
+      - left: 87.75%
+
+  - type: 'custom:decluttering-card'
+    template: climate_image_v2
+    variables:
+      - temp: sensor.openweathermap_temperature
+      - humidity: sensor.openweathermap_humidity
+      - pressure: sensor.openweathermap_pressure
+      - title: Météo
+      - top: 76%
+      - left: 35.5%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label_v2
+    variables:
+      - sensor: sensor.openweathermap_temperature_round
+      - temp: sensor.openweathermap_temperature
+      - humidity: sensor.openweathermap_humidity
+      - pressure: sensor.openweathermap_pressure
+      - title: Météo
+      - top: 76%
+      - left: 33.25%
+  - type: 'custom:decluttering-card'
+    template: climate_state_label_v2
+    variables:
+      - sensor: sensor.openweathermap_humidity_round
+      - temp: sensor.openweathermap_temperature
+      - humidity: sensor.openweathermap_humidity
+      - pressure: sensor.openweathermap_pressure
+      - title: Météo
+      - top: 76%
+      - left: 39.25%
+
+    #########################    INDIVIDUAL SHUTTER ICONS    #########################
+
+    #  These are the white state icons that appear over the floorplan to control shades, 
+    #  shutters and window openings.
+    #
+    #  browser_mod.popup is used for a tap and hold for a custom popup card, custom styling
+    #  of the icon to make it appear white, etc.
+
+  #windows
+
+  #shades
+  
+  - type: 'custom:button-card'
+    template: cover_no_stop
+    variables:
+      entity: cover.store_terrasse_reversed
+      title: Store Terrasse
+    entity: cover.store_terrasse_reversed
+    state_display: '[[[ return entity.attributes.current_position + " %" ]]]'
+    card_mod:
+      style: |
+        :host {
+          top: 87.5%;
+          left: 37.5%;
+          width: 10%;
+        }
+
+  #shutters
+
+    #########################    NOW PLAYING ON TV IN FLOORPLAN    #########################
+
+  - type: 'custom:decluttering-card'
+    template: now_playing_image
+    style: 
+        left: 82%
+        top: 57%
+        transform: >-
+          rotateZ(90deg) rotateX(305deg)
+        width: 12%
+        --ha-card-border-radius: 0vw 0vw 0vw 0vw
+        
+  - type: 'custom:decluttering-card'
+    template: now_playing_plex
+    style: 
+        left: 82%
+        top: 57%
+        transform: >-
+          rotateZ(90deg) rotateX(305deg)
+        width: 12%
+        --ha-card-border-radius: 0vw 0vw 0vw 0vw
+
+  - type: 'custom:decluttering-card'
+    template: now_playing_other
+    style: 
+        left: 82%
+        top: 57%
+        transform: >-
+          rotateZ(90deg) rotateX(305deg)
+        width: 12%
+        --ha-card-border-radius: 0vw 0vw 0vw 0vw

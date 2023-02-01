@@ -1,0 +1,343 @@
+- id: '1573591467239'
+  alias: Notification poubelle
+  description: ''
+  trigger:
+  - entity_id: sensor.poubelle_compost_papier
+    for: '17:30:00'
+    platform: state
+    to: Tomorrow
+  condition: []
+  action:
+  - data:
+      message: Passage du camion demain matin. Bonne soirée!
+      title: N'oubliez pas de sortir la poubelle, le compost et le papier ce soir
+    service: notify.gmail
+- id: '1573591545660'
+  alias: Notification verre
+  description: ''
+  trigger:
+  - entity_id: sensor.verre
+    for: '17:30:00'
+    platform: state
+    to: Tomorrow
+  condition: []
+  action:
+  - data:
+      message: Passage du camion demain matin. Bonne soirée!
+      title: N'oubliez pas de sortir le verre ce soir
+    service: notify.gmail
+- id: '1589356162275'
+  alias: Tableau TV ouverture
+  description: ''
+  trigger:
+  - entity_id: media_player.living_room_tv
+    platform: state
+    to: 'on'
+  condition: []
+  action:
+  - service: cover.open_cover
+    target:
+      entity_id: cover.tableau_tv
+  mode: single
+- id: '1589356365410'
+  alias: Tableau TV fermeture
+  description: ''
+  trigger:
+  - entity_id: media_player.living_room_tv
+    platform: state
+    to: 'off'
+  condition: []
+  action:
+  - service: cover.close_cover
+    target:
+      entity_id: cover.tableau_tv
+  mode: single
+- id: '1601113499442'
+  alias: Refresh visual on Plex status
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: media_player.plex_plex_for_lg_lg_oled77w7v_z
+    from: idle
+  - platform: state
+    entity_id:
+    - media_player.plex_plex_for_lg_lg_oled77w7v_z
+    to: idle
+  condition: []
+  action:
+  - service: browser_mod.refresh
+    data: {}
+  mode: single
+- id: '1601189043362'
+  alias: Refresh visual on source change
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.living_room_tv_source
+  condition: []
+  action:
+  - service: browser_mod.refresh
+    data: {}
+  mode: single
+- id: '1613936860306'
+  alias: Extended Stereo
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: media_player.pioneer_avr
+    to: 'on'
+    for: '10'
+  condition:
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: media_player.pioneer_avr
+      attribute: source
+      state: MEDIA SERVER
+    - condition: state
+      entity_id: media_player.pioneer_avr
+      state: BT AUDIO
+      attribute: source
+    - condition: state
+      entity_id: media_player.pioneer_avr
+      state: INTERNET RADIO
+      attribute: source
+    - condition: state
+      entity_id: media_player.pioneer_avr
+      state: iPod/USB
+      attribute: source
+    - condition: state
+      entity_id: media_player.pioneer_avr
+      state: CD
+      attribute: source
+    - condition: state
+      entity_id: media_player.pioneer_avr
+      state: TUNER
+      attribute: source
+    - condition: state
+      entity_id: media_player.pioneer_avr
+      state: PHONO
+      attribute: source
+  action:
+  - service: media_player.select_sound_mode
+    data:
+      sound_mode: EXTENDED STEREO
+    entity_id: media_player.pioneer_avr
+  mode: single
+- id: '1613937031520'
+  alias: Auto Surround
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: media_player.pioneer_avr
+    to: 'on'
+    for: '10'
+  condition:
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: media_player.pioneer_avr
+      attribute: source
+      state: BD
+    - condition: state
+      entity_id: media_player.pioneer_avr
+      state: DVD
+      attribute: source
+    - condition: state
+      entity_id: media_player.pioneer_avr
+      state: SAT/CBL
+      attribute: source
+    - condition: state
+      entity_id: media_player.pioneer_avr
+      state: HDMI 1
+      attribute: source
+    - condition: state
+      entity_id: media_player.pioneer_avr
+      state: HDMI 2
+      attribute: source
+    - condition: state
+      entity_id: media_player.pioneer_avr
+      state: HDMI 3
+      attribute: source
+    - condition: state
+      entity_id: media_player.pioneer_avr
+      state: HDMI 4
+      attribute: source
+    - condition: state
+      entity_id: media_player.pioneer_avr
+      state: HDMI 5
+      attribute: source
+    - condition: state
+      entity_id: media_player.pioneer_avr
+      state: HDMI 6
+      attribute: source
+    - condition: state
+      entity_id: media_player.pioneer_avr
+      state: TV
+      attribute: source
+    - condition: state
+      entity_id: media_player.pioneer_avr
+      state: DVR/BDR
+      attribute: source
+    - condition: state
+      entity_id: media_player.pioneer_avr
+      state: HDMI 7/MHL
+      attribute: source
+  action:
+  - service: media_player.select_sound_mode
+    data:
+      sound_mode: AUTO SURROUND
+    entity_id: media_player.pioneer_avr
+  mode: single
+- id: '1616319173051'
+  alias: Swisscom off on source change
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: media_player.living_room_tv
+    from: HDMI1
+    attribute: source
+  condition:
+  - condition: state
+    entity_id: media_player.living_room_tv
+    state: 'on'
+    for: 00:00:30
+  action:
+  - service: remote.send_command
+    data:
+      command: Power
+      entity_id: remote.swisscom
+  mode: single
+- id: '1616843323469'
+  alias: Swisscom TV off when turning off TV
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: sensor.remote_select
+    from: tv
+    to: 'off'
+  condition: []
+  action:
+  - service: remote.send_command
+    data:
+      entity_id: remote.swisscom
+      command: Power
+  mode: single
+- id: '1624895552291'
+  alias: Charlie home start
+  description: Set device tracker for Charlie on HA restart
+  trigger:
+  - platform: homeassistant
+    event: start
+  condition: []
+  action:
+  - service: device_tracker.see
+    data:
+      dev_id: pet_charlie
+      location_name: "{% if states('binary_sensor.charlie') == 'on' %}\n  home\n{%
+        elif states('binary_sensor.charlie') == 'off' %}\n  not_home\n{% else %}\n
+        \ unknown\n{% endif %}\n"
+  mode: single
+  max: 10
+- id: '1624895834625'
+  alias: Charlie home
+  description: Set device tracker for Charlie on binary sensor change
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.charlie
+  condition: []
+  action:
+  - service: device_tracker.see
+    data:
+      dev_id: pet_charlie
+      location_name: "{% if trigger.to_state.state == 'on' %}\n  home\n{% elif trigger.to_state.state
+        == 'off' %}\n  not_home\n{% else %}\n   unknown\n{% endif %}\n"
+  mode: queued
+  max: 10
+- id: '1637858673653'
+  alias: Store terrasse close button
+  description: Close store terrasse on button press
+  trigger:
+  - device_id: 8615c110ea20420a9ac3e10345415a26
+    domain: deconz
+    platform: device
+    type: remote_button_short_press
+    subtype: top_buttons
+  condition: []
+  action:
+  - service: cover.close_cover
+    data: {}
+    target:
+      entity_id: cover.store_terrasse_reversed
+  mode: single
+- id: '1637858821506'
+  alias: Store terrasse open button
+  description: Open store terrasse on button press
+  trigger:
+  - device_id: 8615c110ea20420a9ac3e10345415a26
+    domain: deconz
+    platform: device
+    type: remote_button_short_press
+    subtype: bottom_buttons
+  condition: []
+  action:
+  - service: cover.open_cover
+    data: {}
+    target:
+      entity_id: cover.store_terrasse_reversed
+  mode: single
+- id: '1644140034798'
+  alias: Skip holiday trash
+  description: ''
+  use_blueprint:
+    path: bruxy70/skip_holday.yaml
+    input:
+      garbage_collection_entity: sensor.poubelle_compost_papier
+      holiday_entity: calendar.holidays_lausanne
+- id: '1644140055818'
+  alias: Skip holiday verre
+  description: ''
+  use_blueprint:
+    path: bruxy70/skip_holday.yaml
+    input:
+      garbage_collection_entity: sensor.verre
+      holiday_entity: calendar.holidays_lausanne
+- id: '1644784304855'
+  alias: Lovelace update ignore
+  description: ''
+  trigger:
+  - platform: event
+    event_type: lovelace_updated
+    context: {}
+  condition: []
+  action:
+  - service: browser_mod.notification
+    data: {}
+  mode: restart
+  initial_state: true
+- id: '1646379729132'
+  alias: Turn on TV
+  description: ''
+  trigger:
+  - platform: device
+    device_id: d054e4ed48587c78d89466b796d68978
+    domain: webostv
+    type: webostv.turn_on
+  condition: []
+  action:
+  - service: wake_on_lan.send_magic_packet
+    data:
+      mac: 38:8C:50:15:44:B6
+  mode: single
+- id: '1656948361450'
+  alias: HA reboot
+  description: ''
+  trigger:
+  - platform: time
+    at: 06:05:00
+  condition: []
+  action:
+  - service: homeassistant.restart
+    data: {}
+  mode: single

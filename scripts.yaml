@@ -1,0 +1,438 @@
+watch_tv:
+  alias: Watch TV
+  sequence:
+  - service: media_player.turn_on
+    data: {}
+    entity_id: media_player.living_room_tv
+  - service: remote.send_command
+    data:
+      entity_id: remote.swisscom
+      command: Power
+  - service: media_player.select_source
+    data:
+      source: HDMI1
+    target:
+      entity_id: media_player.living_room_tv
+  - wait_for_trigger:
+    - platform: state
+      entity_id: media_player.pioneer_avr
+      to: 'on'
+      for: '2'
+  - service: media_player.volume_set
+    data:
+      volume_level: 0.4918918918918919
+    target:
+      entity_id: media_player.pioneer_avr
+  mode: single
+  icon: mdi:television-box
+watch_plex:
+  alias: Watch Plex
+  sequence:
+  - service: media_player.turn_on
+    data: {}
+    entity_id: media_player.living_room_tv
+  - wait_for_trigger:
+    - platform: state
+      entity_id: media_player.living_room_tv
+      to: 'on'
+  - service: media_player.select_source
+    data:
+      source: Plex
+    entity_id: media_player.living_room_tv
+  - service: media_player.volume_set
+    data:
+      volume_level: '0.4702702702702703'
+    entity_id: media_player.pioneer_avr
+  mode: single
+  icon: mdi:plex
+watch_youtube_kids:
+  alias: Watch YouTube Kids
+  sequence:
+  - service: media_player.turn_on
+    data: {}
+    entity_id: media_player.living_room_tv
+  - wait_for_trigger:
+    - platform: state
+      entity_id: media_player.living_room_tv
+      to: 'on'
+  - service: media_player.select_source
+    data:
+      source: YouTube Kids
+    entity_id: media_player.living_room_tv
+  - service: media_player.volume_set
+    data:
+      volume_level: '0.43783783783783786'
+    entity_id: media_player.pioneer_avr
+  mode: single
+  icon: mdi:youtube-gaming
+screen_share:
+  alias: Screen Share
+  sequence:
+  - service: media_player.turn_on
+    data: {}
+    entity_id: media_player.living_room_tv
+  - wait_for_trigger:
+    - platform: state
+      entity_id: media_player.living_room_tv
+      to: 'on'
+  - service: media_player.select_source
+    data:
+      source: Screen Share
+    entity_id: media_player.living_room_tv
+  mode: single
+  icon: mdi:cast
+music:
+  sequence:
+  - service: media_player.turn_on
+    data: {}
+    entity_id: media_player.pioneer_avr
+  - wait_for_trigger:
+    - platform: state
+      entity_id: media_player.pioneer_avr
+      to: 'on'
+      for: '2'
+  - service: media_player.select_source
+    data:
+      source: MEDIA SERVER
+    entity_id: media_player.pioneer_avr
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 1
+      milliseconds: 0
+  - service: media_player.volume_set
+    data:
+      volume_level: 0.3837837837837838
+    target:
+      entity_id: media_player.pioneer_avr
+  - service: media_player.media_play
+    data: {}
+    entity_id: media_player.bubble
+  mode: single
+  icon: mdi:music
+  alias: music
+bluetooth:
+  alias: Bluetooth
+  sequence:
+  - service: media_player.turn_on
+    data: {}
+    entity_id: media_player.pioneer_avr
+  - wait_for_trigger:
+    - platform: state
+      entity_id: media_player.pioneer_avr
+      to: 'on'
+      for: '2'
+  - service: media_player.select_source
+    data:
+      source: BT AUDIO
+    entity_id: media_player.pioneer_avr
+  - delay: '1'
+  - service: media_player.volume_set
+    data:
+      volume_level: '0.3837837837837838'
+    entity_id: media_player.pioneer_avr
+  mode: single
+  icon: mdi:speaker-bluetooth
+watch_youtube:
+  alias: Watch YouTube
+  sequence:
+  - service: media_player.turn_on
+    data: {}
+    entity_id: media_player.living_room_tv
+  - wait_for_trigger:
+    - platform: state
+      entity_id: media_player.living_room_tv
+      to: 'on'
+  - service: media_player.select_source
+    data:
+      source: YouTube
+    entity_id: media_player.living_room_tv
+  - service: media_player.volume_set
+    data:
+      volume_level: '0.43783783783783786'
+    entity_id: media_player.pioneer_avr
+  mode: single
+  icon: mdi:youtube
+couleur_3:
+  alias: Couleur 3
+  sequence:
+  - service: media_player.turn_on
+    data: {}
+    entity_id: media_player.pioneer_avr
+  - wait_for_trigger:
+    - platform: state
+      entity_id: media_player.pioneer_avr
+      to: 'on'
+      for: '2'
+  - service: media_player.select_source
+    data:
+      source: INTERNET RADIO
+    target:
+      entity_id: media_player.pioneer_avr
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 1
+      milliseconds: 0
+  - service: media_player.volume_set
+    data:
+      volume_level: 0.3837837837837838
+    target:
+      entity_id: media_player.pioneer_avr
+  mode: single
+  icon: mdi:numeric-3
+music_source:
+  alias: music_source
+  sequence:
+  - service: media_player.select_source
+    data:
+      source: MEDIA SERVER
+    entity_id: media_player.pioneer_avr
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 2
+      milliseconds: 0
+  - service: media_player.media_play
+    data: {}
+    entity_id: media_player.bubble
+  mode: single
+  icon: mdi:music
+avr_mute:
+  alias: AVR_mute
+  sequence:
+  - service: media_player.volume_mute
+    target:
+      entity_id: media_player.pioneer_avr
+    data:
+      is_volume_muted: '{{ not state_attr(''media_player.pioneer_avr'', ''is_volume_muted'')
+        }}'
+  mode: single
+  icon: mdi:volume-low
+to_swisscom:
+  alias: To Swisscom
+  sequence:
+  - service: remote.send_command
+    data:
+      entity_id: remote.swisscom
+      command: Power
+  - service: media_player.select_source
+    data:
+      source: HDMI1
+    target:
+      entity_id: media_player.living_room_tv
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 5
+      milliseconds: 0
+  - service: media_player.volume_set
+    data:
+      volume_level: 0.4918918918918919
+    target:
+      entity_id: media_player.pioneer_avr
+  mode: single
+  icon: mdi:television-box
+m6:
+  alias: M6
+  sequence:
+  - service: remote.send_command
+    data:
+      entity_id: remote.swisscom
+      command: 4
+  mode: single
+rts1:
+  alias: RTS1
+  sequence:
+  - service: remote.send_command
+    data:
+      entity_id: remote.swisscom
+      command: 1
+  mode: single
+rts2:
+  alias: RTS2
+  sequence:
+  - service: remote.send_command
+    data:
+      entity_id: remote.swisscom
+      command: 2
+  mode: single
+tf1:
+  alias: TF1
+  sequence:
+  - service: remote.send_command
+    data:
+      entity_id: remote.swisscom
+      command: 3
+  mode: single
+w9:
+  alias: W9
+  sequence:
+  - service: remote.send_command
+    data:
+      entity_id: remote.swisscom
+      command: 2
+  - service: remote.send_command
+    data:
+      entity_id: remote.swisscom
+      command: 3
+  mode: single
+nat_geo_fr:
+  alias: Nat Geo FR
+  sequence:
+  - service: remote.send_command
+    data:
+      entity_id: remote.swisscom
+      command: 9
+  - service: remote.send_command
+    data:
+      entity_id: remote.swisscom
+      command: 0
+  mode: single
+nat_geo_wild_fr:
+  alias: Nat Geo Wild FR
+  sequence:
+  - service: remote.send_command
+    data:
+      entity_id: remote.swisscom
+      command: 9
+  - service: remote.send_command
+    data:
+      entity_id: remote.swisscom
+      command: 1
+  mode: single
+srf1:
+  alias: SRF1
+  sequence:
+  - service: remote.send_command
+    data:
+      entity_id: remote.swisscom
+      command: 1
+  - service: remote.send_command
+    data:
+      entity_id: remote.swisscom
+      command: 0
+  - service: remote.send_command
+    data:
+      entity_id: remote.swisscom
+      command: 0
+  - service: remote.send_command
+    data:
+      entity_id: remote.swisscom
+      command: 0
+  mode: single
+srf2:
+  alias: SRF2
+  sequence:
+  - service: remote.send_command
+    data:
+      entity_id: remote.swisscom
+      command: 1
+  - service: remote.send_command
+    data:
+      entity_id: remote.swisscom
+      command: 0
+  - service: remote.send_command
+    data:
+      entity_id: remote.swisscom
+      command: 0
+  - service: remote.send_command
+    data:
+      entity_id: remote.swisscom
+      command: 1
+  mode: single
+srfinfo:
+  alias: SRFInfo
+  sequence:
+  - service: remote.send_command
+    data:
+      entity_id: remote.swisscom
+      command: 1
+  - service: remote.send_command
+    data:
+      entity_id: remote.swisscom
+      command: 0
+  - service: remote.send_command
+    data:
+      entity_id: remote.swisscom
+      command: 0
+  - service: remote.send_command
+    data:
+      entity_id: remote.swisscom
+      command: 2
+  mode: single
+dmax:
+  alias: DMAX
+  sequence:
+  - service: remote.send_command
+    data:
+      entity_id: remote.swisscom
+      command: 1
+  - service: remote.send_command
+    data:
+      entity_id: remote.swisscom
+      command: 0
+  - service: remote.send_command
+    data:
+      entity_id: remote.swisscom
+      command: 3
+  - service: remote.send_command
+    data:
+      entity_id: remote.swisscom
+      command: 4
+  mode: single
+nat_geo_de:
+  alias: Nat Geo DE
+  sequence:
+  - service: remote.send_command
+    data:
+      entity_id: remote.swisscom
+      command: 1
+  - service: remote.send_command
+    data:
+      entity_id: remote.swisscom
+      command: 1
+  - service: remote.send_command
+    data:
+      entity_id: remote.swisscom
+      command: 3
+  - service: remote.send_command
+    data:
+      entity_id: remote.swisscom
+      command: 3
+  mode: single
+launch_plex:
+  sequence:
+  - service: media_player.turn_on
+    data: {}
+    entity_id: media_player.living_room_tv
+  - wait_for_trigger:
+    - platform: state
+      entity_id: media_player.living_room_tv
+      to: 'on'
+  - service: media_player.select_source
+    data:
+      source: Plex
+    entity_id: media_player.living_room_tv
+  - service: media_player.volume_set
+    data:
+      volume_level: 0.4702702702702703
+    target:
+      entity_id: media_player.pioneer_avr
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 50
+      milliseconds: 0
+  mode: single
+  icon: mdi:plex
+  alias: Launch Plex
+light_timer:
+  alias: Light timer
+  sequence:
+  - delay: '{{ states(''counter.light_time'') | multiply(60) | int }}'
+  - service: light.turn_off
+    target:
+      entity_id: '{{ entity_id }}'
+  mode: parallel
+  icon: mdi:lightbulb-auto

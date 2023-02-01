@@ -1,0 +1,216 @@
+media_service:
+  variables:
+    name: "var_name"
+    service: "var_service"
+    picture: "var_picture"
+  name: '[[[ return variables.name ]]]'
+  tap_action:
+    action: call-service
+    service: '[[[ return variables.service ]]]'
+  hold_action:
+    action: none
+  show_entity_picture: true
+  entity_picture: '[[[ return variables.picture ]]]'
+  aspect_ratio: 1/1
+  styles:
+    card:
+      - background: none
+      - box-shadow: none
+      - padding: 0
+      - border-radius: '[[[ return variables.name != "" ? "0%" : "100%" ]]]'
+      - --mdc-ripple-color: var(--accent-color)
+      - --mdc-ripple-press-opacity: 0.2
+    entity_picture:
+      - padding: 0
+      - width: 70%
+    name:
+      - padding: 0
+      - font-size: 1vmax
+    grid:
+      - grid-template-areas: '"i" "n"'
+      - grid-template-columns: 1fr
+      - grid-template-rows: 1fr min-content
+  card_mod:
+    style: |
+      :host {
+        --masonry-view-card-margin: 0px !important;
+      }
+
+media_volume:
+  variables:
+    service: "var_service"
+    picture: "var_picture"
+    radius: "var_radius"
+    left: "var_left"
+  tap_action:
+    action: call-service
+    service: '[[[ return variables.service ]]]'
+    service_data:
+      entity_id: media_player.pioneer_avr
+  hold_action:
+    action: none
+  show_entity_picture: true
+  entity_picture: '[[[ return variables.picture ]]]'
+  aspect_ratio: 2/1
+  styles:
+    card:
+      - background: none
+      - box-shadow: none
+      - padding: 0
+      - padding: 0
+      - --mdc-ripple-color: var(--accent-color)
+      - --mdc-ripple-press-opacity: 0.2
+      - border-radius: '[[[ return variables.radius ]]]'
+    entity_picture:
+      - padding: 0
+      - width: 80%
+      - left: '[[[ return variables.left ]]]'
+  card_mod:
+    style: |
+      :host {
+        --masonry-view-card-margin: 0px !important;
+      }
+
+media_volume_vertical:
+  variables:
+    service: "var_service"
+    picture: "var_picture"
+    radius: "var_radius"
+    top: "var_top"
+  tap_action:
+    action: call-service
+    service: '[[[ return variables.service ]]]'
+    service_data:
+      entity_id: media_player.pioneer_avr
+  hold_action:
+    action: none
+  show_entity_picture: true
+  entity_picture: '[[[ return variables.picture ]]]'
+  aspect_ratio: 1/2
+  styles:
+    card:
+      - background: none
+      - box-shadow: none
+      - padding: 0
+      - --mdc-ripple-color: var(--accent-color)
+      - --mdc-ripple-press-opacity: 0.2
+      - border-radius: '[[[ return variables.radius ]]]'
+    entity_picture:
+      - padding: 0
+      - height: 80%
+      - width: 80%
+      - top: '[[[ return variables.top ]]]'
+  card_mod:
+    style: |
+      :host {
+        --masonry-view-card-margin: 0px !important;
+      }
+
+media_state:
+  variables:
+    background: "var_background"
+    justify: "var_justify"
+  tap_action:
+    action: none
+  hold_action:
+    action: none
+  aspect_ratio: 4/1
+  show_name: false
+  show_icon: false
+  show_label: false
+  show_state: true
+  styles:
+    card:
+      - background: '[[[ return variables.background ]]]'
+      - background-size: 100% 80%
+      - background-repeat: no-repeat
+      - background-position: center
+      - box-shadow: none
+      - padding: 0
+    state:
+      - justify-self: '[[[ return variables.justify ]]]'
+      - margin: 0px 7.5% 0px 7.5%
+      - font-size: 1.25vmax
+      - color: lightgrey
+      - overflow: visible
+      - max-width: unset
+  card_mod:
+    style: |
+      :host {
+        --masonry-view-card-margin: 0px !important;
+      }
+
+media_state_title:
+  tap_action:
+    action: none
+  hold_action:
+    action: none
+  show_name: false
+  show_icon: false
+  show_label: false
+  show_state: true
+  styles:
+    card:
+      - box-shadow: none
+      - padding: 0
+    state:
+      - justify-self: center
+      - font-size: 1.25vmax
+      - color: lightgrey
+      - overflow: visible
+      - max-width: unset
+      - align-self: center
+  extra_styles: |
+    .marquee {
+      animation: marquee 20s linear infinite;
+    }
+    @keyframes marquee {
+      from {
+        transform: translateX(0%);
+      }
+      to {
+        transform: translateX(-50%);
+      }
+    }
+  card_mod:
+    style: |
+      :host {
+        --masonry-view-card-margin: 0px !important;
+        left: 50%;
+        top: 50%;
+        width: 90%;
+        height: 80%;
+      }
+      ha-card {
+        height: 100%;
+      }
+
+media_channels:
+  variables:
+    service: "var_service"
+    picture: "var_picture"
+  tap_action:
+    action: call-service
+    service: '[[[ return variables.service ]]]'
+  hold_action:
+    action: none
+  show_entity_picture: true
+  entity_picture: '[[[ return variables.picture ]]]'
+  styles:
+    card:
+      - background: none
+      - box-shadow: none
+      - --mdc-ripple-color: var(--accent-color)
+      - --mdc-ripple-press-opacity: 0.2
+    entity_picture:
+      - padding: 0
+      - width: 80%
+    grid:
+      - grid-template-areas: '"i"'
+      - grid-template-columns: 1fr
+      - grid-template-rows: 1fr
+  card_mod:
+    style: |
+      :host {
+        --masonry-view-card-margin: 0px !important;
+      }

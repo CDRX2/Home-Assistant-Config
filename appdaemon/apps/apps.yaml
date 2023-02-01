@@ -1,0 +1,29 @@
+# Converts to decibels (dB) - Typical Pioneer Media Player Configuration
+salon_volume:
+  module: convert_media_volume
+  class: ConvertMediaVolume
+  media_player: media_player.pioneer_avr
+  name: Pioneer AVR Volume
+  unit_of_measurement: dB
+  min_volume:
+    device: -80.5
+    media_player: 0
+  max_volume:
+    device: 12.0
+    media_player: 1.0
+  precision: 1
+
+calendar_tv_reminders:
+  module: calendar_tv_reminders
+  class: CalendarTVReminders
+  tv: media_player.living_room_tv
+  calendars:
+    - calendar.annedoerig_gmail_com
+    - calendar.cedric2rig_gmail_com
+    - calendar.famille
+    - calendar.family_birthdays
+  notifications:
+    service: notify/living_room_tv
+    triggers:
+      - 10
+  debug: false

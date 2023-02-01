@@ -1,0 +1,25 @@
+- platform: time_date
+  display_options:
+    - 'time'
+    - 'date'
+    - 'date_time'
+    - 'date_time_utc'
+    - 'date_time_iso'
+    - 'time_date'
+    - 'time_utc'
+    - 'beat'
+
+- platform: template
+  sensors:
+    day:
+      value_template: >
+        {% set days = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"] %}
+        {{ days[now().weekday()] }}
+    month:
+      value_template: >
+        {% set months = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"] %}
+        {{ strptime(states('sensor.date'), '%Y-%m-%d').day }}
+        {{ months[now().month-1] }}
+    date_string:
+      friendly_name: "Full Date"
+      value_template: "{{ states('sensor.day') }} {{ states('sensor.month') }} {{ now().year }}"

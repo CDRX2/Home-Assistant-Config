@@ -1,0 +1,300 @@
+color_lights:
+  variables:
+    entity: "var_entity"
+    title: "var_title"
+    gridarea: "var_gridarea"
+    color_temp: "var_color_temp"
+  aspect_ratio: 2/1
+  custom_fields:
+    color:
+      card:
+        type: picture
+        image: /local/ui/color.png
+        tap_action:
+          action: fire-dom-event
+          browser_mod:
+            service: browser_mod.popup
+            data:
+              content:
+                cards:
+                  - entities:
+                      - entity: '[[[ return variables.entity ]]]'
+                        secondary_info: last-changed
+                    style:
+                      z-index: 5
+                    show_header_toggle: false
+                    type: entities
+                  - brightness: false
+                    color_picker: true
+                    consolidate_entities: true
+                    color_temp: '[[[return variables.color_temp]]]'
+                    effects_list: false
+                    entity: '[[[ return variables.entity ]]]'
+                    header: false
+                    hide_header: true
+                    persist_features: true
+                    smooth_color_wheel: true
+                    full_width_sliders: true
+                    type: 'custom:light-entity-card'
+                    card_mod:
+                      style: |
+                          ha-card {
+                            box-shadow: none !important;
+                          }
+                mode: vertical
+                type: 'custom:stack-in-card'
+              title: '[[[ return variables.title ]]]'
+    slider:
+      card:
+        type: 'custom:mod-card'
+        card:
+          type: 'custom:slider-entity-row'
+          entity: '[[[ return variables.entity ]]]'
+          full_row: true
+          grow: true
+          hide_state: false
+        card_mod:
+          style:
+            .: |
+              ha-card {
+                box-shadow: none;
+              }
+            slider-entity-row$: 
+              .: |
+                .state {
+                  margin-left: 0 !important;
+                  min-width: 0 !important;
+                  white-space: nowrap;
+                }
+                ha-slider {
+                  min-width: 0 !important;
+                  height: 3vw;
+                }
+                .wrapper {
+                  height: 3vw !important;
+                }
+              ha-slider.full$: |
+                #sliderContainer {
+                  margin-left: 10%;
+                  margin-right: 10%;
+                }
+  styles:
+    grid:
+      - grid-template-areas: '[[[ return variables.gridarea ]]]'
+      - grid-template-columns: 1fr 1fr 1fr
+      - grid-template-rows: 1fr min-content 30%
+    card:
+      - border-radius: 0.75vw
+      - padding: 1vw
+    icon:
+      - top: 0%
+      - left: 0%
+      - '--paper-item-icon-active-color': "[[[ return typeof entity.attributes.rgb_color !== 'undefined' ? 'rgba(' + entity.attributes.rgb_color + ', 1)' : '#f5d442'; ]]]"
+    name:
+      - font-size: 1.4vw
+    custom_fields:
+      slider:
+        - width: 100%
+        - font-size: 0.8vw
+        - '--paper-slider-active-color': "[[[ return typeof entity.attributes.rgb_color !== 'undefined' ? 'rgba(' + entity.attributes.rgb_color + ', 1)' : '#f5d442'; ]]]"
+        - '--paper-slider-container-color': lightgrey
+      color:
+        - align-self: start
+        - justify-self: right
+        - width: 50%
+  card_mod:
+    style: 
+      .: |
+        :host {
+          --masonry-view-card-margin: 4px !important;
+        }
+      ha-icon$: |
+        ha-svg-icon {
+         padding-bottom: 20%;
+        }
+
+on_off_lights:
+  variables:
+    gridarea: "var_gridarea"
+  aspect_ratio: 2/1
+  styles:
+    grid:
+      - grid-template-areas: '[[[ return variables.gridarea ]]]'
+      - grid-template-columns: 1fr 1fr 1fr
+      - grid-template-rows: 1fr min-content 30%
+    card:
+      - border-radius: 0.75vw
+      - padding: 1vw
+    icon:
+      - top: 0%
+      - left: 0%
+      - '--paper-item-icon-active-color': '#f5d442'
+    name:
+      - font-size: 1.4vw
+  card_mod:
+    style: 
+      .: |
+        :host {
+          --masonry-view-card-margin: 4px !important;
+        }
+      ha-icon$: |
+        ha-svg-icon {
+         padding-bottom: 20%;
+        }
+
+dimmable_lights:
+  variables:
+    entity: "var_entity"
+    gridarea: "var_gridarea"
+  aspect_ratio: 2/1
+  custom_fields:
+    slider:
+      card:
+        type: 'custom:mod-card'
+        card:
+          type: 'custom:slider-entity-row'
+          entity: '[[[ return variables.entity ]]]'
+          full_row: true
+          grow: true
+          hide_state: false
+        card_mod:
+          style:
+            .: |
+              ha-card {
+                box-shadow: none;
+              }
+            slider-entity-row$: 
+              .: |
+                .state {
+                  margin-left: 0 !important;
+                  min-width: 0 !important;
+                  white-space: nowrap;
+                }
+                ha-slider {
+                  min-width: 0 !important;
+                  height: 3vw;
+                }
+                .wrapper {
+                  height: 3vw !important;
+                }
+              ha-slider.full$: |
+                #sliderContainer {
+                  margin-left: 10%;
+                  margin-right: 10%;
+                }
+  styles:
+    grid:
+      - grid-template-areas: '[[[ return variables.gridarea ]]]'
+      - grid-template-columns: 1fr 1fr 1fr
+      - grid-template-rows: 1fr min-content 30%
+    card:
+      - border-radius: 0.75vw
+      - padding: 1vw
+    icon:
+      - top: 0%
+      - left: 0%
+      - '--paper-item-icon-active-color': '#f5d442'
+    name:
+      - font-size: 1.4vw
+    custom_fields:
+      slider:
+        - width: 100%
+        - font-size: 0.8vw
+        - '--paper-slider-active-color': '#f5d442'
+        - '--paper-slider-container-color': lightgrey
+  card_mod:
+    style: 
+      .: |
+        :host {
+          --masonry-view-card-margin: 4px !important;
+        }
+      ha-icon$: |
+        ha-svg-icon {
+         padding-bottom: 20%;
+        }
+
+light_timer:
+  variables:
+    entity: "var_entity"
+  custom_fields:
+    minus:
+      card:
+        type: 'custom:button-card'
+        show_icon: true
+        show_name: false
+        size: 100%
+        icon: "mdi:minus"
+        tap_action:
+          action: call-service
+          service: counter.decrement
+          service_data:
+            entity_id: counter.light_time
+        styles:
+          card:
+            - border-radius: 100%
+            - padding: 0
+            - background: 'rgba(255, 255, 255, 0.3)'
+    time:
+      card:
+        type: 'custom:button-card'
+        show_icon: false
+        show_name: true
+        aspect_ratio: 3.5/1
+        name: '[[[ return states["counter.light_time"].state + " min."; ]]]' 
+        tap_action:
+          action: none
+        styles:
+          card:
+            - border-radius: 1vw
+            - padding: 0
+            - background: 'rgba(255, 255, 255, 0.3)'
+          name:
+            - font-size: 1vw
+    plus:
+      card:
+        type: 'custom:button-card'
+        show_icon: true
+        show_name: false
+        size: 100%
+        icon: "mdi:plus" 
+        tap_action:
+          action: call-service
+          service: counter.increment
+          service_data:
+            entity_id: counter.light_time
+        styles:
+          card:
+            - border-radius: 100%
+            - padding: 0
+            - background: 'rgba(255, 255, 255, 0.3)'
+    OK:
+      card:
+        type: 'custom:button-card'
+        show_icon: true
+        show_name: false
+        size: 100%
+        icon: "mdi:play" 
+        tap_action:
+          action: call-service
+          service: script.light_timer
+          service_data:
+            entity_id: '[[[ return variables.entity ]]]'
+        styles:
+          card:
+            - border-radius: 100%
+            - padding: 0
+            - background: 'rgba(255, 255, 255, 0.3)'
+  name: "Timer extinction"
+  show_icon: false
+  show_name: true
+  action: none
+  styles:
+    grid:
+      - grid-template-areas: '"n n n n n n n n n" ". minus . time . plus . OK ."'
+      - grid-template-columns: 10% 10% 5% 35% 5% 10% 5% 10% 10%
+      - grid-template-rows: 1fr 1fr
+    card:
+      - border: none
+      - box-shadow: none
+    name:
+      - font-size: 1vw
