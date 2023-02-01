@@ -198,35 +198,50 @@ HDD_button:
 
 HDD_markdown:
   card:
-    type: 'custom:stack-in-card'
-    mode: vertical
-    cards:
-      - type: markdown
-        content: |
-          <font color=[[font_color]]><ha-icon icon="mdi:[[icon]]"></ha-icon></font>
-        card_mod:
-          style: |
-            ha-card {
-              box-shadow: none;
-              background: none;
-              text-align: [[text-align]] ;
-            } 
-            ha-markdown {
-              padding: 0 !important;
-            }   
-      - type: markdown
-        content: |
-          <font size=2 color=[[font_color]]>[[text]]</font>
-        card_mod:
-          style: |
-            ha-card {
-              box-shadow: none;
-              background: none;
-              text-align: [[text-align]];
-            } 
-            ha-markdown {
-              padding: 0 !important;
-            } 
+    type: custom:mod-card
+    card_mod:
+      style:
+        layout-card$:
+          grid-layout$: |
+            :host {
+              padding: 0px !important;
+            }
+            #root {
+              margin: 0px !important;
+            }
+            #root > * {
+              margin: 0px !important;
+            }
+    card:
+      type: 'custom:layout-card'
+      layout_type: custom:vertical-layout
+      cards:
+        - type: markdown
+          content: |
+            <font color=[[font_color]]><ha-icon icon="mdi:[[icon]]"></ha-icon></font>
+          card_mod:
+            style: |
+              ha-card {
+                box-shadow: none;
+                background: none;
+                text-align: [[text-align]] ;
+              } 
+              ha-markdown {
+                padding: 0 !important;
+              }   
+        - type: markdown
+          content: |
+            <font size=2 color=[[font_color]]>[[text]]</font>
+          card_mod:
+            style: |
+              ha-card {
+                box-shadow: none;
+                background: none;
+                text-align: [[text-align]];
+              } 
+              ha-markdown {
+                padding: 0 !important;
+              } 
     card_mod:
       style: |
         ha-card {

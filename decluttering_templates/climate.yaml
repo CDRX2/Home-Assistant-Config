@@ -227,301 +227,317 @@ climate_state_label:
 
 fan_popup:
   card:
-    type: 'custom:stack-in-card'
-    mode: horizontal
-    cards:
-      - type: 'custom:stack-in-card'
-        mode: vertical
-        cards:
-          - type: 'custom:apexcharts-card'
-            config_templates:
-              - default
-              - temp_humidity
-            series:
-              - entity: sun.sun
-                curve: stepline
-                name: Soleil
-                transform: "return x === 'above_horizon' ? 0 : 1;"
-                color: grey
-                opacity: 0.3
-                yaxis_id: day
-                show:
-                  in_header: false
-                  datalabels: false
-              - entity: '[[temp]]'
-                name: Température
-                yaxis_id: temp
-                color: '#ffa31a'
-                group_by:
-                  func: avg
-                  duration: 60min
-              - entity: '[[humidity]]'
-                name: Humidité
-                yaxis_id: humidity
-                color: '#03a8f4'
-                group_by:
-                  func: avg
-                  duration: 60min
-            card_mod:
-              style: |
-                ha-card {
-                  box-shadow: none !important;
-                }
-                div#header__title {
-                  color: var(--primary-text-color);
-                  opacity: 0.65;
-                }
-                div.apexcharts-legend-series {
-                  opacity: 0.65;
-                }
-                div#header__states {
-                  padding-top: 3%;
-                }
-                div#state__value {
-                  opacity: 0.65;
-                }
-                .apexcharts-tooltip {
-                  border: none !important;
-                  border-radius: 0.2vw !important;
-                }
-                .apexcharts-tooltip-title {
-                  border: none !important;
-                  padding-bottom: none;
-                  margin-bottom: none;
-                }
-          - type: entities
-            title: Ventilateur
-            show_header_toggle: false
-            entities:
-              - type: 'custom:multiple-entity-row'
-                name: Ventilation
-                secondary_info: last-changed
-                entity: fan.master_bedroom
-                state_header: Ventilateur
-                toggle: true
-                state_color: true
-                entities:
-                  - entity: switch.master_bedroom_front_airflow
-                    name: Flux avant
-                    toggle: true
-                card_mod:
-                  style:
-                    hui-generic-entity-row$: |
-                      state-badge {
-                        animation: {{ iif (is_state('fan.master_bedroom', 'on'), 'spin 1s linear infinite', 'none') }};
-                      }  
-                      @keyframes spin {
-                        0% { transform: rotate(0deg); }
-                        100% { transform: rotate(360deg); }
-                      } 
-              - type: 'custom:paper-buttons-row'
-                base_config:
-                  style:
-                    button:
-                      background-color: 'rgba(255, 255, 255, 0.4)'
-                      color: lightgrey
-                      border-radius: 10%
-                buttons:
-                  - icon: 'mdi:minus-thick'
-                    tap_action:
-                      action: call-service
-                      service: fan.decrease_speed
-                      service_data:
-                        entity_id: fan.master_bedroom
-                        percentage_step: 10                   
-                  - entity: fan.master_bedroom
-                    name:
-                      attribute: percentage
-                      postfix: " %"
-                  - icon: 'mdi:plus-thick'
-                    tap_action:
-                      action: call-service
-                      service: fan.increase_speed
-                      service_data:
-                        entity_id: fan.master_bedroom
-                        percentage_step: 10
-              - type: 'custom:multiple-entity-row'
-                name: Modes
-                icon: 'mdi:fan-alert'
-                entity: switch.master_bedroom_auto_mode
-                state_header: Auto
-                toggle: true
-                state_color: true
-                entities:
-                  - entity: switch.master_bedroom_continuous_monitoring
-                    name: Monitoring
-                    toggle: true
-                  - entity: switch.master_bedroom_night_mode
-                    name: Nuit
-                    toggle: true
-              - type: 'custom:multiple-entity-row'
-                name: Infos
-                entity: sensor.master_bedroom_filter_life
-                state_header: Filtre
-                entities:
-                  - entity: sensor.master_bedroom_next_deep_clean
-                    name: Nettoyage
-        card_mod:
-          style: |
-            ha-card {
-              box-shadow: none !important;
-            } 
-      - type: 'custom:stack-in-card'
-        mode: vertical
-        cards:
-          - type: 'custom:apexcharts-card'
-            config_templates:
-              - default
-              - temp_humidity
-            header:
-              title: Qualité de l'air
-            series:
-              - entity: '[[volatile_organic_compounds]]'
-                name: Composé org. volatile
-                yaxis_id: humidity
-                color: '#30f403'
-                group_by:
-                  func: avg
-                  duration: 60min
-                show:
-                  in_header: false
-              - entity: '[[nitrogen_dioxide]]'
-                name: Dioxyde d'azote
-                yaxis_id: humidity
-                color: '#c703f4'
-                group_by:
-                  func: avg
-                  duration: 60min
-                show:
-                  in_header: false
-              - entity: '[[particulate_matter_2_5]]'
-                name: Particules 2.5
-                yaxis_id: humidity
-                color: '#03a8f4'
-                group_by:
-                  func: avg
-                  duration: 60min
-                show:
-                  in_header: false
-              - entity: '[[particulate_matter_10]]'
-                name: Particules 10
-                yaxis_id: humidity
-                color: '#f44f03'
-                group_by:
-                  func: avg
-                  duration: 60min
-                show:
-                  in_header: false
-            card_mod:
-              style: |
-                ha-card {
-                  box-shadow: none !important;
-                }
-                div#header__title {
-                  color: var(--primary-text-color);
-                  opacity: 0.65;
-                }
-                div.apexcharts-legend-series {
-                  opacity: 0.65;
-                }
-                div#header__states {
-                  padding-top: 3%;
-                }
-                div#state__value {
-                  opacity: 0.65;
-                }
-                .apexcharts-tooltip {
-                  border: none !important;
-                  border-radius: 0.2vw !important;
-                }
-                .apexcharts-tooltip-title {
-                  border: none !important;
-                  padding-bottom: none;
-                  margin-bottom: none;
-                }  
-          - type: entities
-            title: Humidificateur
-            entities:
-              - type: 'custom:paper-buttons-row'
-                base_config:
-                  style:
-                    button:
-                      color: lightgrey
-                      border-radius: 10%
-                buttons:
-                  - icon: 'mdi:air-humidifier'
-                    tap_action:
-                      action: call-service
-                      service: humidifier.toggle
-                      service_data:
-                        entity_id: humidifier.master_bedroom
+    type: custom:mod-card
+    card_mod:
+      style:
+        layout-card$:
+          grid-layout$: |
+            :host {
+              padding: 0px !important;
+            }
+            #root {
+              margin: 0px !important;
+            }
+            #root > * {
+              margin: 0px !important;
+            }
+    card:
+      type: 'custom:layout-card'
+      layout_type: custom:grid-layout
+      layout:
+        grid-template-rows: auto
+        grid-template-columns: 1fr 1fr
+        grid-template-areas: |
+          "a b"
+          "c d"
+          "c e"
+      cards:
+            - type: 'custom:apexcharts-card'
+              config_templates:
+                - default
+                - temp_humidity
+              series:
+                - entity: sun.sun
+                  curve: stepline
+                  name: Soleil
+                  transform: "return x === 'above_horizon' ? 0 : 1;"
+                  color: grey
+                  opacity: 0.3
+                  yaxis_id: day
+                  show:
+                    in_header: false
+                    datalabels: false
+                - entity: '[[temp]]'
+                  name: Température
+                  yaxis_id: temp
+                  color: '#ffa31a'
+                  group_by:
+                    func: avg
+                    duration: 60min
+                - entity: '[[humidity]]'
+                  name: Humidité
+                  yaxis_id: humidity
+                  color: '#03a8f4'
+                  group_by:
+                    func: avg
+                    duration: 60min
+              view_layout:
+                grid-area: a
+              card_mod:
+                style: |
+                  ha-card {
+                    box-shadow: none !important;
+                  }
+                  div#header__title {
+                    color: var(--primary-text-color);
+                    opacity: 0.65;
+                  }
+                  div.apexcharts-legend-series {
+                    opacity: 0.65;
+                  }
+                  div#header__states {
+                    padding-top: 3%;
+                  }
+                  div#state__value {
+                    opacity: 0.65;
+                  }
+                  .apexcharts-tooltip {
+                    border: none !important;
+                    border-radius: 0.2vw !important;
+                  }
+                  .apexcharts-tooltip-title {
+                    border: none !important;
+                    padding-bottom: none;
+                    margin-bottom: none;
+                  }
+            - type: entities
+              title: Ventilateur
+              show_header_toggle: false
+              view_layout:
+                grid-area: c
+              entities:
+                - type: 'custom:multiple-entity-row'
+                  name: Ventilation
+                  secondary_info: last-changed
+                  entity: fan.master_bedroom
+                  state_header: Ventilateur
+                  toggle: true
+                  state_color: true
+                  entities:
+                    - entity: switch.master_bedroom_front_airflow
+                      name: Flux avant
+                      toggle: true
+                  card_mod:
+                    style:
+                      hui-generic-entity-row$: |
+                        state-badge {
+                          animation: {{ iif (is_state('fan.master_bedroom', 'on'), 'spin 1s linear infinite', 'none') }};
+                        }  
+                        @keyframes spin {
+                          0% { transform: rotate(0deg); }
+                          100% { transform: rotate(360deg); }
+                        } 
+                - type: 'custom:paper-buttons-row'
+                  base_config:
                     style:
                       button:
-                        color: >-
-                          {{ iif (is_state('humidifier.master_bedroom', 'on'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}
-                        background-color: rgba(255, 255, 255, 0.4)                        
-                  - name: Auto
-                    tap_action:
-                      action: call-service
-                      service: humidifier.set_mode
-                      service_data:
-                        entity_id: humidifier.master_bedroom
-                        mode: auto
+                        background-color: 'rgba(255, 255, 255, 0.4)'
+                        color: lightgrey
+                        border-radius: 10%
+                  buttons:
+                    - icon: 'mdi:minus-thick'
+                      tap_action:
+                        action: call-service
+                        service: fan.decrease_speed
+                        service_data:
+                          entity_id: fan.master_bedroom
+                          percentage_step: 10                   
+                    - entity: fan.master_bedroom
+                      name:
+                        attribute: percentage
+                        postfix: " %"
+                    - icon: 'mdi:plus-thick'
+                      tap_action:
+                        action: call-service
+                        service: fan.increase_speed
+                        service_data:
+                          entity_id: fan.master_bedroom
+                          percentage_step: 10
+                - type: 'custom:multiple-entity-row'
+                  name: Modes
+                  icon: 'mdi:fan-alert'
+                  entity: switch.master_bedroom_auto_mode
+                  state_header: Auto
+                  toggle: true
+                  state_color: true
+                  entities:
+                    - entity: switch.master_bedroom_continuous_monitoring
+                      name: Monitoring
+                      toggle: true
+                    - entity: switch.master_bedroom_night_mode
+                      name: Nuit
+                      toggle: true
+                - type: 'custom:multiple-entity-row'
+                  name: Infos
+                  entity: sensor.master_bedroom_filter_life
+                  state_header: Filtre
+                  entities:
+                    - entity: sensor.master_bedroom_next_deep_clean
+                      name: Nettoyage
+            - type: 'custom:apexcharts-card'
+              config_templates:
+                - default
+                - temp_humidity
+              header:
+                title: Qualité de l'air
+              series:
+                - entity: '[[volatile_organic_compounds]]'
+                  name: Composé org. volatile
+                  yaxis_id: humidity
+                  color: '#30f403'
+                  group_by:
+                    func: avg
+                    duration: 60min
+                  show:
+                    in_header: true
+                - entity: '[[nitrogen_dioxide]]'
+                  name: Dioxyde d'azote
+                  yaxis_id: humidity
+                  color: '#c703f4'
+                  group_by:
+                    func: avg
+                    duration: 60min
+                  show:
+                    in_header: true
+                - entity: '[[particulate_matter_2_5]]'
+                  name: Particules 2.5
+                  yaxis_id: humidity
+                  color: '#03a8f4'
+                  group_by:
+                    func: avg
+                    duration: 60min
+                  show:
+                    in_header: true
+                - entity: '[[particulate_matter_10]]'
+                  name: Particules 10
+                  yaxis_id: humidity
+                  color: '#f44f03'
+                  group_by:
+                    func: avg
+                    duration: 60min
+                  show:
+                    in_header: true
+              view_layout: 
+                grid-area: b
+              card_mod:
+                style: |
+                  ha-card {
+                    box-shadow: none !important;
+                  }
+                  div#header__title {
+                    color: var(--primary-text-color);
+                    opacity: 0.65;
+                  }
+                  div.apexcharts-legend-series {
+                    opacity: 0.65;
+                  }
+                  div#header__states {
+                    padding-top: 3%;
+                  }
+                  div#state__value {
+                    opacity: 0.65;
+                  }
+                  .apexcharts-tooltip {
+                    border: none !important;
+                    border-radius: 0.2vw !important;
+                  }
+                  .apexcharts-tooltip-title {
+                    border: none !important;
+                    padding-bottom: none;
+                    margin-bottom: none;
+                  }  
+            - type: entities
+              title: Humidificateur
+              entities:
+                - type: 'custom:paper-buttons-row'
+                  base_config:
                     style:
                       button:
-                        background-color: >-
-                          {{ iif (is_state_attr('humidifier.master_bedroom', 'mode', 'auto'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}
-                  - name: Normal
-                    tap_action:
-                      action: call-service
-                      service: humidifier.set_mode
-                      service_data:
-                        entity_id: humidifier.master_bedroom
-                        mode: normal
-                    style:
-                      button:
-                        background-color: >-
-                          {{ iif (is_state_attr('humidifier.master_bedroom', 'mode', 'normal'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}
-            card_mod:
-              style:  
-                paper-buttons-row$:
-                  ha-icon$: 
-                    ha-svg-icon: |
-                      :host {
-                        animation: {{ iif (is_state('humidifier.master_bedroom', 'on'), 'blink 1s linear infinite alternate', 'none') }};
-                      }  
-                      @keyframes blink {
-                        0% { opacity: 0.1; }
-                        100% { opacity: 1; }
-                      }
-          - type: humidifier
-            entity: humidifier.master_bedroom
-            name: Humidité cible
-            card_mod:
-              style: |
-                .more-info {
-                  display: none;
-                }
-                #info {
-                  display: none;
-                }
-                #controls {
-                  padding: 0px;
-                }
-                round-slider {
-                  padding-bottom: 0px;
-                }
-        card_mod:
-          style: |
-            ha-card {
-              box-shadow: none !important;
-            }  
+                        color: lightgrey
+                        border-radius: 10%
+                  buttons:
+                    - icon: 'mdi:air-humidifier'
+                      tap_action:
+                        action: call-service
+                        service: humidifier.toggle
+                        service_data:
+                          entity_id: humidifier.master_bedroom
+                      style:
+                        button:
+                          color: >-
+                            {{ iif (is_state('humidifier.master_bedroom', 'on'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}
+                          background-color: rgba(255, 255, 255, 0.4)                        
+                    - name: Auto
+                      tap_action:
+                        action: call-service
+                        service: humidifier.set_mode
+                        service_data:
+                          entity_id: humidifier.master_bedroom
+                          mode: auto
+                      style:
+                        button:
+                          background-color: >-
+                            {{ iif (is_state_attr('humidifier.master_bedroom', 'mode', 'auto'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}
+                    - name: Normal
+                      tap_action:
+                        action: call-service
+                        service: humidifier.set_mode
+                        service_data:
+                          entity_id: humidifier.master_bedroom
+                          mode: normal
+                      style:
+                        button:
+                          background-color: >-
+                            {{ iif (is_state_attr('humidifier.master_bedroom', 'mode', 'normal'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}
+              view_layout:
+                grid-area: d
+              card_mod:
+                style:  
+                  paper-buttons-row$:
+                    ha-icon$: 
+                      ha-svg-icon: |
+                        :host {
+                          animation: {{ iif (is_state('humidifier.master_bedroom', 'on'), 'blink 1s linear infinite alternate', 'none') }};
+                        }  
+                        @keyframes blink {
+                          0% { opacity: 0.1; }
+                          100% { opacity: 1; }
+                        }
+            - type: humidifier
+              entity: humidifier.master_bedroom
+              name: Humidité cible
+              view_layout:
+                grid-area: e
+              card_mod:
+                style: |
+                  .more-info {
+                    display: none;
+                  }
+                  #info {
+                    display: none;
+                  }
+                  #controls {
+                    padding: 0px;
+                  }
+                  round-slider {
+                    padding-bottom: 0px;
+                  } 
     card_mod: 
       style: |
         ha-card {
-          width: 90% !important;
           min-width: 400px;
-          padding-left: 5%;
+          padding-left: 2%;
+          padding-right: 2%;
         }    
 
 fan_image:
@@ -542,9 +558,12 @@ fan_image:
               - volatile_organic_compounds: '[[volatile_organic_compounds]]'
               - nitrogen_dioxide: '[[nitrogen_dioxide]]'
               - particulate_matter_2_5: '[[particulate_matter_2_5]]'
-              - particulate_matter_10: '[[particulate_matter_10]]'         
+              - particulate_matter_10: '[[particulate_matter_10]]'
+            card_mod:
+              style: |         
           title: '[[title]]'
-          size: wide
+          style: |
+            --popup-min-width: 80vw;
     style:
       top: '[[top]]'
       left: '[[left]]'
@@ -568,9 +587,10 @@ fan_state_label:
               - volatile_organic_compounds: '[[volatile_organic_compounds]]'
               - nitrogen_dioxide: '[[nitrogen_dioxide]]'
               - particulate_matter_2_5: '[[particulate_matter_2_5]]'
-              - particulate_matter_10: '[[particulate_matter_10]]'      
+              - particulate_matter_10: '[[particulate_matter_10]]'   
           title: '[[title]]'
-          size: wide
+          style: |
+            --popup-min-width: 80vw;
     hold_action:
       action: none
     style:
