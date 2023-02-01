@@ -16,33 +16,48 @@ color_lights:
             service: browser_mod.popup
             data:
               content:
-                cards:
-                  - entities:
-                      - entity: '[[[ return variables.entity ]]]'
-                        secondary_info: last-changed
-                    style:
-                      z-index: 5
-                    show_header_toggle: false
-                    type: entities
-                  - brightness: false
-                    color_picker: true
-                    consolidate_entities: true
-                    color_temp: '[[[return variables.color_temp]]]'
-                    effects_list: false
-                    entity: '[[[ return variables.entity ]]]'
-                    header: false
-                    hide_header: true
-                    persist_features: true
-                    smooth_color_wheel: true
-                    full_width_sliders: true
-                    type: 'custom:light-entity-card'
-                    card_mod:
-                      style: |
-                          ha-card {
-                            box-shadow: none !important;
-                          }
-                mode: vertical
-                type: 'custom:stack-in-card'
+                type: custom:mod-card
+                card_mod:
+                  style:
+                    layout-card$:
+                      grid-layout$: |
+                        :host {
+                          padding: 0px !important;
+                        }
+                        #root {
+                          margin: 0px !important;
+                        }
+                        #root > * {
+                          margin: 0px !important;
+                        }
+                card:
+                  type: custom:layout-card
+                  layout_type: custom:vertical-layout
+                  cards:
+                    - entities:
+                        - entity: '[[[ return variables.entity ]]]'
+                          secondary_info: last-changed
+                      style:
+                        z-index: 5
+                      show_header_toggle: false
+                      type: entities
+                    - brightness: false
+                      color_picker: true
+                      consolidate_entities: true
+                      color_temp: '[[[return variables.color_temp]]]'
+                      effects_list: false
+                      entity: '[[[ return variables.entity ]]]'
+                      header: false
+                      hide_header: true
+                      persist_features: true
+                      smooth_color_wheel: true
+                      full_width_sliders: true
+                      type: 'custom:light-entity-card'
+                      card_mod:
+                        style: |
+                            ha-card {
+                              box-shadow: none !important;
+                            }
               title: '[[[ return variables.title ]]]'
     slider:
       card:
