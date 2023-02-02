@@ -6,6 +6,9 @@ CDRX:
       ha-card-border-radius: 0px
       paper-item-icon-color: '#9da0a2'
       app-header-background-color: "var(--card-background-color)"
+      accent-color: "var(--primary-color)"
+      state-lock-locked-color: "var(--primary-color)"
+      state-lock-unlocked-color: '#ff9800'
       # Dialogs
       dialog-backdrop-filter: blur(17px)
       mdc-dialog-box-shadow: 0 0 1vw 0 black
