@@ -273,7 +273,7 @@ Light_icon_on_off:
     icon: '[[icon]]'
     style:
       '--mdc-icon-size': 1.4vw
-      '--paper-item-icon-active-color': '#000000'
+      '--state-light-active-color': '#000000'
       '--paper-item-icon-color': lightgrey
       align-items: center
       background-color: 'rgba(255, 255, 255, 0.3)'
@@ -350,7 +350,7 @@ Light_icon_full:
     icon: '[[icon]]'
     style:
       '--mdc-icon-size': 1.4vw
-      '--paper-item-icon-active-color': '#000000'
+      '--state-light-active-color': '#000000'
       '--paper-item-icon-color': lightgrey
       align-items: center
       background-color: 'rgba(255, 255, 255, 0.3)'
