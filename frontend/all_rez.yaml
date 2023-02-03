@@ -175,22 +175,71 @@ elements:
           view_layout:
             grid-area: f
         - type: 'custom:button-card'
-          template: dimmable_lights
+          template: on_off_lights
           variables:
-            entity: light.amis_plafonnier
-            gridarea: '"i . ." "n n n" "slider slider slider"'
+            gridarea: '"i consumption ." "n n n" ". . ."'
           entity: light.amis_plafonnier
           icon: 'hue:recessed-ceiling'
           name: Chambre d'amis
+          custom_fields:
+            consumption:
+              card:
+                type: sensor
+                entity: sensor.consumption_amis
+                card_mod:
+                  style: |
+                    ha-card {
+                      box-shadow: none;
+                      pointer-events: none;
+                    }   
+                    .header {
+                      display: none !important;
+                    } 
+                    .info {
+                      padding: 0 !important;
+                      line-height: 1.2vw !important;
+                    }
+                    .value {
+                      font-size: 1.2vw !important;
+                      margin: 0 !important;
+                    }    
+                    .measurement {
+                      font-size: 0.8vw !important;
+                    }
           view_layout:
             grid-area: j
         - type: 'custom:button-card'
           template: on_off_lights
           variables:
-            gridarea: '"i . ." "n n n" ". . ."'
+            gridarea: '"i consumption ." "n n n" ". . ."'
           entity: light.amis_prises
           icon: 'mdi:led-strip-variant'
           name: Dressing amis
+          custom_fields:
+            consumption:
+              card:
+                type: sensor
+                entity: sensor.consumption_amis
+                card_mod:
+                  style: |
+                    ha-card {
+                      box-shadow: none;
+                      pointer-events: none;
+                    }   
+                    .header {
+                      display: none !important;
+                    } 
+                    .info {
+                      padding: 0 !important;
+                      line-height: 1.2vw !important;
+                    }
+                    .value {
+                      font-size: 1.2vw !important;
+                      margin: 0 !important;
+                    }    
+                    .measurement {
+                      font-size: 0.8vw !important;
+                    }
           view_layout:
             grid-area: n
         - type: 'custom:button-card'
@@ -306,19 +355,69 @@ elements:
         - type: 'custom:button-card'
           template: on_off_lights
           variables:
-            gridarea: '"i . ." "n n n" ". . ."'
+            gridarea: '"i consumption ." "n n n" ". . ."'
           entity: light.guest_bathroom
           icon: 'mdi:spotlight-beam'
           name: Douche
+          custom_fields:
+            consumption:
+              card:
+                type: sensor
+                entity: sensor.consumption_escalier_cave
+                card_mod:
+                  style: |
+                    ha-card {
+                      box-shadow: none;
+                      pointer-events: none;
+                    }   
+                    .header {
+                      display: none !important;
+                    } 
+                    .info {
+                      padding: 0 !important;
+                      line-height: 1.2vw !important;
+                    }
+                    .value {
+                      font-size: 1.2vw !important;
+                      margin: 0 !important;
+                    }    
+                    .measurement {
+                      font-size: 0.8vw !important;
+                    }
           view_layout:
             grid-area: p
         - type: 'custom:button-card'
           template: on_off_lights
           variables:
-            gridarea: '"i . ." "n n n" ". . ."'
+            gridarea: '"i consumption ." "n n n" ". . ."'
           entity: light.escalier_cave
           icon: 'mdi:stairs'
           name: Cave
+          custom_fields:
+            consumption:
+              card:
+                type: sensor
+                entity: sensor.consumption_escalier_cave
+                card_mod:
+                  style: |
+                    ha-card {
+                      box-shadow: none;
+                      pointer-events: none;
+                    }   
+                    .header {
+                      display: none !important;
+                    } 
+                    .info {
+                      padding: 0 !important;
+                      line-height: 1.2vw !important;
+                    }
+                    .value {
+                      font-size: 1.2vw !important;
+                      margin: 0 !important;
+                    }    
+                    .measurement {
+                      font-size: 0.8vw !important;
+                    }
           view_layout:
             grid-area: t
         # - type: 'custom:button-card'

@@ -356,31 +356,16 @@ elements:
     variables:
       - entity: light.escalier_cave
       - image: rez/Escalier_bas.png
-  # - type: 'custom:config-template-card'
-  #   entities:
-  #     - light.amis_plafonnier
-  #   element:
-  #     action: none
-  #     entity: light.amis_plafonnier
-  #     hold_action:
-  #       action: none
-  #     image: /local/transparent.png
-  #     state_image:
-  #       'on': /local/ui/floorplan/lights/rez/Amis.png
-  #     tap_action:
-  #       action: none
-  #     type: image 
-  #   style:
-  #     left: 50%
-  #     mix-blend-mode: lighten
-  #     opacity: "${states['light.amis_plafonnier'].state === 'on' ? (states['light.amis_plafonnier'].attributes.brightness / 255) : '0'}"
-  #     top: 50%
-  #     width: 100%
-  # - type: 'custom:decluttering-card'
-  #   template: light_overlay
-  #   variables:
-  #     - entity: light.amis_prises
-  #     - image: rez/Amis_dressing.png
+  - type: 'custom:decluttering-card'
+    template: light_overlay
+    variables:
+      - entity: light.amis_prises
+      - image: rez/Amis_dressing.png
+  - type: 'custom:decluttering-card'
+    template: light_overlay
+    variables:
+      - entity: light.amis_plafonnier
+      - image: rez/Amis.png
 
     #########################    ROOM/GROUP CONTROL TRANSPARENT IMAGES    #########################
 
@@ -544,14 +529,23 @@ elements:
       - top: 29.5%
 
   #amis  
-  # - type: 'custom:decluttering-card'
-  #   template: Light_icon_on_off
-  #   variables:
-  #     - light: light.amis_prises
-  #     - title: Dressing
-  #     - icon: mdi:led-strip-variant
-  #     - left: 36%
-  #     - top: 31%
+  - type: 'custom:decluttering-card'
+    template: Light_icon_on_off
+    variables:
+      - light: light.amis_prises
+      - title: Dressing
+      - icon: mdi:led-strip-variant
+      - left: 36%
+      - top: 31%
+
+  - type: 'custom:decluttering-card'
+    template: Light_icon_on_off
+    variables:
+      - light: light.amis_plafonnier
+      - title: Chambre d'amis
+      - icon: hue:recessed-ceiling
+      - left: 45%
+      - top: 23%
 
   #color lights
   #salon
@@ -706,17 +700,7 @@ elements:
       - top: 73.5%
 
 #amis
-  # - type: 'custom:decluttering-card'
-  #   template: Light_icon_full
-  #   variables:
-  #     - light: light.amis_plafonnier
-  #     - title: Chambre d'amis
-  #     - icon: mdi:led-strip-variant
-  #     - hide_header: true
-  #     - color_picker: false
-  #     - color_temp: false
-  #     - left: 45%
-  #     - top: 23%
+
 
 #groups
 #salon

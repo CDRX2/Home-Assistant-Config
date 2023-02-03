@@ -90,25 +90,40 @@ elements:
           name: Jumeaux armoires
           view_layout:
             grid-area: f
-        # - type: 'custom:button-card'
-        #   template: dimmable_lights
-        #   variables:
-        #     entity: light.lustre_jumeaux
-        #     gridarea: '"i . ." "n n n" "slider slider slider"'
-        #   entity: light.lustre_jumeaux
-        #   icon: 'hue:bulb-filament'
-        #   name: Jumeaux lustre
-        #   view_layout:
-        #     grid-area: j
         - type: 'custom:button-card'
           template: on_off_lights
           variables:
-            gridarea: '"i . ." "n n n" ". . ."'
+            gridarea: '"i consumption ." "n n n" ". . ."'
           entity: light.jumeaux_prises
           icon: 'mdi:power-socket-ch'
           name: Jumeaux prises
+          custom_fields:
+            consumption:
+              card:
+                type: sensor
+                entity: sensor.consumption_twins
+                card_mod:
+                  style: |
+                    ha-card {
+                      box-shadow: none;
+                      pointer-events: none;
+                    }   
+                    .header {
+                      display: none !important;
+                    } 
+                    .info {
+                      padding: 0 !important;
+                      line-height: 1.2vw !important;
+                    }
+                    .value {
+                      font-size: 1.2vw !important;
+                      margin: 0 !important;
+                    }    
+                    .measurement {
+                      font-size: 0.8vw !important;
+                    }
           view_layout:
-            grid-area: n
+            grid-area: j
         - type: 'custom:button-card'
           template: color_lights
           variables:
@@ -120,7 +135,7 @@ elements:
           icon: 'cil:google-home'
           name: Jumeaux mobile
           view_layout:
-            grid-area: r
+            grid-area: n
         - type: 'custom:button-card'
           template: on_off_lights
           variables:
@@ -133,39 +148,71 @@ elements:
         - type: 'custom:button-card'
           template: on_off_lights
           variables:
-            gridarea: '"i . ." "n n n" ". . ."'
+            gridarea: '"i consumption ." "n n n" ". . ."'
           entity: light.bathroom_door
           icon: 'hue:ceiling-fugato-two'
           name: Salle de bains
+          custom_fields:
+            consumption:
+              card:
+                type: sensor
+                entity: sensor.consumption_bathroom
+                card_mod:
+                  style: |
+                    ha-card {
+                      box-shadow: none;
+                      pointer-events: none;
+                    }   
+                    .header {
+                      display: none !important;
+                    } 
+                    .info {
+                      padding: 0 !important;
+                      line-height: 1.2vw !important;
+                    }
+                    .value {
+                      font-size: 1.2vw !important;
+                      margin: 0 !important;
+                    }    
+                    .measurement {
+                      font-size: 0.8vw !important;
+                    }
           view_layout:
             grid-area: d
         - type: 'custom:button-card'
           template: on_off_lights
           variables:
-            gridarea: '"i . ." "n n n" ". . ."'
+            gridarea: '"i consumption ." "n n n" ". . ."'
           entity: light.bathroom_mirror
           icon: 'mdi:led-strip-variant'
           name: Mirroir
+          custom_fields:
+            consumption:
+              card:
+                type: sensor
+                entity: sensor.consumption_bathroom
+                card_mod:
+                  style: |
+                    ha-card {
+                      box-shadow: none;
+                      pointer-events: none;
+                    }   
+                    .header {
+                      display: none !important;
+                    } 
+                    .info {
+                      padding: 0 !important;
+                      line-height: 1.2vw !important;
+                    }
+                    .value {
+                      font-size: 1.2vw !important;
+                      margin: 0 !important;
+                    }    
+                    .measurement {
+                      font-size: 0.8vw !important;
+                    }
           view_layout:
             grid-area: h
-        # - type: 'custom:button-card'
-        #   template: on_off_lights
-        #   variables:
-        #     gridarea: '"i . ." "n n n" ". . ."'
-        #   entity: switch.spare_switch_1
-        #   icon: 'mdi:flash'
-        #   name: Temporaire 1
-        #   view_layout:
-        #     grid-area: l
-        # - type: 'custom:button-card'
-        #   template: on_off_lights
-        #   variables:
-        #     gridarea: '"i . ." "n n n" ". . ."'
-        #   entity: switch.spare_switch_2
-        #   icon: 'mdi:flash'
-        #   name: Temporaire 2
-        #   view_layout:
-        #     grid-area: p
       style:
         left: 50%
         top: 50%

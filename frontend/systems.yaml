@@ -353,6 +353,9 @@ elements:
             icon: 'mdi:thermometer'
             group_id: group.temp_sensors_battery
             min: 20
+          - name: Lumières
+            icon: 'mdi:lightbulb'
+            group_id: group.lights_battery
           - name: Autres
             icon: 'mdi:battery'
             entities:
@@ -407,6 +410,12 @@ elements:
             name: 'Movement driveway'
           - entity: sensor.cat_flap_entree_battery_level
             name: 'Cat flap'
+          - entity: sensor.chevet_amis_geneve_battery
+            name: Amis Genève
+          - entity: sensor.chevet_amis_valais_battery
+            name: 'Amis Valais'
+          - entity: sensor.twins_mobile_battery
+            name: 'Jumeaux mobile'
         title: Batteries
         view_layout:
           column: 2

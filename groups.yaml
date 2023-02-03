@@ -60,6 +60,8 @@ Amis:
   entities:
   - light.chevet_amis_geneve
   - light.chevet_amis_valais
+  - light.amis_plafonnier
+  - light.amis_prises
 
 Chevet_amis:
   name: Chevet amis
@@ -71,7 +73,6 @@ Jumeaux:
   name: Jumeaux
   entities:
   - light.jumeaux_armoires_blanc
-  - light.lustre_jumeaux
   - light.jumeaux_prises
 
 Salle_bains:
@@ -128,3 +129,10 @@ mobiles_tablets_battery:
     - sensor.tablet_rez_battery_level
     - sensor.tablet_mobile_battery_level
     - sensor.tablet_remote_battery_level
+
+lights_battery:
+  name: Lights battery
+  entities:
+    - sensor.chevet_amis_valais_battery
+    - sensor.chevet_amis_geneve_battery
+    - sensor.twins_mobile_battery
