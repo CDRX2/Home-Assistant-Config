@@ -301,9 +301,13 @@ light:
     name: Escalier cave
     entity_id: switch.escalier_cave
 
-  # - platform: switch
-  #   name: Amis prises
-  #   entity_id: switch.amis_prises
+  - platform: switch
+    name: Amis prises
+    entity_id: switch.amis_prises
+  
+  - platform: switch
+    name: Amis plafonnier
+    entity_id: switch.amis_plafonnier
 
   - platform: group
     name: Cuisine
@@ -392,14 +396,13 @@ light:
     entities:
     - light.chevet_amis_geneve
     - light.chevet_amis_valais
-    # - light.amis_prises
-    # - light.amis_plafonnier
+    - light.amis_prises
+    - light.amis_plafonnier
 
   - platform: group
     name: Jumeaux
     entities:
     - light.jumeaux_prises
-    - light.lustre_jumeaux
     - light.jumeaux_armoires_blanc
   
   - platform: group

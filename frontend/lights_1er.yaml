@@ -176,26 +176,11 @@ elements:
       opacity: "${states['light.jumeaux_armoires_blanc'].state === 'on' ? (states['light.jumeaux_armoires_blanc'].attributes.brightness / 255) : '0'}"
       top: 50%
       width: 100% 
-  # - type: 'custom:config-template-card'
-  #   entities:
-  #     - light.lustre_jumeaux
-  #   element:
-  #     action: none
-  #     entity: light.lustre_jumeaux
-  #     hold_action:
-  #       action: none
-  #     image: /local/transparent.png
-  #     state_image:
-  #       'on': /local/ui/floorplan/lights/1er/twins_lampe.png
-  #     tap_action:
-  #       action: none
-  #     type: image   
-  #   style:
-  #     left: 50%
-  #     mix-blend-mode: lighten
-  #     opacity: "${states['light.lustre_jumeaux'].state === 'on' ? (states['light.lustre_jumeaux'].attributes.brightness / 255) : '0'}"
-  #     top: 50%
-  #     width: 100% 
+  - type: 'custom:decluttering-card'
+    template: light_overlay
+    variables:
+      - entity: light.jumeaux_prises
+      - image: 1er/twins_lampe.png
   - type: 'custom:decluttering-card'
     template: light_overlay
     variables:
@@ -325,6 +310,27 @@ elements:
       - icon: mdi:led-strip-variant
       - left: 78%
       - top: 14%
+  
+  #twins
+  - type: 'custom:decluttering-card'
+    template: Light_icon_on_off
+    variables:
+      - light: light.jumeaux_prises
+      - title: Jumeaux prises
+      - icon: mdi:power-socket-ch
+      - left: 18%
+      - top: 28%
+  # - type: 'custom:decluttering-card'
+  #   template: Light_icon_full
+  #   variables:
+  #     - light: light.lustre_jumeaux
+  #     - title: Lampe jumeaux
+  #     - icon: hue:bulb-filament
+  #     - hide_header: true
+  #     - color_picker: false
+  #     - color_temp: false
+  #     - left: 18%
+  #     - top: 28%
 
   #dimming lights
   #chambre Charles
@@ -365,18 +371,6 @@ elements:
       - color_temp: false
       - left: 43%
       - top: 18%
-
-  # - type: 'custom:decluttering-card'
-  #   template: Light_icon_full
-  #   variables:
-  #     - light: light.lustre_jumeaux
-  #     - title: Lampe jumeaux
-  #     - icon: hue:bulb-filament
-  #     - hide_header: true
-  #     - color_picker: false
-  #     - color_temp: false
-  #     - left: 18%
-  #     - top: 28%
 
   #color lights
   #chambre parents
