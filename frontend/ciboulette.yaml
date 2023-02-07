@@ -1,376 +1,380 @@
-type: 'custom:stack-in-card'
-mode: horizontal
-cards:
-  - type: 'custom:stack-in-card'
-    mode: vertical
-    cards:
-      - type: picture-elements
-        image: /local/ui/car/skoda.png
-        elements:
-          - type: state-icon
-            entity: sensor.ciboulette_combustion_range
+type: custom:mod-card
+card_mod:
+  style:
+    layout-card$:
+      grid-layout$: |
+        :host {
+          padding: 0px !important;
+        }
+        #root {
+          margin: 0px !important;
+        }
+        #root > * {
+          margin: 0px !important;
+        }
+card:
+  type: custom:layout-card
+  layout_type: custom:grid-layout
+  layout:
+    grid-template-rows: auto
+    grid-template-columns: 50% 25% 25%
+    grid-template-areas: |
+      "a b b"
+      "c d e"
+  cards:
+    - type: picture-elements
+      image: /local/ui/car/skoda.png
+      elements:
+        - type: state-icon
+          entity: sensor.ciboulette_combustion_range
+          style:
+            top: 5%
+            left: 5%
+            pointer-events: none
+        - type: state-label
+          entity: sensor.ciboulette_combustion_range
+          style:
+            top: 6%
+            left: 15%
+            pointer-events: none
+        - type: state-icon
+          entity: sensor.ciboulette_heating_cooling_status
+          style:
+            top: 15%
+            left: 5%
+            pointer-events: none
+            padding: 0 0 0.45% 0
+            '--paper-item-icon-color': var(--color-ciboulette)
+            animation: var(--animation-ciboulette)
+        - type: state-icon
+          entity: binary_sensor.ciboulette_parking_light
+          icon: 'mdi:car-parking-lights'
+          style:
+            top: 25%
+            left: 5%
+            pointer-events: none    
+        - type: state-icon
+          entity: lock.ciboulette_door_locked
+          icon: 'mdi:car-door-lock'
+          style:
+            bottom: 0%
+            right: 0%
+            '--paper-item-icon-active-color': '#ff1a1a'
+        - type: state-icon
+          entity: lock.ciboulette_trunk_locked
+          icon: 'mdi:car-back'
+          style:
+            bottom: 0%
+            right: 7%
+            '--paper-item-icon-active-color': '#ff1a1a'
+        - type: state-icon
+          entity: binary_sensor.ciboulette_windows_closed
+          icon: 'mdi:car-door'
+          style:
+            bottom: 0%
+            right: 14%
+            '--paper-item-icon-active-color': '#ff1a1a'
+            pointer-events: none
+        - type: state-icon
+          entity: binary_sensor.ciboulette_sunroof_closed
+          icon: 'mdi:window-closed'
+          style:
+            bottom: 0%
+            right: 21%
+            '--paper-item-icon-active-color': '#ff1a1a'
+            pointer-events: none
+      view_layout:
+        grid-area: a
+      card_mod:
+        style: |
+          ha-card {
+            --animation-ciboulette: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %} blink 1s linear infinite alternate {% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} spin 1s linear infinite {% else %} none {% endif %};
+            --color-ciboulette: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %} #ff1a1a {% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} var(--accent-color) {% else %} var(--paper-item-icon-color) {% endif %};        
+          }
+          @keyframes spin {
+            0% { transform: translate(-50%, -50%) scale(1.4) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) scale(1.4) rotate(360deg); }
+          }
+          @keyframes blink {
+            0% { opacity: 0.5; }
+            100% { opacity 1; }
+          }
+    - type: entities
+      entities:
+        - type: section
+          label: Préchauffage/Ventilation
+          card_mod:
+            style: |
+              .divider {
+                height: 0px !important;
+              }
+        - type: 'custom:paper-buttons-row'
+          base_config:
             style:
-              top: 5%
-              left: 5%
-              pointer-events: none
-          - type: state-label
-            entity: sensor.ciboulette_combustion_range
-            style:
-              top: 6%
-              left: 15%
-              pointer-events: none
-          - type: state-icon
-            entity: sensor.ciboulette_heating_cooling_status
-            style:
-              top: 15%
-              left: 5%
-              pointer-events: none
-              padding: 0 0 0.45% 0
-              '--paper-item-icon-color': var(--color-ciboulette)
-              animation: var(--animation-ciboulette)
-          - type: state-icon
-            entity: binary_sensor.ciboulette_parking_light
-            icon: 'mdi:car-parking-lights'
-            style:
-              top: 25%
-              left: 5%
-              pointer-events: none    
-          - type: state-icon
-            entity: lock.ciboulette_door_locked
-            icon: 'mdi:car-door-lock'
-            style:
-              bottom: 0%
-              right: 0%
-              '--paper-item-icon-active-color': '#ff1a1a'
-          - type: state-icon
-            entity: lock.ciboulette_trunk_locked
-            icon: 'mdi:car-back'
-            style:
-              bottom: 0%
-              right: 7%
-              '--paper-item-icon-active-color': '#ff1a1a'
-          - type: state-icon
-            entity: binary_sensor.ciboulette_windows_closed
-            icon: 'mdi:car-door'
-            style:
-              bottom: 0%
-              right: 14%
-              '--paper-item-icon-active-color': '#ff1a1a'
-              pointer-events: none
-          - type: state-icon
-            entity: binary_sensor.ciboulette_sunroof_closed
-            icon: 'mdi:window-closed'
-            style:
-              bottom: 0%
-              right: 21%
-              '--paper-item-icon-active-color': '#ff1a1a'
-              pointer-events: none
-        card_mod:
-          style: |
-            ha-card {
-              --animation-ciboulette: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %} blink 1s linear infinite alternate {% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} spin 1s linear infinite {% else %} none {% endif %};
-              --color-ciboulette: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %} #ff1a1a {% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} var(--accent-color) {% else %} var(--paper-item-icon-color) {% endif %};        
-            }
-            @keyframes spin {
-              0% { transform: translate(-50%, -50%) scale(1.4) rotate(0deg); }
-              100% { transform: translate(-50%, -50%) scale(1.4) rotate(360deg); }
-            }
-            @keyframes blink {
-              0% { opacity: 0.5; }
-              100% { opacity 1; }
-            }
-      - type: entities
-        entities:
-          - type: section
-            label: Préchauffage/Ventilation
-            card_mod:
-              style: |
-                .divider {
-                  height: 0px !important;
-                }
-          - type: 'custom:paper-buttons-row'
-            base_config:
+              button:
+                background-color: 'rgba(255, 255, 255, 0.4)'
+                color: lightgrey
+                border-radius: 10%
+          buttons:
+            - tap_action:
+                action: call-service
+                service: skodaconnect.set_pheater_duration
+                service_data:
+                  device_id: 7efc8d0d37ec5c716e63bc19d81e390b
+                  duration: 10
+              name: 10 min.
               style:
                 button:
-                  background-color: 'rgba(255, 255, 255, 0.4)'
-                  color: lightgrey
-                  border-radius: 10%
-            buttons:
-              - tap_action:
-                  action: call-service
-                  service: skodaconnect.set_pheater_duration
-                  service_data:
-                    device_id: 7efc8d0d37ec5c716e63bc19d81e390b
-                    duration: 10
-                name: 10 min.
-                style:
-                  button:
-                    background-color: >-
-                      {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '10'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}
-              - tap_action:
-                  action: call-service
-                  service: skodaconnect.set_pheater_duration
-                  service_data:
-                    device_id: 7efc8d0d37ec5c716e63bc19d81e390b
-                    duration: 20
-                name: 20 min.
-                style:
-                  button:
-                    background-color: >-
-                      {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '20'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}    
-              - tap_action:
-                  action: call-service
-                  service: skodaconnect.set_pheater_duration
-                  service_data:
-                    device_id: 7efc8d0d37ec5c716e63bc19d81e390b
-                    duration: 30
-                name: 30 min.
-                style:
-                  button:
-                    background-color: >-
-                      {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '30'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }} 
-              - tap_action:
-                  action: call-service
-                  service: skodaconnect.set_pheater_duration
-                  service_data:
-                    device_id: 7efc8d0d37ec5c716e63bc19d81e390b
-                    duration: 40
-                name: 40 min.
-                style:
-                  button:
-                    background-color: >-
-                      {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '40'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}
-          - entity: sensor.ciboulette_heating_cooling_status
-            type: 'custom:multiple-entity-row'
-            name: Préchauffage/Ventilation
-            toggle: true
-            secondary_info: last-updated
-            show_state: false
-            tap_action:
-              action: none
-            hold_action:
-              action: none
-            entities:
-              - entity: sensor.ciboulette_outside_temperature
-                name: Temp extérieure 
-                tap_action:
-                  action: none
-                hold_action:
-                  action: none
-              - entity: switch.ciboulette_parking_heater_ventilation
-                name: Ventilation
-                toggle: true
-              - entity: switch.ciboulette_parking_heater_heating
-                name: Préchauffage
-                toggle: true
-            card_mod:
+                  background-color: >-
+                    {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '10'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}
+            - tap_action:
+                action: call-service
+                service: skodaconnect.set_pheater_duration
+                service_data:
+                  device_id: 7efc8d0d37ec5c716e63bc19d81e390b
+                  duration: 20
+              name: 20 min.
               style:
-                hui-generic-entity-row$: |
-                  state-badge {
-                    color: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %}#ff1a1a{% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} var(--accent-color) {% else %} var(--paper-item-icon-color){% endif %};
-                    animation: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %} blink 1s linear infinite alternate {% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} spin 1s linear infinite {% else %} none {% endif %};
-                  }         
-                  @keyframes blink {
-                    0% {opacity: 0.5;}
-                    100% {opacity: 1;}
-                  }  
-                  @keyframes spin {
-                    0% { transform: rotate(0deg); }
-                    100% { transform: rotate(360deg); }
-                  } 
-          - entity: binary_sensor.ciboulette_vehicle_moving
-            type: 'custom:multiple-entity-row'
-            name: Voiture parquée
-            state_header: Mouvement
-            icon: 'mdi:car-brake-parking'
-            tap_action:
-              action: none
-            hold_action:
-              action: none
-            secondary_info:
-              entity: sensor.ciboulette_parking
-              name: 'Parquée:'
+                button:
+                  background-color: >-
+                    {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '20'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}    
+            - tap_action:
+                action: call-service
+                service: skodaconnect.set_pheater_duration
+                service_data:
+                  device_id: 7efc8d0d37ec5c716e63bc19d81e390b
+                  duration: 30
+              name: 30 min.
+              style:
+                button:
+                  background-color: >-
+                    {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '30'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }} 
+            - tap_action:
+                action: call-service
+                service: skodaconnect.set_pheater_duration
+                service_data:
+                  device_id: 7efc8d0d37ec5c716e63bc19d81e390b
+                  duration: 40
+              name: 40 min.
+              style:
+                button:
+                  background-color: >-
+                    {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '40'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}
+        - entity: sensor.ciboulette_heating_cooling_status
+          type: 'custom:multiple-entity-row'
+          name: Préchauffage/Ventilation
+          toggle: true
+          secondary_info: last-updated
+          show_state: false
+          tap_action:
+            action: none
+          hold_action:
+            action: none
+          entities:
+            - entity: sensor.ciboulette_outside_temperature
+              name: Temp extérieure 
               tap_action:
                 action: none
               hold_action:
                 action: none
-            entities:
-              - entity: device_tracker.ciboulette_position
-                name: Localisation
-                tap_action:
-                  action: none
-                hold_action:
-                  action: none
-          - entity: switch.ciboulette_start_honking_and_flashing
-            type: 'custom:multiple-entity-row'
-            name: Repérage
-            state_header: Klaxon et feux
-            icon: 'mdi:car-parking-lights'
-            toggle: true
-            entities:
-              - entity: switch.ciboulette_start_honking_and_flashing
-                name: Feux
-                toggle: true
-          - entity: switch.ciboulette_force_data_refresh
-            name: Données
-            type: 'custom:multiple-entity-row'
-            state_header: Forcer mise à jour
-            toggle: true
-            secondary_info:
-              entity: sensor.ciboulette_connected
-              name: 'Dernières données:'
-            entities:
-              - entity: sensor.ciboulette_requests_remaining
-                name: Restantes
-                tap_action:
-                  action: none
-                hold_action:
-                  action: none
-              - entity: binary_sensor.ciboulette_request_in_progress
-                name: En cours
-                tap_action:
-                  action: none
-                hold_action:
-                  action: none
-            tap_action:
-              action: none
-            hold_action:
-              action: none            
-          - entity: sensor.ciboulette_odometer
-            type: 'custom:multiple-entity-row'
-            name: Kilométrage
-            icon: 'mdi:counter'
-            state_header: Total
+            - entity: switch.ciboulette_parking_heater_ventilation
+              name: Ventilation
+              toggle: true
+            - entity: switch.ciboulette_parking_heater_heating
+              name: Préchauffage
+              toggle: true
+          card_mod:
+            style:
+              hui-generic-entity-row$: |
+                state-badge {
+                  color: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %}#ff1a1a{% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} var(--accent-color) {% else %} var(--paper-item-icon-color){% endif %};
+                  animation: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %} blink 1s linear infinite alternate {% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} spin 1s linear infinite {% else %} none {% endif %};
+                }         
+                @keyframes blink {
+                  0% {opacity: 0.5;}
+                  100% {opacity: 1;}
+                }  
+                @keyframes spin {
+                  0% { transform: rotate(0deg); }
+                  100% { transform: rotate(360deg); }
+                } 
+        - entity: binary_sensor.ciboulette_vehicle_moving
+          type: 'custom:multiple-entity-row'
+          name: Voiture parquée
+          state_header: Mouvement
+          icon: 'mdi:car-brake-parking'
+          tap_action:
+            action: none
+          hold_action:
+            action: none
+          secondary_info:
+            entity: sensor.ciboulette_parking
+            name: 'Parquée:'
             tap_action:
               action: none
             hold_action:
               action: none
-            entities:
-              - entity: sensor.ciboulette_combined_range
-                name: Autonomie
-                tap_action:
-                  action: none
-                hold_action:
-                  action: none
-          - entity: sensor.ciboulette_service_inspection_distance
-            type: 'custom:multiple-entity-row'
-            name: Service
-            icon: 'mdi:wrench'
-            tap_action:
-              action: none
-            hold_action:
-              action: none
-            entities:
-              - entity: sensor.ciboulette_service_inspection_days
-                name: false
-                tap_action:
-                  action: none
-                hold_action:
-                  action: none
-          - entity: sensor.ciboulette_oil_inspection_distance
-            type: 'custom:multiple-entity-row'
-            name: Huile
-            icon: 'mdi:oil'
-            tap_action:
-              action: none
-            hold_action:
-              action: none
-            entities:
-              - entity: sensor.ciboulette_oil_inspection_days
-                name: false
-                tap_action:
-                  action: none
-                hold_action:
-                  action: none
-          - entity: sensor.ciboulette_last_trip_length
-            type: 'custom:multiple-entity-row'
-            name: Dernier voyage
-            icon: 'mdi:map-marker-distance'
-            state_header: Distance
-            tap_action:
-              action: none
-            hold_action:
-              action: none
-            entities:
-              - entity: sensor.ciboulette_last_trip_average_speed
-                name: Vitesse moy.
-                tap_action:
-                  action: none
-                hold_action:
-                  action: none
-              - entity: sensor.ciboulette_last_trip_duration
-                name: Durée
-                tap_action:
-                  action: none
-                hold_action:
-                  action: none
-              - entity: sensor.ciboulette_last_trip_average_fuel_consumption
-                name: Consommation
-                tap_action:
-                  action: none
-                hold_action:
-                  action: none
-        show_header_toggle: false
-        state_color: true
-        card_mod:
-          style: |
-            ha-card {
-              box-shadow: none !important;
-            } 
-    card_mod:      
-      style: |
-        ha-card {
-          box-shadow: none !important;
-        }   
-  - type: 'custom:stack-in-card'
-    mode: vertical
-    cards:
-      - dark_mode: true
-        entities:
-          - entity: person.ciboulette
-        hours_to_show: 24
-        type: map    
-        card_mod:                
-          style: |
-            ha-card {
-              box-shadow: none !important;
-            }
-      - type: 'custom:stack-in-card'
-        mode: horizontal
-        cards:
-          - type: 'custom:apexcharts-card'
-            config_templates: radial_bar
-            series:
-              - entity: sensor.ciboulette_fuel_level
-                min: 0
-                max: 100
-                name: Essence
-            apex_config:
-              legend:
-                show: false
-            card_mod:
-              style: |
-                .apexcharts-inner.apexcharts-graphical {
-                  transform: translate(-15%, -10%);
-                }
-                div#graph-wrapper {
-                  transform: translate(0, -10%);
-                }
-          - type: 'custom:decluttering-card'
-            template: ciboulette_temp
-        card_mod:  
-          style: |
-            ha-card {
-              box-shadow: none !important;
-            } 
-    card_mod:
-      style: |
-        ha-card {
-          box-shadow: none !important;
-        } 
-card_mod:  
-  style: |
-    ha-card {
-      width: 100%;
-      box-shadow: none !important;
-    }
+          entities:
+            - entity: device_tracker.ciboulette_position
+              name: Localisation
+              tap_action:
+                action: none
+              hold_action:
+                action: none
+        - entity: switch.ciboulette_start_honking_and_flashing
+          type: 'custom:multiple-entity-row'
+          name: Repérage
+          state_header: Klaxon et feux
+          icon: 'mdi:car-parking-lights'
+          toggle: true
+          entities:
+            - entity: switch.ciboulette_start_honking_and_flashing
+              name: Feux
+              toggle: true
+        - entity: switch.ciboulette_force_data_refresh
+          name: Données
+          type: 'custom:multiple-entity-row'
+          state_header: Forcer mise à jour
+          toggle: true
+          secondary_info:
+            entity: sensor.ciboulette_connected
+            name: 'Dernières données:'
+          entities:
+            - entity: sensor.ciboulette_requests_remaining
+              name: Restantes
+              tap_action:
+                action: none
+              hold_action:
+                action: none
+            - entity: binary_sensor.ciboulette_request_in_progress
+              name: En cours
+              tap_action:
+                action: none
+              hold_action:
+                action: none
+          tap_action:
+            action: none
+          hold_action:
+            action: none            
+        - entity: sensor.ciboulette_odometer
+          type: 'custom:multiple-entity-row'
+          name: Kilométrage
+          icon: 'mdi:counter'
+          state_header: Total
+          tap_action:
+            action: none
+          hold_action:
+            action: none
+          entities:
+            - entity: sensor.ciboulette_combined_range
+              name: Autonomie
+              tap_action:
+                action: none
+              hold_action:
+                action: none
+        - entity: sensor.ciboulette_service_inspection_distance
+          type: 'custom:multiple-entity-row'
+          name: Service
+          icon: 'mdi:wrench'
+          tap_action:
+            action: none
+          hold_action:
+            action: none
+          entities:
+            - entity: sensor.ciboulette_service_inspection_days
+              name: false
+              tap_action:
+                action: none
+              hold_action:
+                action: none
+        - entity: sensor.ciboulette_oil_inspection_distance
+          type: 'custom:multiple-entity-row'
+          name: Huile
+          icon: 'mdi:oil'
+          tap_action:
+            action: none
+          hold_action:
+            action: none
+          entities:
+            - entity: sensor.ciboulette_oil_inspection_days
+              name: false
+              tap_action:
+                action: none
+              hold_action:
+                action: none
+        - entity: sensor.ciboulette_last_trip_length
+          type: 'custom:multiple-entity-row'
+          name: Dernier voyage
+          icon: 'mdi:map-marker-distance'
+          state_header: Distance
+          tap_action:
+            action: none
+          hold_action:
+            action: none
+          entities:
+            - entity: sensor.ciboulette_last_trip_average_speed
+              name: Vitesse moy.
+              tap_action:
+                action: none
+              hold_action:
+                action: none
+            - entity: sensor.ciboulette_last_trip_duration
+              name: Durée
+              tap_action:
+                action: none
+              hold_action:
+                action: none
+            - entity: sensor.ciboulette_last_trip_average_fuel_consumption
+              name: Consommation
+              tap_action:
+                action: none
+              hold_action:
+                action: none
+      show_header_toggle: false
+      state_color: true
+      view_layout:
+        grid-area: c
+      card_mod:
+        style: |
+          ha-card {
+            box-shadow: none !important;
+          } 
+    - dark_mode: true
+      entities:
+        - entity: person.ciboulette
+      hours_to_show: 48
+      type: map
+      view_layout:
+        grid-area: b
+      card_mod:                
+        style: |
+          ha-card {
+            box-shadow: none !important;
+          }
+          #root {
+            padding-bottom: 0 !important;
+          }
+    - type: 'custom:apexcharts-card'
+      config_templates: radial_bar
+      series:
+        - entity: sensor.ciboulette_fuel_level
+          min: 0
+          max: 100
+          name: Essence
+      apex_config:
+        legend:
+          show: false
+      view_layout:
+        grid-area: d
+      card_mod:
+        style: |
+          .apexcharts-inner.apexcharts-graphical {
+            transform: translate(-15%, -10%);
+          }
+          div#graph-wrapper {
+            transform: translate(0, -10%);
+          }
+    - type: 'custom:decluttering-card'
+      template: ciboulette_temp
+      view_layout:
+        grid-area: e
