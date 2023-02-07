@@ -503,7 +503,7 @@ elements:
     template: Light_icon_on_off
     variables:
       - light: light.terrasse_sol
-      - title: Terasse sol
+      - title: Terrasse sol
       - icon: hue:recessed-floor
       - left: 41.5%
       - top: 94.4%

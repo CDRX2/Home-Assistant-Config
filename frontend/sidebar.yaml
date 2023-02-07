@@ -578,110 +578,118 @@ elements:
         service: browser_mod.popup
         data:
           content:
-            type: 'custom:stack-in-card'
-            mode: vertical
-            cards:
-              - type: entities
-                entities:
-                  - type: 'custom:paper-buttons-row'
-                    base_config:
-                      style:
-                        button:
-                          background-color: 'rgba(255, 255, 255, 0.4)'
-                          color: lightgrey
-                          border-radius: 10%
-                    buttons:
-                      - tap_action:
-                          action: call-service
-                          service: skodaconnect.set_pheater_duration
-                          service_data:
-                            device_id: 7efc8d0d37ec5c716e63bc19d81e390b
-                            duration: 10
-                        name: 10 min.
+            type: custom:mod-card
+            card_mod:
+              style:
+                layout-card$:
+                  grid-layout$: |
+                    :host {
+                      padding: 0px !important;
+                    }
+                    #root {
+                      margin: 0px !important;
+                    }
+                    #root > * {
+                      margin: 0px !important;
+                    }
+            card:
+              type: custom:layout-card
+              layout_type: custom:vertical-layout
+              cards:
+                - type: entities
+                  entities:
+                    - type: 'custom:paper-buttons-row'
+                      base_config:
                         style:
                           button:
-                            background-color: >-
-                              {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '10'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}
-                      - tap_action:
-                          action: call-service
-                          service: skodaconnect.set_pheater_duration
-                          service_data:
-                            device_id: 7efc8d0d37ec5c716e63bc19d81e390b
-                            duration: 20
-                        name: 20 min.
+                            background-color: 'rgba(255, 255, 255, 0.4)'
+                            color: lightgrey
+                            border-radius: 10%
+                      buttons:
+                        - tap_action:
+                            action: call-service
+                            service: skodaconnect.set_pheater_duration
+                            service_data:
+                              device_id: 7efc8d0d37ec5c716e63bc19d81e390b
+                              duration: 10
+                          name: 10 min.
+                          style:
+                            button:
+                              background-color: >-
+                                {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '10'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}
+                        - tap_action:
+                            action: call-service
+                            service: skodaconnect.set_pheater_duration
+                            service_data:
+                              device_id: 7efc8d0d37ec5c716e63bc19d81e390b
+                              duration: 20
+                          name: 20 min.
+                          style:
+                            button:
+                              background-color: >-
+                                {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '20'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}    
+                        - tap_action:
+                            action: call-service
+                            service: skodaconnect.set_pheater_duration
+                            service_data:
+                              device_id: 7efc8d0d37ec5c716e63bc19d81e390b
+                              duration: 30
+                          name: 30 min.
+                          style:
+                            button:
+                              background-color: >-
+                                {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '30'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }} 
+                        - tap_action:
+                            action: call-service
+                            service: skodaconnect.set_pheater_duration
+                            service_data:
+                              device_id: 7efc8d0d37ec5c716e63bc19d81e390b
+                              duration: 40
+                          name: 40 min.
+                          style:
+                            button:
+                              background-color: >-
+                                {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '40'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}
+                    - entity: sensor.ciboulette_heating_cooling_status
+                      type: 'custom:multiple-entity-row'
+                      name: Préchauffage/Ventilation
+                      toggle: true
+                      secondary_info: last-updated
+                      show_state: false
+                      tap_action:
+                        action: none
+                      hold_action:
+                        action: none
+                      entities:
+                        - entity: sensor.ciboulette_outside_temperature
+                          name: Temp extérieure 
+                          tap_action:
+                            action: none
+                          hold_action:
+                            action: none
+                        - entity: switch.ciboulette_parking_heater_ventilation
+                          name: Ventilation
+                          toggle: true
+                        - entity: switch.ciboulette_parking_heater_heating
+                          name: Préchauffage
+                          toggle: true
+                      card_mod:
                         style:
-                          button:
-                            background-color: >-
-                              {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '20'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}    
-                      - tap_action:
-                          action: call-service
-                          service: skodaconnect.set_pheater_duration
-                          service_data:
-                            device_id: 7efc8d0d37ec5c716e63bc19d81e390b
-                            duration: 30
-                        name: 30 min.
-                        style:
-                          button:
-                            background-color: >-
-                              {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '30'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }} 
-                      - tap_action:
-                          action: call-service
-                          service: skodaconnect.set_pheater_duration
-                          service_data:
-                            device_id: 7efc8d0d37ec5c716e63bc19d81e390b
-                            duration: 40
-                        name: 40 min.
-                        style:
-                          button:
-                            background-color: >-
-                              {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '40'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}
-                  - entity: sensor.ciboulette_heating_cooling_status
-                    type: 'custom:multiple-entity-row'
-                    name: Préchauffage/Ventilation
-                    toggle: true
-                    secondary_info: last-updated
-                    show_state: false
-                    tap_action:
-                      action: none
-                    hold_action:
-                      action: none
-                    entities:
-                      - entity: sensor.ciboulette_outside_temperature
-                        name: Temp extérieure 
-                        tap_action:
-                          action: none
-                        hold_action:
-                          action: none
-                      - entity: switch.ciboulette_parking_heater_ventilation
-                        name: Ventilation
-                        toggle: true
-                      - entity: switch.ciboulette_parking_heater_heating
-                        name: Préchauffage
-                        toggle: true
-                    card_mod:
-                      style:
-                        hui-generic-entity-row$: |
-                          state-badge {
-                            color: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %}#ff1a1a{% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} var(--accent-color) {% else %} var(--paper-item-icon-color){% endif %};
-                            animation: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %} blink 1s linear infinite alternate {% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} spin 1s linear infinite {% else %} none {% endif %};
-                          }         
-                          @keyframes blink {
-                            0% {opacity: 0.5;}
-                            100% {opacity: 1;}
-                          }  
-                          @keyframes spin {
-                            0% { transform: rotate(0deg); }
-                            100% { transform: rotate(360deg); }
-                          }   
-              - type: 'custom:decluttering-card'
-                template: ciboulette_temp    
-            card_mod: 
-              style: |
-                ha-card {
-                  margin-bottom: -24px;
-                }
-          # style: |
-          #   - margin-bottom: -24px;
+                          hui-generic-entity-row$: |
+                            state-badge {
+                              color: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %}#ff1a1a{% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} var(--accent-color) {% else %} var(--paper-item-icon-color){% endif %};
+                              animation: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %} blink 1s linear infinite alternate {% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} spin 1s linear infinite {% else %} none {% endif %};
+                            }         
+                            @keyframes blink {
+                              0% {opacity: 0.5;}
+                              100% {opacity: 1;}
+                            }  
+                            @keyframes spin {
+                              0% { transform: rotate(0deg); }
+                              100% { transform: rotate(360deg); }
+                            }   
+                - type: 'custom:decluttering-card'
+                  template: ciboulette_temp
           title: Préchauffage/Ventilation 
     hold_action:
       action: none

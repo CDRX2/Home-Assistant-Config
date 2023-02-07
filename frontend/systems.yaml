@@ -33,190 +33,186 @@ elements:
                 service: browser_mod.popup
                 data:
                   content:
-                    cards:
-                      - cards:
-                          - type: 'custom:apexcharts-card'
-                            config_templates: default
-                            graph_span: 2d
-                            update_interval: 1min
-                            update_delay: 3s
-                            header:
-                              show: true
-                              show_states: true
-                            all_series_config:
-                              type: column
-                              group_by:
-                                func: max
-                                duration: 2h
-                              show:
-                                in_header: raw
-                            series:
-                              - entity: sensor.swisscom_internet_box_kib_s_received
-                                color: "#ffa31a"
-                                transform: "return x / 1024;"
-                                name: Download ISP
-                                unit: MB/s
-                              - entity: sensor.swisscom_internet_box_kib_s_sent
-                                color: "#424F96"
-                                transform: "return x / 1024;"
-                                name: Upload ISP
-                                unit: MB/s
-                                invert: true
-                              - entity: sensor.deluge_down_speed
-                                color: "#FF5401"
-                                transform: "return x / 1024;"
-                                name: Download Deluge
-                                unit: MB/s
-                              - entity: sensor.deluge_up_speed
-                                color: "#03a8f4"
-                                transform: "return x*-1 / 1024;"
-                                name: Upload Deluge
-                                unit: MB/s
-                                invert: true
-                              - entity: sensor.sabnzbd_speed
-                                color: "#ff1a1a"
-                                name: SABnzbd
-                            apex_config:
-                              legend:
-                                show: false
-                            card_mod:
-                              style: |
-                                ha-card {
-                                  box-shadow: none !important;
-                                }                    
-                          - type: 'custom:stack-in-card'
-                            mode: horizontal
-                            cards:
-                              - type: entities
-                                entities:
-                                  - entity: sensor.sabnzbd_daily_total
-                                    icon: 'mdi:calendar-today'
-                                    name: 'Day'
-                                    tap_action:
-                                      action: url
-                                      url_path: !secret SABNzbd_URL
-                                  - entity: sensor.sabnzbd_weekly_total
-                                    icon: 'mdi:calendar-range'
-                                    name: 'Week'
-                                    tap_action:
-                                      action: url
-                                      url_path: !secret SABNzbd_URL
-                                  - entity: sensor.sabnzbd_left
-                                    icon: 'mdi:folder-download'
-                                    name: 'Left'
-                                    tap_action:
-                                      action: url
-                                      url_path: !secret SABNzbd_URL
-                              - type: entities
-                                entities:
-                                  - entity: sensor.sabnzbd_monthly_total
-                                    icon: 'mdi:calendar-month'
-                                    name: 'Month'
-                                    tap_action:
-                                      action: url
-                                      url_path: !secret SABNzbd_URL
-                                  - entity: sensor.sabnzbd_total
-                                    icon: 'mdi:folder-download'
-                                    name: 'Total'
-                                    tap_action:
-                                      action: url
-                                      url_path: !secret SABNzbd_URL 
-                                  - entity: sensor.sabnzbd_queue 
-                                    icon: 'mdi:tray-full'
-                                    name: 'Queue'
-                                    tap_action:
-                                      action: url
-                                      url_path: !secret SABNzbd_URL
-                            card_mod:
-                              style: |
-                                ha-card {
-                                  box-shadow: none !important;
-                                }
-                        mode: vertical
-                        type: 'custom:stack-in-card'
-                        card_mod:
-                          style: |
-                            ha-card {
-                              box-shadow: none !important;
+                    type: custom:mod-card
+                    card_mod:
+                      style:
+                        layout-card$:
+                          grid-layout$: |
+                            :host {
+                              padding: 0px !important;
                             }
-                      - cards:
-                          - type: 'custom:apexcharts-card'
-                            config_templates: default
-                            graph_span: 2d
-                            update_interval: 1min
-                            update_delay: 3s
-                            header:
-                              show: true
-                              show_states: true
-                            all_series_config:
-                              type: column
-                              group_by:
-                                func: max
-                                duration: 2h
-                              show:
-                                in_header: raw
-                            series:
-                              - entity: sensor.swisscom_internet_box_packets_s_received
-                                color: "#ffa31a"
-                                name: Download
-                                unit: Pkts/s
-                              - entity: sensor.swisscom_internet_box_packets_s_sent
-                                color: "#03a8f4"
-                                name: Upload
-                                unit: Pkts/s
-                                invert: true
-                            apex_config:
-                              legend:
-                                show: false
-                            card_mod:
-                              style: |
-                                ha-card {
-                                  box-shadow: none !important;
-                                }
-                          - type: 'custom:apexcharts-card'
-                            config_templates: default
-                            graph_span: 2d
-                            update_interval: 1min
-                            update_delay: 3s
-                            header:
-                              show: true
-                              show_states: true
-                            all_series_config:
-                              type: column
-                              group_by:
-                                func: max
-                                duration: 2h
-                            series:
-                              - entity: sensor.swisscom_internet_box_b_received
-                                color: "#ffa31a"
-                                transform: "return x / 1000000000;"
-                                name: Download
-                                unit: GB
-                              - entity: sensor.swisscom_internet_box_b_sent
-                                color: "#03a8f4"
-                                transform: "return x / 1000000000;"
-                                name: Upload
-                                unit: GB
-                                invert: true
-                            apex_config:
-                              legend:
-                                show: false
-                            card_mod:
-                              style: |
-                                ha-card {
-                                  box-shadow: none !important;
-                                }
-                        mode: vertical
-                        type: 'custom:stack-in-card'
-                    mode: horizontal
-                    type: 'custom:stack-in-card'
-                    card_mod: 
-                      style: |
-                        ha-card {
-                          width: 60vw !important;
-                          min-width: 400px;
-                          padding-left: 15vw;
-                        }
+                            #root {
+                              margin: 0px !important;
+                            }
+                            #root > * {
+                              margin: 0px !important;
+                            }
+                        .: |
+                          ha-card {
+                            width: 80vw !important;
+                            min-width: 400px;
+                            margin: auto;
+                          }
+                    card:
+                      type: custom:layout-card
+                      layout_type: custom:grid-layout
+                      layout:
+                        grid-template-rows: auto
+                        grid-template-columns: 25% 25% 50%
+                        grid-template-areas: |
+                          "a a b"
+                          "c d e"                     
+                      cards:    
+                        - type: 'custom:apexcharts-card'
+                          config_templates: default
+                          graph_span: 2d
+                          update_interval: 1min
+                          update_delay: 3s
+                          header:
+                            show: true
+                            show_states: true
+                          all_series_config:
+                            type: column
+                            group_by:
+                              func: max
+                              duration: 2h
+                            show:
+                              in_header: raw
+                          series:
+                            - entity: sensor.swisscom_internet_box_kib_s_received
+                              color: "#ffa31a"
+                              transform: "return x / 1024;"
+                              name: Download ISP
+                              unit: MB/s
+                            - entity: sensor.swisscom_internet_box_kib_s_sent
+                              color: "#424F96"
+                              transform: "return x / 1024;"
+                              name: Upload ISP
+                              unit: MB/s
+                              invert: true
+                            - entity: sensor.deluge_down_speed
+                              color: "#FF5401"
+                              transform: "return x / 1024;"
+                              name: Download Deluge
+                              unit: MB/s
+                            - entity: sensor.deluge_up_speed
+                              color: "#03a8f4"
+                              transform: "return x*-1 / 1024;"
+                              name: Upload Deluge
+                              unit: MB/s
+                              invert: true
+                            - entity: sensor.sabnzbd_speed
+                              color: "#ff1a1a"
+                              name: SABnzbd
+                          apex_config:
+                            legend:
+                              show: false
+                          view_layout:
+                            grid-area: a
+                        - type: entities
+                          entities:
+                            - entity: sensor.sabnzbd_daily_total
+                              icon: 'mdi:calendar-today'
+                              name: 'Day'
+                              tap_action:
+                                action: url
+                                url_path: !secret SABNzbd_URL
+                            - entity: sensor.sabnzbd_weekly_total
+                              icon: 'mdi:calendar-range'
+                              name: 'Week'
+                              tap_action:
+                                action: url
+                                url_path: !secret SABNzbd_URL
+                            - entity: sensor.sabnzbd_left
+                              icon: 'mdi:folder-download'
+                              name: 'Left'
+                              tap_action:
+                                action: url
+                                url_path: !secret SABNzbd_URL
+                          view_layout:
+                            grid-area: c
+                        - type: entities
+                          entities:
+                            - entity: sensor.sabnzbd_monthly_total
+                              icon: 'mdi:calendar-month'
+                              name: 'Month'
+                              tap_action:
+                                action: url
+                                url_path: !secret SABNzbd_URL
+                            - entity: sensor.sabnzbd_total
+                              icon: 'mdi:folder-download'
+                              name: 'Total'
+                              tap_action:
+                                action: url
+                                url_path: !secret SABNzbd_URL 
+                            - entity: sensor.sabnzbd_queue 
+                              icon: 'mdi:tray-full'
+                              name: 'Queue'
+                              tap_action:
+                                action: url
+                                url_path: !secret SABNzbd_URL
+                          view_layout:
+                            grid-area: d
+                        - type: 'custom:apexcharts-card'
+                          config_templates: default
+                          graph_span: 2d
+                          update_interval: 1min
+                          update_delay: 3s
+                          header:
+                            show: true
+                            show_states: true
+                          all_series_config:
+                            type: column
+                            group_by:
+                              func: max
+                              duration: 2h
+                            show:
+                              in_header: raw
+                          series:
+                            - entity: sensor.swisscom_internet_box_packets_s_received
+                              color: "#ffa31a"
+                              name: Download
+                              unit: Pkts/s
+                            - entity: sensor.swisscom_internet_box_packets_s_sent
+                              color: "#03a8f4"
+                              name: Upload
+                              unit: Pkts/s
+                              invert: true
+                          apex_config:
+                            legend:
+                              show: false
+                          view_layout:
+                            grid-area: b
+                        - type: 'custom:apexcharts-card'
+                          config_templates: default
+                          graph_span: 2d
+                          update_interval: 1min
+                          update_delay: 3s
+                          header:
+                            show: true
+                            show_states: true
+                          all_series_config:
+                            type: column
+                            group_by:
+                              func: max
+                              duration: 2h
+                          series:
+                            - entity: sensor.swisscom_internet_box_b_received
+                              color: "#ffa31a"
+                              transform: "return x / 1000000000;"
+                              name: Download
+                              unit: GB
+                            - entity: sensor.swisscom_internet_box_b_sent
+                              color: "#03a8f4"
+                              transform: "return x / 1000000000;"
+                              name: Upload
+                              unit: GB
+                              invert: true
+                          apex_config:
+                            legend:
+                              show: false
+                          view_layout:
+                            grid-area: e
                   title: Internet speed
                   size: wide
         series:
