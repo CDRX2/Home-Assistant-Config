@@ -126,9 +126,7 @@ mobiles_tablets_battery:
   entities:
     - sensor.lya_l29_battery_level
     - sensor.cdrx2pro_battery_level
-    - sensor.tablet_rez_battery_level
-    - sensor.tablet_mobile_battery_level
-    - sensor.tablet_remote_battery_level
+    - sensor.lenovo_tab_1st_floor_battery
 
 lights_battery:
   name: Lights battery
