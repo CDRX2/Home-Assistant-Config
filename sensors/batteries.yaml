@@ -61,4 +61,5 @@
           states('sensor.cat_flap_entree_battery_level')|float(default=0) < 10 or
           states('sensor.chevet_amis_geneve_battery')|float(default=0) < 10 or
           states('sensor.chevet_amis_valais_battery')|float(default=0) < 10 or
-          states('sensor.twins_mobile_battery')|float(default=0) < 10, 'alert', 'normal') }}
+          states('sensor.twins_mobile_battery')|float(default=0) < 10 or
+          states('sensor.lenovo_tab_1st_floor_battery')|float(default=0) < 10, 'alert', 'normal') }}
