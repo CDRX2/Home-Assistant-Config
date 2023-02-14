@@ -9,8 +9,8 @@ card_mod:
       overflow: hidden;
       background: none !important;
       width: 100%;
-      --animation-ciboulette: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %} blink 1s linear infinite alternate {% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} spin 1s linear infinite {% else %} none {% endif %};
-      --color-ciboulette: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %} #ff1a1a {% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} var(--accent-color) {% else %} lightgrey {% endif %};
+      /*--animation-ciboulette: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %} blink 1s linear infinite alternate {% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} spin 1s linear infinite {% else %} none {% endif %};*/
+      /*--color-ciboulette: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %} #ff1a1a {% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} var(--accent-color) {% else %} lightgrey {% endif %};*/
       --color-cat-flap: {{ iif (is_state('lock.entree_locked_all', 'locked') or is_state('lock.entree_locked_in', 'locked') or is_state('lock.entree_locked_out', 'locked'), 'var(--accent-color)', 'lightgrey') }};
     }
     @keyframes spin {
@@ -534,211 +534,211 @@ elements:
             template: cats_popup
           title: Chatière   
 
-  - type: image
-    entity: person.ciboulette
-    state_image:
-      "home": /local/ui/sidebar/Ciboulette_home.png
-      "not_home": /local/ui/sidebar/Ciboulette_not_home.png
-    style:
-      top: 67%
-      left: 85%
-      width: 4vw
-      height: 4vw
-      border-radius: 100%
-    tap_action:
-      action: fire-dom-event
-      browser_mod:
-        service: browser_mod.popup
-        data:
-          content: !include ciboulette.yaml
-          title: Ciboulette
-          size: fullscreen
-    hold_action:
-      action: none
-  - type: state-icon
-    entity: sensor.ciboulette_heating_cooling_status
-    style:
-      '--mdc-icon-size': 1vw
-      '--paper-item-icon-color': var(--color-ciboulette)
-      align-items: center
-      display: flex
-      height: 2.1vw
-      justify-content: center
-      left: 82%
-      margin-left: '-1.5vw'
-      margin-top: '-1.5vw'
-      top: 66%
-      width: 2.1vw
-      transform: 'translate(-50%, -50%) scale(1.4)'
-      padding: 0 0 0.6% 0
-      animation: var(--animation-ciboulette)
-    tap_action:
-      action: fire-dom-event
-      browser_mod:
-        service: browser_mod.popup
-        data:
-          content:
-            type: custom:mod-card
-            card_mod:
-              style:
-                layout-card$:
-                  grid-layout$: |
-                    :host {
-                      padding: 0px !important;
-                    }
-                    #root {
-                      margin: 0px !important;
-                    }
-                    #root > * {
-                      margin: 0px !important;
-                    }
-            card:
-              type: custom:layout-card
-              layout_type: custom:vertical-layout
-              cards:
-                - type: entities
-                  entities:
-                    - type: 'custom:paper-buttons-row'
-                      base_config:
-                        style:
-                          button:
-                            background-color: 'rgba(255, 255, 255, 0.4)'
-                            color: lightgrey
-                            border-radius: 10%
-                      buttons:
-                        - tap_action:
-                            action: call-service
-                            service: skodaconnect.set_pheater_duration
-                            service_data:
-                              device_id: 7efc8d0d37ec5c716e63bc19d81e390b
-                              duration: 10
-                          name: 10 min.
-                          style:
-                            button:
-                              background-color: >-
-                                {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '10'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}
-                        - tap_action:
-                            action: call-service
-                            service: skodaconnect.set_pheater_duration
-                            service_data:
-                              device_id: 7efc8d0d37ec5c716e63bc19d81e390b
-                              duration: 20
-                          name: 20 min.
-                          style:
-                            button:
-                              background-color: >-
-                                {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '20'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}    
-                        - tap_action:
-                            action: call-service
-                            service: skodaconnect.set_pheater_duration
-                            service_data:
-                              device_id: 7efc8d0d37ec5c716e63bc19d81e390b
-                              duration: 30
-                          name: 30 min.
-                          style:
-                            button:
-                              background-color: >-
-                                {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '30'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }} 
-                        - tap_action:
-                            action: call-service
-                            service: skodaconnect.set_pheater_duration
-                            service_data:
-                              device_id: 7efc8d0d37ec5c716e63bc19d81e390b
-                              duration: 40
-                          name: 40 min.
-                          style:
-                            button:
-                              background-color: >-
-                                {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '40'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}
-                    - entity: sensor.ciboulette_heating_cooling_status
-                      type: 'custom:multiple-entity-row'
-                      name: Préchauffage/Ventilation
-                      toggle: true
-                      secondary_info: last-updated
-                      show_state: false
-                      tap_action:
-                        action: none
-                      hold_action:
-                        action: none
-                      entities:
-                        - entity: sensor.ciboulette_outside_temperature
-                          name: Temp extérieure 
-                          tap_action:
-                            action: none
-                          hold_action:
-                            action: none
-                        - entity: switch.ciboulette_parking_heater_ventilation
-                          name: Ventilation
-                          toggle: true
-                        - entity: switch.ciboulette_parking_heater_heating
-                          name: Préchauffage
-                          toggle: true
-                      card_mod:
-                        style:
-                          hui-generic-entity-row$: |
-                            state-badge {
-                              color: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %}#ff1a1a{% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} var(--accent-color) {% else %} var(--paper-item-icon-color){% endif %};
-                              animation: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %} blink 1s linear infinite alternate {% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} spin 1s linear infinite {% else %} none {% endif %};
-                            }         
-                            @keyframes blink {
-                              0% {opacity: 0.5;}
-                              100% {opacity: 1;}
-                            }  
-                            @keyframes spin {
-                              0% { transform: rotate(0deg); }
-                              100% { transform: rotate(360deg); }
-                            }   
-                - type: 'custom:decluttering-card'
-                  template: ciboulette_temp
-          title: Préchauffage/Ventilation 
-    hold_action:
-      action: none
-  - type: conditional
-    conditions:
-      - entity: binary_sensor.ciboulette_doors_locked
-        state: 'off'
-    elements:
-      - type: 'custom:decluttering-card'
-        template: icons_ciboulette_popup
-        variables:
-          - icon: lock
-          - color: lightgrey
-  - type: conditional
-    conditions:
-      - entity: binary_sensor.ciboulette_doors_locked
-        state: 'on'
-    elements:
-      - type: 'custom:decluttering-card'
-        template: icons_ciboulette_popup
-        variables:
-          - icon: lock-open
-          - color: '#ff1a1a'
-  - type: state-icon
-    entity: binary_sensor.ciboulette_vehicle_moving
-    icon: 'mdi:car-side'
-    style:
-      '--mdc-icon-size': 1vw
-      '--paper-item-icon-color': lightgrey
-      align-items: center
-      display: flex
-      height: 2.1vw
-      justify-content: center
-      left: 95%
-      margin-left: '-1.5vw'
-      margin-top: '-1.5vw'
-      top: 71%
-      transform: scale(1.4)
-      width: 2.1vw
-    tap_action:
-      action: fire-dom-event
-      browser_mod:
-        service: browser_mod.popup
-        data:
-          content: !include ciboulette.yaml
-          title: Ciboulette 
-          size: fullscreen
-    hold_action:
-      action: none
+  # - type: image
+  #   entity: person.ciboulette
+  #   state_image:
+  #     "home": /local/ui/sidebar/Ciboulette_home.png
+  #     "not_home": /local/ui/sidebar/Ciboulette_not_home.png
+  #   style:
+  #     top: 67%
+  #     left: 85%
+  #     width: 4vw
+  #     height: 4vw
+  #     border-radius: 100%
+  #   tap_action:
+  #     action: fire-dom-event
+  #     browser_mod:
+  #       service: browser_mod.popup
+  #       data:
+  #         content: !include ciboulette.yaml
+  #         title: Ciboulette
+  #         size: fullscreen
+  #   hold_action:
+  #     action: none
+  # - type: state-icon
+  #   entity: sensor.ciboulette_heating_cooling_status
+  #   style:
+  #     '--mdc-icon-size': 1vw
+  #     '--paper-item-icon-color': var(--color-ciboulette)
+  #     align-items: center
+  #     display: flex
+  #     height: 2.1vw
+  #     justify-content: center
+  #     left: 82%
+  #     margin-left: '-1.5vw'
+  #     margin-top: '-1.5vw'
+  #     top: 66%
+  #     width: 2.1vw
+  #     transform: 'translate(-50%, -50%) scale(1.4)'
+  #     padding: 0 0 0.6% 0
+  #     animation: var(--animation-ciboulette)
+  #   tap_action:
+  #     action: fire-dom-event
+  #     browser_mod:
+  #       service: browser_mod.popup
+  #       data:
+  #         content:
+  #           type: custom:mod-card
+  #           card_mod:
+  #             style:
+  #               layout-card$:
+  #                 grid-layout$: |
+  #                   :host {
+  #                     padding: 0px !important;
+  #                   }
+  #                   #root {
+  #                     margin: 0px !important;
+  #                   }
+  #                   #root > * {
+  #                     margin: 0px !important;
+  #                   }
+  #           card:
+  #             type: custom:layout-card
+  #             layout_type: custom:vertical-layout
+  #             cards:
+  #               - type: entities
+  #                 entities:
+  #                   - type: 'custom:paper-buttons-row'
+  #                     base_config:
+  #                       style:
+  #                         button:
+  #                           background-color: 'rgba(255, 255, 255, 0.4)'
+  #                           color: lightgrey
+  #                           border-radius: 10%
+  #                     buttons:
+  #                       - tap_action:
+  #                           action: call-service
+  #                           service: skodaconnect.set_pheater_duration
+  #                           service_data:
+  #                             device_id: 7efc8d0d37ec5c716e63bc19d81e390b
+  #                             duration: 10
+  #                         name: 10 min.
+  #                         style:
+  #                           button:
+  #                             background-color: >-
+  #                               {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '10'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}
+  #                       - tap_action:
+  #                           action: call-service
+  #                           service: skodaconnect.set_pheater_duration
+  #                           service_data:
+  #                             device_id: 7efc8d0d37ec5c716e63bc19d81e390b
+  #                             duration: 20
+  #                         name: 20 min.
+  #                         style:
+  #                           button:
+  #                             background-color: >-
+  #                               {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '20'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}    
+  #                       - tap_action:
+  #                           action: call-service
+  #                           service: skodaconnect.set_pheater_duration
+  #                           service_data:
+  #                             device_id: 7efc8d0d37ec5c716e63bc19d81e390b
+  #                             duration: 30
+  #                         name: 30 min.
+  #                         style:
+  #                           button:
+  #                             background-color: >-
+  #                               {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '30'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }} 
+  #                       - tap_action:
+  #                           action: call-service
+  #                           service: skodaconnect.set_pheater_duration
+  #                           service_data:
+  #                             device_id: 7efc8d0d37ec5c716e63bc19d81e390b
+  #                             duration: 40
+  #                         name: 40 min.
+  #                         style:
+  #                           button:
+  #                             background-color: >-
+  #                               {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '40'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}
+  #                   - entity: sensor.ciboulette_heating_cooling_status
+  #                     type: 'custom:multiple-entity-row'
+  #                     name: Préchauffage/Ventilation
+  #                     toggle: true
+  #                     secondary_info: last-updated
+  #                     show_state: false
+  #                     tap_action:
+  #                       action: none
+  #                     hold_action:
+  #                       action: none
+  #                     entities:
+  #                       - entity: sensor.ciboulette_outside_temperature
+  #                         name: Temp extérieure 
+  #                         tap_action:
+  #                           action: none
+  #                         hold_action:
+  #                           action: none
+  #                       - entity: switch.ciboulette_parking_heater_ventilation
+  #                         name: Ventilation
+  #                         toggle: true
+  #                       - entity: switch.ciboulette_parking_heater_heating
+  #                         name: Préchauffage
+  #                         toggle: true
+  #                     card_mod:
+  #                       style:
+  #                         hui-generic-entity-row$: |
+  #                           state-badge {
+  #                             color: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %}#ff1a1a{% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} var(--accent-color) {% else %} var(--paper-item-icon-color){% endif %};
+  #                             animation: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %} blink 1s linear infinite alternate {% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} spin 1s linear infinite {% else %} none {% endif %};
+  #                           }         
+  #                           @keyframes blink {
+  #                             0% {opacity: 0.5;}
+  #                             100% {opacity: 1;}
+  #                           }  
+  #                           @keyframes spin {
+  #                             0% { transform: rotate(0deg); }
+  #                             100% { transform: rotate(360deg); }
+  #                           }   
+  #               - type: 'custom:decluttering-card'
+  #                 template: ciboulette_temp
+  #         title: Préchauffage/Ventilation 
+  #   hold_action:
+  #     action: none
+  # - type: conditional
+  #   conditions:
+  #     - entity: binary_sensor.ciboulette_doors_locked
+  #       state: 'off'
+  #   elements:
+  #     - type: 'custom:decluttering-card'
+  #       template: icons_ciboulette_popup
+  #       variables:
+  #         - icon: lock
+  #         - color: lightgrey
+  # - type: conditional
+  #   conditions:
+  #     - entity: binary_sensor.ciboulette_doors_locked
+  #       state: 'on'
+  #   elements:
+  #     - type: 'custom:decluttering-card'
+  #       template: icons_ciboulette_popup
+  #       variables:
+  #         - icon: lock-open
+  #         - color: '#ff1a1a'
+  # - type: state-icon
+  #   entity: binary_sensor.ciboulette_vehicle_moving
+  #   icon: 'mdi:car-side'
+  #   style:
+  #     '--mdc-icon-size': 1vw
+  #     '--paper-item-icon-color': lightgrey
+  #     align-items: center
+  #     display: flex
+  #     height: 2.1vw
+  #     justify-content: center
+  #     left: 95%
+  #     margin-left: '-1.5vw'
+  #     margin-top: '-1.5vw'
+  #     top: 71%
+  #     transform: scale(1.4)
+  #     width: 2.1vw
+  #   tap_action:
+  #     action: fire-dom-event
+  #     browser_mod:
+  #       service: browser_mod.popup
+  #       data:
+  #         content: !include ciboulette.yaml
+  #         title: Ciboulette 
+  #         size: fullscreen
+  #   hold_action:
+  #     action: none
 
     #########################    Minigraph to show temperature inside and out    #########################
   - color_thresholds:
