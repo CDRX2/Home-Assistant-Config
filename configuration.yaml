@@ -53,7 +53,7 @@ homeassistant:
         10.81.19.91: b10394b57f24478ba674a837f57158be
         10.81.19.92: b10394b57f24478ba674a837f57158be
         10.81.19.93: b10394b57f24478ba674a837f57158be
-        10.81.19.94: b10394b57f24478ba674a837f57158be
+        10.81.19.94: ae55fdfcf7714f1485058190846c3c8a
       allow_bypass_login: true
 
 # browser_mod:
