@@ -8,6 +8,11 @@
   to: !secret SPT_Destination_2
   name: dir_maison
 
+- platform: swiss_public_transport
+  from: !secret SPT_Origin_1
+  to: !secret SPT_Destination_3
+  name: dir_vclb
+
 - platform: template
   sensors:
     depuis_metro_1:
@@ -52,26 +57,47 @@
 
 - platform: template
   sensors:
-    ciboulette_heating_cooling_status:
-      friendly_name: "Chauffage/ventilation"
-      value_template: "{{ states('sensor.ciboulette_parking_heater_heating_ventilation_status') }}"
-      icon_template: >-
-        {% if is_state('sensor.ciboulette_parking_heater_heating_ventilation_status', 'off') %}
-          mdi:radiator-disabled
-        {% elif is_state('sensor.ciboulette_parking_heater_heating_ventilation_status', 'heating') %}
-          mdi:radiator
-        {% elif is_state('sensor.ciboulette_parking_heater_heating_ventilation_status', 'ventilation' ) %}
-          mdi:fan
-        {% endif %}
+    dir_vclb_1:
+      friendly_name: "Prochain bus"
+      icon_template: mdi:bus-alert
+      value_template: '{{ as_timestamp(states.sensor.dir_vclb.state)| timestamp_custom("%H:%M", True) }}'   
 
 - platform: template
   sensors:
-    ciboulette_parking:
-      friendly_name: "Parquée"
-      value_template: '{{ as_timestamp(states.sensor.ciboulette_parking_time.state)| timestamp_custom("%d.%m.%Y %H:%M", True) }}'
+    dir_vclb_2:
+      friendly_name: "Bus suivant"
+      icon_template: mdi:bus-clock
+      value_template: '{{ as_timestamp(states.sensor.dir_vclb.attributes.next_departure)| timestamp_custom("%H:%M", True) }}'        
 
 - platform: template
   sensors:
-    ciboulette_connected:
-      friendly_name: "Connexion"
-      value_template: '{{ as_timestamp(states.sensor.ciboulette_last_connected.state)| timestamp_custom("%d.%m.%Y %H:%M", True) }}'
+    dir_vclb_3:
+      friendly_name: "Bus d'après"
+      icon_template: mdi:bus
+      value_template: '{{ as_timestamp(states.sensor.dir_vclb.attributes.next_on_departure)| timestamp_custom("%H:%M", True) }}'
+
+# - platform: template
+#   sensors:
+#     ciboulette_heating_cooling_status:
+#       friendly_name: "Chauffage/ventilation"
+#       value_template: "{{ states('sensor.ciboulette_parking_heater_heating_ventilation_status') }}"
+#       icon_template: >-
+#         {% if is_state('sensor.ciboulette_parking_heater_heating_ventilation_status', 'off') %}
+#           mdi:radiator-disabled
+#         {% elif is_state('sensor.ciboulette_parking_heater_heating_ventilation_status', 'heating') %}
+#           mdi:radiator
+#         {% elif is_state('sensor.ciboulette_parking_heater_heating_ventilation_status', 'ventilation' ) %}
+#           mdi:fan
+#         {% endif %}
+
+# - platform: template
+#   sensors:
+#     ciboulette_parking:
+#       friendly_name: "Parquée"
+#       value_template: '{{ as_timestamp(states.sensor.ciboulette_parking_time.state)| timestamp_custom("%d.%m.%Y %H:%M", True) }}'
+
+# - platform: template
+#   sensors:
+#     ciboulette_connected:
+#       friendly_name: "Connexion"
+#       value_template: '{{ as_timestamp(states.sensor.ciboulette_last_connected.state)| timestamp_custom("%d.%m.%Y %H:%M", True) }}'
