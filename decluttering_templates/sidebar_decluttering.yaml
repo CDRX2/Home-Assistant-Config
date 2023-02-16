@@ -23,6 +23,23 @@ icons:
       action: '[[action]]'
       '[[type]]': '[[data]]'
 
+icons_no_bgd:
+  element:
+    type: icon
+    icon: 'mdi:[[icon]]'
+    style:
+      '--mdc-icon-size': 1.4vw
+      color: '[[color]]'
+      align-items: center
+      display: flex
+      height: 2.1vw
+      justify-content: center
+      left: '[[left]]'
+      margin-left: '-1.2vw'
+      margin-top: '-1.2vw'
+      top: '[[top]]'
+      transform: scale(1.2)
+      width: 2.1vw
 ##########################    Icons for alerts   ##########################
 
 icons_nas_popup:
@@ -51,7 +68,8 @@ icons_nas_popup:
       justify-content: center
       margin-left: '-1.5vw'
       margin-top: '-1.5vw'
-      top: 52%
+      # top: 52%
+      top: 45%
       transform: scale(1.6)
       width: 2.1vw
       '--mdc-icon-size': 1.4vw
