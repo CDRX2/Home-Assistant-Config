@@ -51,14 +51,15 @@ swiper_config_template:
                 - '[[card_1er]]'
             Tab1st:
               type: 'custom:swipe-card'
+              start_card: 2
               parameters:
                 effect: 'cube'
                 cubeEffect: 
                   shadow: false
                   slideShadows: false
               cards:
+                - '[[card_rez]]'              
                 - '[[card_1er]]'
-                - '[[card_rez]]'
 
 simple_grid:
   card:
