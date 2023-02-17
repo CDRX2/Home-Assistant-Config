@@ -36,6 +36,7 @@ swiper_config_template:
       cards:
         - '[[sidebar]]'
         - type: 'custom:swipe-card'
+          # start_card: 2
           parameters:
             effect: 'cube'
             cubeEffect: 

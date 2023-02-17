@@ -145,7 +145,7 @@ Light_room:
                           box-shadow: none !important;
                         }
           title: '[[title]]'
-    image: /local/transparent.png
+    image: /local/transparent.png    
     style:
       height: '[[height]]'
       left: '[[left]]'

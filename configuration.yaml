@@ -51,7 +51,7 @@ homeassistant:
         - 10.81.19.0/24
       trusted_users:
         10.81.19.91: b10394b57f24478ba674a837f57158be
-        10.81.19.92: b10394b57f24478ba674a837f57158be
+        10.81.19.92: e73940ee9cb640aaa6f08ba02e88a54c
         10.81.19.93: b10394b57f24478ba674a837f57158be
         10.81.19.94: ae55fdfcf7714f1485058190846c3c8a
       allow_bypass_login: true
