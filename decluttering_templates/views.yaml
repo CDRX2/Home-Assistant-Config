@@ -35,16 +35,30 @@ swiper_config_template:
           "sidebar main"
       cards:
         - '[[sidebar]]'
-        - type: 'custom:swipe-card'
-          # start_card: 2
-          parameters:
-            effect: 'cube'
-            cubeEffect: 
-              shadow: false
-              slideShadows: false
-          cards:
-            - '[[card_rez]]'
-            - '[[card_1er]]'
+        - type: 'custom:state-switch'
+          entity: user
+          default: default
+          states:
+            default:
+              type: 'custom:swipe-card'
+              parameters:
+                effect: 'cube'
+                cubeEffect: 
+                  shadow: false
+                  slideShadows: false
+              cards:
+                - '[[card_rez]]'
+                - '[[card_1er]]'
+            Tab1st:
+              type: 'custom:swipe-card'
+              parameters:
+                effect: 'cube'
+                cubeEffect: 
+                  shadow: false
+                  slideShadows: false
+              cards:
+                - '[[card_1er]]'
+                - '[[card_rez]]'
 
 simple_grid:
   card:
