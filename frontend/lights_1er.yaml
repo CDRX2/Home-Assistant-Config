@@ -207,6 +207,24 @@ elements:
       - width: 35.5%
       - top: 68%
       - height: 41%
+    card_mod:
+      style:
+        .: |
+          #root {
+            height: 100% !important;
+          }
+        hui-image-element#declutter-child$:
+          .: |
+            hui-image {
+              height: 100% !important;
+            }
+          hui-image$: |
+            .container {
+              height: 100% !important;
+            }
+            img {
+              height: 100% !important;
+            }
 
   - type: 'custom:decluttering-card'
     template: Light_room
@@ -220,6 +238,24 @@ elements:
       - width: 9.4%
       - top: 61%
       - height: 27%
+    card_mod:
+      style:
+        .: |
+          #root {
+            height: 100% !important;
+          }
+        hui-image-element#declutter-child$:
+          .: |
+            hui-image {
+              height: 100% !important;
+            }
+          hui-image$: |
+            .container {
+              height: 100% !important;
+            }
+            img {
+              height: 100% !important;
+            }
 
   - type: 'custom:decluttering-card'
     template: Light_room
@@ -233,6 +269,24 @@ elements:
       - width: 35.2%
       - top: 55.7%
       - height: 37.5%
+    card_mod:
+      style:
+        .: |
+          #root {
+            height: 100% !important;
+          }
+        hui-image-element#declutter-child$:
+          .: |
+            hui-image {
+              height: 100% !important;
+            }
+          hui-image$: |
+            .container {
+              height: 100% !important;
+            }
+            img {
+              height: 100% !important;
+            }
 
   - type: 'custom:decluttering-card'
     template: Light_room
@@ -246,6 +300,24 @@ elements:
       - width: 35%
       - top: 20.2%
       - height: 31%
+    card_mod:
+      style:
+        .: |
+          #root {
+            height: 100% !important;
+          }
+        hui-image-element#declutter-child$:
+          .: |
+            hui-image {
+              height: 100% !important;
+            }
+          hui-image$: |
+            .container {
+              height: 100% !important;
+            }
+            img {
+              height: 100% !important;
+            }
 
   - type: 'custom:decluttering-card'
     template: Light_room
@@ -259,6 +331,24 @@ elements:
       - width: 30.7%
       - top: 15%
       - height: 20.5%
+    card_mod:
+      style:
+        .: |
+          #root {
+            height: 100% !important;
+          }
+        hui-image-element#declutter-child$:
+          .: |
+            hui-image {
+              height: 100% !important;
+            }
+          hui-image$: |
+            .container {
+              height: 100% !important;
+            }
+            img {
+              height: 100% !important;
+            }
 
     #########################    INDIVIDUAL LIGHT ICONS    #########################
 

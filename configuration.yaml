@@ -51,7 +51,7 @@ homeassistant:
         - REDACTED_IP/24
       trusted_users:
         REDACTED_IP: b10394b57f24478ba674a837f57158be
-        REDACTED_IP: b10394b57f24478ba674a837f57158be
+        REDACTED_IP: e73940ee9cb640aaa6f08ba02e88a54c
         REDACTED_IP: b10394b57f24478ba674a837f57158be
         REDACTED_IP: ae55fdfcf7714f1485058190846c3c8a
       allow_bypass_login: true
