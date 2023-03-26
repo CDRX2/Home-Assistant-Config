@@ -80,6 +80,14 @@ from .const import (
     CONF_REFRESH_INTERVAL,
     CONF_OUTPUT_EVENTS,
     CONF_CRON,
+    CONF_EVERY_N_DAYS,
+    CONF_START_N_DAYS,
+    CONF_CHECK_BACK,
+    CONF_STATES,
+    CONF_RETRIES,
+    CONF_RESYNC,
+    CONF_STATE_ON,
+    CONF_STATE_OFF,
 )
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
@@ -111,12 +119,22 @@ CRON_SCHEMA = vol.Schema(
         vol.Required(CONF_CRON): cv.string,
     }
 )
+
+EVERY_N_DAYS_SCHEMA = vol.Schema(
+    {
+        vol.Required(CONF_EVERY_N_DAYS): cv.positive_int,
+        vol.Required(CONF_START_N_DAYS): cv.date,
+    }
+)
+
 time_event = vol.Any(cv.time, SUN_SCHEMA, CRON_SCHEMA)
 anchor_event = vol.Any(CONF_START, CONF_FINISH)
 month_event = vol.All(cv.ensure_list, [vol.In(MONTHS)])
 
 day_number = vol.All(vol.Coerce(int), vol.Range(min=0, max=31))
-day_event = vol.Any(CONF_ODD, CONF_EVEN, cv.ensure_list(day_number))
+day_event = vol.Any(
+    CONF_ODD, CONF_EVEN, cv.ensure_list(day_number), EVERY_N_DAYS_SCHEMA
+)
 
 SCHEDULE_SCHEMA = vol.Schema(
     {
@@ -128,6 +146,17 @@ SCHEDULE_SCHEMA = vol.Schema(
         vol.Optional(CONF_MONTH): month_event,
         vol.Optional(CONF_DAY): day_event,
         vol.Optional(CONF_ENABLED): cv.boolean,
+    }
+)
+
+CHECK_BACK_SCHEMA = vol.Schema(
+    {
+        vol.Optional(CONF_STATES): vol.Any("none", "all", "on", "off"),
+        vol.Optional(CONF_DELAY): cv.positive_int,
+        vol.Optional(CONF_RETRIES): cv.positive_int,
+        vol.Optional(CONF_RESYNC): cv.boolean,
+        vol.Optional(CONF_STATE_ON): cv.string,
+        vol.Optional(CONF_STATE_OFF): cv.string,
     }
 )
 
@@ -143,6 +172,7 @@ ZONE_SCHEMA = vol.Schema(
         vol.Optional(CONF_MAXIMUM): cv.positive_time_period,
         vol.Optional(CONF_FUTURE_SPAN): cv.positive_int,
         vol.Optional(CONF_SHOW): vol.All(SHOW_SCHEMA),
+        vol.Optional(CONF_CHECK_BACK): vol.All(CHECK_BACK_SCHEMA),
     }
 )
 
@@ -153,6 +183,7 @@ ALL_ZONES_SCHEMA = vol.Schema(
         vol.Optional(CONF_MAXIMUM): cv.positive_time_period,
         vol.Optional(CONF_FUTURE_SPAN): cv.positive_int,
         vol.Optional(CONF_ALLOW_MANUAL): cv.boolean,
+        vol.Optional(CONF_CHECK_BACK): vol.All(CHECK_BACK_SCHEMA),
     }
 )
 

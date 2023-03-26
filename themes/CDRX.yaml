@@ -26,14 +26,14 @@ CDRX:
       input-label-ink-color: "var(--secondary-text-color)"
       input-disabled-ink-color: "var(--disabled-text-color)"
       input-dropdown-icon-color: "var(--primary-text-color)"
-      # Correct closing button placement
-      card-mode-theme: "CDRX"
-      card-mod-more-info-yaml: |
-        mwc-icon-button$: |
-          .mdc-icon-button {
-              padding-top: calc( (var(--mdc-icon-button-size, 48px) - var(--mdc-icon-size, 24px)) / 4 ) !important;
-            }
-        .: |
-          ha-dialog {
-            --vertical-align-dialog: center !important;
-          }
+  # Card-mod
+  card-mod-theme: CDRX
+  card-mod-more-info-yaml: |
+    mwc-icon-button$: |
+      .mdc-icon-button {
+          padding-top: calc( (var(--mdc-icon-button-size, 48px) - var(--mdc-icon-size, 24px)) / 4 ) !important;
+        }
+    .: |
+      ha-dialog {
+        --vertical-align-dialog: center !important;
+      }
