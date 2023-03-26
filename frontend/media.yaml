@@ -1015,14 +1015,7 @@ elements:
               ". remote . player ."
           cards:
             - !include remote.yaml
-            - type: 'custom:stack-in-card'
-              mode: vertical
-              keep:
-                background: false
-                box_shadow: false
-                border_radius: false
-                margin: false
-                outer_padding: false
+            - type: 'custom:vertical-stack-in-card'
               card_mod:
                 style: |
                   :host {
@@ -1048,6 +1041,7 @@ elements:
                       }
                       ha-card {
                         animation: rotation 2.5s infinite linear;
+                        background: none;
                       }
                       @keyframes rotation {
                         0% { transform: rotate(0deg); }
@@ -1073,6 +1067,7 @@ elements:
                       }
                       ha-card {
                         animation: rotation 2.5s infinite linear;
+                        background: none;
                       }
                       @keyframes rotation {
                         0% { transform: rotate(0deg); }
@@ -1092,6 +1087,7 @@ elements:
                       }
                       ha-card {
                         animation: rotation 2.5s infinite linear;
+                        background: none;
                       }
                       @keyframes rotation {
                         0% { transform: rotate(0deg); }
@@ -1133,14 +1129,8 @@ elements:
               ". remote . player ."
           cards:
             - !include remote.yaml
-            - type: 'custom:stack-in-card'
+            - type: 'custom:vertical-stack-in-card'
               mode: vertical
-              keep:
-                background: false
-                box_shadow: false
-                border_radius: false
-                margin: false
-                outer_padding: false
               card_mod:
                 style: |
                   :host {
@@ -1166,6 +1156,7 @@ elements:
                       }
                       ha-card {
                         {{ iif (is_state('media_player.bubble', 'playing'), 'animation: rotation 2.5s infinite linear', 'none') }};
+                        background: none;
                       }
                       @keyframes rotation {
                         0% { transform: rotate(0deg); }
@@ -1218,6 +1209,7 @@ elements:
                       }
                       ha-card {
                         {{ iif (is_state('media_player.bubble', 'playing'), 'animation: rotation 2.5s infinite linear', 'none') }};
+                        background: none;
                       }
                       @keyframes rotation {
                         0% { transform: rotate(0deg); }
@@ -1259,14 +1251,7 @@ elements:
               ". remote . player ."
           cards:
             - !include remote.yaml
-            - type: 'custom:stack-in-card'
-              mode: vertical
-              keep:
-                background: false
-                box_shadow: false
-                border_radius: false
-                margin: false
-                outer_padding: false
+            - type: 'custom:vertical-stack-in-card'
               card_mod:
                 style: |
                   :host {
@@ -1292,6 +1277,7 @@ elements:
                       }
                       ha-card {
                         animation: rotation 2.5s infinite linear;
+                        background: none;
                       }
                       @keyframes rotation {
                         0% { transform: rotate(0deg); }
@@ -1323,6 +1309,7 @@ elements:
                       }
                       ha-card {
                         animation: rotation 2.5s infinite linear;
+                        background: none;
                       }
                       @keyframes rotation {
                         0% { transform: rotate(0deg); }
@@ -1342,6 +1329,7 @@ elements:
                       }
                       ha-card {
                         animation: rotation 2.5s infinite linear;
+                        background: none;
                       }
                       @keyframes rotation {
                         0% { transform: rotate(0deg); }
