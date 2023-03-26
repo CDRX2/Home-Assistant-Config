@@ -128,27 +128,6 @@ elements:
           - color: '#ffa31a'
           - left: 17.5%
           - top: 45%
-      # - type: 'custom:decluttering-card'
-      #   template: icons
-      #   variables:
-      #     - icon: trash-can
-      #     - color: lightgrey
-      #     - left: 42.5%
-      #     - top: 45%
-      # - type: 'custom:decluttering-card'
-      #   template: icons
-      #   variables:
-      #     - icon: newspaper-variant-multiple
-      #     - color: lightgrey
-      #     - left: 62.5%
-      #     - top: 45%
-      # - type: 'custom:decluttering-card'
-      #   template: icons
-      #   variables:
-      #     - icon: leaf
-      #     - color: lightgrey
-      #     - left: 82.5%
-      #     - top: 45%
 
   - type: conditional
     conditions:
@@ -162,27 +141,6 @@ elements:
           - color: '#ff1a1a'
           - left: 17.5%
           - top: 45%
-      # - type: 'custom:decluttering-card'
-      #   template: icons
-      #   variables:
-      #     - icon: trash-can
-      #     - color: lightgrey
-      #     - left: 42.5%
-      #     - top: 45%
-      # - type: 'custom:decluttering-card'
-      #   template: icons
-      #   variables:
-      #     - icon: newspaper-variant-multiple
-      #     - color: lightgrey
-      #     - left: 62.5%
-      #     - top: 45%
-      # - type: 'custom:decluttering-card'
-      #   template: icons
-      #   variables:
-      #     - icon: leaf
-      #     - color: lightgrey
-      #     - left: 82.5%
-      #     - top: 45%
 
   - type: conditional
     conditions:
@@ -196,34 +154,6 @@ elements:
           - color: '#ffa31a'
           - left: 17.5%
           - top: 45%
-      # - type: 'custom:decluttering-card'
-      #   template: icons
-      #   variables:
-      #     - icon: trash-can
-      #     - color: lightgrey
-      #     - left: 35%
-      #     - top: 45%
-      # - type: 'custom:decluttering-card'
-      #   template: icons
-      #   variables:
-      #     - icon: newspaper-variant-multiple
-      #     - color: lightgrey
-      #     - left: 52.5%
-      #     - top: 45%
-      # - type: 'custom:decluttering-card'
-      #   template: icons
-      #   variables:
-      #     - icon: leaf
-      #     - color: lightgrey
-      #     - left: 70%
-      #     - top: 45%
-      # - type: 'custom:decluttering-card'
-      #   template: icons
-      #   variables:
-      #     - icon: bottle-wine
-      #     - color: lightgrey
-      #     - left: 87.5%
-      #     - top: 45%
 
   - type: conditional
     conditions:
@@ -237,34 +167,6 @@ elements:
           - color: '#ff1a1a'
           - left: 17.5%
           - top: 45%
-      # - type: 'custom:decluttering-card'
-      #   template: icons
-      #   variables:
-      #     - icon: trash-can
-      #     - color: lightgrey
-      #     - left: 35%
-      #     - top: 45%
-      # - type: 'custom:decluttering-card'
-      #   template: icons
-      #   variables:
-      #     - icon: newspaper-variant-multiple
-      #     - color: lightgrey
-      #     - left: 52.5%
-      #     - top: 45%
-      # - type: 'custom:decluttering-card'
-      #   template: icons
-      #   variables:
-      #     - icon: leaf
-      #     - color: lightgrey
-      #     - left: 70%
-      #     - top: 45%
-      # - type: 'custom:decluttering-card'
-      #   template: icons
-      #   variables:
-      #     - icon: bottle-wine
-      #     - color: lightgrey
-      #     - left: 87.5%
-      #     - top: 45%
 
     ##########################    Icons for alerts   ##########################
 
@@ -278,8 +180,6 @@ elements:
         variables:
           - icon: battery-alert
           - color: '#ff1a1a'
-          # - left: 22.5%
-          # - top: 52%
           - left: 35%
           - top: 45%
           - action: navigate
@@ -295,7 +195,6 @@ elements:
         template: icons_nas_popup
         variables:
           - icon: nas
-          # - left: 42.5%
           - left: 52.5%
   - type: conditional
     conditions:
@@ -306,8 +205,6 @@ elements:
         template: text
         variables:
           - text: "3"
-          # - top: 52.5%
-          # - left: 33%
           - top: 45%
           - left: 43%
   - type: conditional
@@ -319,8 +216,6 @@ elements:
         template: text
         variables:
           - text: "B"
-          # - top: 52.5%
-          # - left: 46%
           - top: 45%
           - left: 56%
 
@@ -333,7 +228,6 @@ elements:
         template: icons_nas_popup
         variables:
           - icon: update
-          # - left: 62.5%
           - left: 70%
   - type: conditional
     conditions:
@@ -344,8 +238,6 @@ elements:
         template: text
         variables:
           - text: "3"
-          # - top: 52.5%
-          # - left: 53%
           - top: 45%
           - left: 60.5%
   - type: conditional
@@ -357,8 +249,6 @@ elements:
         template: text
         variables:
           - text: "B"
-          # - top: 52.5%
-          # - left: 66%
           - top: 45%
           - left: 73.5%
 
@@ -372,8 +262,6 @@ elements:
         variables:
           - icon: home-assistant
           - color: '#ff1a1a'
-          # - left: 82.5%
-          # - top: 52%
           - left: 87.5%
           - top: 45%
           - action: navigate
@@ -388,8 +276,6 @@ elements:
         template: text
         variables:
           - text: "HACS"
-          # - top: 54%
-          # - left: 75%
           - top: 47%
           - left: 80%
   - type: conditional
@@ -401,8 +287,6 @@ elements:
         template: text
         variables:
           - text: "HA"
-          # - top: 47%
-          # - left: 72%
           - top: 40%
           - left: 77%
 
@@ -500,7 +384,6 @@ elements:
       - icon: bus-clock
       - color: lightgrey
       - left: 17.5%
-      # - top: 59.5%
       - top: 55.5%
       - action: url
       - type: url_path
