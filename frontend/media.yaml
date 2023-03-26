@@ -4,7 +4,7 @@ elements:
 
     ##########################################################################################
     #                                                                                        #
-    #          IF NO MEDIA PLAYING, SHOW UPCOMING TV & MOVIES, BUTTONS TO LAUNCH MEDIA       #
+    #          IF NO MEDIA PLAYING, SHOW RECENT AND UPCOMING TV & MOVIES                     #
     #                                                                                        #
     ##########################################################################################
 
@@ -32,217 +32,201 @@ elements:
           cards:
             - !include remote.yaml
 
-            - type: entities
-              entities: 
-                - input_select.plex_library
-              card_mod:
-                style:  
-                  hui-input-select-entity-row$:
-                    hui-generic-entity-row:
-                      ha-select$:
-                        mwc-menu$: |
-                          mwc-menu-surface > mwc-list {
-                            background-color: rgba(44, 45, 67, 0.3) !important;
-                            backdrop-filter: blur(10px);
-                            -webkit-backdrop-filter: blur(10px);                        
-                          }   
-                        .: |
-                          .mdc-floating-label {
-                            display: none !important;
-                          }
-                          .mdc-select .mdc-select__anchor {
-                            padding: 0px 10px !important;
-                          }
-                          .mdc-select--filled .mdc-select__anchor {
-                            height: 2.5vw !important;
-                            align-items: center !important;
-                          }
-                          .mdc-select__selected-text {
-                            color: var(--secondary-text-color) !important;
-                          }
-                          .mdc-select__dropdown-icon {
-                            fill: var(--secondary-text-color) !important;
-                            margin: 0px !important;
-                          }
-                          .mdc-select__anchor {
-                            background-color: rgba(44, 45, 67, 0.3) !important;
-                            backdrop-filter: blur(10px);
-                            -webkit-backdrop-filter: blur(10px);
-                          }
-                          .mdc-select .mdc-select__anchor * {
-                            align-items: center !important;
-                          }    
-                      .: |
-                        mwc-list-item {
-                          color: var(--secondary-text-color);
-                          height: var(--mdc-menu-item-height, 30px);
-                        }
-                      $: |
-                        state-badge {
-                          display: none;
-                        }
-                        ha-paper-dropdown-menu {
-                          margin-left: 0px !important;
-                        }
-                      
-                  .: |
-                    .card-content {
-                      padding: 0.5vw !important;
-                    }
-                    :host {
-                      position: absolute;
-                      top: 25%;
-                      right: 30%;
-                      z-index: 2 !important;
-                      width: 17.5%; 
-                      height: 2.5vw;
-                    }
-                    ha-card {
-                      margin: 0px !important;
-                      border: none;
-                      background-color: transparent;
-                      border-radius: 1%;                
-                    }
-
-        # Plex meets Home Assistant:
-        # https://github.com/JurajNyiri/PlexMeetsHomeAssistant
-
-            - type: 'custom:mod-card'
-              view_layout:
-                grid-area: recentseries
-              card:
-                type: 'custom:decluttering-card'
-                template: plex_meets_HA
-                variables:
-                  - library: Watch Next
-                  - search: false
-                  - script: script.launch_plex
-                  - title: Continuer
-                  - sort: ''
-                  - max: ''
-              card_mod:
-                style: 
-                  decluttering-card$: |
-                    .titleElem {
-                      display: none !important;
-                    }
-                    .yearElem {
-                      color: var(--primary-text-color) !important;
-                    }                                
-                    .additionalElem {
-                      color: var(--secondary-text-color) !important;
-                    }
-            - type: conditional
-              conditions:
-                - entity: input_select.plex_library
-                  state: 'Séries'
-              view_layout:
-                grid-area: recentfilms
-              card:
-                type: 'custom:mod-card'
-                card:
-                  type: 'custom:decluttering-card'
-                  template: plex_meets_HA
-                  variables:
-                    - library: Series
-                    - search: true
-                    - script: script.launch_plex
-                    - title: Séries
-                    - sort: ''
-                    - max: ''
-                card_mod:
-                  style: 
-                    decluttering-card$: |
-                      .titleElem {
-                        display: none !important;
-                      }
-                      .yearElem {
-                        display: none !important;
-                      }
-            - type: conditional
-              conditions:
-                - entity: input_select.plex_library
-                  state: 'Séries récentes'
-              view_layout:
-                grid-area: recentfilms
-              card:
-                type: 'custom:mod-card'
-                card:
-                  type: 'custom:decluttering-card'
-                  template: plex_meets_HA
-                  variables:
-                    - library: Series
-                    - search: true
-                    - script: script.launch_plex
-                    - title: Séries récentes
-                    - sort: episode.addedAt:desc
-                    - max: ''
-                card_mod:
-                  style: 
-                    decluttering-card$: |
-                      .titleElem {
-                        display: none !important;
-                      }
-                      .yearElem {
-                        display: none !important;
-                      }
-            - type: conditional
-              conditions:
-                - entity: input_select.plex_library
-                  state: 'Films récents'
-              view_layout:
-                grid-area: recentfilms
-              card:
-                type: 'custom:mod-card'
-                card:
-                  type: 'custom:decluttering-card'
-                  template: plex_meets_HA
-                  variables:
-                    - library: Films
-                    - search: true
-                    - script: script.launch_plex
-                    - title: Films récents
-                    - sort: addedAt:desc
-                    - max: 300
-                card_mod:
-                  style: 
-                    decluttering-card$: |
-                      .titleElem {
-                        display: none !important;
-                      }
-                      .yearElem {
-                        display: none !important;
-                      }
-            - type: conditional
-              conditions:
-                - entity: input_select.plex_library
-                  state: 'Enregistrements TV'
-              view_layout:
-                grid-area: recentfilms
-              card:
-                type: 'custom:mod-card'
-                card:
-                  type: 'custom:decluttering-card'
-                  template: plex_meets_HA
-                  variables:
-                    - library: TV recordings
-                    - search: true
-                    - script: script.launch_plex
-                    - title: Enregistrements TV
-                    - sort: ''
-                    - max: ''
-                card_mod:
-                  style: 
-                    decluttering-card$: |
-                      .titleElem {
-                        display: none !important;
-                      }
-                      .yearElem {
-                        display: none !important;
-                      }
-
         # Upcoming Media Card:
         # https://github.com/custom-cards/upcoming-media-card
+
+        # Enabled by Sonarr upcoming media:
+        # https://github.com/NemesisRE/sensor.plex_recently_added
+
+            - type: 'custom:upcoming-media-card'
+              entity: sensor.recently_added_tv
+              max: 7
+              flag: false
+              date: ddmm
+              clock: 24
+              title_text: $empty
+              line1_text: $day
+              line2_text: $date, $runtime
+              line3_text: $empty
+              line4_text: $empty
+              line1_size: large
+              line2_size: medium
+              card_mod:
+                style: |
+                  ha-card.type-custom-upcoming-media-card {
+                    background: none;
+                    box-shadow: none !important;
+                    padding: 0px !important;
+                    overflox: visible !important;
+                  }
+                  .card-header {
+                    font-size: 1.5vw;
+                    padding: 0px;
+                    line-height: 2.5vw;
+                  }
+                  ha-card > div {
+                    padding: 0px !important;
+                  }
+                  .rece_poster {
+                    width: 6vw !important;
+                    margin-right: 1vw !important;
+                    margin-left: 0vw !important;
+                    position: absolute !important;
+                    margin-top: 0.7vw !important;
+                  }
+                  .rece_poster:nth-child(1) {
+                    left: 0vw;
+                  }
+                  .rece_poster:nth-child(2) {
+                    left: 7vw;
+                  }
+                  .rece_poster:nth-child(3) {
+                    left: 14vw;
+                  }
+                  .rece_poster:nth-child(4) {
+                    left: 21vw;
+                  }
+                  .rece_poster:nth-child(5) {
+                    left: 28vw;
+                  }
+                  .rece_poster:nth-child(6) {
+                    left: 35vw;
+                  }
+                  .rece_poster:nth-child(7) {
+                    left: 42vw;
+                  }
+                  .rece_poster .rece_svg_poster {
+                    position: absolute !important;
+                    bottom: 5%;
+                    left: 0;
+                    width: 100% !important;
+                    backdrop-filter: blur(10px);
+                    -webkit-backdrop-filter: blur(10px);
+                    background-color: rgba(44, 45, 67, 0.3);
+                    border-radius: 0% 1% 1% 0%;
+                    margin: 0px !important;
+                    transition-duration: 150ms;
+                    overflow: hidden !important;
+                  }
+                  .rece_container_poster{
+                    width: 100% !important;
+                    outline: none !important;
+                    margin: 0px !important;
+                  }
+                  .rece_svg_poster > rect {
+                   fill: none !important;
+                  }
+                  .rece_poster .rece_svg_poster:hover {
+                    opacity: 0%;
+                    transition-duration: 200ms;
+                  }
+                  .rece_line0_poster {
+                    font-size: 0.4vw !important;
+                  }
+                  .rece_line1_poster {
+                    font-size: 1.6vw !important;
+                  }
+                  .rece_line2_poster {
+                    font-size: 1.5vw !important;
+                  }
+              view_layout:
+                grid-area: recentseries
+              title: Séries récentes
+
+            - type: 'custom:upcoming-media-card'
+              entity: sensor.recently_added_movies
+              max: 7
+              flag: false
+              date: ddmm
+              clock: 24
+              title_text: $empty
+              line1_text: $day, $date
+              line2_text: $number - $runtime
+              line3_text: $empty
+              line4_text: $empty
+              line1_size: large
+              line2_size: medium
+              card_mod:
+                style: |
+                  ha-card.type-custom-upcoming-media-card {
+                    background: none;
+                    box-shadow: none !important;
+                    padding: 0px !important;
+                    overflox: visible !important;
+                  }
+                  .card-header {
+                    font-size: 1.5vw;
+                    padding: 0px;
+                    line-height: 2.5vw;
+                  }
+                  ha-card > div {
+                    padding: 0px !important;
+                  }
+                  /*.sona_poster {
+                    width: 6vw !important;
+                    margin-right: 1vw !important;
+                    margin-left: 0vw !important;
+                    position: absolute !important;
+                    margin-top: 0.7vw !important;
+                  }
+                  .sona_poster:nth-child(1) {
+                    left: 0vw;
+                  }
+                  .sona_poster:nth-child(2) {
+                    left: 7vw;
+                  }
+                  .sona_poster:nth-child(3) {
+                    left: 14vw;
+                  }
+                  .sona_poster:nth-child(4) {
+                    left: 21vw;
+                  }
+                  .sona_poster:nth-child(5) {
+                    left: 28vw;
+                  }
+                  .sona_poster:nth-child(6) {
+                    left: 35vw;
+                  }
+                  .sona_poster:nth-child(7) {
+                    left: 42vw;
+                  }
+                  .sona_poster .sona_svg_poster {
+                    position: absolute !important;
+                    bottom: 5%;
+                    left: 0;
+                    width: 90% !important;
+                    backdrop-filter: blur(10px);
+                    -webkit-backdrop-filter: blur(10px);
+                    background-color: rgba(44, 45, 67, 0.3);
+                    border-radius: 0% 1% 1% 0%;
+                    margin: 0px !important;
+                    transition-duration: 150ms;
+                    overflow: hidden !important;
+                  }
+                  .sona_container_poster{
+                    width: 100% !important;
+                    outline: none !important;
+                    margin: 0px !important;
+                  }
+                  .sona_svg_poster > rect {
+                   fill: none !important;
+                  }
+                  .sona_poster .sona_svg_poster:hover {
+                    opacity: 0%;
+                    transition-duration: 200ms;
+                  }
+                  .sona_line0_poster {
+                    font-size: 0.4vw !important;
+                  }
+                  .sona_line1_poster {
+                    font-size: 1.6vw !important;
+                  }
+                  .sona_line2_poster {
+                    font-size: 1.5vw !important;
+                  }*/
+              view_layout:
+                grid-area: recentfilms
+              title: Films récents
 
         # Enabled by Sonarr upcoming media:
         # https://github.com/custom-components/sensor.sonarr_upcoming_media
@@ -308,7 +292,7 @@ elements:
                     position: absolute !important;
                     bottom: 5%;
                     left: 0;
-                    width: 90% !important;
+                    width: 100% !important;
                     backdrop-filter: blur(10px);
                     -webkit-backdrop-filter: blur(10px);
                     background-color: rgba(44, 45, 67, 0.3);
@@ -464,193 +448,201 @@ elements:
           cards:
             - !include remote.yaml
   
-            - type: entities
-              entities: 
-                - input_select.plex_library
-              card_mod:
-                style:  
-                  hui-input-select-entity-row$:
-                    ha-paper-dropdown-menu$:
-                      paper-menu-button:
-                        .dropdown-trigger:
-                          paper-input$:
-                            paper-input-container$: |
-                              :host {
-                                padding: 0px;
-                              }
-                              .floated-label-placeholder {
-                                display: none;
-                              }
-                            paper-input-container: |
-                              iron-input {
-                                color: var(--secondary-text-color) !important;
-                              }
-                    .: |
-                      state-badge {
-                        display: none;
-                      }   
-                      ha-paper-dropdown-menu {
-                        margin-left: 0px !important;
-                      }       
-                  .: |
-                    .card-content {
-                      padding: 0.5vw !important;
-                    }
-                    :host {
-                      position: absolute;
-                      top: 25%;
-                      right: 30%;
-                      z-index: 1;
-                      width: 17.5%; 
-                      height: 2.5vw;
-                      --paper-listbox-background-color: rgba(44, 45, 67, 0.7);
-                    }
-                    ha-card {
-                      margin: 0px !important;
-                      border: none;
-                      background-color: rgba(44, 45, 67, 0.3);
-                      border-radius: 1%;             
-                    }
-
-        # Plex meets Home Assistant:
-        # https://github.com/JurajNyiri/PlexMeetsHomeAssistant
-
-            - type: 'custom:mod-card'
-              view_layout:
-                grid-area: recentseries
-              card:
-                type: 'custom:decluttering-card'
-                template: plex_meets_HA
-                variables:
-                  - library: Watch Next
-                  - search: false
-                  - script: ''
-                  - title: Continuer
-                  - sort: ''
-                  - max: ''
-              card_mod:
-                style: 
-                  decluttering-card$: |
-                    .titleElem {
-                      display: none !important;
-                    }
-                    .yearElem {
-                      color: var(--primary-text-color) !important;
-                    }                                
-                    .additionalElem {
-                      color: var(--secondary-text-color) !important;
-                    }
-            - type: conditional
-              conditions:
-                - entity: input_select.plex_library
-                  state: 'Séries'
-              view_layout:
-                grid-area: recentfilms
-              card:
-                type: 'custom:mod-card'
-                card:
-                  type: 'custom:decluttering-card'
-                  template: plex_meets_HA
-                  variables:
-                    - library: Series
-                    - search: true
-                    - script: ''
-                    - title: Séries
-                    - sort: ''
-                    - max: ''
-                card_mod:
-                  style: 
-                    decluttering-card$: |
-                      .titleElem {
-                        display: none !important;
-                      }
-                      .yearElem {
-                        display: none !important;
-                      }
-            - type: conditional
-              conditions:
-                - entity: input_select.plex_library
-                  state: 'Séries récentes'
-              view_layout:
-                grid-area: recentfilms
-              card:
-                type: 'custom:mod-card'
-                card:
-                  type: 'custom:decluttering-card'
-                  template: plex_meets_HA
-                  variables:
-                    - library: Series
-                    - search: true
-                    - script: ''
-                    - title: Séries récentes
-                    - sort: episode.addedAt:desc
-                    - max: ''
-                card_mod:
-                  style: 
-                    decluttering-card$: |
-                      .titleElem {
-                        display: none !important;
-                      }
-                      .yearElem {
-                        display: none !important;
-                      }
-            - type: conditional
-              conditions:
-                - entity: input_select.plex_library
-                  state: 'Films récents'
-              view_layout:
-                grid-area: recentfilms
-              card:
-                type: 'custom:mod-card'
-                card:
-                  type: 'custom:decluttering-card'
-                  template: plex_meets_HA
-                  variables:
-                    - library: Films
-                    - search: true
-                    - script: ''
-                    - title: Films récents
-                    - sort: addedAt:desc
-                    - max: 300
-                card_mod:
-                  style: 
-                    decluttering-card$: |
-                      .titleElem {
-                        display: none !important;
-                      }
-                      .yearElem {
-                        display: none !important;
-                      }
-            - type: conditional
-              conditions:
-                - entity: input_select.plex_library
-                  state: 'Enregistrements TV'
-              view_layout:
-                grid-area: recentfilms
-              card:
-                type: 'custom:mod-card'
-                card:
-                  type: 'custom:decluttering-card'
-                  template: plex_meets_HA
-                  variables:
-                    - library: TV recordings
-                    - search: true
-                    - script: ''
-                    - title: Enregistrements TV
-                    - sort: ''
-                    - max: ''
-                card_mod:
-                  style: 
-                    decluttering-card$: |
-                      .titleElem {
-                        display: none !important;
-                      }
-                      .yearElem {
-                        display: none !important;
-                      }
-
         # Upcoming Media Card:
         # https://github.com/custom-cards/upcoming-media-card
+
+        # Enabled by Sonarr upcoming media:
+        # https://github.com/NemesisRE/sensor.plex_recently_added
+
+            - type: 'custom:upcoming-media-card'
+              entity: sensor.recently_added_tv
+              max: 7
+              flag: false
+              date: ddmm
+              clock: 24
+              title_text: $empty
+              line1_text: $day
+              line2_text: $date, $runtime
+              line3_text: $empty
+              line4_text: $empty
+              line1_size: large
+              line2_size: medium
+              card_mod:
+                style: |
+                  ha-card.type-custom-upcoming-media-card {
+                    background: none;
+                    box-shadow: none !important;
+                    padding: 0px !important;
+                    overflox: visible !important;
+                  }
+                  .card-header {
+                    font-size: 1.5vw;
+                    padding: 0px;
+                    line-height: 2.5vw;
+                  }
+                  ha-card > div {
+                    padding: 0px !important;
+                  }
+                  .rece_poster {
+                    width: 6vw !important;
+                    margin-right: 1vw !important;
+                    margin-left: 0vw !important;
+                    position: absolute !important;
+                    margin-top: 0.7vw !important;
+                  }
+                  .rece_poster:nth-child(1) {
+                    left: 0vw;
+                  }
+                  .rece_poster:nth-child(2) {
+                    left: 7vw;
+                  }
+                  .rece_poster:nth-child(3) {
+                    left: 14vw;
+                  }
+                  .rece_poster:nth-child(4) {
+                    left: 21vw;
+                  }
+                  .rece_poster:nth-child(5) {
+                    left: 28vw;
+                  }
+                  .rece_poster:nth-child(6) {
+                    left: 35vw;
+                  }
+                  .rece_poster:nth-child(7) {
+                    left: 42vw;
+                  }
+                  .rece_poster .rece_svg_poster {
+                    position: absolute !important;
+                    bottom: 5%;
+                    left: 0;
+                    width: 100% !important;
+                    backdrop-filter: blur(10px);
+                    -webkit-backdrop-filter: blur(10px);
+                    background-color: rgba(44, 45, 67, 0.3);
+                    border-radius: 0% 1% 1% 0%;
+                    margin: 0px !important;
+                    transition-duration: 150ms;
+                    overflow: hidden !important;
+                  }
+                  .rece_container_poster{
+                    width: 100% !important;
+                    outline: none !important;
+                    margin: 0px !important;
+                  }
+                  .rece_svg_poster > rect {
+                   fill: none !important;
+                  }
+                  .rece_poster .rece_svg_poster:hover {
+                    opacity: 0%;
+                    transition-duration: 200ms;
+                  }
+                  .rece_line0_poster {
+                    font-size: 0.4vw !important;
+                  }
+                  .rece_line1_poster {
+                    font-size: 1.6vw !important;
+                  }
+                  .rece_line2_poster {
+                    font-size: 1.5vw !important;
+                  }
+              view_layout:
+                grid-area: recentseries
+              title: Séries récentes
+
+            - type: 'custom:upcoming-media-card'
+              entity: sensor.recently_added_movies
+              max: 7
+              flag: false
+              date: ddmm
+              clock: 24
+              title_text: $empty
+              line1_text: $day, $date
+              line2_text: $number - $runtime
+              line3_text: $empty
+              line4_text: $empty
+              line1_size: large
+              line2_size: medium
+              card_mod:
+                style: |
+                  ha-card.type-custom-upcoming-media-card {
+                    background: none;
+                    box-shadow: none !important;
+                    padding: 0px !important;
+                    overflox: visible !important;
+                  }
+                  .card-header {
+                    font-size: 1.5vw;
+                    padding: 0px;
+                    line-height: 2.5vw;
+                  }
+                  ha-card > div {
+                    padding: 0px !important;
+                  }
+                  /*.sona_poster {
+                    width: 6vw !important;
+                    margin-right: 1vw !important;
+                    margin-left: 0vw !important;
+                    position: absolute !important;
+                    margin-top: 0.7vw !important;
+                  }
+                  .sona_poster:nth-child(1) {
+                    left: 0vw;
+                  }
+                  .sona_poster:nth-child(2) {
+                    left: 7vw;
+                  }
+                  .sona_poster:nth-child(3) {
+                    left: 14vw;
+                  }
+                  .sona_poster:nth-child(4) {
+                    left: 21vw;
+                  }
+                  .sona_poster:nth-child(5) {
+                    left: 28vw;
+                  }
+                  .sona_poster:nth-child(6) {
+                    left: 35vw;
+                  }
+                  .sona_poster:nth-child(7) {
+                    left: 42vw;
+                  }
+                  .sona_poster .sona_svg_poster {
+                    position: absolute !important;
+                    bottom: 5%;
+                    left: 0;
+                    width: 90% !important;
+                    backdrop-filter: blur(10px);
+                    -webkit-backdrop-filter: blur(10px);
+                    background-color: rgba(44, 45, 67, 0.3);
+                    border-radius: 0% 1% 1% 0%;
+                    margin: 0px !important;
+                    transition-duration: 150ms;
+                    overflow: hidden !important;
+                  }
+                  .sona_container_poster{
+                    width: 100% !important;
+                    outline: none !important;
+                    margin: 0px !important;
+                  }
+                  .sona_svg_poster > rect {
+                   fill: none !important;
+                  }
+                  .sona_poster .sona_svg_poster:hover {
+                    opacity: 0%;
+                    transition-duration: 200ms;
+                  }
+                  .sona_line0_poster {
+                    font-size: 0.4vw !important;
+                  }
+                  .sona_line1_poster {
+                    font-size: 1.6vw !important;
+                  }
+                  .sona_line2_poster {
+                    font-size: 1.5vw !important;
+                  }*/
+              view_layout:
+                grid-area: recentfilms
+              title: Films récents
 
         # Enabled by Sonarr upcoming media:
         # https://github.com/custom-components/sensor.sonarr_upcoming_media
@@ -716,7 +708,7 @@ elements:
                     position: absolute !important;
                     bottom: 5%;
                     left: 0;
-                    width: 90% !important;
+                    width: 100% !important;
                     backdrop-filter: blur(10px);
                     -webkit-backdrop-filter: blur(10px);
                     background-color: rgba(44, 45, 67, 0.3);

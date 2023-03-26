@@ -8,59 +8,6 @@
 
 # To understand why, check: https://github.com/iantrich/config-template-card
 
-# swiper_config_template:
-#   card:
-#     type: 'custom:mod-card'
-#     card_mod:
-#       style: 
-#         layout-card$: 
-#           grid-layout$: |
-#             :host {
-#               padding: 0px !important;
-#             }
-#             #root {
-#               margin: 0px !important;
-#             }
-#             #root > * {
-#               margin: 0px !important;
-#             }
-#     card:
-#       type: 'custom:layout-card'
-#       layout_type: grid
-#       layout_options:
-#         grid-template-rows: 100%
-#         grid-template-columns: 25% 75%
-#         grid-gap: 0
-#         grid-template-areas: |
-#           "sidebar main"
-#       cards:
-#         - '[[sidebar]]'
-#         - type: 'custom:state-switch'
-#           entity: user
-#           default: default
-#           states:
-#             default:
-#               type: 'custom:swipe-card'
-#               parameters:
-#                 effect: 'cube'
-#                 cubeEffect: 
-#                   shadow: false
-#                   slideShadows: false
-#               cards:
-#                 - '[[card_rez]]'
-#                 - '[[card_1er]]'
-#             Tab1st:
-#               type: 'custom:swipe-card'
-#               start_card: 2
-#               parameters:
-#                 effect: 'cube'
-#                 cubeEffect: 
-#                   shadow: false
-#                   slideShadows: false
-#               cards:
-#                 - '[[card_rez]]'              
-#                 - '[[card_1er]]'
-
 simple_grid:
   card:
     type: 'custom:mod-card'
