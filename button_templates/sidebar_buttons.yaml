@@ -76,6 +76,7 @@ media_sidebar_state:
   styles:
     card:
       - background-size: 120% 100%
+      - background: none
       - box-shadow: none
       - padding: 0
       - height: 100%
@@ -113,6 +114,7 @@ media_sidebar_picture:
   styles:
     card:
       - box-shadow: none
+      - background: none
       - padding: 0
       - height: 100%
     entity_picture:
