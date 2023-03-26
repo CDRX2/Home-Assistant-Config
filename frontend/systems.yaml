@@ -356,7 +356,7 @@ elements:
             icon: 'mdi:battery'
             entities:
               - sensor.movement_driveway_battery_level
-              - sensor.cat_flap_entree_battery_level
+              - sensor.entree_battery_level
             min: 20
         entities:
           - entity: sensor.lya_l29_battery_level
@@ -368,21 +368,6 @@ elements:
             name: 'Realme CDRX'
             charging_state:
               entity_id: binary_sensor.cdrx2pro_is_charging
-              state: 'on'
-          - entity: sensor.tablet_rez_battery_level
-            name: Tablet rez
-            charging_state:
-              entity_id: binary_sensor.tablet_rez_plugged_in
-              state: 'on'
-          - entity: sensor.tablet_mobile_battery_level
-            name: Tablet mobile
-            charging_state:
-              entity_id: binary_sensor.tablet_mobile_plugged_in
-              state: 'on'
-          - entity: sensor.tablet_remote_battery_level
-            name: Tablet remote
-            charging_state:
-              entity_id: binary_sensor.tablet_remote_plugged_in
               state: 'on'
           - entity: sensor.salon_battery
             name: 'Climate living room'
@@ -404,14 +389,29 @@ elements:
             name: 'Climate bottom stairs'
           - entity: sensor.movement_driveway_battery_level
             name: 'Movement driveway'
-          - entity: sensor.cat_flap_entree_battery_level
-            name: 'Cat flap'
+          - entity: sensor.entree_battery_level
+            name: 'Chatière'
           - entity: sensor.chevet_amis_geneve_battery
             name: Amis Genève
           - entity: sensor.chevet_amis_valais_battery
             name: 'Amis Valais'
           - entity: sensor.twins_mobile_battery
             name: 'Jumeaux mobile'
+          - entity: sensor.lenovo_rez_battery
+            name: 'Tablette Rez'
+            charging_state:
+              entity_id: binary_sensor.lenovo_rez_plugged_in
+              state: 'on'
+          - entity: sensor.lenovo_tab_1st_floor_battery
+            name: 'Tablette 1er'
+            charging_state:
+              entity_id: binary_sensor.lenovo_tab_1st_floor_plugged_in
+              state: 'on'
+          - entity: sensor.lenovo_tab_remote_battery
+            name: 'Tablette télécommande'
+            charging_state:
+              entity: binary_sensor.lenovo_tab_remote_plugged_in
+              state: 'on'
         title: Batteries
         view_layout:
           column: 2
