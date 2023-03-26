@@ -152,7 +152,7 @@ media_state_title:
   styles:
     card:
       - box-shadow: none
-      # - background: none
+      - background: none
       - padding: 0
     state:
       - justify-self: center
