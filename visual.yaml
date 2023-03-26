@@ -6,6 +6,9 @@ decluttering_templates: !include_dir_merge_named decluttering_templates/
 
 apexcharts_card_templates: !include_dir_merge_named apexcharts_templates/
 
+swipe_nav:
+  wrap: true
+
 views:
 
   #############################################################################################################################################
@@ -14,19 +17,33 @@ views:
   #                                                                                                                                           #
   #############################################################################################################################################
 
-- title: Lumières
+## Ground Floor
+
+- title: Lumières rez
   icon: 'mdi:lightbulb-group'
   panel: true
   badges: []
-  path: lights
+  path: lights_rez
   cards:
     - type: 'custom:decluttering-card'
-      template: swiper_config_template
+      template: simple_grid
       variables:
         - sidebar: !include frontend/sidebar.yaml
-        - card_rez: !include frontend/lights_rez.yaml
-        - card_1er: !include frontend/lights_1er.yaml
+        - card: !include frontend/lights_rez.yaml
 
+## First Floor
+
+- title: Lumières 1er
+  icon: 'mdi:lightbulb-group'
+  panel: true
+  badges: []
+  path: lights_1er
+  cards:
+    - type: 'custom:decluttering-card'
+      template: simple_grid
+      variables:
+        - sidebar: !include frontend/sidebar.yaml
+        - card: !include frontend/lights_1er.yaml
 
   #############################################################################################################################################
   #                                                                                                                                           #
@@ -34,19 +51,33 @@ views:
   #                                                                                                                                           #
   #############################################################################################################################################
 
-- title: Climat
+## Ground Floor
+
+- title: Climat rez
   icon: 'mdi:water-outline'
   panel: true
   badges: []
-  path: climate
+  path: climate_rez
   cards:
     - type: 'custom:decluttering-card'
-      template: swiper_config_template
+      template: simple_grid
       variables:
         - sidebar: !include frontend/sidebar.yaml
-        - card_rez: !include frontend/climate_rez.yaml
-        - card_1er: !include frontend/climate_1er.yaml
-  
+        - card: !include frontend/climate_rez.yaml
+
+ ## First Floor
+
+- title: Climat 1er
+  icon: 'mdi:water-outline'
+  panel: true
+  badges: []
+  path: climate_1er
+  cards:
+    - type: 'custom:decluttering-card'
+      template: simple_grid
+      variables:
+        - sidebar: !include frontend/sidebar.yaml
+        - card: !include frontend/climate_1er.yaml
 
   #############################################################################################################################################
   #                                                                                                                                           #
@@ -54,27 +85,31 @@ views:
   #                                                                                                                                           #
   #############################################################################################################################################
 
-- title: Standard
+## Ground Floor
+
+- title: Standard rez
   icon: 'mdi:floor-plan'
-  path: all-devices
+  path: all-devices_rez
   panel: true
   cards:
     - type: 'custom:decluttering-card'
       template: simple_grid
       variables:
         - sidebar: !include frontend/sidebar.yaml
-        - card:
-            type: 'custom:swipe-card'
-            parameters:
-              effect: 'cube'
-              cubeEffect:
-                shadow: false
-                slideShadows: false
-              grabCursor: true
-            cards:
-              - !include frontend/all_rez.yaml
-              - !include frontend/all_1er.yaml
+        - card: !include frontend/all_rez.yaml
 
+## First Floor
+
+- title: Standard 1er
+  icon: 'mdi:floor-plan'
+  path: all-devices_1er
+  panel: true
+  cards:
+    - type: 'custom:decluttering-card'
+      template: simple_grid
+      variables:
+        - sidebar: !include frontend/sidebar.yaml
+        - card: !include frontend/all_1er.yaml
 
   #############################################################################################################################################
   #                                                                                                                                           #

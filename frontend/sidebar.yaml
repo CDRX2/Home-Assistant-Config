@@ -57,9 +57,9 @@ elements:
   - type: 'custom:button-card'
     template: navigation
     variables:
-      navigation: /lovelace-visual/lights
+      navigation: /lovelace-visual/lights_rez
     entity_picture: >
-      [[[ return (window.location.pathname == '/lovelace-visual/lights') ? '/local/ui/sidebar/lumieres_on.png' : '/local/ui/sidebar/lumieres_off.png'; ]]]
+      [[[ return (window.location.pathname == '/lovelace-visual/lights_rez' || window.location.pathname == '/lovelace-visual/lights_1er') ? '/local/ui/sidebar/lumieres_on.png' : '/local/ui/sidebar/lumieres_off.png'; ]]]
     card_mod:
       style: |
         :host {
@@ -72,9 +72,9 @@ elements:
   - type: 'custom:button-card'
     template: navigation
     variables:
-      navigation: /lovelace-visual/climate
+      navigation: /lovelace-visual/climate_rez
     entity_picture: >
-      [[[ return (window.location.pathname == '/lovelace-visual/climate') ? '/local/ui/sidebar/climat_on.png' : '/local/ui/sidebar/climat_off.png'; ]]]
+      [[[ return (window.location.pathname == '/lovelace-visual/climate_rez' || window.location.pathname == '/lovelace-visual/climate_1er') ? '/local/ui/sidebar/climat_on.png' : '/local/ui/sidebar/climat_off.png'; ]]]
     card_mod:
       style: |
         :host {
@@ -87,9 +87,9 @@ elements:
   - type: 'custom:button-card'
     template: navigation
     variables:
-      navigation: /lovelace-visual/all-devices
+      navigation: /lovelace-visual/all-devices_rez
     entity_picture: >
-      [[[ return (window.location.pathname == '/lovelace-visual/all-devices') ? '/local/ui/sidebar/classique_on.png' : '/local/ui/sidebar/classique_off.png'; ]]]
+      [[[ return (window.location.pathname == '/lovelace-visual/all-devices_rez' || window.location.pathname == '/lovelace-visual/all-devices_1er') ? '/local/ui/sidebar/classique_on.png' : '/local/ui/sidebar/classique_off.png'; ]]]
     card_mod:
       style: |
         :host {
