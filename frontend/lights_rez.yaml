@@ -659,152 +659,118 @@ elements:
   #color lights
   #salon
   - type: 'custom:decluttering-card'
-    template: Light_icon_full
+    template: Light_icon_mid
     variables:
       - light: light.grand_totem_deco
       - title: Grand totem couleur
       - icon: hue:bulb-spot
-      - hide_header: true
-      - color_picker: true
-      - color_temp: false
       - left: 83%
       - top: 75%
 
   - type: 'custom:decluttering-card'
-    template: Light_icon_full
+    template: Light_icon_mid
     variables:
       - light: light.petit_totem_deco
       - title: Petit totem couleur
       - icon: hue:bulb-spot
-      - hide_header: true
-      - color_picker: true
-      - color_temp: false
       - left: 80.25%
       - top: 47%
 
   - type: 'custom:decluttering-card'
-    template: Light_icon_full
+    template: Light_icon_mid
     variables:
       - light: light.tv
       - title: Meuble TV
       - icon: mdi:led-strip-variant
-      - hide_header: true
-      - color_picker: true
-      - color_temp: false
       - left: 83.5%
       - top: 61%
 
   - type: 'custom:decluttering-card'
-    template: Light_icon_full
+    template: Light_icon_mid
     variables:
       - light: light.bar
       - title: Bar
       - icon: mdi:led-strip-variant
-      - hide_header: true
-      - color_picker: true
-      - color_temp: false
       - left: 53.8%
       - top: 38%
 
   #amis
   - type: 'custom:decluttering-card'
-    template: Light_icon_full
+    template: Light_icon_mid
     variables:
       - light: light.chevet_amis_geneve
       - title: Chevet amis Genève
       - icon: cil:google-home-alt
-      - hide_header: true
-      - color_picker: true
-      - color_temp: true
+      # - min: 153
+      # - max: 370
       - left: 26%
       - top: 15%
 
   - type: 'custom:decluttering-card'
-    template: Light_icon_full
+    template: Light_icon_mid
     variables:
       - light: light.chevet_amis_valais
       - title: Chevet amis Valais
       - icon: cil:google-home
-      - hide_header: true
-      - color_picker: true
-      - color_temp: true
       - left: 39%
       - top: 15%
 
 #dimming lights
 #Cuisine
   - type: 'custom:decluttering-card'
-    template: Light_icon_full
+    template: Light_icon_dim
     variables:
       - light: light.cuisine_deco
       - title: Cuisine déco
       - icon: mdi:led-strip-variant
-      - hide_header: true
-      - color_picker: false
-      - color_temp: false
       - left: 22%
       - top: 52%
 
     #salon
   - type: 'custom:decluttering-card'
-    template: Light_icon_full
+    template: Light_icon_dim
     variables:
       - light: light.vinyles
       - title: Meuble vinyles
       - icon: mdi:led-strip-variant
-      - hide_header: true
-      - color_picker: false
-      - color_temp: false
       - left: 70.75%
       - top: 47%
 
     #carport
   - type: 'custom:decluttering-card'
-    template: Light_icon_full
+    template: Light_icon_dim
     variables:
       - light: light.carport
       - title: Carport
       - icon: hue:wall-fuzo-h
-      - hide_header: true
-      - color_picker: false
-      - color_temp: false
       - left: 57%
       - top: 3%
 
   - type: 'custom:decluttering-card'
-    template: Light_icon_full
+    template: Light_icon_dim
     variables:
       - light: light.salon_plafonnier
       - title: Salon plafonnier
       - icon: hue:recessed-ceiling
-      - hide_header: true
-      - color_picker: false
-      - color_temp: false
       - left: 73.75%
       - top: 61.75%
 
   - type: 'custom:decluttering-card'
-    template: Light_icon_full
+    template: Light_icon_dim
     variables:
       - light: light.manger_plafonnier
       - title: Salle à manger
       - icon: hue:recessed-ceiling
-      - hide_header: true
-      - color_picker: false
-      - color_temp: false
       - left: 51%
       - top: 45%
 
     #terrasse
   - type: 'custom:decluttering-card'
-    template: Light_icon_full
+    template: Light_icon_dim
     variables:
       - light: light.terrasse_3
       - title: Terrasse
       - icon: mdi:coach-lamp
-      - hide_header: true
-      - color_picker: false
-      - color_temp: false
       - left: 38%
       - top: 73.5%
 

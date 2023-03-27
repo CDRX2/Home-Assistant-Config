@@ -410,68 +410,45 @@ elements:
       - icon: mdi:power-socket-ch
       - left: 18%
       - top: 28%
-  # - type: 'custom:decluttering-card'
-  #   template: Light_icon_full
-  #   variables:
-  #     - light: light.lustre_jumeaux
-  #     - title: Lampe jumeaux
-  #     - icon: hue:bulb-filament
-  #     - hide_header: true
-  #     - color_picker: false
-  #     - color_temp: false
-  #     - left: 18%
-  #     - top: 28%
 
   #dimming lights
   #chambre Charles
   - type: 'custom:decluttering-card'
-    template: Light_icon_full
+    template: Light_icon_dim
     variables:
       - light: group.chambre_charles
       - title: Chambre Charles
       - icon: mdi:led-strip-variant
-      - hide_header: true
-      - color_picker: false
-      - color_temp: false
       - left: 31%
       - top: 56%
 
   #chambre parents
   - type: 'custom:decluttering-card'
-    template: Light_icon_full
+    template: Light_icon_dim
     variables:
       - light: light.lit_parents_blanc
       - title: Lit parents blanc
       - icon: mdi:led-strip-variant
-      - hide_header: true
-      - color_picker: false
-      - color_temp: false
       - left: 68%
       - top: 69.5%
 
   #chambre twins
   - type: 'custom:decluttering-card'
-    template: Light_icon_full
+    template: Light_icon_dim
     variables:
       - light: light.jumeaux_armoires_blanc
       - title: Chambre jumeaux
       - icon: mdi:led-strip-variant
-      - hide_header: true
-      - color_picker: false
-      - color_temp: false
       - left: 43%
       - top: 18%
 
   #color lights
   #chambre parents
   - type: 'custom:decluttering-card'
-    template: Light_icon_full
+    template: Light_icon_mid
     variables:
       - light: light.lit_parents_couleur
       - title: Lit parents couleur
       - icon: mdi:led-strip-variant
-      - hide_header: true
-      - color_picker: true
-      - color_temp: false
       - left: 82%
       - top: 69.5%

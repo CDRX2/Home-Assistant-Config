@@ -90,127 +90,14 @@ lights_glance:
 #  Used to create tap areas and popups for each room, referring to light groups.
 #  Because the above images overlap each other, I used seperate transparent images
 #. to handle the control of the room, so you always tap the right room.
-#
-#  browser_mod.popup is used for a tap and hold for a custom popup card
+
 
 Light_room:
   element:
     entity: '[[light]]'
     hold_action:
-      action: fire-dom-event
-      browser_mod:
-        service: browser_mod.popup
-        data:
-          content:
-            type: custom:mod-card
-            card_mod:
-              style:
-                layout-card$:
-                  grid-layout$: |
-                    :host {
-                      padding: 0px !important;
-                    }
-                    #root {
-                      margin: 0px !important;
-                    }
-                    #root > * {
-                      margin: 0px !important;
-                    }
-            card:
-              type: custom:layout-card
-              layout_type: custom:vertical-layout
-              cards:
-                - entities:
-                    - entity: '[[light]]'
-                      secondary_info: last-changed
-                  style:
-                    z-index: 5
-                  type: entities
-                - brightness: true
-                  color_picker: '[[color_picker]]'
-                  color_temp: '[[color_temp]]'
-                  effects_list: false
-                  entity: '[[light]]'
-                  brightness_icon: network-strength-outline
-                  full_width_sliders: true
-                  header: false
-                  hide_header: '[[hide_header]]'
-                  persist_features: true
-                  show_slider_percent: true
-                  smooth_color_wheel: true
-                  type: 'custom:light-entity-card'
-                  card_mod:
-                    style: |
-                        ha-card {
-                          box-shadow: none !important;
-                        }
-          title: '[[title]]'
+      action: none
     image: /local/transparent.png    
-    style:
-      height: '[[height]]'
-      left: '[[left]]'
-      top: '[[top]]'
-      width: '[[width]]'
-    tap_action:
-      action: call-service
-      service: homeassistant.toggle
-      service_data:
-          entity_id: '[[light]]'
-    type: image
-
-Light_room_position:
-  element:
-    entity: '[[light]]'
-    hold_action:
-      action: fire-dom-event
-      browser_mod:
-        service: browser_mod.popup
-        data:
-          content:
-            type: custom:mod-card
-            card_mod:
-              style:
-                layout-card$:
-                  grid-layout$: |
-                    :host {
-                      padding: 0px !important;
-                    }
-                    #root {
-                      margin: 0px !important;
-                    }
-                    #root > * {
-                      margin: 0px !important;
-                    }
-            card:
-              type: custom:layout-card
-              layout_type: custom:vertical-layout
-              cards:
-                - entities:
-                    - entity: '[[light]]'
-                      secondary_info: last-changed
-                  style:
-                    z-index: 5
-                  type: entities
-                - brightness: true
-                  color_picker: '[[color_picker]]'
-                  color_temp: false
-                  effects_list: false
-                  entity: '[[light]]'
-                  brightness_icon: network-strength-outline
-                  full_width_sliders: true
-                  header: false
-                  hide_header: '[[hide_header]]'
-                  persist_features: true
-                  show_slider_percent: true
-                  smooth_color_wheel: true
-                  type: 'custom:light-entity-card'
-                  card_mod:
-                    style: |
-                        ha-card {
-                          box-shadow: none !important;
-                        }
-          title: '[[title]]'
-    image: /local/transparent.png
     style:
       height: '[[height]]'
       left: '[[left]]'
@@ -232,64 +119,165 @@ Light_room_position:
 #  browser_mod.popup is used for a tap and hold for a custom popup card, custom styling
 #  of the icon to make it appear white, etc.
 
-Light_icon_on_off:
+light_overlay:
   element:
-    entity: '[[light]]'
+    action: none
+    entity: '[[entity]]'
     hold_action:
-      action: fire-dom-event
-      browser_mod:
-        service: browser_mod.popup
-        data:
-          content:
-            type: custom:mod-card
-            card_mod:
-              style:
-                layout-card$:
-                  grid-layout$: |
-                    :host {
-                      padding: 0px !important;
-                    }
-                    #root {
-                      margin: 0px !important;
-                    }
-                    #root > * {
-                      margin: 0px !important;
-                    }
-            card:
-              type: custom:layout-card
-              layout_type: custom:vertical-layout
-              cards:
-                - entities:
-                    - entity: '[[light]]'
-                      secondary_info: last-changed
-                  style:
-                    z-index: 5
-                  type: entities
-                - type: 'custom:button-card'
-                  template: light_timer
-                  variables:
-                    entity: '[[light]]'
-          title: '[[title]]'
-    icon: '[[icon]]'
-    style:
-      '--mdc-icon-size': 1.4vw
-      '--state-light-active-color': '#000000'
-      '--paper-item-icon-color': lightgrey
-      align-items: center
-      background-color: 'rgba(255, 255, 255, 0.3)'
-      border-radius: 100%
-      display: flex
-      height: 3vw
-      justify-content: center
-      left: '[[left]]'
-      margin-left: '-1.5vw'
-      margin-top: '-1.5vw'
-      top: '[[top]]'
-      transform: scale(1.2)
-      width: 3vw
+      action: none
+    image: /local/ui/floorplan/lights/[[image]]
+    state_filter:
+      'off': opacity(0%)
+      'on': opacity(100%)
     tap_action:
-      action: toggle
-    type: state-icon
+      action: none
+    type: image
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      top: 50%
+      width: 100%
+
+light_button:
+  card:
+    type: button
+    entity: '[[light]]'
+    name: '[[name]]'
+    icon: '[[icon]]'
+    show_name: false
+    show_icon: true
+    card_mod:
+      style: |
+        ha-card {
+          background-color: rgba(255, 255, 255, 0.3);
+          border-radius: 5vw;
+          width: 50%;
+          left: 25%;
+        }
+
+light_slider_brightness:
+  card:
+    type: 'custom:big-slider-card'
+    entity: '[[light]]'
+    name: '[[name]]'
+    attribute: brightness
+    colorize: true
+    icon: '[[icon]]'
+    show_percentage: true
+    card_mod:
+      style: |
+        ha-card {
+          background: rgba(255, 255, 255, 0.3) !important;
+          border-radius: 1vw;
+        }
+
+light_slider_color_temp:
+  card:
+    type: 'custom:big-slider-card'
+    entity: '[[light]]'
+    name: '[[name]]'
+    attribute: color_temp
+    colorize: true
+    icon: '[[icon]]'
+    tap_action:
+      action: none
+    min: '[[min]]'
+    max: '[[max]]'
+
+light_color_wheel:
+  card:
+    type: 'custom:light-entity-card'
+    entity: '[[light]]'
+    consolidate_entities: true
+    persist_features: true
+    effects_list: false
+    hide_header: true
+    brightness: false
+    color_temp: false
+    white_value: false
+    color_picker: true
+
+light_popup_full:
+  card:
+    type: 'custom:layout-card'
+    layout_type: custom:vertical-layout
+    cards:
+      - type: 'custom:decluttering-card'
+        template: light_slider_brightness
+        variables:
+          - light: '[[light]]'
+          - name: '[[name]]'
+          - icon: '[[icon]]'
+      - type: 'custom:decluttering-card'
+        template: light_slider_color_temp
+        variables:
+          - light: '[[light]]'
+          - name: '[[name]]'
+          - icon: '[[icon]]'
+          - min: '[[min]]'
+          - max: '[[max]]'
+      - type: 'custom:decluttering-card'
+        template: light_color_wheel
+        variables:
+          - light: '[[light]]'
+      - type: 'custom:button-card'    
+        template: light_timer
+        variables:
+          entity: '[[light]]'
+
+light_popup_mid:
+  card:
+    type: 'custom:layout-card'
+    layout_type: custom:vertical-layout
+    cards:
+      - type: 'custom:decluttering-card'
+        template: light_slider_brightness
+        variables:
+          - light: '[[light]]'
+          - name: '[[name]]'
+          - icon: '[[icon]]'
+          - attribute: '[[attribute]]'
+      - type: 'custom:decluttering-card'
+        template: light_color_wheel
+        variables:
+          - light: '[[light]]'
+      - type: 'custom:button-card'    
+        template: light_timer
+        variables:
+          entity: '[[light]]'
+
+light_popup_dim:
+  card:
+    type: 'custom:layout-card'
+    layout_type: custom:vertical-layout
+    cards:
+      - type: 'custom:decluttering-card'
+        template: light_slider_brightness
+        variables:
+          - light: '[[light]]'
+          - name: '[[name]]'
+          - icon: '[[icon]]'
+          - attribute: '[[attribute]]'
+      - type: 'custom:button-card'    
+        template: light_timer
+        variables:
+          entity: '[[light]]'
+
+light_popup_on_off:
+  card:
+    type: 'custom:layout-card'
+    layout_type: custom:vertical-layout
+    cards:
+      - type: 'custom:decluttering-card'
+        template: light_button
+        variables:
+          - light: '[[light]]'
+          - name: '[[name]]'
+          - icon: '[[icon]]'
+      - type: 'custom:button-card'    
+        template: light_timer
+        variables:
+          entity: '[[light]]'
 
 Light_icon_full:
   element:
@@ -315,37 +303,14 @@ Light_icon_full:
                       margin: 0px !important;
                     }
             card:
-              type: custom:layout-card
-              layout_type: custom:vertical-layout
-              cards:
-                - entities:
-                    - entity: '[[light]]'
-                      secondary_info: last-changed
-                  style:
-                    z-index: 5
-                  type: entities
-                - brightness: true
-                  color_picker: '[[color_picker]]'
-                  color_temp: '[[color_temp]]'
-                  effects_list: false
-                  entity: '[[light]]'
-                  brightness_icon: network-strength-outline
-                  full_width_sliders: true
-                  header: false
-                  hide_header: '[[hide_header]]'
-                  persist_features: true
-                  show_slider_percent: true
-                  smooth_color_wheel: true
-                  type: 'custom:light-entity-card'
-                  card_mod:
-                    style: |
-                        ha-card {
-                          box-shadow: none !important;
-                        }
-                - type: 'custom:button-card'
-                  template: light_timer
-                  variables:
-                    entity: '[[light]]'
+              type: 'custom:decluttering-card'
+              template: light_popup_full
+              variables:
+                - light: '[[light]]'
+                - name: '[[title]]'
+                - icon: '[[icon]]'
+                - min: '[[min]]'
+                - max: '[[max]]'
           title: '[[title]]'
     icon: '[[icon]]'
     style:
@@ -355,7 +320,6 @@ Light_icon_full:
       align-items: center
       background-color: 'rgba(255, 255, 255, 0.3)'
       border-radius: 100%
-      # box-shadow: '0px 0px 28px 0px rgba(0,0,0,0.39)'
       display: flex
       height: 3vw
       justify-content: center
@@ -369,21 +333,158 @@ Light_icon_full:
       action: toggle
     type: state-icon
 
-light_overlay:
+Light_icon_mid:
   element:
-    action: none
-    entity: '[[entity]]'
+    entity: '[[light]]'
     hold_action:
-      action: none
-    image: /local/ui/floorplan/lights/[[image]]
-    state_filter:
-      'off': opacity(0%)
-      'on': opacity(100%)
-    tap_action:
-      action: none
-    type: image
+      action: fire-dom-event
+      browser_mod:
+        service: browser_mod.popup
+        data:
+          content:
+            type: custom:mod-card
+            card_mod:
+              style:
+                layout-card$:
+                  grid-layout$: |
+                    :host {
+                      padding: 0px !important;
+                    }
+                    #root {
+                      margin: 0px !important;
+                    }
+                    #root > * {
+                      margin: 0px !important;
+                    }
+            card:
+              type: 'custom:decluttering-card'
+              template: light_popup_mid
+              variables:
+                - light: '[[light]]'
+                - name: '[[title]]'
+                - icon: '[[icon]]'
+          title: '[[title]]'
+    icon: '[[icon]]'
     style:
-      left: 50%
-      mix-blend-mode: lighten
-      top: 50%
-      width: 100%
+      '--mdc-icon-size': 1.4vw
+      '--state-light-active-color': '#000000'
+      '--paper-item-icon-color': lightgrey
+      align-items: center
+      background-color: 'rgba(255, 255, 255, 0.3)'
+      border-radius: 100%
+      display: flex
+      height: 3vw
+      justify-content: center
+      left: '[[left]]'
+      margin-left: '-1.5vw'
+      margin-top: '-1.5vw'
+      top: '[[top]]'
+      transform: 'scale(-1.2, 1.2)'
+      width: 3vw
+    tap_action:
+      action: toggle
+    type: state-icon
+
+Light_icon_dim:
+  element:
+    entity: '[[light]]'
+    hold_action:
+      action: fire-dom-event
+      browser_mod:
+        service: browser_mod.popup
+        data:
+          content:
+            type: custom:mod-card
+            card_mod:
+              style:
+                layout-card$:
+                  grid-layout$: |
+                    :host {
+                      padding: 0px !important;
+                    }
+                    #root {
+                      margin: 0px !important;
+                    }
+                    #root > * {
+                      margin: 0px !important;
+                    }
+            card:
+              type: 'custom:decluttering-card'
+              template: light_popup_dim
+              variables:
+                - light: '[[light]]'
+                - name: '[[title]]'
+                - icon: '[[icon]]'
+          title: '[[title]]'
+    icon: '[[icon]]'
+    style:
+      '--mdc-icon-size': 1.4vw
+      '--state-light-active-color': '#000000'
+      '--paper-item-icon-color': lightgrey
+      align-items: center
+      background-color: 'rgba(255, 255, 255, 0.3)'
+      border-radius: 100%
+      display: flex
+      height: 3vw
+      justify-content: center
+      left: '[[left]]'
+      margin-left: '-1.5vw'
+      margin-top: '-1.5vw'
+      top: '[[top]]'
+      transform: 'scale(-1.2, 1.2)'
+      width: 3vw
+    tap_action:
+      action: toggle
+    type: state-icon
+
+Light_icon_on_off:
+  element:
+    entity: '[[light]]'
+    hold_action:
+      action: fire-dom-event
+      browser_mod:
+        service: browser_mod.popup
+        data:
+          content:
+            type: custom:mod-card
+            card_mod:
+              style:
+                layout-card$:
+                  grid-layout$: |
+                    :host {
+                      padding: 0px !important;
+                    }
+                    #root {
+                      margin: 0px !important;
+                    }
+                    #root > * {
+                      margin: 0px !important;
+                    }
+            card:
+              type: 'custom:decluttering-card'
+              template: light_popup_on_off
+              variables:
+                - light: '[[light]]'
+                - name: '[[title]]'
+                - icon: '[[icon]]'
+          title: '[[title]]'
+    icon: '[[icon]]'
+    style:
+      '--mdc-icon-size': 1.4vw
+      '--state-light-active-color': '#000000'
+      '--paper-item-icon-color': lightgrey
+      align-items: center
+      background-color: 'rgba(255, 255, 255, 0.3)'
+      border-radius: 100%
+      display: flex
+      height: 3vw
+      justify-content: center
+      left: '[[left]]'
+      margin-left: '-1.5vw'
+      margin-top: '-1.5vw'
+      top: '[[top]]'
+      transform: scale(1.2)
+      width: 3vw
+    tap_action:
+      action: toggle
+    type: state-icon
