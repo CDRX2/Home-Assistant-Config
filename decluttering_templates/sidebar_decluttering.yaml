@@ -69,8 +69,7 @@ icons_nas_popup:
       justify-content: center
       margin-left: '-1.5vw'
       margin-top: '-1.5vw'
-      top: 52%
-      # top: 45%
+      top: 51%
       transform: scale(1.6)
       width: 2.1vw
       '--mdc-icon-size': 1.4vw
@@ -113,7 +112,7 @@ image:
       "home": '/local/ui/sidebar/[[imagehome]]'
       "not_home": '/local/ui/sidebar/[[imageaway]]'
     style:
-      top: 67%
+      top: 70%
       left: '[[left]]'
       width: 4vw
       height: 4vw
@@ -137,7 +136,7 @@ stateicon:
       left: '[[left]]'
       margin-left: '-1.5vw'
       margin-top: '-1.5vw'
-      top: 71%
+      top: 74%
       transform: scale(1.2)
       width: 2.1vw
 
@@ -155,7 +154,7 @@ icons_ciboulette_popup:
       left: 78%
       margin-left: '-1.5vw'
       margin-top: '-1.5vw'
-      top: 71%
+      top: 74%
       transform: scale(1.2)
       width: 2.1vw
     tap_action:
@@ -275,10 +274,3 @@ cats_popup:
           .divider {
             display: none;
           }
-
-# ##########################    Updates popup    ##########################
-
-# updates_popup:
-#   card:
-#     type: 'custom:layout-card'
-#     layout_type: custom:vertical-layout

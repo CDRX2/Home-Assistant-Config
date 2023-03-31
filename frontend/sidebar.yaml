@@ -158,7 +158,7 @@ elements:
           - icon: delete-restore
           - color: '#ffa31a'
           - left: 17.5%
-          - top: 52%
+          - top: 51%
 
   - type: conditional
     conditions:
@@ -171,7 +171,7 @@ elements:
           - icon: delete-empty
           - color: '#ff1a1a'
           - left: 17.5%
-          - top: 52%
+          - top: 51%
 
   - type: conditional
     conditions:
@@ -184,7 +184,7 @@ elements:
           - icon: bottle-wine
           - color: '#ffa31a'
           - left: 17.5%
-          - top: 52%
+          - top: 51%
 
   - type: conditional
     conditions:
@@ -197,7 +197,7 @@ elements:
           - icon: bottle-wine
           - color: '#ff1a1a'
           - left: 17.5%
-          - top: 52%
+          - top: 51%
 
     ##########################    Icons for alerts   ##########################
 
@@ -212,7 +212,7 @@ elements:
           - icon: battery-alert
           - color: '#ff1a1a'
           - left: 35%
-          - top: 52%
+          - top: 51%
           - action: navigate
           - type: navigation_path
           - data: /lovelace-visual/systems
@@ -236,7 +236,7 @@ elements:
         template: text
         variables:
           - text: "3"
-          - top: 52.5%
+          - top: 51.5%
           - left: 43%
   - type: conditional
     conditions:
@@ -247,7 +247,7 @@ elements:
         template: text
         variables:
           - text: "B"
-          - top: 52.5%
+          - top: 51.5%
           - left: 56%
 
   - type: conditional
@@ -269,7 +269,7 @@ elements:
         template: text
         variables:
           - text: "3"
-          - top: 52.5%
+          - top: 51.5%
           - left: 60.5%
   - type: conditional
     conditions:
@@ -280,7 +280,7 @@ elements:
         template: text
         variables:
           - text: "B"
-          - top: 52.5%
+          - top: 51.5%
           - left: 73.5%
 
   - type: conditional
@@ -294,7 +294,7 @@ elements:
           - icon: home-assistant
           - color: '#ff1a1a'
           - left: 87.5%
-          - top: 52%
+          - top: 51%
           - action: navigate
           - type: navigation_path
           - data: /config/dashboard
@@ -420,7 +420,7 @@ elements:
       - size: 0.8vw
       - weight: 300
       - left: 12%
-      - top: 70.7%
+      - top: 73.7%
       - action: navigate
       - type: navigation_path
       - data: /lovelace-visual/systems
@@ -445,7 +445,7 @@ elements:
       - size: 0.8vw
       - weight: 300
       - left: 37%
-      - top: 70.7%
+      - top: 73.7%
       - action: navigate
       - type: navigation_path
       - data: /lovelace-visual/systems
@@ -456,7 +456,7 @@ elements:
       "home": /local/ui/sidebar/Charlie_home.png
       "not_home": /local/ui/sidebar/Charlie_not_home.png
     style:
-      top: 67%
+      top: 70%
       left: 60%
       width: 4vw
       height: 4vw
@@ -482,7 +482,7 @@ elements:
       left: 53%
       margin-left: '-1.5vw'
       margin-top: '-1.5vw'
-      top: 71%
+      top: 74%
       width: 2.1vw
       transform: scale(1.2)
     tap_action:
@@ -501,7 +501,7 @@ elements:
   #     "home": /local/ui/sidebar/Ciboulette_home.png
   #     "not_home": /local/ui/sidebar/Ciboulette_not_home.png
   #   style:
-  #     top: 67%
+  #     top: 70%
   #     left: 85%
   #     width: 4vw
   #     height: 4vw
@@ -528,7 +528,7 @@ elements:
   #     left: 82%
   #     margin-left: '-1.5vw'
   #     margin-top: '-1.5vw'
-  #     top: 66%
+  #     top: 69%
   #     width: 2.1vw
   #     transform: 'translate(-50%, -50%) scale(1.4)'
   #     padding: 0 0 0.6% 0
@@ -687,7 +687,7 @@ elements:
   #     left: 95%
   #     margin-left: '-1.5vw'
   #     margin-top: '-1.5vw'
-  #     top: 71%
+  #     top: 74%
   #     transform: scale(1.4)
   #     width: 2.1vw
   #   tap_action:
