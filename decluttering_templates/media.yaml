@@ -13,7 +13,7 @@ now_playing_image:
       image: /local/ui/btns/power-standby.png
       tap_action:
         action: navigate
-        navigation_path: /lovelace-visual/media
+        navigation_path: /lovelace-remote/remote
 
 now_playing_plex:
   card:
@@ -48,7 +48,7 @@ now_playing_plex:
         shuffle: true
       tap_action:
         action: navigate
-        navigation_path: /lovelace-visual/media
+        navigation_path: /lovelace-remote/remote
 
 now_playing_other:
   card:
@@ -83,4 +83,4 @@ now_playing_other:
         shuffle: true 
       tap_action:
         action: navigate
-        navigation_path: /lovelace-visual/media   
+        navigation_path: /lovelace-remote/remote   

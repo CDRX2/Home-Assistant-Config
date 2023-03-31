@@ -12,6 +12,7 @@ card:
         grid-template-areas: |
           "plex share youtube ytkids"
           "radio music bt tv"
+          "home home home home"
         grid-gap: 0px
       cards:
         - type: 'custom:button-card'
@@ -78,6 +79,21 @@ card:
             picture: /local/ui/btns/blue_off.png
           view_layout:
             grid-area: tv
+        - type: 'custom:button-card'
+          template: media_state  
+          variables:
+            background: transparent url("/local/ui/btns/return_home.png")  
+            justify: left
+          view_layout:
+            grid-area: home
+          state_display: >
+            [[[ return 'Retour à la maison'; ]]]
+          tap_action:
+            action: navigate
+            navigation_path: /lovelace-visual/lights
+          styles:
+            state:
+            - font-size: 5vw
     'music':
       type: 'custom:layout-card'
       layout_type: custom:grid-layout
@@ -92,6 +108,7 @@ card:
           "voldown voldown volup volup"
           "vol vol vol vol"
           "title title title title"
+          "home home home home"
         grid-gap: 0px    
       cards:
         - type: 'custom:button-card'
@@ -341,7 +358,22 @@ card:
                 --masonry-view-card-margin: 0px !important;
               }
           view_layout:
-            grid-area: title
+            grid-area: title  
+        - type: 'custom:button-card'
+          template: media_state  
+          variables:
+            background: transparent url("/local/ui/btns/return_home.png")  
+            justify: left
+          view_layout:
+            grid-area: home
+          state_display: >
+            [[[ return 'Retour à la maison'; ]]]
+          tap_action:
+            action: navigate
+            navigation_path: /lovelace-visual/lights
+          styles:
+            state:
+            - font-size: 5vw
     'bluetooth':
       type: 'custom:layout-card'
       layout_type: custom:grid-layout
@@ -355,6 +387,7 @@ card:
           "play previous next stop"
           "voldown voldown volup volup"
           "vol vol vol vol"
+          "home home home home"
         grid-gap: 0px    
       cards:
         - type: 'custom:button-card'
@@ -544,6 +577,21 @@ card:
             return states['sensor.pioneer_volume'].state == 'MUTE' ? 'MUTE' : volume; ]]]     
           view_layout:
             grid-area: vol
+        - type: 'custom:button-card'
+          template: media_state  
+          variables:
+            background: transparent url("/local/ui/btns/return_home.png")  
+            justify: left
+          view_layout:
+            grid-area: home
+          state_display: >
+            [[[ return 'Retour à la maison'; ]]]
+          tap_action:
+            action: navigate
+            navigation_path: /lovelace-visual/lights
+          styles:
+            state:
+            - font-size: 5vw
     'radio':
       type: 'custom:layout-card'
       layout_type: custom:grid-layout
@@ -557,6 +605,7 @@ card:
           "voldown voldown volup volup"
           "vol vol vol vol"
           "title title title title"
+          "home home home home"
         grid-gap: 0px     
       cards:
         - type: 'custom:button-card'
@@ -758,6 +807,21 @@ card:
               }
           view_layout:
             grid-area: title
+        - type: 'custom:button-card'
+          template: media_state  
+          variables:
+            background: transparent url("/local/ui/btns/return_home.png")  
+            justify: left
+          view_layout:
+            grid-area: home
+          state_display: >
+            [[[ return 'Retour à la maison'; ]]]
+          tap_action:
+            action: navigate
+            navigation_path: /lovelace-visual/lights
+          styles:
+            state:
+            - font-size: 5vw
     'tv':
       type: 'custom:layout-card'
       layout_type: custom:grid-layout
@@ -773,6 +837,7 @@ card:
           "guide menu options voldown"
           "skipback rew fwd skipfwd"
           "vol vol vol vol"
+          "home home home home"
         grid-gap: 0px 
       cards:
         - type: 'custom:button-card'
@@ -1074,6 +1139,21 @@ card:
             return states['sensor.pioneer_volume'].state == 'MUTE' ? 'MUTE' : volume; ]]]     
           view_layout:
             grid-area: vol
+        - type: 'custom:button-card'
+          template: media_state  
+          variables:
+            background: transparent url("/local/ui/btns/return_home.png")  
+            justify: left
+          view_layout:
+            grid-area: home
+          state_display: >
+            [[[ return 'Retour à la maison'; ]]]
+          tap_action:
+            action: navigate
+            navigation_path: /lovelace-visual/lights
+          styles:
+            state:
+            - font-size: 5vw
     'other':
       type: 'custom:layout-card'
       layout_type: custom:grid-layout
@@ -1089,6 +1169,7 @@ card:
           ". down . voldown"
           "vol vol vol vol"
           "title title title title"
+          "home home home home"
         grid-gap: 0px 
       cards:
         - type: 'custom:button-card'
@@ -1386,6 +1467,21 @@ card:
               }
           view_layout:
             grid-area: title
+        - type: 'custom:button-card'
+          template: media_state  
+          variables:
+            background: transparent url("/local/ui/btns/return_home.png")  
+            justify: left
+          view_layout:
+            grid-area: home
+          state_display: >
+            [[[ return 'Retour à la maison'; ]]]
+          tap_action:
+            action: navigate
+            navigation_path: /lovelace-visual/lights
+          styles:
+            state:
+            - font-size: 5vw
 card_mod:
   style: |
     :host {
