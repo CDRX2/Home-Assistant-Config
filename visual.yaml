@@ -17,33 +17,17 @@ views:
   #                                                                                                                                           #
   #############################################################################################################################################
 
-## Ground Floor
-
-- title: Lumières rez
+- title: Lumières
   icon: 'mdi:lightbulb-group'
   panel: true
-  badges: []
-  path: lights_rez
+  path: lights
   cards:
     - type: 'custom:decluttering-card'
-      template: simple_grid
+      template: floors
       variables:
         - sidebar: !include frontend/sidebar.yaml
-        - card: !include frontend/lights_rez.yaml
-
-## First Floor
-
-- title: Lumières 1er
-  icon: 'mdi:lightbulb-group'
-  panel: true
-  badges: []
-  path: lights_1er
-  cards:
-    - type: 'custom:decluttering-card'
-      template: simple_grid
-      variables:
-        - sidebar: !include frontend/sidebar.yaml
-        - card: !include frontend/lights_1er.yaml
+        - card_rez: !include frontend/lights_rez.yaml
+        - card_1er: !include frontend/lights_1er.yaml
 
   #############################################################################################################################################
   #                                                                                                                                           #
@@ -51,33 +35,18 @@ views:
   #                                                                                                                                           #
   #############################################################################################################################################
 
-## Ground Floor
-
-- title: Climat rez
+- title: Climat
   icon: 'mdi:water-outline'
   panel: true
-  badges: []
-  path: climate_rez
+  path: climate
   cards:
     - type: 'custom:decluttering-card'
-      template: simple_grid
+      template: floors
       variables:
         - sidebar: !include frontend/sidebar.yaml
-        - card: !include frontend/climate_rez.yaml
+        - card_rez: !include frontend/climate_rez.yaml
+        - card_1er: !include frontend/climate_1er.yaml
 
- ## First Floor
-
-- title: Climat 1er
-  icon: 'mdi:water-outline'
-  panel: true
-  badges: []
-  path: climate_1er
-  cards:
-    - type: 'custom:decluttering-card'
-      template: simple_grid
-      variables:
-        - sidebar: !include frontend/sidebar.yaml
-        - card: !include frontend/climate_1er.yaml
 
   #############################################################################################################################################
   #                                                                                                                                           #
@@ -85,31 +54,17 @@ views:
   #                                                                                                                                           #
   #############################################################################################################################################
 
-## Ground Floor
-
-- title: Standard rez
+- title: Standard
   icon: 'mdi:floor-plan'
-  path: all-devices_rez
+  path: all-devices
   panel: true
   cards:
     - type: 'custom:decluttering-card'
-      template: simple_grid
+      template: floors
       variables:
         - sidebar: !include frontend/sidebar.yaml
-        - card: !include frontend/all_rez.yaml
-
-## First Floor
-
-- title: Standard 1er
-  icon: 'mdi:floor-plan'
-  path: all-devices_1er
-  panel: true
-  cards:
-    - type: 'custom:decluttering-card'
-      template: simple_grid
-      variables:
-        - sidebar: !include frontend/sidebar.yaml
-        - card: !include frontend/all_1er.yaml
+        - card_rez: !include frontend/all_rez.yaml
+        - card_1er: !include frontend/all_1er.yaml
 
   #############################################################################################################################################
   #                                                                                                                                           #
@@ -121,7 +76,6 @@ views:
   icon: 'mdi:play-circle'
   path: media
   panel: true
-  badges: []
   cards:
     - type: 'custom:decluttering-card'
       template: simple_grid
@@ -139,7 +93,6 @@ views:
   icon: 'mdi:weather-pouring'
   path: weather
   panel: true
-  badges: []
   cards:
     - type: 'custom:decluttering-card'
       template: simple_grid
@@ -158,7 +111,6 @@ views:
   icon: 'mdi:chart-line'
   path: systems
   panel: true
-  badges: []
   cards:
     - type: 'custom:decluttering-card'
       template: simple_grid

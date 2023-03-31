@@ -20,6 +20,30 @@ navigation:
       - width: 100%
       - height: 100%
 
+floors:
+  variables:
+    picture: "var_picture"
+    top: "var_top"
+  tap_action:
+    action: call-service
+    service: input_select.set_options
+    service_data:
+      entity_id: input_select.floor
+      options: '[[[ return variables.options ]]]'
+  hold_action:
+    action: none
+  show_entity_picture: true
+  styles:
+    card:
+      - background: none
+      - box-shadow: none
+      - padding: 0
+    entity_picture:
+      - left: 0%
+      - top: 0%
+      - width: 100%
+      - height: 100%
+
 media_sidebar:
   variables:
   tap_action:

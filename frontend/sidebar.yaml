@@ -57,9 +57,9 @@ elements:
   - type: 'custom:button-card'
     template: navigation
     variables:
-      navigation: /lovelace-visual/lights_rez
+      navigation: /lovelace-visual/lights
     entity_picture: >
-      [[[ return (window.location.pathname == '/lovelace-visual/lights_rez' || window.location.pathname == '/lovelace-visual/lights_1er') ? '/local/ui/sidebar/lumieres_on.png' : '/local/ui/sidebar/lumieres_off.png'; ]]]
+      [[[ return (window.location.pathname == '/lovelace-visual/lights') ? '/local/ui/sidebar/lumieres_on.png' : '/local/ui/sidebar/lumieres_off.png'; ]]]
     card_mod:
       style: |
         :host {
@@ -72,9 +72,9 @@ elements:
   - type: 'custom:button-card'
     template: navigation
     variables:
-      navigation: /lovelace-visual/climate_rez
+      navigation: /lovelace-visual/climate
     entity_picture: >
-      [[[ return (window.location.pathname == '/lovelace-visual/climate_rez' || window.location.pathname == '/lovelace-visual/climate_1er') ? '/local/ui/sidebar/climat_on.png' : '/local/ui/sidebar/climat_off.png'; ]]]
+      [[[ return (window.location.pathname == '/lovelace-visual/climate') ? '/local/ui/sidebar/climat_on.png' : '/local/ui/sidebar/climat_off.png'; ]]]
     card_mod:
       style: |
         :host {
@@ -87,9 +87,9 @@ elements:
   - type: 'custom:button-card'
     template: navigation
     variables:
-      navigation: /lovelace-visual/all-devices_rez
+      navigation: /lovelace-visual/all-devices
     entity_picture: >
-      [[[ return (window.location.pathname == '/lovelace-visual/all-devices_rez' || window.location.pathname == '/lovelace-visual/all-devices_1er') ? '/local/ui/sidebar/classique_on.png' : '/local/ui/sidebar/classique_off.png'; ]]]
+      [[[ return (window.location.pathname == '/lovelace-visual/all-devices') ? '/local/ui/sidebar/classique_on.png' : '/local/ui/sidebar/classique_off.png'; ]]]
     card_mod:
       style: |
         :host {
@@ -114,6 +114,37 @@ elements:
           width: 88%;
         }
 
+  #floor change
+  - type: 'custom:button-card'
+    template: floors
+    variables:
+      options: Rez
+    entity_picture: >
+      [[[ return (states['input_select.floor'].state == 'Rez') ? '/local/ui/sidebar/Rez_on.png' : '/local/ui/sidebar/Rez_off.png'; ]]]
+    card_mod:
+      style: |
+        :host {
+          top: 42%;
+          right: 50%;
+          width: 44%;
+          transform: translate(0, -50%) !important;
+        }
+
+  - type: 'custom:button-card'
+    template: floors
+    variables:
+      options: 1er
+    entity_picture: >
+      [[[ return (states['input_select.floor'].state == '1er') ? '/local/ui/sidebar/1er_on.png' : '/local/ui/sidebar/1er_off.png'; ]]]
+    card_mod:
+      style: |
+        :host {
+          top: 42%;
+          left: 50%;
+          width: 44%;
+          transform: translate(0, -50%) !important;
+        }
+
     ##########################    Icons for taking out the trash    ##########################
 
   - type: conditional
@@ -127,7 +158,7 @@ elements:
           - icon: delete-restore
           - color: '#ffa31a'
           - left: 17.5%
-          - top: 45%
+          - top: 52%
 
   - type: conditional
     conditions:
@@ -140,7 +171,7 @@ elements:
           - icon: delete-empty
           - color: '#ff1a1a'
           - left: 17.5%
-          - top: 45%
+          - top: 52%
 
   - type: conditional
     conditions:
@@ -153,7 +184,7 @@ elements:
           - icon: bottle-wine
           - color: '#ffa31a'
           - left: 17.5%
-          - top: 45%
+          - top: 52%
 
   - type: conditional
     conditions:
@@ -166,7 +197,7 @@ elements:
           - icon: bottle-wine
           - color: '#ff1a1a'
           - left: 17.5%
-          - top: 45%
+          - top: 52%
 
     ##########################    Icons for alerts   ##########################
 
@@ -181,7 +212,7 @@ elements:
           - icon: battery-alert
           - color: '#ff1a1a'
           - left: 35%
-          - top: 45%
+          - top: 52%
           - action: navigate
           - type: navigation_path
           - data: /lovelace-visual/systems
@@ -205,7 +236,7 @@ elements:
         template: text
         variables:
           - text: "3"
-          - top: 45%
+          - top: 52.5%
           - left: 43%
   - type: conditional
     conditions:
@@ -216,7 +247,7 @@ elements:
         template: text
         variables:
           - text: "B"
-          - top: 45%
+          - top: 52.5%
           - left: 56%
 
   - type: conditional
@@ -238,7 +269,7 @@ elements:
         template: text
         variables:
           - text: "3"
-          - top: 45%
+          - top: 52.5%
           - left: 60.5%
   - type: conditional
     conditions:
@@ -249,7 +280,7 @@ elements:
         template: text
         variables:
           - text: "B"
-          - top: 45%
+          - top: 52.5%
           - left: 73.5%
 
   - type: conditional
@@ -263,32 +294,10 @@ elements:
           - icon: home-assistant
           - color: '#ff1a1a'
           - left: 87.5%
-          - top: 45%
+          - top: 52%
           - action: navigate
           - type: navigation_path
-          - data: /hassio/dashboard
-  - type: conditional
-    conditions:
-      - entity: sensor.hacs
-        state_not: '0'
-    elements:
-      - type: 'custom:decluttering-card'
-        template: text
-        variables:
-          - text: "HACS"
-          - top: 47%
-          - left: 80%
-  - type: conditional
-    conditions:
-      - entity: sensor.hass_alert_2
-        state: 'alert'
-    elements:
-      - type: 'custom:decluttering-card'
-        template: text
-        variables:
-          - text: "HA"
-          - top: 40%
-          - left: 77%
+          - data: /config/dashboard
 
     #########################    Next bus departure    #########################
 
@@ -300,7 +309,7 @@ elements:
       - size: 1.3vw
       - weight: 300
       - left: 40%
-      - top: 57.5%
+      - top: 61.5%
       - action: url
       - type: url_path
       - data: !secret TL_URL
@@ -312,7 +321,7 @@ elements:
       - size: 1.3vw
       - weight: 300
       - left: 62.5%
-      - top: 57.5%
+      - top: 61.5%
       - action: url
       - type: url_path
       - data: !secret TL_URL
@@ -324,7 +333,7 @@ elements:
       - size: 1.3vw
       - weight: 300
       - left: 85%
-      - top: 57.5%
+      - top: 61.5%
       - action: url
       - type: url_path
       - data: !secret TL_URL
@@ -336,7 +345,7 @@ elements:
       - size: 1.3vw
       - weight: 300
       - left: 40%
-      - top: 52.5%
+      - top: 56.5%
       - action: url
       - type: url_path
       - data: !secret TL_URL
@@ -348,7 +357,7 @@ elements:
       - size: 1.3vw
       - weight: 300
       - left: 62.5%
-      - top: 52.5%
+      - top: 56.5%
       - action: url
       - type: url_path
       - data: !secret TL_URL
@@ -360,7 +369,7 @@ elements:
       - size: 1.3vw
       - weight: 300
       - left: 85%
-      - top: 52.5%
+      - top: 56.5%
       - action: url
       - type: url_path
       - data: !secret TL_URL
@@ -370,21 +379,21 @@ elements:
       - icon: slope-uphill
       - color: lightgrey
       - left: 29%
-      - top: 52.5%
+      - top: 56.5%
   - type: 'custom:decluttering-card'
     template: icons_no_bgd
     variables:
       - icon: slope-downhill
       - color: lightgrey
       - left: 29%
-      - top: 57.5%
+      - top: 61.5%
   - type: 'custom:decluttering-card'
     template: icons
     variables:
       - icon: bus-clock
       - color: lightgrey
       - left: 17.5%
-      - top: 55.5%
+      - top: 59.5%
       - action: url
       - type: url_path
       - data: !secret TL_URL

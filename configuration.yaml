@@ -10,6 +10,8 @@ default_config:
 tts:
   - platform: google_translate
 
+python_script:
+
 # logger:
 #   default: warning
 #   logs:
