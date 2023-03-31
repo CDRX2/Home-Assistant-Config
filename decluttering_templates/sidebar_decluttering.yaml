@@ -40,6 +40,7 @@ icons_no_bgd:
       top: '[[top]]'
       transform: scale(1.2)
       width: 2.1vw
+
 ##########################    Icons for alerts   ##########################
 
 icons_nas_popup:
@@ -68,8 +69,8 @@ icons_nas_popup:
       justify-content: center
       margin-left: '-1.5vw'
       margin-top: '-1.5vw'
-      # top: 52%
-      top: 45%
+      top: 52%
+      # top: 45%
       transform: scale(1.6)
       width: 2.1vw
       '--mdc-icon-size': 1.4vw
@@ -274,3 +275,10 @@ cats_popup:
           .divider {
             display: none;
           }
+
+# ##########################    Updates popup    ##########################
+
+# updates_popup:
+#   card:
+#     type: 'custom:layout-card'
+#     layout_type: custom:vertical-layout

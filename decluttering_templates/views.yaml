@@ -36,3 +36,43 @@ simple_grid:
       cards:
         - '[[sidebar]]'
         - '[[card]]'
+
+floors:
+  card:
+    type: 'custom:mod-card'
+    card_mod:
+      style: 
+        layout-card$: 
+          grid-layout$: |
+            :host {
+              padding: 0px !important;
+            }
+            #root {
+              margin: 0px !important;
+            }
+            #root > * {
+              margin: 0px !important;
+            }
+    card:
+      type: 'custom:layout-card'
+      layout_type: grid
+      layout_options:
+        grid-template-rows: 100%
+        grid-template-columns: 25% 75%
+        grid-gap: 0
+        grid-template-areas: |
+          "sidebar main"
+      cards:
+        - '[[sidebar]]'
+        - type: conditional
+          conditions:
+            - entity: input_select.floor
+              state: Rez
+          card:
+            '[[card_rez]]'
+        - type: conditional
+          conditions:
+            - entity: input_select.floor
+              state: 1er
+          card:
+            '[[card_1er]]'            
