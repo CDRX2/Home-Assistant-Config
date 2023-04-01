@@ -6,9 +6,6 @@ decluttering_templates: !include_dir_merge_named decluttering_templates/
 
 apexcharts_card_templates: !include_dir_merge_named apexcharts_templates/
 
-swipe_nav:
-  wrap: true
-
 views:
 
   #############################################################################################################################################
