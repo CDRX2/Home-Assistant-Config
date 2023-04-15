@@ -310,6 +310,14 @@ light:
   - platform: switch
     name: Amis plafonnier
     entity_id: switch.amis_plafonnier
+  
+  - platform: switch
+    name: Entrée
+    entity_id: switch.entree
+
+  - platform: switch
+    name: Escalier 1er
+    entity_id: switch.escalier_haut
 
   - platform: group
     name: Cuisine
@@ -418,6 +426,13 @@ light:
     entities:
     - light.bathroom_door
     - light.bathroom_mirror
+
+  - platform: group
+    name: Couloir 1er
+    entities:
+    - light.escalier_haut
+    - light.couloir_1
+    - light.couloir_2
 
   - platform: group
     name: All lights

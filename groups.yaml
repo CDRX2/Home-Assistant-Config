@@ -81,6 +81,13 @@ Salle_bains:
   - light.bathroom_door
   - light.bathroom_mirror
 
+Couloir_haut:
+  name: Couloir 1er
+  entities:
+  - light.escalier_haut
+  - light.couloir_1
+  - light.couloir_2
+
 Lumieres_maison:
   name: Toute la maison
   entities:

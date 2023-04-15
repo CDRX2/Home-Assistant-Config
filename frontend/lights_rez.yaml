@@ -366,6 +366,11 @@ elements:
     variables:
       - entity: light.amis_plafonnier
       - image: rez/Amis.png
+  - type: 'custom:decluttering-card'
+    template: light_overlay
+    variables:
+      - entity: light.entree
+      - image: rez/Entree.png
 
     #########################    ROOM/GROUP CONTROL TRANSPARENT IMAGES    #########################
 
@@ -556,6 +561,37 @@ elements:
               height: 100% !important;
             }
 
+  - type: 'custom:decluttering-card'
+    template: Light_room
+    variables:
+      - light: light.entree
+      - title: Entrée
+      - color_picker: false
+      - color_temp: false
+      - hide_header: false
+      - left: 65%
+      - width: 20.5%
+      - top: 19.5%
+      - height: 28.5%
+    card_mod:
+      style:
+        .: |
+          #root {
+            height: 100% !important;
+          }
+        hui-image-element#declutter-child$:
+          .: |
+            hui-image {
+              height: 100% !important;
+            }
+          hui-image$: |
+            .container {
+              height: 100% !important;
+            }
+            img {
+              height: 100% !important;
+            }
+
     #########################    INDIVIDUAL LIGHT ICONS    #########################
 
   #on-off lights
@@ -654,6 +690,16 @@ elements:
       - title: Chambre d'amis
       - icon: hue:recessed-ceiling
       - left: 45%
+      - top: 23%
+
+  #entree
+  - type: 'custom:decluttering-card'
+    template: Light_icon_on_off
+    variables:
+      - light: light.entree
+      - title: Entrée
+      - icon: hue:recessed-ceiling
+      - left: 65%
       - top: 23%
 
   #color lights
