@@ -59,25 +59,24 @@ cover_stop:
       service: browser_mod.popup
       data:
         content:
-          type: 'custom:vertical-slider-cover-card'
+          type: 'custom:more-info-card'
           title: '[[[ return variables.title ]]]'
-          entities:
-            - entity: '[[[return variables.entity]]]'
-          showSidebar: false
-          switchColor: rgba(255, 255, 255, 0.3)
-          showSwitch: true
-          showName: false
+          entity: '[[[return variables.entity]]]'
           card_mod:
-            style: |
-              .main {
-                padding-bottom: 5% !important;
-              }
-              .cover-name {
-                display: none !important;
-              }
-              .cover {
-                width: 100% !important;
-              }
+            style: 
+              $: |
+                h1 {
+                  display: none !important;
+                }
+              more-info-cover$:
+                ha-more-info-state-header$: |
+                  .name {
+                    display: none;
+                  }
+              .: |
+                state-card-cover {
+                  display: none;
+                }
         title: '[[[ return variables.title ]]]'  
   show_icon: false
   show_name: false
@@ -138,25 +137,24 @@ cover_no_stop:
       service: browser_mod.popup
       data:
         content:
-          type: 'custom:vertical-slider-cover-card'
+          type: 'custom:more-info-card'
           title: '[[[ return variables.title ]]]'
-          entities:
-            - entity: '[[[return variables.entity]]]'
-          showSidebar: false
-          switchColor: rgba(255, 255, 255, 0.3)
-          showSwitch: false
-          showName: false
+          entity: '[[[return variables.entity]]]'
           card_mod:
-            style: |
-              .main {
-                padding-bottom: 5% !important;
-              }
-              .cover-name {
-                display: none !important;
-              }
-              .cover {
-                width: 100% !important;
-              }
+            style: 
+              $: |
+                h1 {
+                  display: none !important;
+                }
+              more-info-cover$:
+                ha-more-info-state-header$: |
+                  .name {
+                    display: none;
+                  }
+              .: |
+                state-card-cover {
+                  display: none;
+                }
         title: '[[[ return variables.title ]]]'        
   show_icon: false
   show_name: false
