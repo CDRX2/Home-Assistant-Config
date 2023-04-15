@@ -406,12 +406,12 @@ elements:
       - entity: !secret CDRX
       - imagehome: CDRX_home.png
       - imageaway: CDRX_not_home.png
-      - left: 15%
+      - left: 20%
   - type: 'custom:decluttering-card'
     template: stateicon
     variables:
       - entity: sensor.battery_realme
-      - left: 8%
+      - left: 13%
   - type: 'custom:decluttering-card'
     template: statelabel
     variables:
@@ -419,7 +419,7 @@ elements:
       - color: lightgrey
       - size: 0.8vw
       - weight: 300
-      - left: 12%
+      - left: 17%
       - top: 73.7%
       - action: navigate
       - type: navigation_path
