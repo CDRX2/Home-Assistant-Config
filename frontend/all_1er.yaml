@@ -146,6 +146,60 @@ elements:
           view_layout:
             grid-area: c
         - type: 'custom:button-card'
+          template: dimmable_lights
+          variables:
+            entity: light.couloir_1
+            gridarea: '"i . ." "n n n" "slider slider slider"'
+          entity: light.couloir_1
+          icon: 'hue:bulb-filament-hung'
+          name: Couloir 1
+          view_layout:
+            grid-area: g
+        - type: 'custom:button-card'
+          template: dimmable_lights
+          variables:
+            entity: light.couloir_2
+            gridarea: '"i . ." "n n n" "slider slider slider"'
+          entity: light.couloir_2
+          icon: 'hue:bulb-filament-hung'
+          name: Couloir 2
+          view_layout:
+            grid-area: k
+        - type: 'custom:button-card'
+          template: on_off_lights
+          variables:
+            gridarea: '"i consumption ." "n n n" ". . ."'
+          entity: light.escalier_1er
+          icon: 'hue:bulb-group-ceiling-flush-circular'
+          name: Escalier 1er
+          custom_fields:
+            consumption:
+              card:
+                type: sensor
+                entity: sensor.consumption_entree
+                card_mod:
+                  style: |
+                    ha-card {
+                      box-shadow: none;
+                      pointer-events: none;
+                    }   
+                    .header {
+                      display: none !important;
+                    } 
+                    .info {
+                      padding: 0 !important;
+                      line-height: 1.2vw !important;
+                    }
+                    .value {
+                      font-size: 1.2vw !important;
+                      margin: 0 !important;
+                    }    
+                    .measurement {
+                      font-size: 0.8vw !important;
+                    }
+          view_layout:
+            grid-area: o
+        - type: 'custom:button-card'
           template: on_off_lights
           variables:
             gridarea: '"i consumption ." "n n n" ". . ."'

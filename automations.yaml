@@ -341,3 +341,22 @@
   - service: homeassistant.restart
     data: {}
   mode: single
+- id: '1681558902386'
+  alias: Entrée 10 min.
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - light.entree
+    to: 'on'
+    for:
+      hours: 0
+      minutes: 10
+      seconds: 0
+  condition: []
+  action:
+  - service: light.turn_off
+    data: {}
+    target:
+      entity_id: light.entree
+  mode: single

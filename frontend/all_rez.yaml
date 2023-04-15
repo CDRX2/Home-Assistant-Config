@@ -299,6 +299,40 @@ elements:
           view_layout:
             grid-area: g
         - type: 'custom:button-card'
+          template: on_off_lights
+          variables:
+            gridarea: '"i consumption ." "n n n" ". . ."'
+          entity: light.entree
+          icon: 'hue:recessed-ceiling'
+          name: Entrée
+          custom_fields:
+            consumption:
+              card:
+                type: sensor
+                entity: sensor.consumption_entree
+                card_mod:
+                  style: |
+                    ha-card {
+                      box-shadow: none;
+                      pointer-events: none;
+                    }   
+                    .header {
+                      display: none !important;
+                    } 
+                    .info {
+                      padding: 0 !important;
+                      line-height: 1.2vw !important;
+                    }
+                    .value {
+                      font-size: 1.2vw !important;
+                      margin: 0 !important;
+                    }    
+                    .measurement {
+                      font-size: 0.8vw !important;
+                    }
+          view_layout:
+            grid-area: k
+        - type: 'custom:button-card'
           template: dimmable_lights
           variables:
             entity: light.terrasse_3

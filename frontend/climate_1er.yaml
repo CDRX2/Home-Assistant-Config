@@ -176,26 +176,11 @@ elements:
       opacity: "${states['light.jumeaux_armoires_blanc'].state === 'on' ? (states['light.jumeaux_armoires_blanc'].attributes.brightness / 255) : '0'}"
       top: 50%
       width: 100% 
-  - type: 'custom:config-template-card'
-    entities:
-      - light.lustre_jumeaux
-    element:
-      action: none
-      entity: light.lustre_jumeaux
-      hold_action:
-        action: none
-      image: /local/transparent.png
-      state_image:
-        'on': /local/ui/floorplan/lights/1er/twins_lampe.png
-      tap_action:
-        action: none
-      type: image   
-    style:
-      left: 50%
-      mix-blend-mode: lighten
-      opacity: "${states['light.lustre_jumeaux'].state === 'on' ? (states['light.lustre_jumeaux'].attributes.brightness / 255) : '0'}"
-      top: 50%
-      width: 100% 
+  - type: 'custom:decluttering-card'
+    template: light_overlay
+    variables:
+      - entity: light.jumeaux_prises
+      - image: 1er/twins_lampe.png
   - type: 'custom:decluttering-card'
     template: light_overlay
     variables:
@@ -206,6 +191,51 @@ elements:
     variables:
       - entity: light.bathroom_mirror
       - image: 1er/salle_bains_mirroir.png
+  - type: 'custom:config-template-card'
+    entities:
+      - light.couloir_1
+    element:
+      action: none
+      entity: light.couloir_1
+      hold_action:
+        action: none
+      image: /local/transparent.png
+      state_image:
+        'on': /local/ui/floorplan/lights/1er/couloir_1.png
+      tap_action:
+        action: none
+      type: image   
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.couloir_1'].state === 'on' ? (states['light.couloir_1'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
+  - type: 'custom:config-template-card'
+    entities:
+      - light.couloir_2
+    element:
+      action: none
+      entity: light.couloir_2
+      hold_action:
+        action: none
+      image: /local/transparent.png
+      state_image:
+        'on': /local/ui/floorplan/lights/1er/couloir_2.png
+      tap_action:
+        action: none
+      type: image   
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.couloir_2'].state === 'on' ? (states['light.couloir_2'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
+  - type: 'custom:decluttering-card'
+    template: light_overlay
+    variables:
+      - entity: light.escalier_1er
+      - image: 1er/escalier_haut.png
       
     #########################    TEMPERATURE CONTROL STATE LABELS    #########################
 
