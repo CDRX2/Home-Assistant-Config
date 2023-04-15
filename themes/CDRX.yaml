@@ -9,6 +9,7 @@ CDRX:
       accent-color: "var(--primary-color)"
       state-lock-locked-color: "var(--primary-color)"
       state-lock-unlocked-color: '#ff9800'
+      state-cover-active-color: "var(--primary-color)"
       # Dialogs
       dialog-backdrop-filter: blur(17px)
       mdc-dialog-box-shadow: 0 0 1vw 0 black
