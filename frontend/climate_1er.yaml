@@ -436,8 +436,19 @@ elements:
     #  browser_mod.popup is used for a tap and hold for a custom popup card, custom styling
     #  of the icon to make it appear white, etc.
 
-  #windows
-
-  #shades
-  
-  #shutters
+  - type: 'custom:button-card'
+    template: cover_no_stop_dual
+    variables:
+      entity: cover.velux
+      entity_2: cover.velux_store
+      title: Velux / Store
+      title_2: Velux store
+    entity: cover.velux
+    state_display: '[[[ return entity.attributes.current_position + " %" ]]]'
+    card_mod:
+      style: |
+        :host {
+          top: 37%;
+          left: 70%;
+          width: 10%;
+        }
