@@ -92,6 +92,128 @@ cover_stop:
     state:
       - font-size: 1vw
 
+cover_no_stop_dual:
+  variables:
+    entity: "var_entity"
+  custom_fields:
+    down:
+      card:
+        type: 'custom:button-card'
+        entity: '[[[ return variables.entity ]]]'
+        show_icon: true
+        show_name: false
+        size: 70%
+        icon: '[[[ if (entity.attributes.current_position != 0) return "mdi:arrow-down-bold"; else return "mdi:arrow-down-bold-outline" ]]]' 
+        tap_action:
+          action: call-service
+          service: cover.close_cover
+          service_data:
+            entity_id: '[[[ return variables.entity ]]]'
+        styles:
+          card:
+            - background: none
+            - padding: 0
+    # stop:
+    #   card:
+    #     type: 'custom:button-card'
+    #     entity: '[[[ return variables.entity ]]]'
+    #     show_icon: true
+    #     show_name: false
+    #     size: 70%
+    #     icon: mdi:stop
+    #     tap_action:
+    #       action: call-service
+    #       service: cover.stop_cover
+    #       service_data:
+    #         entity_id: '[[[ return variables.entity ]]]'
+    #     styles:
+    #       card:
+    #         - background: none
+    #         - padding: 0
+    up:
+      card:
+        type: 'custom:button-card'
+        entity: '[[[ return variables.entity ]]]'
+        show_icon: true
+        show_name: false
+        size: 70%
+        icon: '[[[ if (entity.attributes.current_position != 100) return "mdi:arrow-up-bold"; else return "mdi:arrow-up-bold-outline" ]]]' 
+        tap_action:
+          action: call-service
+          service: cover.open_cover
+          service_data:
+            entity_id: '[[[ return variables.entity ]]]'
+        styles:
+          card:
+            - background: none
+            - padding: 0
+  tap_action:
+    action: fire-dom-event
+    browser_mod:
+      service: browser_mod.popup
+      data:
+        content:
+          type: 'custom:layout-card'
+          layout_type: 'custom:horizontal-layout'
+          cards:
+            - type: 'custom:more-info-card'
+              title: '[[[ return variables.title ]]]'
+              entity: '[[[return variables.entity]]]'
+              view_layout: 
+                column: 1
+              card_mod:
+                style: 
+                  $: |
+                    h1 {
+                      display: none !important;
+                    }
+                  more-info-cover$:
+                    ha-more-info-state-header$: |
+                      .name {
+                        display: none;
+                      }
+                  .: |
+                    state-card-cover {
+                      display: none;
+                    }
+            - type: 'custom:layout-break'
+            - type: 'custom:more-info-card'
+              title: '[[[ return variables.title_2 ]]]'
+              entity: '[[[return variables.entity_2]]]'
+              view_layout:
+                column: 2
+              card_mod:
+                style: 
+                  $: |
+                    h1 {
+                      display: none !important;
+                    }
+                  more-info-cover$:
+                    ha-more-info-state-header$: |
+                      .name {
+                        display: none;
+                      }
+                  .: |
+                    state-card-cover {
+                      display: none;
+                    }
+        style: |
+          --popup-min-width: 800px;
+        title: '[[[ return variables.title ]]]'  
+  show_icon: false
+  show_name: false
+  show_state: true
+  styles:
+    grid:
+      - grid-template-areas: '"down . up" "s s s"'
+      - grid-template-columns: 1fr 1fr 1fr
+      - grid-template-rows: 1fr min-content
+    card:
+      - background: 'rgba(255, 255, 255, 0.3)'
+      - border-radius: 1vw
+    state:
+      - font-size: 1vw
+
 cover_no_stop:
   variables:
     entity: "var_entity"
