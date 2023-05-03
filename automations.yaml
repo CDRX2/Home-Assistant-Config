@@ -360,3 +360,25 @@
     target:
       entity_id: light.entree
   mode: single
+- id: '1683140700552'
+  alias: Bathroom 30 min
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - light.bathroom_door
+    - light.bathroom_mirror
+    to: 'on'
+    for:
+      hours: 0
+      minutes: 30
+      seconds: 0
+  condition: []
+  action:
+  - service: light.turn_off
+    data: {}
+    target:
+      entity_id:
+      - light.bathroom_door
+      - light.bathroom_mirror
+  mode: single
