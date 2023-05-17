@@ -439,11 +439,11 @@ elements:
   - type: 'custom:button-card'
     template: cover_no_stop_dual
     variables:
-      entity: cover.velux
-      entity_2: cover.velux_store
-      title: Velux / Store
-      title_2: Velux store
-    entity: cover.velux
+      entity: cover.velux_store
+      entity_2: cover.velux
+      title: Store / Velux
+      title_2: Velux
+    entity: cover.velux_store
     state_display: '[[[ return entity.attributes.current_position + " %" ]]]'
     card_mod:
       style: |
