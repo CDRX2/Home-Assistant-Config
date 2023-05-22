@@ -1,31 +1,3 @@
-- id: '1573591467239'
-  alias: Notification poubelle
-  description: ''
-  trigger:
-  - entity_id: sensor.poubelle_compost_papier
-    for: '17:30:00'
-    platform: state
-    to: Tomorrow
-  condition: []
-  action:
-  - data:
-      message: Passage du camion demain matin. Bonne soirée!
-      title: N'oubliez pas de sortir la poubelle, le compost et le papier ce soir
-    service: notify.gmail
-- id: '1573591545660'
-  alias: Notification verre
-  description: ''
-  trigger:
-  - entity_id: sensor.verre
-    for: '17:30:00'
-    platform: state
-    to: Tomorrow
-  condition: []
-  action:
-  - data:
-      message: Passage du camion demain matin. Bonne soirée!
-      title: N'oubliez pas de sortir le verre ce soir
-    service: notify.gmail
 - id: '1589356162275'
   alias: Tableau TV ouverture
   description: ''
@@ -190,40 +162,6 @@
       sound_mode: AUTO SURROUND
     entity_id: media_player.pioneer_avr
   mode: single
-- id: '1616319173051'
-  alias: Swisscom off on source change
-  description: ''
-  trigger:
-  - platform: state
-    entity_id: media_player.living_room_tv
-    from: HDMI1
-    attribute: source
-  condition:
-  - condition: state
-    entity_id: media_player.living_room_tv
-    state: 'on'
-    for: 00:00:30
-  action:
-  - service: remote.send_command
-    data:
-      command: Power
-      entity_id: remote.swisscom
-  mode: single
-- id: '1616843323469'
-  alias: Swisscom TV off when turning off TV
-  description: ''
-  trigger:
-  - platform: state
-    entity_id: sensor.remote_select
-    from: tv
-    to: 'off'
-  condition: []
-  action:
-  - service: remote.send_command
-    data:
-      entity_id: remote.swisscom
-      command: Power
-  mode: single
 - id: '1624895552291'
   alias: Charlie home start
   description: Set device tracker for Charlie on HA restart
@@ -316,20 +254,6 @@
     data: {}
   mode: restart
   initial_state: true
-- id: '1646379729132'
-  alias: Turn on TV
-  description: ''
-  trigger:
-  - platform: device
-    device_id: d054e4ed48587c78d89466b796d68978
-    domain: webostv
-    type: webostv.turn_on
-  condition: []
-  action:
-  - service: wake_on_lan.send_magic_packet
-    data:
-      mac: 38:8C:50:15:44:B6
-  mode: single
 - id: '1656948361450'
   alias: HA reboot
   description: ''
@@ -361,7 +285,7 @@
       entity_id: light.entree
   mode: single
 - id: '1683140700552'
-  alias: Bathroom 30 min
+  alias: Bathroom 45 min
   description: ''
   trigger:
   - platform: state
@@ -371,7 +295,7 @@
     to: 'on'
     for:
       hours: 0
-      minutes: 30
+      minutes: 45
       seconds: 0
   condition: []
   action:
@@ -381,4 +305,19 @@
       entity_id:
       - light.bathroom_door
       - light.bathroom_mirror
+  mode: single
+- id: '1684744858875'
+  alias: Turn on TV
+  description: ''
+  trigger:
+  - platform: device
+    device_id: ef1ffbad0101d9148d85d5469d4cfe76
+    domain: webostv
+    type: webostv.turn_on
+  condition: []
+  action:
+  - service: wake_on_lan.send_magic_packet
+    data:
+      broadcast_port: 9
+      mac: 7C:64:6C:A8:20:A8
   mode: single
