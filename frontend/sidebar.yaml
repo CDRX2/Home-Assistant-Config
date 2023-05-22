@@ -1002,7 +1002,7 @@ elements:
           top: 35%
       - type: 'custom:button-card'
         template: media_sidebar_state
-        entity: media_player.plex_plex_for_lg_lg_oled77w7v_z
+        entity: media_player.plex_living_room_tv
         state_display: >
           [[[
             if (entity) {
@@ -1065,16 +1065,16 @@ elements:
       - type: 'custom:button-card'
         template: media_sidebar_picture
         entity_picture: >
-          [[[ if (states['media_player.plex_plex_for_lg_lg_oled77w7v_z'].state != 'idle') return states['media_player.plex_plex_for_lg_lg_oled77w7v_z'].attributes['entity_picture'];
+          [[[ if (states['media_player.plex_living_room_tv'].state != 'idle') return states['media_player.plex_living_room_tv'].attributes['entity_picture'];
           else return '/local/ui/media/plex.png'; ]]]
         styles:
           entity_picture:
             - width: >
-                [[[ if (states['media_player.plex_plex_for_lg_lg_oled77w7v_z'].state != 'idle') return '100%';
+                [[[ if (states['media_player.plex_living_room_tv'].state != 'idle') return '100%';
                 else return '40%'; ]]]
             - height: 100%
             - clip-path: >
-                [[[ if (states['media_player.plex_plex_for_lg_lg_oled77w7v_z'].state != 'idle') return 'circle(42% at 37% 50%)';
+                [[[ if (states['media_player.plex_living_room_tv'].state != 'idle') return 'circle(42% at 37% 50%)';
                 else return 'none'; ]]]
 
   - type: conditional
@@ -1119,7 +1119,7 @@ elements:
   - type: conditional
     conditions:
       - entity: sensor.living_room_tv_source
-        state: HDMI1
+        state: Swisscom blue TV
     elements:
       - type: 'custom:button-card'
         template: media_sidebar

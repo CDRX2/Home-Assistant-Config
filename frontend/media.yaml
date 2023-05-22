@@ -1342,14 +1342,14 @@ elements:
 
     ###########################################################################
     #                                                                         #
-    #                   IF HDMI1 IS ON, REMOTE & CHANNELS                     #
+    #                   IF Swisscom Blue TV IS ON, REMOTE & LOGO              #
     #                                                                         #
     ###########################################################################
 
   - type: conditional
     conditions:
       - entity: sensor.living_room_tv_source
-        state: 'HDMI1'
+        state: 'Swisscom blue TV'
     elements:
       - type: 'custom:mod-card'
         card: 
@@ -1360,10 +1360,23 @@ elements:
             grid-template-columns: 5% 30% 5% 55% 5%
             grid-template-rows: auto
             grid-template-areas: |
-              ". remote . channels ."
+              ". remote . image ."
           cards:
             - !include remote.yaml
-            - !include tv_channels.yaml
+            - type: picture
+              image: /local/ui/media/swisscomTV_transparent_white.png
+              tap_action:
+                action: none
+              card_mod:
+                style: |
+                  :host {
+                    align-self: center;
+                  }
+                  ha-card {
+                    background: none;
+                  }
+              view_layout:
+                grid-area: image
           style:
             left: 50%
             top: 50%

@@ -10,8 +10,8 @@ card:
         grid-template-columns: 25% 25% 25% 25%
         grid-template-rows: auto
         grid-template-areas: |
-          "plex share youtube ytkids"
-          "radio music bt tv"
+          "plex tv youtube ytkids"
+          "radio music bt ."
           "home home home home"
         grid-gap: 0px
       cards:
@@ -23,14 +23,6 @@ card:
             picture: /local/ui/btns/plex_off.png
           view_layout:
             grid-area: plex
-        - type: 'custom:button-card'
-          template: media_service
-          variables:
-            name: Partage
-            service: script.screen_share
-            picture: /local/ui/btns/screenshare_off.png
-          view_layout:
-            grid-area: share
         - type: 'custom:button-card'
           template: media_service
           variables:
@@ -101,8 +93,8 @@ card:
         grid-template-columns: 25% 25% 25% 25%
         grid-template-rows: auto
         grid-template-areas: |
-          "plex share youtube ytkids"
-          "radio music bt tv"
+          "plex tv youtube ytkids"
+          "radio music bt ."
           "power stereo surround mute"
           "play previous next stop"
           "voldown voldown volup volup"
@@ -119,14 +111,6 @@ card:
             picture: /local/ui/btns/plex_off.png
           view_layout:
             grid-area: plex
-        - type: 'custom:button-card'
-          template: media_service
-          variables:
-            name: Partage
-            service: script.screen_share
-            picture: /local/ui/btns/screenshare_off.png
-          view_layout:
-            grid-area: share
         - type: 'custom:button-card'
           template: media_service
           variables:
@@ -381,8 +365,8 @@ card:
         grid-template-columns: 25% 25% 25% 25%
         grid-template-rows: auto
         grid-template-areas: |
-          "plex share youtube ytkids"
-          "radio music bt tv"
+          "plex tv youtube ytkids"
+          "radio music bt ."
           "power stereo surround mute"
           "play previous next stop"
           "voldown voldown volup volup"
@@ -398,14 +382,6 @@ card:
             picture: /local/ui/btns/plex_off.png
           view_layout:
             grid-area: plex
-        - type: 'custom:button-card'
-          template: media_service
-          variables:
-            name: Partage
-            service: script.screen_share
-            picture: /local/ui/btns/screenshare_off.png
-          view_layout:
-            grid-area: share
         - type: 'custom:button-card'
           template: media_service
           variables:
@@ -599,8 +575,8 @@ card:
         grid-template-columns: 25% 25% 25% 25%
         grid-template-rows: auto
         grid-template-areas: |
-          "plex share youtube ytkids"
-          "radio music bt tv"
+          "plex tv youtube ytkids"
+          "radio music bt ."
           "power stereo surround mute"
           "voldown voldown volup volup"
           "vol vol vol vol"
@@ -616,14 +592,6 @@ card:
             picture: /local/ui/btns/plex_off.png
           view_layout:
             grid-area: plex
-        - type: 'custom:button-card'
-          template: media_service
-          variables:
-            name: Partage
-            service: script.screen_share
-            picture: /local/ui/btns/screenshare_off.png
-          view_layout:
-            grid-area: share
         - type: 'custom:button-card'
           template: media_service
           variables:
@@ -822,338 +790,338 @@ card:
           styles:
             state:
             - font-size: 5vw
-    'tv':
-      type: 'custom:layout-card'
-      layout_type: custom:grid-layout
-      layout:
-        grid-template-columns: 25% 25% 25% 25%
-        grid-template-rows: auto
-        grid-template-areas: |
-          "plex share youtube ytkids"
-          "power stereo surround mute"
-          "play up back volup"
-          "left enter right volup"
-          "record down . voldown"
-          "guide menu options voldown"
-          "skipback rew fwd skipfwd"
-          "vol vol vol vol"
-          "home home home home"
-        grid-gap: 0px 
-      cards:
-        - type: 'custom:button-card'
-          template: media_service
-          variables:
-            name: Plex
-            service: media_player.select_source
-            picture: /local/ui/btns/plex_off.png 
-          view_layout:
-            grid-area: plex
-          tap_action:
-            service_data:
-              entity_id: media_player.living_room_tv
-              source: Plex
-        - type: 'custom:button-card'
-          template: media_service
-          variables:
-            name: Partage
-            service: media_player.select_source
-            picture: /local/ui/btns/screenshare_off.png
-          view_layout:
-            grid-area: share
-          tap_action:
-            service_data:
-              entity_id: media_player.living_room_tv
-              source: Screen Share
-        - type: 'custom:button-card'
-          template: media_service
-          variables:
-            name: YouTube
-            service: media_player.select_source
-            picture: /local/ui/btns/youtube_off.png
-          view_layout:
-            grid-area: youtube
-          tap_action:
-            service_data:
-              entity_id: media_player.living_room_tv
-              source: YouTube
-        - type: 'custom:button-card'
-          template: media_service
-          variables:
-            name: YouTube Kids
-            service: media_player.select_source
-            picture: /local/ui/btns/youtube-kids_off.png
-          view_layout:
-            grid-area: ytkids
-          tap_action:
-            service_data:
-              entity_id: media_player.living_room_tv
-              source: YouTube Kids
-        - type: 'custom:button-card'
-          template: media_service
-          variables:
-            name: ''
-            service: media_player.turn_off
-            picture: /local/ui/btns/power.png
-          view_layout:
-            grid-area: power
-          tap_action:
-            service_data:
-              entity_id: media_player.living_room_tv
-        - type: 'custom:button-card'
-          template: media_service
-          variables:
-            name: ''
-            service: media_player.select_sound_mode
-            picture: "[[[ return states['media_player.pioneer_avr'].attributes['current_sound_mode'] == 'EXTENDED STEREO' ? '/local/ui/btns/stereo_on.png' : '/local/ui/btns/stereo_off.png'; ]]]"
-          view_layout:  
-            grid-area: stereo
-          tap_action:
-            service_data:
-              entity_id: media_player.pioneer_avr
-              sound_mode: EXTENDED STEREO
-        - type: 'custom:button-card'
-          template: media_service
-          variables:
-            name: ''
-            service: media_player.select_sound_mode
-            picture: "[[[ return states['media_player.pioneer_avr'].attributes['current_sound_mode'] == 'AUTO SURROUND' ? '/local/ui/btns/surround_on.png' : '/local/ui/btns/surround_off.png'; ]]]"
-          view_layout:  
-            grid-area: surround
-          tap_action:
-            service_data:
-              entity_id: media_player.pioneer_avr
-              sound_mode: AUTO SURROUND
-        - type: 'custom:button-card'
-          template: media_service
-          variables:
-            name: ''
-            service: script.AVR_mute
-            picture: "[[[ return states['sensor.pioneer_volume'].state == 'MUTE' ? '/local/ui/btns/mute_on.png' : '/local/ui/btns/mute_off.png'; ]]]"
-          view_layout:  
-            grid-area: mute
-        - type: 'custom:button-card'
-          template: media_service
-          variables:
-            name: ''
-            service: remote.send_command
-            picture: /local/ui/btns/play_pause.png
-          view_layout:
-            grid-area: play
-          tap_action:
-            service_data:
-              entity_id: remote.swisscom
-              command: Play/Pause
-        - type: 'custom:button-card'
-          template: media_service
-          variables:
-            name: ''
-            service: remote.send_command
-            picture: /local/ui/btns/up.png
-          view_layout:
-            grid-area: up
-          tap_action:
-            service_data:
-              entity_id: remote.swisscom
-              command: Up
-        - type: 'custom:button-card'
-          template: media_service
-          variables:
-            name: ''
-            service: remote.send_command
-            picture: /local/ui/btns/back.png
-          view_layout:
-            grid-area: back
-          tap_action:
-            service_data:
-              entity_id: remote.swisscom
-              command: Back
-        - type: 'custom:button-card'
-          template: media_service
-          variables:
-            name: ''
-            service: remote.send_command
-            picture: /local/ui/btns/left.png
-          view_layout:
-            grid-area: left
-          tap_action:
-            service_data:
-              entity_id: remote.swisscom
-              command: Left
-        - type: 'custom:button-card'
-          template: media_service
-          variables:
-            name: ''
-            service: remote.send_command
-            picture: /local/ui/btns/ok.png
-          view_layout:
-            grid-area: enter
-          tap_action:
-            service_data:
-              entity_id: remote.swisscom
-              command: Ok
-        - type: 'custom:button-card'
-          template: media_service
-          variables:
-            name: ''
-            service: remote.send_command
-            picture: /local/ui/btns/right.png
-          view_layout:
-            grid-area: right
-          tap_action:
-            service_data:
-              entity_id: remote.swisscom
-              command: Right
-        - type: 'custom:button-card'
-          template: media_service
-          variables:
-            name: ''
-            service: remote.send_command
-            picture: /local/ui/btns/record.png
-          view_layout:
-            grid-area: record
-          tap_action:
-            service_data:
-              entity_id: remote.swisscom
-              command: Rec
-        - type: 'custom:button-card'
-          template: media_service
-          variables:
-            name: ''
-            service: remote.send_command
-            picture: /local/ui/btns/down.png
-          view_layout:
-            grid-area: down
-          tap_action:
-            service_data:
-              entity_id: remote.swisscom
-              command: Down  
-        - type: 'custom:button-card'
-          template: media_service
-          variables:
-            name: Guide TV
-            service: remote.send_command
-            picture: /local/ui/btns/guide.png
-          view_layout:
-            grid-area: guide
-          tap_action:
-            service_data:
-              entity_id: remote.swisscom
-              command: Tv guide
-        - type: 'custom:button-card'
-          template: media_service
-          variables:
-            name: Menu
-            service: remote.send_command
-            picture: /local/ui/btns/menu.png
-          view_layout:
-            grid-area: menu
-          tap_action:
-            service_data:
-              entity_id: remote.swisscom
-              command: Menu
-        - type: 'custom:button-card'
-          template: media_service
-          variables:
-            name: Options
-            service: remote.send_command
-            picture: /local/ui/btns/option.png
-          view_layout:
-            grid-area: options
-          tap_action:
-            service_data:
-              entity_id: remote.swisscom
-              command: Option
-        - type: 'custom:button-card'
-          template: media_service
-          variables:
-            name: ''
-            service: remote.send_command
-            picture: /local/ui/btns/rew-10.png
-          view_layout:
-            grid-area: skipback
-          tap_action:
-            service_data:
-              entity_id: remote.swisscom
-              command: -10sec
-        - type: 'custom:button-card'
-          template: media_service
-          variables:
-            name: ''
-            service: remote.send_command
-            picture: /local/ui/btns/rewind.png
-          view_layout:
-            grid-area: rew
-          tap_action:
-            service_data:
-              entity_id: remote.swisscom
-              command: Rewind
-        - type: 'custom:button-card'
-          template: media_service
-          variables:
-            name: ''
-            service: remote.send_command
-            picture: /local/ui/btns/forward.png
-          view_layout:
-            grid-area: fwd
-          tap_action:
-            service_data:
-              entity_id: remote.swisscom
-              command: Forward
-        - type: 'custom:button-card'
-          template: media_service
-          variables:
-            name: ''
-            service: remote.send_command
-            picture: /local/ui/btns/fwd-30.png
-          view_layout:
-            grid-area: skipfwd
-          tap_action:
-            service_data:
-              entity_id: remote.swisscom
-              command: +30sec   
-        - type: 'custom:button-card'
-          template: media_volume_vertical
-          variables:
-            service: media_player.volume_up
-            picture: /local/ui/btns/volume_up_vertical.png
-            radius: 10vw 10vw 0 0
-            top: 20%
-          view_layout:
-            grid-area: volup
-        - type: 'custom:button-card'
-          template: media_volume_vertical
-          variables:
-            service: media_player.volume_down
-            picture: /local/ui/btns/volume_down_vertical.png
-            radius: 0 0 10vw 10vw
-            top: 0%
-          view_layout:
-            grid-area: voldown
-        - type: 'custom:button-card'
-          template: media_state  
-          variables:
-            background: transparent url("/local/ui/btns/volume.png")  
-            justify: right
-          state_display: >
-            [[[ var volume = (states['sensor.pioneer_volume'].state + ' dB');
-            return states['sensor.pioneer_volume'].state == 'MUTE' ? 'MUTE' : volume; ]]]     
-          view_layout:
-            grid-area: vol
-        - type: 'custom:button-card'
-          template: media_state  
-          variables:
-            background: transparent url("/local/ui/btns/return_home.png")  
-            justify: left
-          view_layout:
-            grid-area: home
-          state_display: >
-            [[[ return 'Retour à la maison'; ]]]
-          tap_action:
-            action: navigate
-            navigation_path: /lovelace-visual/lights
-          styles:
-            state:
-            - font-size: 5vw
+    # 'tv':
+    #   type: 'custom:layout-card'
+    #   layout_type: custom:grid-layout
+    #   layout:
+    #     grid-template-columns: 25% 25% 25% 25%
+    #     grid-template-rows: auto
+    #     grid-template-areas: |
+    #       "plex share youtube ytkids"
+    #       "power stereo surround mute"
+    #       "play up back volup"
+    #       "left enter right volup"
+    #       "record down . voldown"
+    #       "guide menu options voldown"
+    #       "skipback rew fwd skipfwd"
+    #       "vol vol vol vol"
+    #       "home home home home"
+    #     grid-gap: 0px 
+    #   cards:
+    #     - type: 'custom:button-card'
+    #       template: media_service
+    #       variables:
+    #         name: Plex
+    #         service: media_player.select_source
+    #         picture: /local/ui/btns/plex_off.png 
+    #       view_layout:
+    #         grid-area: plex
+    #       tap_action:
+    #         service_data:
+    #           entity_id: media_player.living_room_tv
+    #           source: Plex
+    #     - type: 'custom:button-card'
+    #       template: media_service
+    #       variables:
+    #         name: Partage
+    #         service: media_player.select_source
+    #         picture: /local/ui/btns/screenshare_off.png
+    #       view_layout:
+    #         grid-area: share
+    #       tap_action:
+    #         service_data:
+    #           entity_id: media_player.living_room_tv
+    #           source: Screen Share
+    #     - type: 'custom:button-card'
+    #       template: media_service
+    #       variables:
+    #         name: YouTube
+    #         service: media_player.select_source
+    #         picture: /local/ui/btns/youtube_off.png
+    #       view_layout:
+    #         grid-area: youtube
+    #       tap_action:
+    #         service_data:
+    #           entity_id: media_player.living_room_tv
+    #           source: YouTube
+    #     - type: 'custom:button-card'
+    #       template: media_service
+    #       variables:
+    #         name: YouTube Kids
+    #         service: media_player.select_source
+    #         picture: /local/ui/btns/youtube-kids_off.png
+    #       view_layout:
+    #         grid-area: ytkids
+    #       tap_action:
+    #         service_data:
+    #           entity_id: media_player.living_room_tv
+    #           source: YouTube Kids
+    #     - type: 'custom:button-card'
+    #       template: media_service
+    #       variables:
+    #         name: ''
+    #         service: media_player.turn_off
+    #         picture: /local/ui/btns/power.png
+    #       view_layout:
+    #         grid-area: power
+    #       tap_action:
+    #         service_data:
+    #           entity_id: media_player.living_room_tv
+    #     - type: 'custom:button-card'
+    #       template: media_service
+    #       variables:
+    #         name: ''
+    #         service: media_player.select_sound_mode
+    #         picture: "[[[ return states['media_player.pioneer_avr'].attributes['current_sound_mode'] == 'EXTENDED STEREO' ? '/local/ui/btns/stereo_on.png' : '/local/ui/btns/stereo_off.png'; ]]]"
+    #       view_layout:  
+    #         grid-area: stereo
+    #       tap_action:
+    #         service_data:
+    #           entity_id: media_player.pioneer_avr
+    #           sound_mode: EXTENDED STEREO
+    #     - type: 'custom:button-card'
+    #       template: media_service
+    #       variables:
+    #         name: ''
+    #         service: media_player.select_sound_mode
+    #         picture: "[[[ return states['media_player.pioneer_avr'].attributes['current_sound_mode'] == 'AUTO SURROUND' ? '/local/ui/btns/surround_on.png' : '/local/ui/btns/surround_off.png'; ]]]"
+    #       view_layout:  
+    #         grid-area: surround
+    #       tap_action:
+    #         service_data:
+    #           entity_id: media_player.pioneer_avr
+    #           sound_mode: AUTO SURROUND
+    #     - type: 'custom:button-card'
+    #       template: media_service
+    #       variables:
+    #         name: ''
+    #         service: script.AVR_mute
+    #         picture: "[[[ return states['sensor.pioneer_volume'].state == 'MUTE' ? '/local/ui/btns/mute_on.png' : '/local/ui/btns/mute_off.png'; ]]]"
+    #       view_layout:  
+    #         grid-area: mute
+    #     - type: 'custom:button-card'
+    #       template: media_service
+    #       variables:
+    #         name: ''
+    #         service: remote.send_command
+    #         picture: /local/ui/btns/play_pause.png
+    #       view_layout:
+    #         grid-area: play
+    #       tap_action:
+    #         service_data:
+    #           entity_id: remote.swisscom
+    #           command: Play/Pause
+    #     - type: 'custom:button-card'
+    #       template: media_service
+    #       variables:
+    #         name: ''
+    #         service: remote.send_command
+    #         picture: /local/ui/btns/up.png
+    #       view_layout:
+    #         grid-area: up
+    #       tap_action:
+    #         service_data:
+    #           entity_id: remote.swisscom
+    #           command: Up
+    #     - type: 'custom:button-card'
+    #       template: media_service
+    #       variables:
+    #         name: ''
+    #         service: remote.send_command
+    #         picture: /local/ui/btns/back.png
+    #       view_layout:
+    #         grid-area: back
+    #       tap_action:
+    #         service_data:
+    #           entity_id: remote.swisscom
+    #           command: Back
+    #     - type: 'custom:button-card'
+    #       template: media_service
+    #       variables:
+    #         name: ''
+    #         service: remote.send_command
+    #         picture: /local/ui/btns/left.png
+    #       view_layout:
+    #         grid-area: left
+    #       tap_action:
+    #         service_data:
+    #           entity_id: remote.swisscom
+    #           command: Left
+    #     - type: 'custom:button-card'
+    #       template: media_service
+    #       variables:
+    #         name: ''
+    #         service: remote.send_command
+    #         picture: /local/ui/btns/ok.png
+    #       view_layout:
+    #         grid-area: enter
+    #       tap_action:
+    #         service_data:
+    #           entity_id: remote.swisscom
+    #           command: Ok
+    #     - type: 'custom:button-card'
+    #       template: media_service
+    #       variables:
+    #         name: ''
+    #         service: remote.send_command
+    #         picture: /local/ui/btns/right.png
+    #       view_layout:
+    #         grid-area: right
+    #       tap_action:
+    #         service_data:
+    #           entity_id: remote.swisscom
+    #           command: Right
+    #     - type: 'custom:button-card'
+    #       template: media_service
+    #       variables:
+    #         name: ''
+    #         service: remote.send_command
+    #         picture: /local/ui/btns/record.png
+    #       view_layout:
+    #         grid-area: record
+    #       tap_action:
+    #         service_data:
+    #           entity_id: remote.swisscom
+    #           command: Rec
+    #     - type: 'custom:button-card'
+    #       template: media_service
+    #       variables:
+    #         name: ''
+    #         service: remote.send_command
+    #         picture: /local/ui/btns/down.png
+    #       view_layout:
+    #         grid-area: down
+    #       tap_action:
+    #         service_data:
+    #           entity_id: remote.swisscom
+    #           command: Down  
+    #     - type: 'custom:button-card'
+    #       template: media_service
+    #       variables:
+    #         name: Guide TV
+    #         service: remote.send_command
+    #         picture: /local/ui/btns/guide.png
+    #       view_layout:
+    #         grid-area: guide
+    #       tap_action:
+    #         service_data:
+    #           entity_id: remote.swisscom
+    #           command: Tv guide
+    #     - type: 'custom:button-card'
+    #       template: media_service
+    #       variables:
+    #         name: Menu
+    #         service: remote.send_command
+    #         picture: /local/ui/btns/menu.png
+    #       view_layout:
+    #         grid-area: menu
+    #       tap_action:
+    #         service_data:
+    #           entity_id: remote.swisscom
+    #           command: Menu
+    #     - type: 'custom:button-card'
+    #       template: media_service
+    #       variables:
+    #         name: Options
+    #         service: remote.send_command
+    #         picture: /local/ui/btns/option.png
+    #       view_layout:
+    #         grid-area: options
+    #       tap_action:
+    #         service_data:
+    #           entity_id: remote.swisscom
+    #           command: Option
+    #     - type: 'custom:button-card'
+    #       template: media_service
+    #       variables:
+    #         name: ''
+    #         service: remote.send_command
+    #         picture: /local/ui/btns/rew-10.png
+    #       view_layout:
+    #         grid-area: skipback
+    #       tap_action:
+    #         service_data:
+    #           entity_id: remote.swisscom
+    #           command: -10sec
+    #     - type: 'custom:button-card'
+    #       template: media_service
+    #       variables:
+    #         name: ''
+    #         service: remote.send_command
+    #         picture: /local/ui/btns/rewind.png
+    #       view_layout:
+    #         grid-area: rew
+    #       tap_action:
+    #         service_data:
+    #           entity_id: remote.swisscom
+    #           command: Rewind
+    #     - type: 'custom:button-card'
+    #       template: media_service
+    #       variables:
+    #         name: ''
+    #         service: remote.send_command
+    #         picture: /local/ui/btns/forward.png
+    #       view_layout:
+    #         grid-area: fwd
+    #       tap_action:
+    #         service_data:
+    #           entity_id: remote.swisscom
+    #           command: Forward
+    #     - type: 'custom:button-card'
+    #       template: media_service
+    #       variables:
+    #         name: ''
+    #         service: remote.send_command
+    #         picture: /local/ui/btns/fwd-30.png
+    #       view_layout:
+    #         grid-area: skipfwd
+    #       tap_action:
+    #         service_data:
+    #           entity_id: remote.swisscom
+    #           command: +30sec   
+    #     - type: 'custom:button-card'
+    #       template: media_volume_vertical
+    #       variables:
+    #         service: media_player.volume_up
+    #         picture: /local/ui/btns/volume_up_vertical.png
+    #         radius: 10vw 10vw 0 0
+    #         top: 20%
+    #       view_layout:
+    #         grid-area: volup
+    #     - type: 'custom:button-card'
+    #       template: media_volume_vertical
+    #       variables:
+    #         service: media_player.volume_down
+    #         picture: /local/ui/btns/volume_down_vertical.png
+    #         radius: 0 0 10vw 10vw
+    #         top: 0%
+    #       view_layout:
+    #         grid-area: voldown
+    #     - type: 'custom:button-card'
+    #       template: media_state  
+    #       variables:
+    #         background: transparent url("/local/ui/btns/volume.png")  
+    #         justify: right
+    #       state_display: >
+    #         [[[ var volume = (states['sensor.pioneer_volume'].state + ' dB');
+    #         return states['sensor.pioneer_volume'].state == 'MUTE' ? 'MUTE' : volume; ]]]     
+    #       view_layout:
+    #         grid-area: vol
+    #     - type: 'custom:button-card'
+    #       template: media_state  
+    #       variables:
+    #         background: transparent url("/local/ui/btns/return_home.png")  
+    #         justify: left
+    #       view_layout:
+    #         grid-area: home
+    #       state_display: >
+    #         [[[ return 'Retour à la maison'; ]]]
+    #       tap_action:
+    #         action: navigate
+    #         navigation_path: /lovelace-visual/lights
+    #       styles:
+    #         state:
+    #         - font-size: 5vw
     'other':
       type: 'custom:layout-card'
       layout_type: custom:grid-layout
@@ -1161,8 +1129,8 @@ card:
         grid-template-columns: 25% 25% 25% 25%
         grid-template-rows: auto
         grid-template-areas: |
-          "plex share youtube ytkids"
-          "power . tv mute"
+          "plex tv youtube ytkids"
+          "power . . mute"
           "menu stereo surround volup"
           "play up back volup"
           "left enter right voldown"
@@ -1184,18 +1152,6 @@ card:
             service_data:
               entity_id: media_player.living_room_tv
               source: Plex
-        - type: 'custom:button-card'
-          template: media_service
-          variables:
-            name: Partage
-            service: media_player.select_source
-            picture: "[[[ return states['media_player.living_room_tv'].attributes['source'] == 'Screen Share' ? '/local/ui/btns/screenshare_on.png' : '/local/ui/btns/screenshare_off.png'; ]]]"
-          view_layout:  
-            grid-area: share
-          tap_action:
-            service_data:
-              entity_id: media_player.living_room_tv
-              source: Screen Share
         - type: 'custom:button-card'
           template: media_service
           variables:
@@ -1234,11 +1190,15 @@ card:
         - type: 'custom:button-card'
           template: media_service
           variables:
-            name: ''
-            service: script.to_swisscom
-            picture: /local/ui/btns/blue_off.png
+            name: Blue TV
+            service: media_player.select_source
+            picture: "[[[ return states['media_player.living_room_tv'].attributes['source'] == 'Swisscom blue TV' ? '/local/ui/btns/blue_on.png' : '/local/ui/btns/blue_off.png'; ]]]"
           view_layout:
             grid-area: tv
+          tap_action:
+            service_data:
+              entity_id: media_player.living_room_tv
+              source: Swisscom blue TV
         - type: 'custom:button-card'
           template: media_service
           variables:
@@ -1401,7 +1361,7 @@ card:
           elements:
             - type: 'custom:button-card'
               template: media_state_title
-              entity: media_player.plex_plex_for_lg_lg_oled77w7v_z
+              entity: media_player.plex_living_room_tv
               state_display: >
                 [[[
                   if (entity) {
@@ -1423,8 +1383,8 @@ card:
                               ? `YouTube`
                               : states['sensor.living_room_tv_source'].state == 'YouTube Kids'
                                 ? `YouTube Kids`
-                                : states['sensor.living_room_tv_source'].state == 'Screen Share'
-                                  ? `Partage d'écran`
+                                : states['sensor.living_room_tv_source'].state == 'Swisscom blue TV'
+                                  ? `Blue TV`
                                   : variables.translate_idle;
                     function marquee() {
                       let state = elt.getElementById("state"),
