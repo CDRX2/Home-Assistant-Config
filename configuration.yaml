@@ -58,32 +58,6 @@ homeassistant:
         10.81.19.94: ae55fdfcf7714f1485058190846c3c8a
       allow_bypass_login: true
 
-# browser_mod:
-#   devices:
-#     7cd8f43d-f1e2fb4d:
-#       name: CDRXPS_chrome
-#     1ca3e9c8 29c5fdd7:
-#       name: CDRX2_App
-#     89534705-fa304c6a:
-#       name: NanneHuawei_App
-#     eae7e411-f2908d51:
-#       name: NanneHuawei_chrome
-#     2c088d82-ca71ed40:
-#       name: CDRX2_chrome
-#     9e06779f-8aa8373e:
-#       name: Tab_rez
-#       force_stay_awake: true
-#     86f66e1b-f1dcabf4:
-#       name: Tab_mobile
-#       force_stay_awake: true
-#     a87a25ad-d83a08ab:
-#       name: Tab_remote
-#       force_stay_awake: true
-#     ed9d0359-407e4340:
-#       name: CDRXPS_Vivaldi
-#   disable:
-#     - all
-
 discovery:
 
 media_player:
@@ -196,38 +170,6 @@ cover:
           {% else %}
             mdi:awning-outline
           {% endif %}
-
-  # - platform: template
-  #   covers:
-  #     tableau_tv_reversed:
-  #       friendly_name: "Tableau TV reversed"
-  #       position_template: "{{ 100 - state_attr('cover.tableau_tv', 'current_position') | int(100) }}"
-  #       open_cover:
-  #         service: cover.close_cover
-  #         data: {}
-  #         target:
-  #           entity_id: cover.tableau_tv
-  #       close_cover:
-  #         service: cover.open_cover
-  #         data: {}
-  #         target:
-  #           entity_id: cover.tableau_tv
-  #       stop_cover:
-  #         service: cover.stop_cover
-  #         data: {}
-  #         target:
-  #           entity_id: cover.tableau_tv
-  #       set_cover_position:
-  #         service: cover.set_cover_position
-  #         data:
-  #           position: "{{100-position}}"
-  #           entity_id: cover.tableau_tv
-  #       icon_template: >-
-  #         {% if is_state('cover.tableau_tv', 'closed') %}
-  #           mdi:door-sliding-open
-  #         {% else %}
-  #           mdi:door-sliding
-  #         {% endif %}
 
 light:
 
