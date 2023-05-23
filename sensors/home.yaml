@@ -1,18 +1,18 @@
-- platform: template
-  sensors:
-    trash:
-      value_template: >-
-        {% if states('sensor.poubelle_compost_papier') == 'tomorrow' and states('sensor.verre') != 'tomorrow' %}
-          tomorrow
-        {% elif states('sensor.poubelle_compost_papier') == 'today' and states('sensor.verre') != 'today' %}
-          today
-        {%elif states('sensor.poubelle_compost_papier') == 'tomorrow' and states('sensor.verre') == 'tomorrow' %}
-          verre tomorrow
-        {%elif states('sensor.poubelle_compost_papier') == 'today' and states('sensor.verre') == 'today' %}
-          verre today
-        {% else %}
-          normal
-        {% endif %}
+# - platform: template
+#   sensors:
+#     trash:
+#       value_template: >-
+#         {% if states('sensor.poubelle_compost_papier') == 'tomorrow' and states('sensor.verre') != 'tomorrow' %}
+#           tomorrow
+#         {% elif states('sensor.poubelle_compost_papier') == 'today' and states('sensor.verre') != 'today' %}
+#           today
+#         {%elif states('sensor.poubelle_compost_papier') == 'tomorrow' and states('sensor.verre') == 'tomorrow' %}
+#           verre tomorrow
+#         {%elif states('sensor.poubelle_compost_papier') == 'today' and states('sensor.verre') == 'today' %}
+#           verre today
+#         {% else %}
+#           normal
+#         {% endif %}
 
 - platform: template
   sensors:
@@ -33,4 +33,20 @@
                 is_state('lock.entree_locked_in', 'unlocked') and
                 is_state('lock.entree_locked_out', 'unlocked') %}
           mdi:lock-open
+        {% endif %}
+
+- platform: template
+  sensors:
+    trash:
+      value_template: >-
+        {%if (state_attr('calendar.garbage','start_time')|as_timestamp - today_at('00:00')|as_timestamp)/86400 ==1 and (state_attr('calendar.glass','start_time')|as_timestamp - today_at('00:00')|as_timestamp)/86400 !=1 %}
+          tomorrow
+        {%elif (state_attr('calendar.garbage','start_time')|as_timestamp - today_at('00:00')|as_timestamp)/86400 ==0 and (state_attr('calendar.glass','start_time')|as_timestamp - today_at('00:00')|as_timestamp)/86400 !=0 %}
+          today
+        {%elif (state_attr('calendar.garbage','start_time')|as_timestamp - today_at('00:00')|as_timestamp)/86400 ==1 and (state_attr('calendar.glass','start_time')|as_timestamp - today_at('00:00')|as_timestamp)/86400 ==1 %}
+          verre tomorrow
+        {%elif (state_attr('calendar.garbage','start_time')|as_timestamp - today_at('00:00')|as_timestamp)/86400 ==0 and (state_attr('calendar.glass','start_time')|as_timestamp - today_at('00:00')|as_timestamp)/86400 ==0 %}
+          verre today
+        {% else %}
+          normal
         {% endif %}

@@ -225,22 +225,6 @@
     target:
       entity_id: cover.store_terrasse_reversed
   mode: single
-- id: '1644140034798'
-  alias: Skip holiday trash
-  description: ''
-  use_blueprint:
-    path: bruxy70/skip_holday.yaml
-    input:
-      garbage_collection_entity: sensor.poubelle_compost_papier
-      holiday_entity: calendar.holidays_lausanne
-- id: '1644140055818'
-  alias: Skip holiday verre
-  description: ''
-  use_blueprint:
-    path: bruxy70/skip_holday.yaml
-    input:
-      garbage_collection_entity: sensor.verre
-      holiday_entity: calendar.holidays_lausanne
 - id: '1644784304855'
   alias: Lovelace update ignore
   description: ''
