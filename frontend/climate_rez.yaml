@@ -588,7 +588,7 @@ elements:
   #shades
   
   - type: 'custom:button-card'
-    template: cover_no_stop
+    template: cover_invert_no_stop
     variables:
       entity: cover.store_terrasse_reversed
       title: Store Terrasse
