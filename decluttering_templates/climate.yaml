@@ -230,6 +230,12 @@ fan_popup:
     type: custom:mod-card
     card_mod:
       style:
+        .: |
+          ha-card {
+            min-width: 400px;
+            padding-left: 2%;
+            padding-right: 2%;
+          }
         layout-card$:
           grid-layout$: |
             :host {
@@ -532,13 +538,6 @@ fan_popup:
                   round-slider {
                     padding-bottom: 0px;
                   } 
-    card_mod: 
-      style: |
-        ha-card {
-          min-width: 400px;
-          padding-left: 2%;
-          padding-right: 2%;
-        }    
 
 fan_image:
   element:
