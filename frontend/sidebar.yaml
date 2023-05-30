@@ -114,36 +114,7 @@ elements:
           width: 88%;
         }
 
-  #floor change
-  - type: 'custom:button-card'
-    template: floors
-    variables:
-      options: Rez
-    entity_picture: >
-      [[[ return (states['input_select.floor'].state == 'Rez') ? '/local/ui/sidebar/Rez_on.png' : '/local/ui/sidebar/Rez_off.png'; ]]]
-    card_mod:
-      style: |
-        :host {
-          top: 42%;
-          right: 50%;
-          width: 44%;
-          transform: translate(0, -50%) !important;
-        }
 
-  - type: 'custom:button-card'
-    template: floors
-    variables:
-      options: 1er
-    entity_picture: >
-      [[[ return (states['input_select.floor'].state == '1er') ? '/local/ui/sidebar/1er_on.png' : '/local/ui/sidebar/1er_off.png'; ]]]
-    card_mod:
-      style: |
-        :host {
-          top: 42%;
-          left: 50%;
-          width: 44%;
-          transform: translate(0, -50%) !important;
-        }
 
     ##########################    Icons for taking out the trash    ##########################
 
@@ -1080,19 +1051,6 @@ elements:
   - type: conditional
     conditions:
       - entity: sensor.living_room_tv_source
-        state: Screen Share
-    elements:
-      - type: 'custom:button-card'
-        template: media_sidebar
-        entity_picture: /local/ui/media/screenshare.png
-        label: "Partage d'écran"
-        styles:
-          entity_picture:
-            - width: 100%
-
-  - type: conditional
-    conditions:
-      - entity: sensor.living_room_tv_source
         state: YouTube
     elements:
       - type: 'custom:button-card'
@@ -1128,3 +1086,34 @@ elements:
         styles:
           entity_picture:
             - height: 100%
+
+  #floor change button
+  - type: 'custom:button-card'
+    template: floors
+    variables:
+      options: Rez
+    entity_picture: >
+      [[[ return (states['input_select.floor'].state == 'Rez') ? '/local/ui/sidebar/Rez_on.png' : '/local/ui/sidebar/Rez_off.png'; ]]]
+    card_mod:
+      style: |
+        :host {
+          top: 42%;
+          right: 50%;
+          width: 44%;
+          transform: translate(0, -50%) !important;
+        }
+
+  - type: 'custom:button-card'
+    template: floors
+    variables:
+      options: 1er
+    entity_picture: >
+      [[[ return (states['input_select.floor'].state == '1er') ? '/local/ui/sidebar/1er_on.png' : '/local/ui/sidebar/1er_off.png'; ]]]
+    card_mod:
+      style: |
+        :host {
+          top: 42%;
+          left: 50%;
+          width: 44%;
+          transform: translate(0, -50%) !important;
+        }
