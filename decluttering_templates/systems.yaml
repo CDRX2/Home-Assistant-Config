@@ -201,6 +201,11 @@ HDD_markdown:
     type: custom:mod-card
     card_mod:
       style:
+        .: |
+          ha-card {
+            box-shadow: none;
+            background: none;
+          }
         layout-card$:
           grid-layout$: |
             :host {
@@ -242,12 +247,7 @@ HDD_markdown:
               ha-markdown {
                 padding: 0 !important;
               } 
-    card_mod:
-      style: |
-        ha-card {
-          box-shadow: none;
-          background: none;
-        }  
+  
 
 #########################    STORAGE VOLUME BUTTON    #########################
 
