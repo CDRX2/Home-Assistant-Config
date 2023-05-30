@@ -226,7 +226,7 @@ cover_no_stop:
         show_icon: true
         show_name: false
         size: 70%
-        icon: '[[[ if (entity.attributes.current_position != 0) return "mdi:arrow-down-bold"; else return "mdi:arrow-down-bold-outline" ]]]' 
+        icon: '[[[ if (entity.attributes.current_position != 100) return "mdi:arrow-down-bold"; else return "mdi:arrow-down-bold-outline" ]]]' 
         tap_action:
           action: call-service
           service: cover.close_cover
@@ -243,7 +243,7 @@ cover_no_stop:
         show_icon: true
         show_name: false
         size: 70%
-        icon: '[[[ if (entity.attributes.current_position != 100) return "mdi:arrow-up-bold"; else return "mdi:arrow-up-bold-outline" ]]]' 
+        icon: '[[[ if (entity.attributes.current_position != 0) return "mdi:arrow-up-bold"; else return "mdi:arrow-up-bold-outline" ]]]' 
         tap_action:
           action: call-service
           service: cover.open_cover
