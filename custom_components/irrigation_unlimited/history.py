@@ -47,7 +47,7 @@ def round_seconds_dt(atime: datetime) -> datetime:
 
 def round_seconds_td(duration: timedelta) -> timedelta:
     """Round the timedelta to the nearest second"""
-    return timedelta(seconds=round(duration.total_seconds()))
+    return timedelta(seconds=int(duration.total_seconds() + 0.5))
 
 
 class IUHistory:
@@ -104,10 +104,10 @@ class IUHistory:
             self._schedule_refresh(False)
         await self._async_update_history(self._stime)
 
-    def _initialise(self) -> None:
+    def _initialise(self) -> bool:
         """Initialise this unit"""
         if self._initialised:
-            return
+            return False
 
         self._remove_refresh()
         self._history_last = None
@@ -118,6 +118,11 @@ class IUHistory:
             if entity_id.startswith(f"{BINARY_SENSOR}.{DOMAIN}_"):
                 self._entity_ids.append(entity_id)
         self._initialised = True
+        return True
+
+    def finalise(self):
+        """Finalise this unit"""
+        self._remove_refresh()
 
     def _clear_cache(self) -> None:
         self._cache = {}
@@ -131,7 +136,6 @@ class IUHistory:
         start = midnight(stime)
 
         for item in data:
-
             # Filter data
             if item.last_changed < start:
                 continue
@@ -172,7 +176,6 @@ class IUHistory:
         front_marker: State = None
 
         for item in data:
-
             # Look for an on state
             if front_marker is None:
                 if item.state == STATE_ON:

@@ -1,73 +1,34 @@
 """This module handles the HA service call interface"""
-import voluptuous as vol
 from homeassistant.core import ServiceCall, callback
+from homeassistant.util import dt
 from homeassistant.helpers import entity_platform
 from homeassistant.helpers.entity_component import EntityComponent
-from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.service import async_register_admin_service
 from homeassistant.const import (
-    CONF_ENTITY_ID,
     SERVICE_RELOAD,
 )
 
 from .irrigation_unlimited import IUCoordinator
 from .entity import IUEntity
+from .schema import (
+    ENTITY_SCHEMA,
+    ENABLE_DISABLE_SCHEMA,
+    TIME_ADJUST_SCHEMA,
+    MANUAL_RUN_SCHEMA,
+    RELOAD_SERVICE_SCHEMA,
+    LOAD_SCHEDULE_SCHEMA,
+)
+
 from .const import (
     DOMAIN,
-    CONF_PERCENTAGE,
-    CONF_ACTUAL,
-    CONF_INCREASE,
-    CONF_DECREASE,
-    CONF_RESET,
-    CONF_TIME,
-    CONF_MINIMUM,
-    CONF_MAXIMUM,
-    CONF_ZONES,
-    CONF_SEQUENCE_ID,
     SERVICE_CANCEL,
     SERVICE_DISABLE,
     SERVICE_ENABLE,
     SERVICE_MANUAL_RUN,
     SERVICE_TIME_ADJUST,
     SERVICE_TOGGLE,
+    SERVICE_LOAD_SCHEDULE,
 )
-
-ENTITY_SCHEMA = {vol.Required(CONF_ENTITY_ID): cv.entity_id}
-
-ENABLE_DISABLE_SCHEMA = {
-    vol.Required(CONF_ENTITY_ID): cv.entity_id,
-    vol.Optional(CONF_ZONES): cv.ensure_list,
-    vol.Optional(CONF_SEQUENCE_ID): cv.positive_int,
-}
-
-TIME_ADJUST_SCHEMA = vol.All(
-    vol.Schema(
-        {
-            vol.Required(CONF_ENTITY_ID): cv.entity_id,
-            vol.Exclusive(CONF_ACTUAL, "adjust_method"): cv.positive_time_period,
-            vol.Exclusive(CONF_PERCENTAGE, "adjust_method"): cv.positive_float,
-            vol.Exclusive(CONF_INCREASE, "adjust_method"): cv.positive_time_period,
-            vol.Exclusive(CONF_DECREASE, "adjust_method"): cv.positive_time_period,
-            vol.Exclusive(CONF_RESET, "adjust_method"): None,
-            vol.Optional(CONF_MINIMUM): cv.positive_time_period,
-            vol.Optional(CONF_MAXIMUM): cv.positive_time_period,
-            vol.Optional(CONF_ZONES): cv.ensure_list,
-            vol.Optional(CONF_SEQUENCE_ID): cv.positive_int,
-        }
-    ),
-    cv.has_at_least_one_key(
-        CONF_ACTUAL, CONF_PERCENTAGE, CONF_INCREASE, CONF_DECREASE, CONF_RESET
-    ),
-)
-
-MANUAL_RUN_SCHEMA = {
-    vol.Required(CONF_ENTITY_ID): cv.entity_id,
-    vol.Required(CONF_TIME): cv.positive_time_period,
-    vol.Optional(CONF_ZONES): cv.ensure_list,
-    vol.Optional(CONF_SEQUENCE_ID): cv.positive_int,
-}
-
-RELOAD_SERVICE_SCHEMA = vol.Schema({})
 
 
 @callback
@@ -115,6 +76,7 @@ def register_component_services(
             conf = {DOMAIN: {}}
         coordinator.load(conf[DOMAIN])
         await async_reload_platform(component, coordinator)
+        coordinator.timer(dt.utcnow())
         coordinator.clock.start()
 
     async_register_admin_service(
@@ -123,4 +85,16 @@ def register_component_services(
         SERVICE_RELOAD,
         reload_service_handler,
         schema=RELOAD_SERVICE_SCHEMA,
+    )
+
+    @callback
+    async def load_schedule_service_handler(call: ServiceCall) -> None:
+        """Reload schedule."""
+        coordinator.service_call(call.service, None, None, call.data)
+
+    component.hass.services.async_register(
+        DOMAIN,
+        SERVICE_LOAD_SCHEDULE,
+        load_schedule_service_handler,
+        LOAD_SCHEDULE_SCHEMA,
     )

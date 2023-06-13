@@ -5,7 +5,7 @@ DOMAIN = "irrigation_unlimited"
 DOMAIN_DATA = f"{DOMAIN}_data"
 COORDINATOR = "coordinator"
 COMPONENT = "component"
-VERSION = "2023.2.1"
+VERSION = "2023.6.1"
 ATTRIBUTION = "Data provided by http://jsonplaceholder.typicode.com/"
 ISSUE_URL = "https://github.com/rgc99/irrigation_unlimited/issues"
 
@@ -105,6 +105,7 @@ CONF_RESYNC = "resync"
 CONF_EXPECTED = "expected"
 CONF_STATE_ON = "state_on"
 CONF_STATE_OFF = "state_off"
+CONF_SCHEDULE_ID = "schedule_id"
 
 # Defaults
 DEFAULT_NAME = DOMAIN
@@ -119,6 +120,7 @@ SERVICE_TOGGLE = "toggle"
 SERVICE_CANCEL = "cancel"
 SERVICE_TIME_ADJUST = "adjust_time"
 SERVICE_MANUAL_RUN = "manual_run"
+SERVICE_LOAD_SCHEDULE = "load_schedule"
 
 # Events
 EVENT_START = "start"

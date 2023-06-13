@@ -15,6 +15,31 @@ cover_stop:
           service: cover.close_cover
           service_data:
             entity_id: '[[[ return variables.entity ]]]'
+        hold_action:
+          action: fire-dom-event
+          browser_mod:
+            service: browser_mod.popup
+            data:
+              content:
+                type: 'custom:more-info-card'
+                title: '[[[ return variables.title ]]]'
+                entity: '[[[return variables.entity]]]'
+                card_mod:
+                  style: 
+                    $: |
+                      h1 {
+                        display: none !important;
+                      }
+                    more-info-cover$:
+                      ha-more-info-state-header$: |
+                        .name {
+                          display: none;
+                        }
+                    .: |
+                      state-card-cover {
+                        display: none;
+                      }
+              title: '[[[ return variables.title ]]]' 
         styles:
           card:
             - background: none
@@ -32,6 +57,31 @@ cover_stop:
           service: cover.stop_cover
           service_data:
             entity_id: '[[[ return variables.entity ]]]'
+        hold_action:
+          action: fire-dom-event
+          browser_mod:
+            service: browser_mod.popup
+            data:
+              content:
+                type: 'custom:more-info-card'
+                title: '[[[ return variables.title ]]]'
+                entity: '[[[return variables.entity]]]'
+                card_mod:
+                  style: 
+                    $: |
+                      h1 {
+                        display: none !important;
+                      }
+                    more-info-cover$:
+                      ha-more-info-state-header$: |
+                        .name {
+                          display: none;
+                        }
+                    .: |
+                      state-card-cover {
+                        display: none;
+                      }
+              title: '[[[ return variables.title ]]]' 
         styles:
           card:
             - background: none
@@ -49,6 +99,31 @@ cover_stop:
           service: cover.open_cover
           service_data:
             entity_id: '[[[ return variables.entity ]]]'
+        hold_action:
+          action: fire-dom-event
+          browser_mod:
+            service: browser_mod.popup
+            data:
+              content:
+                type: 'custom:more-info-card'
+                title: '[[[ return variables.title ]]]'
+                entity: '[[[return variables.entity]]]'
+                card_mod:
+                  style: 
+                    $: |
+                      h1 {
+                        display: none !important;
+                      }
+                    more-info-cover$:
+                      ha-more-info-state-header$: |
+                        .name {
+                          display: none;
+                        }
+                    .: |
+                      state-card-cover {
+                        display: none;
+                      }
+              title: '[[[ return variables.title ]]]' 
         styles:
           card:
             - background: none
@@ -109,6 +184,59 @@ cover_no_stop_dual:
           service: cover.close_cover
           service_data:
             entity_id: '[[[ return variables.entity ]]]'
+        hold_action:
+          action: fire-dom-event
+          browser_mod:
+            service: browser_mod.popup
+            data:
+              content:
+                type: 'custom:layout-card'
+                layout_type: 'custom:horizontal-layout'
+                cards:
+                  - type: 'custom:more-info-card'
+                    title: '[[[ return variables.title ]]]'
+                    entity: '[[[return variables.entity]]]'
+                    view_layout: 
+                      column: 1
+                    card_mod:
+                      style: 
+                        $: |
+                          h1 {
+                            display: none !important;
+                          }
+                        more-info-cover$:
+                          ha-more-info-state-header$: |
+                            .name {
+                              display: none;
+                            }
+                        .: |
+                          state-card-cover {
+                            display: none;
+                          }
+                  - type: 'custom:layout-break'
+                  - type: 'custom:more-info-card'
+                    title: '[[[ return variables.title_2 ]]]'
+                    entity: '[[[return variables.entity_2]]]'
+                    view_layout:
+                      column: 2
+                    card_mod:
+                      style: 
+                        $: |
+                          h1 {
+                            display: none !important;
+                          }
+                        more-info-cover$:
+                          ha-more-info-state-header$: |
+                            .name {
+                              display: none;
+                            }
+                        .: |
+                          state-card-cover {
+                            display: none;
+                          }
+              style: |
+                --popup-min-width: 800px;
+              title: '[[[ return variables.title ]]]'  
         styles:
           card:
             - background: none
@@ -126,6 +254,59 @@ cover_no_stop_dual:
     #       service: cover.stop_cover
     #       service_data:
     #         entity_id: '[[[ return variables.entity ]]]'
+        # hold_action:
+        #   action: fire-dom-event
+        #   browser_mod:
+        #     service: browser_mod.popup
+        #     data:
+        #       content:
+        #         type: 'custom:layout-card'
+        #         layout_type: 'custom:horizontal-layout'
+        #         cards:
+        #           - type: 'custom:more-info-card'
+        #             title: '[[[ return variables.title ]]]'
+        #             entity: '[[[return variables.entity]]]'
+        #             view_layout: 
+        #               column: 1
+        #             card_mod:
+        #               style: 
+        #                 $: |
+        #                   h1 {
+        #                     display: none !important;
+        #                   }
+        #                 more-info-cover$:
+        #                   ha-more-info-state-header$: |
+        #                     .name {
+        #                       display: none;
+        #                     }
+        #                 .: |
+        #                   state-card-cover {
+        #                     display: none;
+        #                   }
+        #           - type: 'custom:layout-break'
+        #           - type: 'custom:more-info-card'
+        #             title: '[[[ return variables.title_2 ]]]'
+        #             entity: '[[[return variables.entity_2]]]'
+        #             view_layout:
+        #               column: 2
+        #             card_mod:
+        #               style: 
+        #                 $: |
+        #                   h1 {
+        #                     display: none !important;
+        #                   }
+        #                 more-info-cover$:
+        #                   ha-more-info-state-header$: |
+        #                     .name {
+        #                       display: none;
+        #                     }
+        #                 .: |
+        #                   state-card-cover {
+        #                     display: none;
+        #                   }
+        #       style: |
+        #         --popup-min-width: 800px;
+        #       title: '[[[ return variables.title ]]]'  
     #     styles:
     #       card:
     #         - background: none
@@ -143,6 +324,59 @@ cover_no_stop_dual:
           service: cover.open_cover
           service_data:
             entity_id: '[[[ return variables.entity ]]]'
+        hold_action:
+          action: fire-dom-event
+          browser_mod:
+            service: browser_mod.popup
+            data:
+              content:
+                type: 'custom:layout-card'
+                layout_type: 'custom:horizontal-layout'
+                cards:
+                  - type: 'custom:more-info-card'
+                    title: '[[[ return variables.title ]]]'
+                    entity: '[[[return variables.entity]]]'
+                    view_layout: 
+                      column: 1
+                    card_mod:
+                      style: 
+                        $: |
+                          h1 {
+                            display: none !important;
+                          }
+                        more-info-cover$:
+                          ha-more-info-state-header$: |
+                            .name {
+                              display: none;
+                            }
+                        .: |
+                          state-card-cover {
+                            display: none;
+                          }
+                  - type: 'custom:layout-break'
+                  - type: 'custom:more-info-card'
+                    title: '[[[ return variables.title_2 ]]]'
+                    entity: '[[[return variables.entity_2]]]'
+                    view_layout:
+                      column: 2
+                    card_mod:
+                      style: 
+                        $: |
+                          h1 {
+                            display: none !important;
+                          }
+                        more-info-cover$:
+                          ha-more-info-state-header$: |
+                            .name {
+                              display: none;
+                            }
+                        .: |
+                          state-card-cover {
+                            display: none;
+                          }
+              style: |
+                --popup-min-width: 800px;
+              title: '[[[ return variables.title ]]]'  
         styles:
           card:
             - background: none
@@ -232,6 +466,31 @@ cover_no_stop:
           service: cover.close_cover
           service_data:
             entity_id: '[[[ return variables.entity ]]]'
+        hold_action:
+          action: fire-dom-event
+          browser_mod:
+            service: browser_mod.popup
+            data:
+              content:
+                type: 'custom:more-info-card'
+                title: '[[[ return variables.title ]]]'
+                entity: '[[[return variables.entity]]]'
+                card_mod:
+                  style: 
+                    $: |
+                      h1 {
+                        display: none !important;
+                      }
+                    more-info-cover$:
+                      ha-more-info-state-header$: |
+                        .name {
+                          display: none;
+                        }
+                    .: |
+                      state-card-cover {
+                        display: none;
+                      }
+              title: '[[[ return variables.title ]]]' 
         styles:
           card:
             - background: none
@@ -249,6 +508,31 @@ cover_no_stop:
           service: cover.open_cover
           service_data:
             entity_id: '[[[ return variables.entity ]]]'
+        hold_action:
+          action: fire-dom-event
+          browser_mod:
+            service: browser_mod.popup
+            data:
+              content:
+                type: 'custom:more-info-card'
+                title: '[[[ return variables.title ]]]'
+                entity: '[[[return variables.entity]]]'
+                card_mod:
+                  style: 
+                    $: |
+                      h1 {
+                        display: none !important;
+                      }
+                    more-info-cover$:
+                      ha-more-info-state-header$: |
+                        .name {
+                          display: none;
+                        }
+                    .: |
+                      state-card-cover {
+                        display: none;
+                      }
+              title: '[[[ return variables.title ]]]' 
         styles:
           card:
             - background: none
@@ -310,6 +594,31 @@ cover_invert_no_stop:
           service: cover.open_cover
           service_data:
             entity_id: '[[[ return variables.entity ]]]'
+        hold_action:
+          action: fire-dom-event
+          browser_mod:
+            service: browser_mod.popup
+            data:
+              content:
+                type: 'custom:more-info-card'
+                title: '[[[ return variables.title ]]]'
+                entity: '[[[return variables.entity]]]'
+                card_mod:
+                  style: 
+                    $: |
+                      h1 {
+                        display: none !important;
+                      }
+                    more-info-cover$:
+                      ha-more-info-state-header$: |
+                        .name {
+                          display: none;
+                        }
+                    .: |
+                      state-card-cover {
+                        display: none;
+                      }
+              title: '[[[ return variables.title ]]]' 
         styles:
           card:
             - background: none
@@ -327,6 +636,31 @@ cover_invert_no_stop:
           service: cover.close_cover
           service_data:
             entity_id: '[[[ return variables.entity ]]]'
+        hold_action:
+          action: fire-dom-event
+          browser_mod:
+            service: browser_mod.popup
+            data:
+              content:
+                type: 'custom:more-info-card'
+                title: '[[[ return variables.title ]]]'
+                entity: '[[[return variables.entity]]]'
+                card_mod:
+                  style: 
+                    $: |
+                      h1 {
+                        display: none !important;
+                      }
+                    more-info-cover$:
+                      ha-more-info-state-header$: |
+                        .name {
+                          display: none;
+                        }
+                    .: |
+                      state-card-cover {
+                        display: none;
+                      }
+              title: '[[[ return variables.title ]]]' 
         styles:
           card:
             - background: none
