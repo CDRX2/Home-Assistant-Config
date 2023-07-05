@@ -132,28 +132,6 @@ elements:
       width: 100%
   - type: 'custom:config-template-card'
     entities:
-      - light.tv
-    element:
-      action: none
-      entity: light.tv
-      hold_action:
-        action: none
-      image: /local/transparent.png
-      state_image:
-        'on': /local/ui/floorplan/lights/rez/TV.png
-      tap_action:
-        action: none
-      type: image
-    style:
-      filter: >-
-        ${ "hue-rotate(" + (states['light.tv'].attributes.hs_color ? states['light.tv'].attributes.hs_color[0] : 0) + "deg) saturate(100%)"}
-      left: 50%
-      mix-blend-mode: lighten
-      opacity: "${states['light.tv'].state === 'on' ? (states['light.tv'].attributes.brightness / 255) : '0'}"
-      top: 50%
-      width: 100%
-  - type: 'custom:config-template-card'
-    entities:
       - light.cuisine_deco
     element:
       action: none
@@ -721,15 +699,6 @@ elements:
       - icon: hue:bulb-spot
       - left: 80.25%
       - top: 47%
-
-  - type: 'custom:decluttering-card'
-    template: Light_icon_mid
-    variables:
-      - light: light.tv
-      - title: Meuble TV
-      - icon: mdi:led-strip-variant
-      - left: 83.5%
-      - top: 61%
 
   - type: 'custom:decluttering-card'
     template: Light_icon_mid
