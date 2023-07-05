@@ -32,12 +32,12 @@ lovelace:
       icon: mdi:remote-tv
       show_in_sidebar: true
       filename: remote-main.yaml
-    lovelace-dev:
-      mode: yaml
-      title: Dev
-      icon: mdi:github
-      show_in_sidebar: true
-      filename: dev.yaml
+    # lovelace-dev:
+    #   mode: yaml
+    #   title: Dev
+    #   icon: mdi:github
+    #   show_in_sidebar: true
+    #   filename: dev.yaml
 
 group: !include groups.yaml
 automation: !include automations.yaml
@@ -301,7 +301,6 @@ light:
     - light.grand_totem_deco
     - light.panneau_lumineux
     - light.petit_totem_deco
-    - light.tv
     - light.vinyles
     - light.bar
     # - light.spare_switch_1
@@ -338,7 +337,6 @@ light:
   - platform: group
     name: Couleur Rez
     entities:
-    - light.tv
     - light.petit_totem_deco
     - light.grand_totem_deco
     - light.bar
@@ -389,7 +387,6 @@ light:
     - light.petit_totem_deco
     - light.salon_plafonnier
     - light.panneau_lumineux
-    - light.tv
     - light.vinyles
     - light.bar
     - light.terrasse_sol

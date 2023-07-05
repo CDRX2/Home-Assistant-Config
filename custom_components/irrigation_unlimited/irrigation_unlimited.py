@@ -399,13 +399,6 @@ class IUAdjustment:
         """Return True if an adjustment is in play"""
         return self._method is not None
 
-    def clear(self) -> None:
-        """Reset the adjustment"""
-        self._method = None
-        self._time_adjustment = None
-        self._minimum = None
-        self._maximum = None
-
     def load(self, data: MappingProxyType) -> bool:
         """Read the adjustment configuration. Return true if anything has changed"""
 
@@ -430,6 +423,8 @@ class IUAdjustment:
         elif CONF_RESET in data:
             self._method = None
             self._time_adjustment = None
+            self._minimum = None
+            self._maximum = None
 
         self._minimum = wash_td(data.get(CONF_MINIMUM, None))
         if self._minimum is not None:
@@ -1541,6 +1536,11 @@ class IUZone(IUBase):
             self.request_update()
 
     @property
+    def allow_manual(self) -> bool:
+        """Return True if manual overide allowed"""
+        return self._allow_manual
+
+    @property
     def zone_sensor(self) -> Entity:
         """Return the HA entity associated with this zone"""
         return self._zone_sensor
@@ -1636,7 +1636,7 @@ class IUZone(IUBase):
 
     def service_manual_run(self, data: MappingProxyType, stime: datetime) -> None:
         """Add a manual run."""
-        if (self._is_enabled or self._allow_manual) and self._controller.enabled:
+        if self._allow_manual or (self._is_enabled and self._controller.enabled):
             duration = wash_td(data.get(CONF_TIME))
             if duration is None or duration == timedelta(0):
                 duration = self._duration
@@ -1669,8 +1669,6 @@ class IUZone(IUBase):
         """Reset this zone"""
         self._schedules.clear()
         self.clear_run_queue()
-        self._adjustment = IUAdjustment()
-        self._is_on = False
 
     def clear_runs(self, stime: datetime) -> None:
         """Clear out the run queue except for current or manual runs"""
@@ -1694,7 +1692,7 @@ class IUZone(IUBase):
                     CONF_TIMELINE, self._show_timeline
                 )
         self._zone_id = config.get(CONF_ZONE_ID, str(self.index + 1))
-        self._is_enabled = config.get(CONF_ENABLED, True)
+        self._is_enabled = config.get(CONF_ENABLED, self._is_enabled)
         self._allow_manual = config.get(CONF_ALLOW_MANUAL, self._allow_manual)
         self._duration = config.get(CONF_DURATION, self._duration)
         self._name = config.get(CONF_NAME, None)
@@ -1969,7 +1967,7 @@ class IUSequenceZone(IUBase):
         self._repeat: int = None
         self._enabled: bool = True
         # Private variables
-        self.clear()
+        self._adjustment = IUAdjustment()
 
     @property
     def zone_ids(self) -> "list[str]":
@@ -2042,13 +2040,8 @@ class IUSequenceZone(IUBase):
                 return STATUS_DISABLED
         return STATUS_BLOCKED
 
-    def clear(self) -> None:
-        """Reset this sequence zone"""
-        self._adjustment = IUAdjustment()
-
     def load(self, config: OrderedDict) -> "IUSequenceZone":
         """Load sequence zone data from the configuration"""
-        self.clear()
         self._zone_ids = config[CONF_ZONE_ID]
         self._delay = wash_td(config.get(CONF_DELAY))
         self._duration = wash_td(config.get(CONF_DURATION))
@@ -2063,7 +2056,7 @@ class IUSequenceZone(IUBase):
             if zone is not None:
                 yield zone.index
 
-    def as_dict(self, duration_factor: float) -> dict:
+    def as_dict(self, duration_factor: float, sqr: "IUSequenceRun" = None) -> dict:
         """Return this sequence zone as a dict"""
         is_on = self.is_on
         result = OrderedDict()
@@ -2072,11 +2065,11 @@ class IUSequenceZone(IUBase):
         result[CONF_ENABLED] = self._enabled
         result[CONF_ICON] = self.icon(is_on)
         result[ATTR_STATUS] = self.status(is_on)
-        result[CONF_DELAY] = self._sequence.zone_delay(self)
-        result[ATTR_BASE_DURATION] = self._sequence.zone_duration_base(self)
-        result[ATTR_ADJUSTED_DURATION] = self._sequence.zone_duration(self)
+        result[CONF_DELAY] = self._sequence.zone_delay(self, sqr)
+        result[ATTR_BASE_DURATION] = self._sequence.zone_duration_base(self, sqr)
+        result[ATTR_ADJUSTED_DURATION] = self._sequence.zone_duration(self, sqr)
         result[ATTR_FINAL_DURATION] = self._sequence.zone_duration_final(
-            self, duration_factor
+            self, duration_factor, sqr
         )
         result[CONF_ZONES] = list(idx + self.ZONE_OFFSET for idx in self.zone_indexes())
         result[ATTR_CURRENT_DURATION] = self._controller.runs.sequence_zone_duration(
@@ -2212,13 +2205,21 @@ class IUSequence(IUBase):
                     return True
         return False
 
-    def zone_enabled(self, sequence_zone: IUSequenceZone) -> bool:
+    def zone_enabled(
+        self, sequence_zone: IUSequenceZone, sqr: "IUSequenceRun" = None
+    ) -> bool:
         """Return True if at least one real zone referenced by the
         sequence_zone is enabled"""
-        if self._controller.enabled and self._enabled and sequence_zone.enabled:
+        if (
+            (self._controller.enabled or (sqr is not None and sqr.is_manual()))
+            and self._enabled
+            and sequence_zone.enabled
+        ):
             for zone_id in sequence_zone.zone_ids:
                 zone = self._controller.find_zone_by_zone_id(zone_id)
-                if zone is not None and zone.enabled:
+                if (zone is not None and zone.enabled) or (
+                    sqr is not None and sqr.zone_enabled(zone)
+                ):
                     return True
         return False
 
@@ -2242,24 +2243,26 @@ class IUSequence(IUBase):
             delay = timedelta(0)
         return delay
 
-    def zone_delay(self, sequence_zone: IUSequenceZone) -> timedelta:
+    def zone_delay(
+        self, sequence_zone: IUSequenceZone, sqr: "IUSequenceRun"
+    ) -> timedelta:
         """Return the delay for the specified zone"""
-        if self.zone_enabled(sequence_zone):
+        if self.zone_enabled(sequence_zone, sqr):
             return self.zone_delay_config(sequence_zone)
         return timedelta(0)
 
-    def total_delay(self) -> timedelta:
+    def total_delay(self, sqr: "IUSequenceRun") -> timedelta:
         """Return the total delay for all the zones"""
         delay = timedelta(0)
         last_zone: IUSequenceZone = None
         if len(self._zones) > 0:
             for zone in self._zones:
-                if self.zone_enabled(zone):
-                    delay += self.zone_delay(zone) * zone.repeat
+                if self.zone_enabled(zone, sqr):
+                    delay += self.zone_delay(zone, sqr) * zone.repeat
                     last_zone = zone
             delay *= self._repeat
             if last_zone is not None:
-                delay -= self.zone_delay(last_zone)
+                delay -= self.zone_delay(last_zone, sqr)
         return delay
 
     def zone_duration_config(self, sequence_zone: IUSequenceZone) -> timedelta:
@@ -2272,65 +2275,76 @@ class IUSequence(IUBase):
             duration = granularity_time()
         return duration
 
-    def zone_duration_base(self, sequence_zone: IUSequenceZone) -> timedelta:
+    def zone_duration_base(
+        self, sequence_zone: IUSequenceZone, sqr: "IUSequenceRun"
+    ) -> timedelta:
         """Return the base duration for the specified zone"""
-        if self.zone_enabled(sequence_zone):
+        if self.zone_enabled(sequence_zone, sqr):
             return self.zone_duration_config(sequence_zone)
         return timedelta(0)
 
-    def zone_duration(self, sequence_zone: IUSequenceZone) -> timedelta:
+    def zone_duration(
+        self, sequence_zone: IUSequenceZone, sqr: "IUSequenceRun"
+    ) -> timedelta:
         """Return the duration for the specified zone including adjustments
         and constraints"""
-        if self.zone_enabled(sequence_zone):
-            duration = self.zone_duration_base(sequence_zone)
+        if self.zone_enabled(sequence_zone, sqr):
+            duration = self.zone_duration_base(sequence_zone, sqr)
             duration = sequence_zone.adjustment.adjust(duration)
             return self.constrain(sequence_zone, duration)
         return timedelta(0)
 
     def zone_duration_final(
-        self, sequence_zone: IUSequenceZone, duration_factor: float
+        self,
+        sequence_zone: IUSequenceZone,
+        duration_factor: float,
+        sqr: "IUSequenceRun",
     ) -> timedelta:
         """Return the final zone time after the factor has been applied"""
-        duration = self.zone_duration(sequence_zone) * duration_factor
+        duration = self.zone_duration(sequence_zone, sqr) * duration_factor
         duration = self.constrain(sequence_zone, duration)
         return round_td(duration)
 
-    def total_duration(self) -> timedelta:
+    def total_duration(self, sqr: "IUSequenceRun") -> timedelta:
         """Return the total duration for all the zones"""
         duration = timedelta(0)
         for zone in self._zones:
-            duration += self.zone_duration(zone) * zone.repeat
+            duration += self.zone_duration(zone, sqr) * zone.repeat
         duration *= self._repeat
         return duration
 
-    def total_duration_adjusted(self, total_duration) -> timedelta:
+    def total_duration_adjusted(
+        self, total_duration, sqr: "IUSequenceRun"
+    ) -> timedelta:
         """Return the adjusted duration"""
         if total_duration is None:
-            total_duration = self.total_duration()
+            total_duration = self.total_duration(sqr)
         if self.has_adjustment(False):
             total_duration = self.adjustment.adjust(total_duration)
             total_duration = max(total_duration, timedelta(0))
         return total_duration
 
-    def total_time_final(self, total_time: timedelta) -> timedelta:
+    def total_time_final(
+        self, total_time: timedelta, sqr: "IUSequenceRun"
+    ) -> timedelta:
         """Return the adjusted total time for the sequence"""
         if total_time is not None and self.has_adjustment(False):
-            total_delay = self.total_delay()
-            total_duration = self.total_duration_adjusted(total_time - total_delay)
+            total_delay = self.total_delay(sqr)
+            total_duration = self.total_duration_adjusted(total_time - total_delay, sqr)
             return total_duration + total_delay
 
         if total_time is None:
-            return self.total_duration_adjusted(None) + self.total_delay()
+            return self.total_duration_adjusted(None, sqr) + self.total_delay(sqr)
 
         return total_time
 
-    def duration_factor(self, total_time: timedelta) -> float:
+    def duration_factor(self, total_time: timedelta, sqr: "IUSequenceRun") -> float:
         """Given a new total run time, calculate how much to shrink or expand each
         zone duration. Final time will be approximate as the new durations must
         be rounded to internal boundaries"""
-        total_duration = self.total_duration()
+        total_duration = self.total_duration(sqr)
         if total_time is not None and total_duration != timedelta(0):
-            total_delay = self.total_delay()
+            total_delay = self.total_delay(sqr)
             if total_time > total_delay:
                 return (total_time - total_delay) / total_duration
             return 0.0
@@ -2339,8 +2353,6 @@ class IUSequence(IUBase):
     def clear(self) -> None:
         """Reset this sequence"""
         self._schedules.clear()
-        self._zones.clear()
-        self._adjustment.clear()
 
     def add_schedule(self, schedule: IUSchedule) -> IUSchedule:
         """Add a new schedule to the sequence"""
@@ -2388,19 +2400,24 @@ class IUSequence(IUBase):
         self._duration = wash_td(config.get(CONF_DURATION))
         self._repeat = config.get(CONF_REPEAT, 1)
         self._enabled = config.get(CONF_ENABLED, self._enabled)
+        zidx: int = 0
         for zidx, zone_config in enumerate(config[CONF_ZONES]):
             self.find_add_zone(zidx).load(zone_config)
+        while zidx < len(self._zones) - 1:
+            self._zones.pop()
         if CONF_SCHEDULES in config:
             for sidx, schedule_config in enumerate(config[CONF_SCHEDULES]):
                 self.find_add_schedule(sidx).load(schedule_config)
         return self
 
-    def as_dict(self) -> OrderedDict:
+    def as_dict(self, sqr: "IUSequenceRun" = None) -> OrderedDict:
         """Return this sequence as a dict"""
-        total_delay = self.total_delay()
-        total_duration = self.total_duration()
-        total_duration_adjusted = self.total_duration_adjusted(total_duration)
-        duration_factor = self.duration_factor(total_duration_adjusted + total_delay)
+        total_delay = self.total_delay(sqr)
+        total_duration = self.total_duration(sqr)
+        total_duration_adjusted = self.total_duration_adjusted(total_duration, sqr)
+        duration_factor = self.duration_factor(
+            total_duration_adjusted + total_delay, sqr
+        )
         is_on = self.is_on
         is_paused = self.is_paused
         result = OrderedDict()
@@ -2517,6 +2534,23 @@ class IUSequenceRun(IUBase):
         """Check if this sequence run is expired"""
         return stime >= self._end_time
 
+    def zone_enabled(self, zone: IUZone) -> bool:
+        """Return true if the zone is enabled"""
+        return zone is not None and (
+            zone.enabled or (self.is_manual() and zone.allow_manual)
+        )
+
+    def calc_total_time(self, total_time: timedelta) -> timedelta:
+        """Calculate the total duration of the sequence"""
+        if total_time is None:
+            if self._schedule is not None and self._schedule.duration is not None:
+                return self._sequence.total_time_final(self._schedule.duration, self)
+            return self.sequence.total_time_final(None, self)
+
+        if self._schedule is not None:
+            return self._sequence.total_time_final(total_time, self)
+        return total_time
+
     def build(self, duration_factor: float) -> timedelta:
         """Build out the sequence. Pre allocate runs and determine
         the duration"""
@@ -2524,18 +2558,18 @@ class IUSequenceRun(IUBase):
         next_run = self._start_time = self._end_time = wash_dt(dt.utcnow())
         for sequence_repeat in range(self._sequence.repeat):
             for sequence_zone in self._sequence.zones:
-                if not self._sequence.zone_enabled(sequence_zone):
+                if not self._sequence.zone_enabled(sequence_zone, self):
                     continue
                 duration = self._sequence.zone_duration_final(
-                    sequence_zone, duration_factor
+                    sequence_zone, duration_factor, self
                 )
                 duration_max = timedelta(0)
-                delay = self._sequence.zone_delay(sequence_zone)
+                delay = self._sequence.zone_delay(sequence_zone, self)
                 for zone in (
                     self._controller.find_zone_by_zone_id(zone_id)
                     for zone_id in sequence_zone.zone_ids
                 ):
-                    if zone is not None and zone.enabled:
+                    if self.zone_enabled(zone):
                         # Don't adjust manual run and no adjustment on adjustment
                         # This code should not really be here. It would be a breaking
                         # change if removed.
@@ -2947,8 +2981,6 @@ class IUController(IUBase):
         # Don't clear zones
         # self._zones.clear()
         self._run_queue.clear_all()
-        self._sequences.clear()
-        self._is_on = False
 
     def clear_sequence_runs(
         self, stime: datetime, zone_ids: "list[str]" = None
@@ -2966,7 +2998,7 @@ class IUController(IUBase):
     def load(self, config: OrderedDict) -> "IUController":
         """Load config data for the controller"""
         self.clear()
-        self._is_enabled = config.get(CONF_ENABLED, True)
+        self._is_enabled = config.get(CONF_ENABLED, self._is_enabled)
         self._name = config.get(CONF_NAME, f"Controller {self.index + 1}")
         self._controller_id = config.get(CONF_CONTROLLER_ID, str(self.index + 1))
         self._preamble = wash_td(config.get(CONF_PREAMBLE))
@@ -2981,8 +3013,13 @@ class IUController(IUBase):
             self._zones.pop().finalise(True)
 
         if CONF_SEQUENCES in config:
+            qidx: int = 0
             for qidx, sequence_config in enumerate(config[CONF_SEQUENCES]):
                 self.find_add_sequence(qidx).load(sequence_config)
+            while qidx < len(self._sequences) - 1:
+                self._sequences.pop()
+        else:
+            self._sequences.clear()
 
         self._switch.load(config, None)
         self._dirty = True
@@ -3104,23 +3141,10 @@ class IUController(IUBase):
                 next_run = stime
             return next_run
 
-        def calc_total_time(
-            total_time: timedelta, sequence: IUSequence, schedule: IUSchedule
-        ) -> timedelta:
-            """Calculate the total duration of the sequence"""
-            if total_time is None:
-                if schedule is not None and schedule.duration is not None:
-                    return sequence.total_time_final(schedule.duration)
-                return sequence.total_time_final(None)
-
-            if schedule is not None:
-                return sequence.total_time_final(total_time)
-            return total_time
-
-        total_time = calc_total_time(total_time, sequence, schedule)
-        duration_factor = sequence.duration_factor(total_time)
-
         sequence_run = IUSequenceRun(self._coordinator, self, sequence, schedule)
+        total_time = sequence_run.calc_total_time(total_time)
+        duration_factor = sequence.duration_factor(total_time, sequence_run)
+
         total_time = sequence_run.build(duration_factor)
         if total_time > timedelta(0):
             start_time = init_run_time(
@@ -3206,12 +3230,15 @@ class IUController(IUBase):
         """Check the run status and update sensors. Return flag
         if anything has changed."""
         zones_changed: list[int] = []
-        is_running: bool = False
-        state_changed: bool = False
+
+        run = self._run_queue.current_run
+        is_enabled = self._is_enabled or (run is not None and run.is_manual())
+        is_running = is_enabled and run is not None
+        state_changed = is_running ^ self._is_on
 
         # Gather zones that have changed status
         for zone in self._zones:
-            if zone.check_run(stime, self._is_enabled):
+            if zone.check_run(stime, is_enabled):
                 zones_changed.append(zone.index)
 
         # Handle off zones before master
@@ -3220,8 +3247,6 @@ class IUController(IUBase):
                 zone.call_switch(zone.is_on, stime)
 
         # Check if master has changed and update
-        is_running = self._is_enabled and self._run_queue.current_run is not None
-        state_changed = is_running ^ self._is_on
         if state_changed:
             self._is_on = not self._is_on
             self.request_update(False)
@@ -4006,12 +4031,13 @@ class IULogger:
         controller: IUController,
         zone: IUZone,
         data: MappingProxyType,
+        level=INFO,
     ) -> None:
         """Message that we have received a service call"""
         # pylint: disable=too-many-arguments
         idl = IUBase.idl([controller, zone], "0", 1)
         self._format(
-            INFO,
+            level,
             "CALL",
             stime,
             f"service: {service}, "
@@ -4269,6 +4295,7 @@ class IUClock:
         self._next_tick: datetime = None
         self._fixed_clock = False
         self._show_log = False
+        self._finalised = False
 
     @property
     def is_fixed(self) -> bool:
@@ -4310,6 +4337,8 @@ class IUClock:
 
     def next_awakening(self, atime: datetime) -> datetime:
         """Return the time for the next event"""
+        if self._finalised:
+            return utc_eot()
         if not self._coordinator.initialised:
             return atime + timedelta(seconds=5)
         if self._fixed_clock:
@@ -4427,7 +4456,9 @@ class IUClock:
 
     def finalise(self):
         """finalise this unit"""
-        self._remove_timer()
+        if not self._finalised:
+            self._remove_timer()
+            self._finalised = True
 
 
 class IUCoordinator:
@@ -4459,6 +4490,7 @@ class IUCoordinator:
         self._restored_from_configuration: bool = False
         self._sync_switches: bool = True
         self._rename_entities = False
+        self._finalised = False
 
     @property
     def entity_id(self) -> str:
@@ -4509,6 +4541,11 @@ class IUCoordinator:
     def initialised(self) -> bool:
         """Return True if we are initialised"""
         return self._initialised
+
+    @property
+    def finalised(self) -> bool:
+        """Return True if we have been finalised"""
+        return self._finalised
 
     @property
     def configuration(self) -> str:
@@ -4724,10 +4761,12 @@ class IUCoordinator:
 
     def finalise(self, turn_off: bool) -> None:
         """Tear down the system and clean up"""
-        for controller in self._controllers:
-            controller.finalise(turn_off)
-        self._clock.finalise()
-        self._history.finalise()
+        if not self._finalised:
+            for controller in self._controllers:
+                controller.finalise(turn_off)
+            self._clock.finalise()
+            self._history.finalise()
+            self._finalised = True
 
     async def _async_shutdown_listener(self, event: HAEvent) -> None:
         """Home Assistant is shutting down. Attempting to turn off any running
@@ -4923,6 +4962,10 @@ class IUCoordinator:
         if changed:
             self._logger.log_service_call(service, stime, controller, zone, data1)
             async_call_later(self._hass, 0, self._async_replay_last_timer)
+        else:
+            self._logger.log_service_call(
+                service, stime, controller, zone, data1, DEBUG
+            )
 
     def service_history(self, entity_ids: set[str]) -> None:
         """History service call entry point. The history has changed
