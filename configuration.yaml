@@ -61,8 +61,6 @@ homeassistant:
 discovery:
 
 media_player:
-  - platform: openhome
-
   - platform: asyncpioneer
     host: !secret AVR_Host
     port: !secret AVR_Port
