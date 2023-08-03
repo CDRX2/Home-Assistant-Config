@@ -58,8 +58,6 @@ homeassistant:
         10.81.19.94: ae55fdfcf7714f1485058190846c3c8a
       allow_bypass_login: true
 
-discovery:
-
 media_player:
   - platform: asyncpioneer
     host: !secret AVR_Host
