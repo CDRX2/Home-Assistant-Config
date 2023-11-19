@@ -37,6 +37,7 @@ from .const import (
     ATTR_ADJUSTMENT,
     ATTR_CONFIGURATION,
     ATTR_TIMELINE,
+    ATTR_SUSPENDED,
     BINARY_SENSOR,
     DOMAIN,
     COORDINATOR,
@@ -46,6 +47,8 @@ from .const import (
     RES_MANUAL,
     RES_NOT_RUNNING,
     RES_NONE,
+    ATTR_VOLUME,
+    ATTR_FLOW_RATE,
 )
 
 
@@ -132,7 +135,7 @@ class IUMasterEntity(IUEntity):
 
     @property
     def should_poll(self):
-        """Indicate that we nee to poll data"""
+        """Indicate that we need to poll data"""
         return False
 
     @property
@@ -146,6 +149,7 @@ class IUMasterEntity(IUEntity):
         attr = {}
         attr[ATTR_INDEX] = self._controller.index
         attr[ATTR_ENABLED] = self._controller.enabled
+        attr[ATTR_SUSPENDED] = self._controller.suspended
         attr[ATTR_STATUS] = self._controller.status
         attr[ATTR_ZONE_COUNT] = len(self._controller.zones)
         attr[CONF_ZONES] = ""
@@ -172,6 +176,9 @@ class IUMasterEntity(IUEntity):
         else:
             attr[ATTR_NEXT_SCHEDULE] = "deprecated (use next_zone)"
             attr[ATTR_NEXT_ZONE] = RES_NONE
+        attr[ATTR_VOLUME] = self._controller.volume.total
+        attr[ATTR_FLOW_RATE] = self._controller.volume.flow_rate
+        attr |= self._controller.user
         return attr
 
 
@@ -212,6 +219,7 @@ class IUZoneEntity(IUEntity):
         attr[CONF_ZONE_ID] = self._zone.zone_id
         attr[ATTR_INDEX] = self._zone.index
         attr[ATTR_ENABLED] = self._zone.enabled
+        attr[ATTR_SUSPENDED] = self._zone.suspended
         attr[ATTR_STATUS] = self._zone.status
         attr[ATTR_SCHEDULE_COUNT] = len(self._zone.schedules)
         attr[CONF_SCHEDULES] = ""
@@ -254,4 +262,7 @@ class IUZoneEntity(IUEntity):
             attr[ATTR_CONFIGURATION] = self._zone.configuration
         if self._zone.show_timeline:
             attr[ATTR_TIMELINE] = self._zone.timeline()
+        attr[ATTR_VOLUME] = self._zone.volume.total
+        attr[ATTR_FLOW_RATE] = self._zone.volume.flow_rate
+        attr |= self._zone.user
         return attr

@@ -305,3 +305,36 @@
       broadcast_port: 9
       mac: 7C:64:6C:A8:20:A8
   mode: single
+- id: '1699095882288'
+  alias: Bathroom sink on with bathroom door
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - light.bathroom_door
+    to: 'on'
+  condition: []
+  action:
+  - service: light.turn_on
+    data: {}
+    target:
+      entity_id:
+      - light.bathroom_sink_white
+  mode: single
+- id: '1699096406867'
+  alias: Bathroom sink off with bathroom door
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - light.bathroom_door
+    to: 'off'
+  condition: []
+  action:
+  - service: light.turn_off
+    data: {}
+    target:
+      entity_id:
+      - light.bathroom_sink_white
+      - light.bathroom_sink
+  mode: single

@@ -1,4 +1,5 @@
 """This module holds the vaious schemas"""
+from datetime import datetime, date
 import voluptuous as vol
 from homeassistant.helpers import config_validation as cv
 from homeassistant.const import (
@@ -9,6 +10,8 @@ from homeassistant.const import (
     CONF_WEEKDAY,
     CONF_REPEAT,
     CONF_DELAY,
+    CONF_FOR,
+    CONF_UNTIL,
 )
 
 from .const import (
@@ -77,7 +80,16 @@ from .const import (
     CONF_SEQUENCE_ID,
     CONF_STATES,
     CONF_SCHEDULE_ID,
+    CONF_FROM,
+    CONF_VOLUME,
+    CONF_PRECISION,
+    CONF_QUEUE,
+    CONF_QUEUE_MANUAL,
+    CONF_USER,
+    CONF_TOGGLE,
 )
+
+IU_ID = r"^[a-z0-9]+(_[a-z0-9]+)*$"
 
 
 def _list_is_not_empty(value):
@@ -85,6 +97,18 @@ def _list_is_not_empty(value):
         raise vol.Invalid("Must have at least one entry")
     return value
 
+
+def _parse_dd_mmm(value: str) -> date | None:
+    """Convert a date string in dd mmm format to a date object."""
+    if isinstance(value, date):
+        return value
+    return datetime.strptime(value, "%d %b").date()
+
+
+USER_SCHEMA = vol.Schema(
+    {},
+    extra=vol.ALLOW_EXTRA,
+)
 
 SHOW_SCHEMA = vol.Schema(
     {
@@ -129,11 +153,13 @@ SCHEDULE_SCHEMA = vol.Schema(
         vol.Required(CONF_ANCHOR, default=CONF_START): anchor_event,
         vol.Required(CONF_DURATION): cv.positive_time_period,
         vol.Optional(CONF_NAME): cv.string,
-        vol.Optional(CONF_SCHEDULE_ID): cv.matches_regex(r"^[a-z0-9]+(_[a-z0-9]+)*$"),
+        vol.Optional(CONF_SCHEDULE_ID): cv.matches_regex(IU_ID),
         vol.Optional(CONF_WEEKDAY): cv.weekdays,
         vol.Optional(CONF_MONTH): month_event,
         vol.Optional(CONF_DAY): day_event,
         vol.Optional(CONF_ENABLED): cv.boolean,
+        vol.Inclusive(CONF_FROM, "span"): _parse_dd_mmm,
+        vol.Inclusive(CONF_UNTIL, "span"): _parse_dd_mmm,
     }
 )
 
@@ -143,17 +169,19 @@ SEQUENCE_SCHEDULE_SCHEMA = vol.Schema(
         vol.Required(CONF_ANCHOR, default=CONF_START): anchor_event,
         vol.Optional(CONF_DURATION): cv.positive_time_period,
         vol.Optional(CONF_NAME): cv.string,
-        vol.Optional(CONF_SCHEDULE_ID): cv.matches_regex(r"^[a-z0-9]+(_[a-z0-9]+)*$"),
+        vol.Optional(CONF_SCHEDULE_ID): cv.matches_regex(IU_ID),
         vol.Optional(CONF_WEEKDAY): cv.weekdays,
         vol.Optional(CONF_MONTH): month_event,
         vol.Optional(CONF_DAY): day_event,
         vol.Optional(CONF_ENABLED): cv.boolean,
+        vol.Inclusive(CONF_FROM, "span"): _parse_dd_mmm,
+        vol.Inclusive(CONF_UNTIL, "span"): _parse_dd_mmm,
     }
 )
 
 LOAD_SCHEDULE_SCHEMA = vol.Schema(
     {
-        vol.Required(CONF_SCHEDULE_ID): cv.matches_regex(r"^[a-z0-9]+(_[a-z0-9]+)*$"),
+        vol.Required(CONF_SCHEDULE_ID): cv.matches_regex(IU_ID),
         vol.Optional(CONF_TIME): time_event,
         vol.Optional(CONF_ANCHOR): anchor_event,
         vol.Optional(CONF_DURATION): cv.positive_time_period_template,
@@ -162,6 +190,8 @@ LOAD_SCHEDULE_SCHEMA = vol.Schema(
         vol.Optional(CONF_MONTH): month_event,
         vol.Optional(CONF_DAY): day_event,
         vol.Optional(CONF_ENABLED): cv.boolean,
+        vol.Inclusive(CONF_FROM, "span"): _parse_dd_mmm,
+        vol.Inclusive(CONF_UNTIL, "span"): _parse_dd_mmm,
     }
 )
 
@@ -173,13 +203,22 @@ CHECK_BACK_SCHEMA = vol.Schema(
         vol.Optional(CONF_RESYNC): cv.boolean,
         vol.Optional(CONF_STATE_ON): cv.string,
         vol.Optional(CONF_STATE_OFF): cv.string,
+        vol.Optional(CONF_ENTITY_ID): cv.entity_id,
+        vol.Optional(CONF_TOGGLE): cv.boolean,
+    }
+)
+
+VOLUME_SCHEMA = vol.Schema(
+    {
+        vol.Required(CONF_ENTITY_ID): cv.entity_id,
+        vol.Optional(CONF_PRECISION): cv.positive_int,
     }
 )
 
 ZONE_SCHEMA = vol.Schema(
     {
         vol.Optional(CONF_SCHEDULES): vol.All(cv.ensure_list, [SCHEDULE_SCHEMA]),
-        vol.Optional(CONF_ZONE_ID): cv.matches_regex(r"^[a-z0-9]+(_[a-z0-9]+)*$"),
+        vol.Optional(CONF_ZONE_ID): cv.matches_regex(IU_ID),
         vol.Optional(CONF_NAME): cv.string,
         vol.Optional(CONF_ENTITY_ID): cv.entity_ids,
         vol.Optional(CONF_ENABLED): cv.boolean,
@@ -189,7 +228,9 @@ ZONE_SCHEMA = vol.Schema(
         vol.Optional(CONF_FUTURE_SPAN): cv.positive_int,
         vol.Optional(CONF_SHOW): vol.All(SHOW_SCHEMA),
         vol.Optional(CONF_CHECK_BACK): vol.All(CHECK_BACK_SCHEMA),
+        vol.Optional(CONF_VOLUME): vol.All(VOLUME_SCHEMA),
         vol.Optional(CONF_DURATION): cv.positive_time_period_template,
+        vol.Optional(CONF_USER): vol.All(USER_SCHEMA),
     }
 )
 
@@ -201,7 +242,9 @@ ALL_ZONES_SCHEMA = vol.Schema(
         vol.Optional(CONF_FUTURE_SPAN): cv.positive_int,
         vol.Optional(CONF_ALLOW_MANUAL): cv.boolean,
         vol.Optional(CONF_CHECK_BACK): vol.All(CHECK_BACK_SCHEMA),
+        vol.Optional(CONF_VOLUME): vol.All(VOLUME_SCHEMA),
         vol.Optional(CONF_DURATION): cv.positive_time_period_template,
+        vol.Optional(CONF_USER): vol.All(USER_SCHEMA),
     }
 )
 
@@ -240,12 +283,16 @@ CONTROLLER_SCHEMA = vol.Schema(
             cv.ensure_list, [SEQUENCE_SCHEMA], _list_is_not_empty
         ),
         vol.Optional(CONF_NAME): cv.string,
-        vol.Optional(CONF_CONTROLLER_ID): cv.matches_regex(r"^[a-z0-9]+(_[a-z0-9]+)*$"),
+        vol.Optional(CONF_CONTROLLER_ID): cv.matches_regex(IU_ID),
         vol.Optional(CONF_ENTITY_ID): cv.entity_ids,
         vol.Optional(CONF_PREAMBLE): cv.time_period,
         vol.Optional(CONF_POSTAMBLE): cv.time_period,
         vol.Optional(CONF_ENABLED): cv.boolean,
         vol.Optional(CONF_ALL_ZONES_CONFIG): vol.All(ALL_ZONES_SCHEMA),
+        vol.Optional(CONF_QUEUE_MANUAL): cv.boolean,
+        vol.Optional(CONF_CHECK_BACK): vol.All(CHECK_BACK_SCHEMA),
+        vol.Optional(CONF_VOLUME): vol.All(VOLUME_SCHEMA),
+        vol.Optional(CONF_USER): vol.All(USER_SCHEMA),
     }
 )
 
@@ -353,8 +400,24 @@ TIME_ADJUST_SCHEMA = vol.All(
 MANUAL_RUN_SCHEMA = {
     vol.Required(CONF_ENTITY_ID): cv.entity_ids,
     vol.Optional(CONF_TIME): cv.positive_time_period_template,
+    vol.Optional(CONF_DELAY): cv.time_period,
+    vol.Optional(CONF_QUEUE): cv.boolean,
     vol.Optional(CONF_ZONES): cv.ensure_list,
     vol.Optional(CONF_SEQUENCE_ID): cv.positive_int,
 }
+
+SUSPEND_SCHEMA = vol.All(
+    vol.Schema(
+        {
+            vol.Required(CONF_ENTITY_ID): cv.entity_ids,
+            vol.Exclusive(CONF_FOR, "time_method"): cv.positive_time_period_template,
+            vol.Exclusive(CONF_UNTIL, "time_method"): cv.datetime,
+            vol.Exclusive(CONF_RESET, "time_method"): None,
+            vol.Optional(CONF_ZONES): cv.ensure_list,
+            vol.Optional(CONF_SEQUENCE_ID): cv.positive_int,
+        }
+    ),
+    cv.has_at_least_one_key(CONF_FOR, CONF_UNTIL, CONF_RESET),
+)
 
 RELOAD_SERVICE_SCHEMA = vol.Schema({})

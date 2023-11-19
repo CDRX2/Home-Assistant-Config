@@ -43,6 +43,47 @@ elements:
         }
     type: 'custom:weather-card'
 
+  # - type: 'custom:weather-chart-card'
+  #   entity: weather.dorighome
+  #   show_main: false
+  #   show_current_condition: true
+  #   show_attributes: false
+  #   show_time: false
+  #   show_day: false
+  #   show_date: false
+  #   show_humidity: true
+  #   show_pressure: true
+  #   show_wind_direction: true
+  #   show_wind_speed: true
+  #   show_sun: true
+  #   forecast:
+  #     precipitation_type: rainfall
+  #     labels_font_size: '11'
+  #     style: style2
+  #     show_wind_forecast: true
+  #     condition_icons: true
+  #     round_temp: false
+  #     type: daily
+  #   units:
+  #     pressure: ''
+  #     speed: ''
+  #   card_mod:
+  #     style: |
+  #       :host {
+  #         left: 50%;
+  #         top: 75%;
+  #         width: 90%;
+  #         height: 40%;
+  #       }
+  #       ha-card {
+  #         /*background: none !important;
+  #         height: 100%;
+  #         left: 50%;
+  #         top: 75%;
+  #         width: 90%;
+  #         height: 40%;*/
+  #       }
+
   - type: 'custom:apexcharts-card'
     experimental:
       color_threshold: true
@@ -119,7 +160,7 @@ elements:
         extend_to: false 
       - entity: weather.openweathermap
         type: area
-        color: '#ffa31a'
+        # color: '#ffa31a'
         opacity: 0.65
         color_threshold:
           - value: -80

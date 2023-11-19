@@ -172,7 +172,7 @@ HDD_button:
       custom_fields:
         bad_sectors:
           - position: absolute
-          - right: 5%
+          - right: 15%
           - top: 30%
         below_life:
           - position: absolute
