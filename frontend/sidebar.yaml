@@ -381,12 +381,12 @@ elements:
   - type: 'custom:decluttering-card'
     template: stateicon
     variables:
-      - entity: sensor.battery_realme
+      - entity: sensor.battery_phone_cdrx
       - left: 13%
   - type: 'custom:decluttering-card'
     template: statelabel
     variables:
-      - entity: sensor.battery_realme
+      - entity: sensor.battery_phone_cdrx
       - color: lightgrey
       - size: 0.8vw
       - weight: 300
@@ -406,12 +406,12 @@ elements:
   - type: 'custom:decluttering-card'
     template: stateicon
     variables:
-      - entity: sensor.battery_huawei
+      - entity: sensor.battery_phone_nanne
       - left: 33%
   - type: 'custom:decluttering-card'
     template: statelabel
     variables:
-      - entity: sensor.battery_huawei
+      - entity: sensor.battery_phone_nanne
       - color: lightgrey
       - size: 0.8vw
       - weight: 300

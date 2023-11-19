@@ -359,15 +359,15 @@ elements:
               - sensor.entree_battery_level
             min: 20
         entities:
-          - entity: sensor.lya_l29_battery_level
-            name: 'Huawei Nanne'
+          - entity: sensor.pixel_8_pro_nanne_battery_level
+            name: 'Phone Nanne'
             charging_state:
-              entity_id: binary_sensor.lya_l29_is_charging
+              entity_id: binary_sensor.pixel_8_pro_nanne_is_charging
               state: 'on'
-          - entity: sensor.cdrx2pro_battery_level
-            name: 'Realme CDRX'
+          - entity: sensor.pixel_8_pro_battery_level
+            name: 'Phone CDRX'
             charging_state:
-              entity_id: binary_sensor.cdrx2pro_is_charging
+              entity_id: binary_sensor.pixel_8_pro_is_charging
               state: 'on'
           - entity: sensor.salon_battery
             name: 'Climate living room'
