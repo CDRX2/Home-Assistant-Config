@@ -79,17 +79,17 @@ elements:
                             show:
                               in_header: raw
                           series:
-                            - entity: sensor.swisscom_internet_box_kib_s_received
-                              color: "#ffa31a"
-                              transform: "return x / 1024;"
-                              name: Download ISP
-                              unit: MB/s
-                            - entity: sensor.swisscom_internet_box_kib_s_sent
-                              color: "#424F96"
-                              transform: "return x / 1024;"
-                              name: Upload ISP
-                              unit: MB/s
-                              invert: true
+                            # - entity: sensor.swisscom_internet_box_kib_s_received
+                            #   color: "#ffa31a"
+                            #   transform: "return x / 1024;"
+                            #   name: Download ISP
+                            #   unit: MB/s
+                            # - entity: sensor.swisscom_internet_box_kib_s_sent
+                            #   color: "#424F96"
+                            #   transform: "return x / 1024;"
+                            #   name: Upload ISP
+                            #   unit: MB/s
+                            #   invert: true
                             - entity: sensor.deluge_down_speed
                               color: "#FF5401"
                               transform: "return x / 1024;"
@@ -153,80 +153,80 @@ elements:
                                 url_path: !secret SABNzbd_URL
                           view_layout:
                             grid-area: d
-                        - type: 'custom:apexcharts-card'
-                          config_templates: default
-                          graph_span: 2d
-                          update_interval: 1min
-                          update_delay: 3s
-                          header:
-                            show: true
-                            show_states: true
-                          all_series_config:
-                            type: column
-                            group_by:
-                              func: max
-                              duration: 2h
-                            show:
-                              in_header: raw
-                          series:
-                            - entity: sensor.swisscom_internet_box_packets_s_received
-                              color: "#ffa31a"
-                              name: Download
-                              unit: Pkts/s
-                            - entity: sensor.swisscom_internet_box_packets_s_sent
-                              color: "#03a8f4"
-                              name: Upload
-                              unit: Pkts/s
-                              invert: true
-                          apex_config:
-                            legend:
-                              show: false
-                          view_layout:
-                            grid-area: b
-                        - type: 'custom:apexcharts-card'
-                          config_templates: default
-                          graph_span: 2d
-                          update_interval: 1min
-                          update_delay: 3s
-                          header:
-                            show: true
-                            show_states: true
-                          all_series_config:
-                            type: column
-                            group_by:
-                              func: max
-                              duration: 2h
-                          series:
-                            - entity: sensor.swisscom_internet_box_b_received
-                              color: "#ffa31a"
-                              transform: "return x / 1000000000;"
-                              name: Download
-                              unit: GB
-                            - entity: sensor.swisscom_internet_box_b_sent
-                              color: "#03a8f4"
-                              transform: "return x / 1000000000;"
-                              name: Upload
-                              unit: GB
-                              invert: true
-                          apex_config:
-                            legend:
-                              show: false
-                          view_layout:
-                            grid-area: e
+                        # - type: 'custom:apexcharts-card'
+                        #   config_templates: default
+                        #   graph_span: 2d
+                        #   update_interval: 1min
+                        #   update_delay: 3s
+                        #   header:
+                        #     show: true
+                        #     show_states: true
+                        #   all_series_config:
+                        #     type: column
+                        #     group_by:
+                        #       func: max
+                        #       duration: 2h
+                        #     show:
+                        #       in_header: raw
+                        #   series:
+                        #     - entity: sensor.swisscom_internet_box_packets_s_received
+                        #       color: "#ffa31a"
+                        #       name: Download
+                        #       unit: Pkts/s
+                        #     - entity: sensor.swisscom_internet_box_packets_s_sent
+                        #       color: "#03a8f4"
+                        #       name: Upload
+                        #       unit: Pkts/s
+                        #       invert: true
+                        #   apex_config:
+                        #     legend:
+                        #       show: false
+                        #   view_layout:
+                        #     grid-area: b
+                        # - type: 'custom:apexcharts-card'
+                        #   config_templates: default
+                        #   graph_span: 2d
+                        #   update_interval: 1min
+                        #   update_delay: 3s
+                        #   header:
+                        #     show: true
+                        #     show_states: true
+                        #   all_series_config:
+                        #     type: column
+                        #     group_by:
+                        #       func: max
+                        #       duration: 2h
+                        #   series:
+                        #     - entity: sensor.swisscom_internet_box_b_received
+                        #       color: "#ffa31a"
+                        #       transform: "return x / 1000000000;"
+                        #       name: Download
+                        #       unit: GB
+                        #     - entity: sensor.swisscom_internet_box_b_sent
+                        #       color: "#03a8f4"
+                        #       transform: "return x / 1000000000;"
+                        #       name: Upload
+                        #       unit: GB
+                        #       invert: true
+                        #   apex_config:
+                        #     legend:
+                        #       show: false
+                        #   view_layout:
+                        #     grid-area: e
                   title: Internet speed
                   size: wide
         series:
-          - entity: sensor.swisscom_internet_box_kib_s_received
-            color: "#ffa31a"
-            transform: "return x / 1024;"
-            name: Download ISP
-            unit: MB/s
-          - entity: sensor.swisscom_internet_box_kib_s_sent
-            color: "#424F96"
-            transform: "return x / 1024;"
-            name: Upload ISP
-            unit: MB/s
-            invert: true
+          # - entity: sensor.swisscom_internet_box_kib_s_received
+          #   color: "#ffa31a"
+          #   transform: "return x / 1024;"
+          #   name: Download ISP
+          #   unit: MB/s
+          # - entity: sensor.swisscom_internet_box_kib_s_sent
+          #   color: "#424F96"
+          #   transform: "return x / 1024;"
+          #   name: Upload ISP
+          #   unit: MB/s
+          #   invert: true
           - entity: sensor.deluge_down_speed
             color: "#FF5401"
             transform: "return x / 1024;"
