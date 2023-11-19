@@ -388,15 +388,15 @@ elements:
       action: none
     name: CPU load time  
     entities:
-      - entity: sensor.backupstation_cpu_load_1_min
+      - entity: sensor.backupstation_cpu_load_average_1_min
         name: 1 min.
         show_state: false
         color: '#ffa31a'
-      - entity: sensor.backupstation_cpu_load_5_min
+      - entity: sensor.backupstation_cpu_load_average_5_min
         name: 5 min.
         show_state: false
         color: '#03a8f4'
-      - entity: sensor.backupstation_cpu_load_15_min
+      - entity: sensor.backupstation_cpu_load_average_15_min
         name: 15 min.
         show_state: false
         color: '#0b0385'
@@ -438,19 +438,19 @@ elements:
       action: none
     name: CPU load type  
     entities:
-      - entity: sensor.backupstation_cpu_load_other
+      - entity: sensor.backupstation_cpu_utilization_other
         name: Other
         show_state: false
         color: '#03a8f4'
-      - entity: sensor.backupstation_cpu_load_system
+      - entity: sensor.backupstation_cpu_utilization_system
         name: System
         show_state: false
         color: '#ff1a1a'
-      - entity: sensor.backupstation_cpu_load_user
+      - entity: sensor.backupstation_cpu_utilization_user
         name: User
         show_state: false
         color: '#ffa31a'
-      - entity: sensor.backupstation_cpu_load_total
+      - entity: sensor.backupstation_cpu_utilization_total
         name: Total
         show_state: false
         color: '#0b0385'
@@ -492,11 +492,11 @@ elements:
       action: none
     name: Network
     entities:
-      - entity: sensor.backupstation_network_down
+      - entity: sensor.backupstation_download_throughput
         name: Download
         show_state: false
         color: '#ffa31a'
-      - entity: sensor.backupstation_network_up
+      - entity: sensor.backupstation_upload_throughput
         name: Upload
         show_state: false
         color: '#03a8f4'
