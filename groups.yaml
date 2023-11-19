@@ -131,8 +131,8 @@ temp_sensors_battery:
 mobiles_tablets_battery:
   name: Mobiles and tablets battery
   entities:
-    - sensor.lya_l29_battery_level
-    - sensor.cdrx2pro_battery_level
+    - sensor.pixel_8_pro_nanne_battery_level
+    - sensor.pixel_8_pro_battery_level
     - sensor.lenovo_tab_1st_floor_battery
     - sensor.lenovo_rez_battery
     - sensor.lenovo_tab_remote_battery
