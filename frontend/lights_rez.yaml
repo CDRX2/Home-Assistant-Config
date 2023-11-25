@@ -795,7 +795,7 @@ elements:
 #groups
 #salon
   - type: 'custom:decluttering-card'
-    template: Light_icon_on_off
+    template: Light_icon_mid
     variables:
       - light: light.salon_deco
       - title: Salon déco
