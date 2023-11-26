@@ -75,4 +75,10 @@ floors:
             - entity: input_select.floor
               state: 1er
           card:
-            '[[card_1er]]'            
+            '[[card_1er]]'
+        # - type: conditional
+        #   conditions:
+        #     - entity: input_select.floor
+        #       state: 2e
+        #   card:
+        #     '[[card_2e]]'   

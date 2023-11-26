@@ -1,0 +1,69 @@
+type: picture-elements
+image: /local/ui/floorplan/blurredFloorplan2e.png
+view_layout:
+  grid-area: main
+card_mod:
+  style: |
+    ha-card {
+      background: rgba(42, 46, 48, 1);
+    }
+    mod-card.element {
+      top: 50%;
+      left: 50%;
+      height: 100%;
+      width: 100%;
+    }
+elements:  
+  - type: 'custom:mod-card'
+    card:
+      type: 'custom:layout-card'
+      layout_type: custom:grid-layout
+      layout:
+        grid-template-columns: 5% 1fr 1fr 1fr 1fr 5%
+        grid-template-rows: 5% auto
+        grid-template-areas: |
+          ". . . . . ."
+          ". a b c d ."
+          ". e f g h ."
+          ". i j k l ."
+          ". m n o p ."
+          ". q r s t ."
+          ". . . . . ."
+      cards:
+        - type: 'custom:button-card'
+          template: dimmable_lights
+          variables:
+            entity: light.charles_bas_white
+            gridarea: '"i . ." "n n n" "slider slider slider"'
+          entity: light.charles_bas_white
+          icon: 'mdi:led-strip-variant'
+          name: Charles bas
+          view_layout:
+            grid-area: a
+        - type: 'custom:button-card'
+          template: dimmable_lights
+          variables:
+            entity: light.charles_haut_white
+            gridarea: '"i . ." "n n n" "slider slider slider"'
+          entity: light.charles_haut_white
+          icon: 'mdi:led-strip-variant'
+          name: Charles haut
+          view_layout:
+            grid-area: e
+      style:
+        left: 50%
+        top: 50%
+        width: 100%
+        height: 100%
+    card_mod:
+      style: 
+        layout-card$:
+          grid-layout$: |
+            #root {
+              height: 100%;
+            }
+        .: |
+          ha-card {
+            height: 100%;
+            width: 100%;
+          }
