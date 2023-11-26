@@ -44,8 +44,8 @@ Chambre_parents:
 Chambre_Charles:
   name: Chambre Charles
   entities:
-  - light.plafond_charles_exterieur_white
-  - light.plafond_charles_interieur_white
+  - light.charles_bas_white
+  - light.charles_haut_white
 
 Salon_couleur:
   name: Salon couleur
@@ -110,8 +110,8 @@ Lumieres_maison:
   - light.lit_parents_couleur
   - light.chevet_cdrx
   - light.chevet_nanne
-  - light.plafond_charles_exterieur_white
-  - light.plafond_charles_interieur_white
+  - light.charles_bas_white
+  - light.charles_haut_white
   - light.imprimante
 
 temp_sensors_battery:
