@@ -117,43 +117,23 @@ elements:
       - entity: light.chevet_nanne
       - image: 1er/chevet_nanne.png
   - type: 'custom:config-template-card'
-    entities:
-      - light.plafond_charles_exterieur_white
-    element:
-      action: none
-      entity: light.plafond_charles_exterieur_white
-      hold_action:
-        action: none
-      image: /local/transparent.png
-      state_image:
-        'on': /local/ui/floorplan/lights/1er/plafond_charles_exterieur_white.png
-      tap_action:
-        action: none
-      type: image 
-    style:
-      left: 50%
-      mix-blend-mode: lighten
-      opacity: "${states['light.plafond_charles_exterieur_white'].state === 'on' ? (states['light.plafond_charles_exterieur_white'].attributes.brightness / 255) : '0'}"
-      top: 50%
-      width: 100%
-  - type: 'custom:config-template-card'
     entities: 
-      - light.plafond_charles_interieur_white
+      - light.charles_bas_white
     element:
       action: none
-      entity: light.plafond_charles_interieur_white
+      entity: light.charles_bas_white
       hold_action:
         action: none
       image: /local/transparent.png
       state_image:
-        'on': /local/ui/floorplan/lights/1er/plafond_charles_interieur_white.png
+        'on': /local/ui/floorplan/lights/1er/Charles_bas.png
       tap_action:
         action: none
       type: image
     style:
       left: 50%
       mix-blend-mode: lighten
-      opacity: "${states['light.plafond_charles_interieur_white'].state === 'on' ? (states['light.plafond_charles_interieur_white'].attributes.brightness / 255) : '0'}"
+      opacity: "${states['light.charles_bas_white'].state === 'on' ? (states['light.charles_bas_white'].attributes.brightness / 255) : '0'}"
       top: 50%
       width: 100%
   - type: 'custom:config-template-card'
@@ -176,11 +156,6 @@ elements:
       opacity: "${states['light.jumeaux_armoires_blanc'].state === 'on' ? (states['light.jumeaux_armoires_blanc'].attributes.brightness / 255) : '0'}"
       top: 50%
       width: 100% 
-  - type: 'custom:decluttering-card'
-    template: light_overlay
-    variables:
-      - entity: light.jumeaux_prises
-      - image: 1er/twins_lampe.png
   - type: 'custom:decluttering-card'
     template: light_overlay
     variables:
@@ -236,6 +211,26 @@ elements:
     variables:
       - entity: light.escalier_1er
       - image: 1er/escalier_haut.png
+  - type: 'custom:config-template-card'
+    entities:
+      - light.bathroom_sink_white
+    element:
+      action: none
+      entity: light.bathroom_sink_white
+      hold_action:
+        action: none
+      image: /local/transparent.png
+      state_image:
+        'on': /local/ui/floorplan/lights/1er/salle_bains_leds.png
+      tap_action:
+        action: none
+      type: image   
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.bathroom_sink_white'].state === 'on' ? (states['light.bathroom_sink_white'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
 
     #########################    ROOM/GROUP CONTROL TRANSPARENT IMAGES    #########################
 
@@ -507,15 +502,15 @@ elements:
       - left: 78%
       - top: 14%
   
-  #twins
-  - type: 'custom:decluttering-card'
-    template: Light_icon_on_off
-    variables:
-      - light: light.jumeaux_prises
-      - title: Jumeaux prises
-      - icon: mdi:power-socket-ch
-      - left: 18%
-      - top: 28%
+  # twins
+  # - type: 'custom:decluttering-card'
+  #   template: Light_icon_on_off
+  #   variables:
+  #     - light: light.jumeaux_prises
+  #     - title: Jumeaux prises
+  #     - icon: mdi:power-socket-ch
+  #     - left: 18%
+  #     - top: 28%
 
   #stairs
   - type: 'custom:decluttering-card'
@@ -532,8 +527,8 @@ elements:
   - type: 'custom:decluttering-card'
     template: Light_icon_dim
     variables:
-      - light: group.chambre_charles
-      - title: Chambre Charles
+      - light: light.charles_bas_white
+      - title: Charles bas
       - icon: mdi:led-strip-variant
       - left: 31%
       - top: 56%
@@ -576,7 +571,7 @@ elements:
       - title: Couloir 2
       - icon: hue:bulb-filament-hung
       - left: 48.6%
-      - top: 20%
+      - top: 26%
 
   #color lights
   #chambre parents

@@ -73,13 +73,23 @@ elements:
         - type: 'custom:button-card'
           template: dimmable_lights
           variables:
-            entity: light.chambre_charles
+            entity: light.charles_bas_white
             gridarea: '"i . ." "n n n" "slider slider slider"'
-          entity: light.chambre_charles
+          entity: light.charles_bas_white
           icon: 'mdi:led-strip-variant'
-          name: Charles
+          name: Charles bas
           view_layout:
             grid-area: b
+        - type: 'custom:button-card'
+          template: dimmable_lights
+          variables:
+            entity: light.charles_haut_white
+            gridarea: '"i . ." "n n n" "slider slider slider"'
+          entity: light.charles_haut_white
+          icon: 'mdi:led-strip-variant'
+          name: Charles haut
+          view_layout:
+            grid-area: f
         - type: 'custom:button-card'
           template: dimmable_lights
           variables:
@@ -89,41 +99,41 @@ elements:
           icon: 'mdi:led-strip-variant'
           name: Jumeaux armoires
           view_layout:
-            grid-area: f
-        - type: 'custom:button-card'
-          template: on_off_lights
-          variables:
-            gridarea: '"i consumption ." "n n n" ". . ."'
-          entity: light.jumeaux_prises
-          icon: 'mdi:power-socket-ch'
-          name: Jumeaux prises
-          custom_fields:
-            consumption:
-              card:
-                type: sensor
-                entity: sensor.consumption_twins
-                card_mod:
-                  style: |
-                    ha-card {
-                      box-shadow: none;
-                      pointer-events: none;
-                    }   
-                    .header {
-                      display: none !important;
-                    } 
-                    .info {
-                      padding: 0 !important;
-                      line-height: 1.2vw !important;
-                    }
-                    .value {
-                      font-size: 1.2vw !important;
-                      margin: 0 !important;
-                    }    
-                    .measurement {
-                      font-size: 0.8vw !important;
-                    }
-          view_layout:
             grid-area: j
+        # - type: 'custom:button-card'
+        #   template: on_off_lights
+        #   variables:
+        #     gridarea: '"i consumption ." "n n n" ". . ."'
+        #   entity: light.jumeaux_prises
+        #   icon: 'mdi:power-socket-ch'
+        #   name: Jumeaux prises
+        #   custom_fields:
+        #     consumption:
+        #       card:
+        #         type: sensor
+        #         entity: sensor.consumption_twins
+        #         card_mod:
+        #           style: |
+        #             ha-card {
+        #               box-shadow: none;
+        #               pointer-events: none;
+        #             }   
+        #             .header {
+        #               display: none !important;
+        #             } 
+        #             .info {
+        #               padding: 0 !important;
+        #               line-height: 1.2vw !important;
+        #             }
+        #             .value {
+        #               font-size: 1.2vw !important;
+        #               margin: 0 !important;
+        #             }    
+        #             .measurement {
+        #               font-size: 0.8vw !important;
+        #             }
+        #   view_layout:
+        #     grid-area: j
         - type: 'custom:button-card'
           template: color_lights
           variables:

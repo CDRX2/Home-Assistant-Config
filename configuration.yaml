@@ -327,8 +327,8 @@ light:
   - platform: group
     name: Chambre Charles
     entities:
-    - light.plafond_charles_exterieur_white
-    - light.plafond_charles_interieur_white
+    - light.charles_bas_white
+    - light.charles_haut_white
 
   - platform: group
     name: Couleur Rez
@@ -391,7 +391,7 @@ light:
     - light.lit_parents_couleur
     - light.chevet_cdrx_4
     - light.chevet_nanne_3
-    - light.plafond_charles_exterieur_white
-    - light.plafond_charles_interieur_white
+    - light.charles_bas_white
+    - light.charles_haut_white
     - light.spare_switch_1
     - light.spare_switch_2

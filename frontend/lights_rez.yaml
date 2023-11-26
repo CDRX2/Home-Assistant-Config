@@ -612,14 +612,14 @@ elements:
       - left: 85%
       - top: 47%
 
-  - type: 'custom:decluttering-card'
-    template: Light_icon_on_off
-    variables:
-      - light: light.panneau_lumineux
-      - title: Panneau lumineux
-      - icon: mdi:television-ambient-light
-      - left: 75.5%
-      - top: 47%
+  # - type: 'custom:decluttering-card'
+  #   template: Light_icon_on_off
+  #   variables:
+  #     - light: light.panneau_lumineux
+  #     - title: Panneau lumineux
+  #     - icon: mdi:television-ambient-light
+  #     - left: 75.5%
+  #     - top: 47%
 
   #terrasse
   - type: 'custom:decluttering-card'
@@ -637,7 +637,7 @@ elements:
     variables:
       - light: light.guest_bathroom
       - title: Salle de douche
-      - icon: mdi:spotlight-beam
+      - icon: hue:bulb-group-filament-alt-hung
       - left: 84%
       - top: 15%
 
@@ -682,32 +682,32 @@ elements:
 
   #color lights
   #salon
-  - type: 'custom:decluttering-card'
-    template: Light_icon_mid
-    variables:
-      - light: light.grand_totem_deco
-      - title: Grand totem couleur
-      - icon: hue:bulb-spot
-      - left: 83%
-      - top: 75%
+  # - type: 'custom:decluttering-card'
+  #   template: Light_icon_mid
+  #   variables:
+  #     - light: light.grand_totem_deco
+  #     - title: Grand totem couleur
+  #     - icon: hue:bulb-spot
+  #     - left: 83%
+  #     - top: 75%
 
-  - type: 'custom:decluttering-card'
-    template: Light_icon_mid
-    variables:
-      - light: light.petit_totem_deco
-      - title: Petit totem couleur
-      - icon: hue:bulb-spot
-      - left: 80.25%
-      - top: 47%
+  # - type: 'custom:decluttering-card'
+  #   template: Light_icon_mid
+  #   variables:
+  #     - light: light.petit_totem_deco
+  #     - title: Petit totem couleur
+  #     - icon: hue:bulb-spot
+  #     - left: 80.25%
+  #     - top: 47%
 
-  - type: 'custom:decluttering-card'
-    template: Light_icon_mid
-    variables:
-      - light: light.bar
-      - title: Bar
-      - icon: mdi:led-strip-variant
-      - left: 53.8%
-      - top: 38%
+  # - type: 'custom:decluttering-card'
+  #   template: Light_icon_mid
+  #   variables:
+  #     - light: light.bar
+  #     - title: Bar
+  #     - icon: mdi:led-strip-variant
+  #     - left: 53.8%
+  #     - top: 38%
 
   #amis
   - type: 'custom:decluttering-card'
@@ -742,14 +742,14 @@ elements:
       - top: 52%
 
     #salon
-  - type: 'custom:decluttering-card'
-    template: Light_icon_dim
-    variables:
-      - light: light.vinyles
-      - title: Meuble vinyles
-      - icon: mdi:led-strip-variant
-      - left: 70.75%
-      - top: 47%
+  # - type: 'custom:decluttering-card'
+  #   template: Light_icon_dim
+  #   variables:
+  #     - light: light.vinyles
+  #     - title: Meuble vinyles
+  #     - icon: mdi:led-strip-variant
+  #     - left: 70.75%
+  #     - top: 47%
 
     #carport
   - type: 'custom:decluttering-card'
@@ -789,9 +789,6 @@ elements:
       - left: 38%
       - top: 73.5%
 
-#amis
-
-
 #groups
 #salon
   - type: 'custom:decluttering-card'
@@ -800,7 +797,7 @@ elements:
       - light: light.salon_deco
       - title: Salon déco
       - icon: mdi:lightbulb-group
-      - left: 73.75%
+      - left: 80%
       - top: 54%
 
   - type: 'custom:decluttering-card'
