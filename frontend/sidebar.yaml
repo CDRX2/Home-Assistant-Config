@@ -1117,3 +1117,18 @@ elements:
           width: 44%;
           transform: translate(0, -50%) !important;
         }
+
+  # - type: 'custom:button-card'
+  #   template: floors
+  #   variables:
+  #     options: 2e
+  #   entity_picture: >
+  #     [[[ return (states['input_select.floor'].state == '2e') ? '/local/ui/sidebar/2e_on.png' : '/local/ui/sidebar/2e_off.png'; ]]]
+  #   card_mod:
+  #     style: |
+  #       :host {
+  #         top: 42%;
+  #         left: 50%;
+  #         width: 44%;
+  #         transform: translate(0, -50%) !important;
+  #       }

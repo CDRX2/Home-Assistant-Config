@@ -1,5 +1,5 @@
 type: picture-elements
-image: /local/ui/floorplan/blurredFloorplanRez.png
+image: /local/ui/floorplan/blurredFloorplan1er.png
 view_layout:
   grid-area: main
 card_mod:
