@@ -323,6 +323,8 @@ light:
     - light.lit_parents_couleur
     - light.chevet_cdrx
     - light.chevet_nanne
+    - light.plafond_parents_blanc
+    - light.plafond_parents_couleur
 
   - platform: group
     name: Chambre Charles
