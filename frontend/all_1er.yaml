@@ -37,7 +37,7 @@ elements:
             gridarea: '"i . ." "n n n" "slider slider slider"'
           entity: light.lit_parents_blanc
           icon: 'mdi:led-strip-variant'
-          name: Parents
+          name: Lit parents
           view_layout:
             grid-area: a
         - type: 'custom:button-card'
@@ -53,6 +53,16 @@ elements:
           view_layout:
             grid-area: e
         - type: 'custom:button-card'
+          template: dimmable_lights
+          variables:
+            entity: light.plafond_parents_blanc
+            gridarea: '"i . ." "n n n" "slider slider slider"'
+          entity: light.plafond_parents_blanc
+          icon: 'mdi:led-strip-variant'
+          name: Plafond parents
+          view_layout:
+            grid-area: i
+        - type: 'custom:button-card'
           template: on_off_lights
           variables:
             gridarea: '"i . ." "n n n" ". . ."'
@@ -60,7 +70,7 @@ elements:
           icon: 'mdi:desk-lamp'
           name: Chevet CDRX
           view_layout:
-            grid-area: i
+            grid-area: m
         - type: 'custom:button-card'
           template: on_off_lights
           variables:
@@ -69,7 +79,7 @@ elements:
           icon: 'mdi:desk-lamp'
           name: Chevet Nanne
           view_layout:
-            grid-area: m
+            grid-area: q
         - type: 'custom:button-card'
           template: dimmable_lights
           variables:

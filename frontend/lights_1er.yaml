@@ -106,6 +106,26 @@ elements:
       opacity: "${states['light.lit_parents_blanc'].state === 'on' ? (states['light.lit_parents_blanc'].attributes.brightness / 255) : '0'}"
       top: 50%
       width: 100% 
+  - type: 'custom:config-template-card'
+    entities:
+      - light.plafond_parents_blanc
+    element:
+      action: none
+      entity: light.plafond_parents_blanc
+      hold_action:
+        action: none
+      image: /local/transparent.png
+      state_image:
+        'on': /local/ui/floorplan/lights/1er/parents_leds.png
+      tap_action:
+        action: none
+      type: image   
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.plafond_parents_blanc'].state === 'on' ? (states['light.plafond_parents_blanc'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100% 
   - type: 'custom:decluttering-card'
     template: light_overlay
     variables:
@@ -542,6 +562,15 @@ elements:
       - icon: mdi:led-strip-variant
       - left: 68%
       - top: 69.5%
+
+  - type: 'custom:decluttering-card'
+    template: Light_icon_dim
+    variables:
+      - light: light.plafond_parents_blanc
+      - title: Plafond parents
+      - icon: mdi:led-strip-variant
+      - left: 68%
+      - top: 85%
 
   #chambre twins
   - type: 'custom:decluttering-card'
