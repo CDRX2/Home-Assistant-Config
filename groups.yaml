@@ -132,7 +132,7 @@ mobiles_tablets_battery:
   name: Mobiles and tablets battery
   entities:
     - sensor.pixel_8_pro_nanne_battery_level
-    - sensor.pixel_8_pro_battery_level
+    - sensor.pixel_8_pro_cdrx_battery_level
     - sensor.lenovo_tab_1st_floor_battery
     - sensor.lenovo_rez_battery
     - sensor.lenovo_tab_remote_battery
