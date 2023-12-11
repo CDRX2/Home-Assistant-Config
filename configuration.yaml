@@ -290,6 +290,9 @@ light:
     - light.couleur_rez
     - light.vinyles
     - light.panneau_lumineux
+    - light.spare_switch_1
+    - light.spare_switch_2
+    - light.spare_switch_3
 
   - platform: group
     name: Salon déco
