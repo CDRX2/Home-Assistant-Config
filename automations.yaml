@@ -7,9 +7,13 @@
     to: 'on'
   condition: []
   action:
-  - service: cover.open_cover
+  - service: cover.close_cover
     target:
-      entity_id: cover.tableau_tv
+      entity_id:
+      - cover.tableau_tv
+      device_id: []
+      area_id: []
+    data: {}
   mode: single
 - id: '1589356365410'
   alias: Tableau TV fermeture
@@ -20,9 +24,13 @@
     to: 'off'
   condition: []
   action:
-  - service: cover.close_cover
+  - service: cover.open_cover
     target:
-      entity_id: cover.tableau_tv
+      entity_id:
+      - cover.tableau_tv
+      device_id: []
+      area_id: []
+    data: {}
   mode: single
 - id: '1601113499442'
   alias: Refresh visual on Plex status
