@@ -290,9 +290,9 @@ light:
     - light.couleur_rez
     - light.vinyles
     - light.panneau_lumineux
-    - light.spare_switch_1
-    - light.spare_switch_2
-    - light.spare_switch_3
+    # - light.spare_switch_1
+    # - light.spare_switch_2
+    # - light.spare_switch_3
 
   - platform: group
     name: Salon déco
@@ -302,9 +302,9 @@ light:
     - light.petit_totem_deco
     - light.vinyles
     - light.bar
-    - light.spare_switch_1
-    - light.spare_switch_2
-    - light.spare_switch_3
+    # - light.spare_switch_1
+    # - light.spare_switch_2
+    # - light.spare_switch_3
 
   - platform: group
     name: Noel
@@ -398,5 +398,5 @@ light:
     - light.chevet_nanne_3
     - light.charles_bas_white
     - light.charles_haut_white
-    - light.spare_switch_1
-    - light.spare_switch_2
+    # - light.spare_switch_1
+    # - light.spare_switch_2
