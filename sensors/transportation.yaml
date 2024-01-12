@@ -1,17 +1,17 @@
-- platform: swiss_public_transport
-  from: !secret SPT_Origin_1
-  to: !secret SPT_Destination_1
-  name: dir_metro
+# - platform: swiss_public_transport
+#   from: !secret SPT_Origin_1
+#   to: !secret SPT_Destination_1
+#   name: dir_metro
     
-- platform: swiss_public_transport
-  from: !secret SPT_Origin_2
-  to: !secret SPT_Destination_2
-  name: dir_maison
+# - platform: swiss_public_transport
+#   from: !secret SPT_Origin_2
+#   to: !secret SPT_Destination_2
+#   name: dir_maison
 
-- platform: swiss_public_transport
-  from: !secret SPT_Origin_1
-  to: !secret SPT_Destination_3
-  name: dir_vclb
+# - platform: swiss_public_transport
+#   from: !secret SPT_Origin_1
+#   to: !secret SPT_Destination_3
+#   name: dir_vclb
 
 - platform: template
   sensors:
