@@ -271,8 +271,8 @@ elements:
     variables:
       - temp: sensor.master_bedroom_temperature
       - humidity: sensor.master_bedroom_humidity
-      - volatile_organic_compounds: sensor.master_bedroom_volatile_organic_compounds
-      - nitrogen_dioxide: sensor.master_bedroom_nitrogen_dioxide
+      - volatile_organic_compounds: sensor.master_bedroom_volatile_organic_compounds_index
+      - nitrogen_dioxide: sensor.master_bedroom_nitrogen_dioxide_index
       - particulate_matter_2_5: sensor.master_bedroom_pm_2_5
       - particulate_matter_10: sensor.master_bedroom_pm_10
       - title: Chambre parents
@@ -284,8 +284,8 @@ elements:
       - sensor: sensor.master_bedroom_temperature_round
       - temp: sensor.master_bedroom_temperature
       - humidity: sensor.master_bedroom_humidity
-      - volatile_organic_compounds: sensor.master_bedroom_volatile_organic_compounds
-      - nitrogen_dioxide: sensor.master_bedroom_nitrogen_dioxide
+      - volatile_organic_compounds: sensor.master_bedroom_volatile_organic_compounds_index
+      - nitrogen_dioxide: sensor.master_bedroom_nitrogen_dioxide_index
       - particulate_matter_2_5: sensor.master_bedroom_pm_2_5
       - particulate_matter_10: sensor.master_bedroom_pm_10
       - title: Chambre parents
@@ -297,8 +297,8 @@ elements:
       - sensor: sensor.master_bedroom_humidity
       - temp: sensor.master_bedroom_temperature
       - humidity: sensor.master_bedroom_humidity
-      - volatile_organic_compounds: sensor.master_bedroom_volatile_organic_compounds
-      - nitrogen_dioxide: sensor.master_bedroom_nitrogen_dioxide
+      - volatile_organic_compounds: sensor.master_bedroom_volatile_organic_compounds_index
+      - nitrogen_dioxide: sensor.master_bedroom_nitrogen_dioxide_index
       - particulate_matter_2_5: sensor.master_bedroom_pm_2_5
       - particulate_matter_10: sensor.master_bedroom_pm_10
       - title: Chambre parents

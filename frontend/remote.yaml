@@ -10,8 +10,8 @@ card:
         grid-template-columns: 25% 25% 25% 25%
         grid-template-rows: auto
         grid-template-areas: |
-          "plex tv youtube ytkids"
-          "radio music bt ."
+          "plex youtube ytkids radio"
+          "music bt . ."
           "home home home home"
         grid-gap: 0px
       cards:
@@ -42,9 +42,9 @@ card:
         - type: 'custom:button-card'
           template: media_service
           variables:
-            name: Couleur 3
-            service: script.couleur_3
-            picture: /local/ui/btns/couleur3_off.png
+            name: Radio
+            service: script.radio
+            picture: /local/ui/btns/radio_off.png
           view_layout:
             grid-area: radio
         - type: 'custom:button-card'
@@ -64,14 +64,6 @@ card:
           view_layout:
             grid-area: bt
         - type: 'custom:button-card'
-          template: media_service
-          variables:
-            name: Blue TV
-            service: script.watch_tv
-            picture: /local/ui/btns/blue_off.png
-          view_layout:
-            grid-area: tv
-        - type: 'custom:button-card'
           template: media_state  
           variables:
             background: transparent url("/local/ui/btns/return_home.png")  
@@ -85,7 +77,8 @@ card:
             navigation_path: /lovelace-visual/lights
           styles:
             state:
-            - font-size: 5vw
+            - font-size: >
+                [[[ return (window.location.pathname == '/lovelace-remote/remote') ? '5vw' : '1.25vw'; ]]]
     'music':
       type: 'custom:layout-card'
       layout_type: custom:grid-layout
@@ -93,8 +86,8 @@ card:
         grid-template-columns: 25% 25% 25% 25%
         grid-template-rows: auto
         grid-template-areas: |
-          "plex tv youtube ytkids"
-          "radio music bt ."
+          "plex youtube ytkids radio"
+          "music bt . ."
           "power stereo surround mute"
           "play previous next stop"
           "voldown voldown volup volup"
@@ -130,15 +123,16 @@ card:
         - type: 'custom:button-card'
           template: media_service
           variables:
-            name: Couleur 3
-            service: media_player.select_source
-            picture: /local/ui/btns/couleur3_off.png
+            name: Radio
+            service: media_player.play_media
+            picture: /local/ui/btns/radio_off.png
           view_layout:
             grid-area: radio
           tap_action:
             service_data:
-              entity_id: media_player.pioneer_avr
-              source: INTERNET RADIO
+              entity_id: media_player.sc_lx78_dlna
+              media_content_type: music
+              media_content_id: 'http://stream.srg-ssr.ch/m/rsc_de/mp3_128'                          
         - type: 'custom:button-card'
           template: media_service
           variables:
@@ -159,14 +153,6 @@ card:
             service_data:
               entity_id: media_player.pioneer_avr
               source: BT AUDIO
-        - type: 'custom:button-card'
-          template: media_service
-          variables:
-            name: Blue TV
-            service: script.watch_tv
-            picture: /local/ui/btns/blue_off.png
-          view_layout:
-            grid-area: tv
         - type: 'custom:button-card'
           template: media_service
           variables:
@@ -357,7 +343,7 @@ card:
             navigation_path: /lovelace-visual/lights
           styles:
             state:
-            - font-size: 5vw
+            - font-size: 1em
     'bluetooth':
       type: 'custom:layout-card'
       layout_type: custom:grid-layout
@@ -365,8 +351,8 @@ card:
         grid-template-columns: 25% 25% 25% 25%
         grid-template-rows: auto
         grid-template-areas: |
-          "plex tv youtube ytkids"
-          "radio music bt ."
+          "plex youtube ytkids radio"
+          "music bt . ."
           "power stereo surround mute"
           "play previous next stop"
           "voldown voldown volup volup"
@@ -401,15 +387,16 @@ card:
         - type: 'custom:button-card'
           template: media_service
           variables:
-            name: Couleur 3
-            service: media_player.select_source
-            picture: /local/ui/btns/couleur3_off.png
+            name: Radio
+            service: media_player.play_media
+            picture: /local/ui/btns/radio_off.png
           view_layout:
             grid-area: radio
           tap_action:
             service_data:
-              entity_id: media_player.pioneer_avr
-              source: INTERNET RADIO
+              entity_id: media_player.sc_lx78_dlna
+              media_content_type: music
+              media_content_id: 'http://stream.srg-ssr.ch/m/rsc_de/mp3_128'
         - type: 'custom:button-card'
           template: media_service
           variables:
@@ -430,14 +417,6 @@ card:
             service_data:
               entity_id: media_player.pioneer_avr
               source: BT AUDIO
-        - type: 'custom:button-card'
-          template: media_service
-          variables:
-            name: Blue TV
-            service: script.watch_tv
-            picture: /local/ui/btns/blue_off.png
-          view_layout:
-            grid-area: tv
         - type: 'custom:button-card'
           template: media_service
           variables:
@@ -567,7 +546,7 @@ card:
             navigation_path: /lovelace-visual/lights
           styles:
             state:
-            - font-size: 5vw
+            - font-size: 1em
     'radio':
       type: 'custom:layout-card'
       layout_type: custom:grid-layout
@@ -575,8 +554,8 @@ card:
         grid-template-columns: 25% 25% 25% 25%
         grid-template-rows: auto
         grid-template-areas: |
-          "plex tv youtube ytkids"
-          "radio music bt ."
+          "plex youtube ytkids radio"
+          "music bt . ."
           "power stereo surround mute"
           "voldown voldown volup volup"
           "vol vol vol vol"
@@ -611,15 +590,16 @@ card:
         - type: 'custom:button-card'
           template: media_service
           variables:
-            name: Couleur 3
-            service: media_player.select_source
-            picture: /local/ui/btns/couleur3_on.png
+            name: Radio
+            service: media_player.play_media
+            picture: /local/ui/btns/radio_on.png
           view_layout:
             grid-area: radio
           tap_action:
             service_data:
-              entity_id: media_player.pioneer_avr
-              source: INTERNET RADIO
+              entity_id: media_player.sc_lx78_dlna
+              media_content_type: music
+              media_content_id: 'http://stream.srg-ssr.ch/m/rsc_de/mp3_128'
         - type: 'custom:button-card'
           template: media_service
           variables:
@@ -640,14 +620,6 @@ card:
             service_data:
               entity_id: media_player.pioneer_avr
               source: BT AUDIO
-        - type: 'custom:button-card'
-          template: media_service
-          variables:
-            name: Blue TV
-            service: script.watch_tv
-            picture: /local/ui/btns/blue_off.png
-          view_layout:
-            grid-area: tv
         - type: 'custom:button-card'
           template: media_service
           variables:
@@ -789,7 +761,7 @@ card:
             navigation_path: /lovelace-visual/lights
           styles:
             state:
-            - font-size: 5vw
+            - font-size: 1em
     'other':
       type: 'custom:layout-card'
       layout_type: custom:grid-layout
@@ -797,7 +769,7 @@ card:
         grid-template-columns: 25% 25% 25% 25%
         grid-template-rows: auto
         grid-template-areas: |
-          "plex tv youtube ytkids"
+          "plex youtube ytkids ."
           "power . . mute"
           "menu stereo surround volup"
           "play up back volup"
@@ -855,19 +827,7 @@ card:
             grid-area: power
           tap_action:
             service_data:
-              entity_id: media_player.living_room_tv 
-        - type: 'custom:button-card'
-          template: media_service
-          variables:
-            name: Blue TV
-            service: media_player.select_source
-            picture: "[[[ return states['media_player.living_room_tv'].attributes['source'] == 'Swisscom blue TV' ? '/local/ui/btns/blue_on.png' : '/local/ui/btns/blue_off.png'; ]]]"
-          view_layout:
-            grid-area: tv
-          tap_action:
-            service_data:
               entity_id: media_player.living_room_tv
-              source: Swisscom blue TV
         - type: 'custom:button-card'
           template: media_service
           variables:
@@ -1052,9 +1012,7 @@ card:
                               ? `YouTube`
                               : states['sensor.living_room_tv_source'].state == 'YouTube Kids'
                                 ? `YouTube Kids`
-                                : states['sensor.living_room_tv_source'].state == 'Swisscom blue TV'
-                                  ? `Blue TV`
-                                  : variables.translate_idle;
+                                : variables.translate_idle;
                     function marquee() {
                       let state = elt.getElementById("state"),
                         container = elt.getElementById("container");
@@ -1096,62 +1054,6 @@ card:
               }
           view_layout:
             grid-area: title
-        # - type: 'custom:button-card'
-        #   aspect_ratio: 4/1
-        #   show_name: false
-        #   show_icon: false
-        #   show_label: false
-        #   show_state: false
-        #   styles:
-        #     card:
-        #       - background: transparent url("/local/ui/btns/background_horizontal.png")
-        #       - background-size: 100% 80%
-        #       - background-repeat: no-repeat
-        #       - background-position: center
-        #       - box-shadow: none
-        #     custom_fields:
-        #       input:
-        #         - width: 100%
-        #         - margin: 0px 7.5% 0px 7.5%
-        #     grid:
-        #       - grid-template-areas: '"input"'
-        #       - grid-template-columns: 1fr
-        #       - grid-template-rows: 1fr
-        #   custom_fields:
-        #     input:
-        #       card:
-        #         type: 'custom:webos-keyboard-card'
-        #         target: media_player.living_room_tv
-        #         title: Texte TV
-        #         label: Entrer le texte ici...
-        #         card_mod: 
-        #           style: 
-        #             .: |
-        #               ha-card {
-        #                 background: none;
-        #                 justify-content: flex-start !important;
-        #                 --ha-card-header-font-size: 5vw;
-        #                 --paper-font-subhead_-_font-size: 3vw;
-        #                 --paper-font-subhead_-_line-height: 48px;
-        #               }
-        #               div > div {
-        #                 width: 160%;
-        #                 line-height: 48px;
-        #                 text-align: left;
-        #                 font-size: 3vw;
-        #               }
-        #             paper-input$: |
-        #               input {
-        #                 font-size: 3vw !important;
-        #               }
-        #   card_mod:
-        #     style: |
-        #       :host {
-        #         --masonry-view-card-margin: 0px !important;
-        #       }          
-
-        #   view_layout: 
-        #     grid-area: input
         - type: 'custom:button-card'
           template: media_state  
           variables:
@@ -1166,7 +1068,7 @@ card:
             navigation_path: /lovelace-visual/lights
           styles:
             state:
-            - font-size: 5vw
+            - font-size: 1em
 card_mod:
   style: |
     :host {

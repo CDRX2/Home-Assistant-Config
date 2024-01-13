@@ -25,7 +25,8 @@ media_service:
       - width: 70%
     name:
       - padding: 0
-      - font-size: 1vmax
+      - font-size: >
+          [[[ return (window.location.pathname == '/lovelace-remote/remote') ? '3vw' : '1vw'; ]]]
     grid:
       - grid-template-areas: '"i" "n"'
       - grid-template-columns: 1fr
@@ -193,6 +194,40 @@ media_channels:
   tap_action:
     action: call-service
     service: '[[[ return variables.service ]]]'
+  hold_action:
+    action: none
+  show_entity_picture: true
+  entity_picture: '[[[ return variables.picture ]]]'
+  styles:
+    card:
+      - background: none
+      - box-shadow: none
+      - --mdc-ripple-color: var(--accent-color)
+      - --mdc-ripple-press-opacity: 0.2
+    entity_picture:
+      - padding: 0
+      - width: 80%
+    grid:
+      - grid-template-areas: '"i"'
+      - grid-template-columns: 1fr
+      - grid-template-rows: 1fr
+  card_mod:
+    style: |
+      :host {
+        --masonry-view-card-margin: 0px !important;
+      }
+
+radio_channels:
+  variables:
+    media: "var_media"
+    picture: "var_picture"
+  tap_action:
+    action: call-service
+    service: media_player.play_media
+    service_data:
+      entity_id: media_player.sc_lx78_dlna
+      media_content_type: music
+      media_content_id: '[[[ return variables.media ]]]'
   hold_action:
     action: none
   show_entity_picture: true

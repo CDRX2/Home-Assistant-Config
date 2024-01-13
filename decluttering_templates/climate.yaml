@@ -372,17 +372,17 @@ fan_popup:
                 - type: 'custom:multiple-entity-row'
                   name: Modes
                   icon: 'mdi:fan-alert'
-                  entity: switch.master_bedroom_auto_mode
-                  state_header: Auto
+                  entity: switch.master_bedroom_night_mode
+                  state_header: Nuit
                   toggle: true
-                  state_color: true
+                  state_color: false
                   entities:
                     - entity: switch.master_bedroom_continuous_monitoring
                       name: Monitoring
                       toggle: true
-                    - entity: switch.master_bedroom_night_mode
-                      name: Nuit
-                      toggle: true
+                    # - entity: switch.master_bedroom_night_mode
+                    #   name: Nuit
+                    #   toggle: true
                 - type: 'custom:multiple-entity-row'
                   name: Infos
                   entity: sensor.master_bedroom_filter_life
