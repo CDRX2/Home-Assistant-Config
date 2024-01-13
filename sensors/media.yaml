@@ -88,9 +88,9 @@
       value_template: >-
         {% if is_state('media_player.pioneer_avr', 'off') and is_state('media_player.living_room_tv', 'off') %}
           off
-        {% elif is_state_attr('media_player.pioneer_avr', 'source', 'INTERNET RADIO') %}
+        {% elif is_state_attr('media_player.pioneer_avr', 'source', 'MEDIA SERVER') and states('media_player.sc_lx78_dlna') != 'idle' %}
           radio
-        {% elif is_state_attr('media_player.pioneer_avr', 'source', 'MEDIA SERVER') %}
+        {% elif is_state_attr('media_player.pioneer_avr', 'source', 'MEDIA SERVER') and states('media_player.bubble') != 'idle' %}
           music
         {% elif is_state_attr('media_player.pioneer_avr', 'source', 'BT AUDIO') %}
           bluetooth

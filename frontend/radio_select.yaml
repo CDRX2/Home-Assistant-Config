@@ -1,0 +1,61 @@
+type: 'custom:mod-card'
+card:
+  type: 'custom:layout-card'
+  layout_type: custom:grid-layout
+  layout:
+    grid-template-columns: 25% 25% 25% 25%
+    grid-template-rows: auto
+    grid-template-areas: |
+      "coul3 nosta b2n ."
+      "swiclass swipop swijazz ."
+  cards:
+    - type: 'custom:button-card'
+      template: radio_channels
+      variables:
+        media: 'http://stream.srg-ssr.ch/m/couleur3/mp3_128'
+        picture: /local/ui/media/Radio_Couleur3.png
+      view_layout:
+        grid-area: coul3
+    - type: 'custom:button-card'
+      template: radio_channels
+      variables:
+        media: 'http://185.52.127.162/fr/30601/mp3_128.mp3?origine=fluxradios&access_token=722d323bfecc43369d2d9efcb932037c'
+        picture: /local/ui/media/Nostalgie.png
+      view_layout:
+        grid-area: nosta
+    # - type: 'custom:button-card'
+    #   template: radio_channels
+    #   variables:
+    #     media: http://securestreams4.autopo.st:1558/Back2Noize
+    #     picture: /local/ui/media/rts2.png
+    #   view_layout:
+    #     grid-area: b2n
+    - type: 'custom:button-card'
+      template: radio_channels
+      variables:
+        media: 'http://stream.srg-ssr.ch/m/rsc_de/mp3_128'
+        picture: /local/ui/media/Radio_Swiss_Classic.png
+      view_layout:
+        grid-area: swiclass
+    - type: 'custom:button-card'
+      template: radio_channels
+      variables:
+        media: 'http://stream.srg-ssr.ch/m/rsp/mp3_128'
+        picture: /local/ui/media/Radio_Swiss_Pop.png
+      view_layout:
+        grid-area: swipop
+    - type: 'custom:button-card'
+      template: radio_channels
+      variables:
+        media: 'http://stream.srg-ssr.ch/m/rsj/mp3_128'
+        picture: /local/ui/media/Radio_Swiss_Jazz.png
+      view_layout:
+        grid-area: swijazz
+
+view_layout:
+  grid-area: radio
+card_mod:
+style: |
+  :host {
+    align-self: center;
+  }

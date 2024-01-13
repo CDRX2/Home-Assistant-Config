@@ -808,8 +808,8 @@ elements:
 
   - type: conditional
     conditions:
-      - entity: sensor.pioneer_avr_source
-        state: INTERNET RADIO
+      - entity: sensor.remote_select
+        state: radio
     elements:
       - type: image
         image: /local/ui/sidebar/sidebarBG.png
@@ -873,7 +873,7 @@ elements:
           }
       - type: 'custom:button-card'
         template: media_sidebar_picture
-        entity_picture: /local/ui/media/couleur3.png
+        entity_picture: /local/ui/media/radio.png
 
   - type: conditional
     conditions:
@@ -887,8 +887,8 @@ elements:
 
   - type: conditional
     conditions:
-      - entity: sensor.pioneer_avr_source
-        state: MEDIA SERVER
+      - entity: sensor.remote_select
+        state: music
     elements:
       - type: image
         image: /local/ui/sidebar/sidebarBG.png
@@ -1097,7 +1097,7 @@ elements:
     card_mod:
       style: |
         :host {
-          top: 42%;
+          top: 43.25%;
           right: 50%;
           width: 44%;
           transform: translate(0, -50%) !important;
@@ -1112,7 +1112,7 @@ elements:
     card_mod:
       style: |
         :host {
-          top: 42%;
+          top: 43.25%;
           left: 50%;
           width: 44%;
           transform: translate(0, -50%) !important;
