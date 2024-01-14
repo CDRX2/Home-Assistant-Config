@@ -60,6 +60,8 @@
       value_template: >-
         {% if states('media_player.living_room_tv') != 'off' %}
           {{ state_attr('media_player.living_room_tv', 'source') }}
+        {% elif states('media_player.sc_lx78_dlna') != 'idle' %}
+          radio
         {% elif states('media_player.bubble') != 'idle' %}
           bubble
         {% elif states('media_player.pioneer_avr') != 'off' %}

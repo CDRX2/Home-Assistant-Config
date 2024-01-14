@@ -78,7 +78,7 @@ card:
           styles:
             state:
             - font-size: >
-                [[[ return (window.location.pathname == '/lovelace-remote/remote') ? '5vw' : '1.25vw'; ]]]
+                [[[ return (window.location.pathname == '/lovelace-remote/remote') ? '3.5vw' : '1.25vw'; ]]]
     'music':
       type: 'custom:layout-card'
       layout_type: custom:grid-layout
@@ -343,7 +343,8 @@ card:
             navigation_path: /lovelace-visual/lights
           styles:
             state:
-            - font-size: 1em
+            - font-size: >
+                [[[ return (window.location.pathname == '/lovelace-remote/remote') ? '3.5vw' : '1.25vw'; ]]]
     'bluetooth':
       type: 'custom:layout-card'
       layout_type: custom:grid-layout
@@ -546,7 +547,8 @@ card:
             navigation_path: /lovelace-visual/lights
           styles:
             state:
-            - font-size: 1em
+            - font-size: >
+                [[[ return (window.location.pathname == '/lovelace-remote/remote') ? '3.5vw' : '1.25vw'; ]]]
     'radio':
       type: 'custom:layout-card'
       layout_type: custom:grid-layout
@@ -761,7 +763,8 @@ card:
             navigation_path: /lovelace-visual/lights
           styles:
             state:
-            - font-size: 1em
+            - font-size: >
+                [[[ return (window.location.pathname == '/lovelace-remote/remote') ? '3.5vw' : '1.25vw'; ]]]
     'other':
       type: 'custom:layout-card'
       layout_type: custom:grid-layout
@@ -1068,7 +1071,8 @@ card:
             navigation_path: /lovelace-visual/lights
           styles:
             state:
-            - font-size: 1em
+            - font-size: >
+                [[[ return (window.location.pathname == '/lovelace-remote/remote') ? '3.5vw' : '1.25vw'; ]]]
 card_mod:
   style: |
     :host {

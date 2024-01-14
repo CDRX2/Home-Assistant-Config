@@ -27,7 +27,7 @@ card:
     #   template: radio_channels
     #   variables:
     #     media: http://securestreams4.autopo.st:1558/Back2Noize
-    #     picture: /local/ui/media/rts2.png
+    #     picture: /local/ui/media/Back2noize.png
     #   view_layout:
     #     grid-area: b2n
     - type: 'custom:button-card'
@@ -51,7 +51,6 @@ card:
         picture: /local/ui/media/Radio_Swiss_Jazz.png
       view_layout:
         grid-area: swijazz
-
 view_layout:
   grid-area: radio
 card_mod:

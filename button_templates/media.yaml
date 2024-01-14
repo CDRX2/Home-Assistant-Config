@@ -26,7 +26,7 @@ media_service:
     name:
       - padding: 0
       - font-size: >
-          [[[ return (window.location.pathname == '/lovelace-remote/remote') ? '3vw' : '1vw'; ]]]
+          [[[ return (window.location.pathname == '/lovelace-remote/remote') ? '2vw' : '1vw'; ]]]
     grid:
       - grid-template-areas: '"i" "n"'
       - grid-template-columns: 1fr
@@ -131,7 +131,8 @@ media_state:
     state:
       - justify-self: '[[[ return variables.justify ]]]'
       - margin: 0px 7.5% 0px 7.5%
-      - font-size: 1.25vmax
+      - font-size: >
+          [[[ return (window.location.pathname == '/lovelace-remote/remote') ? '3.5vw' : '1.25vw'; ]]]
       - color: lightgrey
       - overflow: visible
       - max-width: unset
@@ -157,7 +158,8 @@ media_state_title:
       - padding: 0
     state:
       - justify-self: center
-      - font-size: 1.25vmax
+      - font-size: >
+          [[[ return (window.location.pathname == '/lovelace-remote/remote') ? '3.5vw' : '1.25vw'; ]]]
       - color: lightgrey
       - overflow: visible
       - max-width: unset
