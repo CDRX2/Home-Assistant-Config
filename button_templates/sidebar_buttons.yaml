@@ -1,8 +1,6 @@
 navigation:
   variables:
     navigation: "var_navigation"
-    picture: "var_picture"
-    top: "var_top"
   tap_action:
     action: navigate
     navigation_path: '[[[ return variables.navigation ]]]'
@@ -22,8 +20,7 @@ navigation:
 
 floors:
   variables:
-    picture: "var_picture"
-    top: "var_top"
+    options: "var_options"
   tap_action:
     action: call-service
     service: input_select.set_options
@@ -38,14 +35,15 @@ floors:
       - background: none
       - box-shadow: none
       - padding: 0
+      - overflow: visible
     entity_picture:
-      - left: 0%
-      - top: 0%
-      - width: 100%
+      - width: 65%
       - height: 100%
+      - overflow: visible
+      - object-fit: cover
+      - aspect-ratio: 1/1
 
 media_sidebar:
-  variables:
   tap_action:
     action: navigate
     navigation_path: /lovelace-visual/media
@@ -88,7 +86,6 @@ media_sidebar:
       }
 
 media_sidebar_state:
-  variables:
   tap_action:
     action: navigate
     navigation_path: /lovelace-visual/media
@@ -126,7 +123,6 @@ media_sidebar_state:
       }
 
 media_sidebar_picture:
-  variables:
   tap_action:
     action: navigate
     navigation_path: /lovelace-visual/media

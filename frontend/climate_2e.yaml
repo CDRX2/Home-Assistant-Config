@@ -106,6 +106,26 @@ elements:
       opacity: "${states['light.lit_parents_blanc'].state === 'on' ? (states['light.lit_parents_blanc'].attributes.brightness / 255) : '0'}"
       top: 50%
       width: 100% 
+  - type: 'custom:config-template-card'
+    entities:
+      - light.plafond_parents_blanc
+    element:
+      action: none
+      entity: light.plafond_parents_blanc
+      hold_action:
+        action: none
+      image: /local/transparent.png
+      state_image:
+        'on': /local/ui/floorplan/lights/2e/parents_leds.png
+      tap_action:
+        action: none
+      type: image   
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.plafond_parents_blanc'].state === 'on' ? (states['light.plafond_parents_blanc'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100% 
   - type: 'custom:decluttering-card'
     template: light_overlay
     variables:
@@ -134,26 +154,6 @@ elements:
       left: 50%
       mix-blend-mode: lighten
       opacity: "${states['light.charles_bas_white'].state === 'on' ? (states['light.charles_bas_white'].attributes.brightness / 255) : '0'}"
-      top: 50%
-      width: 100%
-  - type: 'custom:config-template-card'
-    entities: 
-      - light.charles_haut_white
-    element:
-      action: none
-      entity: light.charles_haut_white
-      hold_action:
-        action: none
-      image: /local/transparent.png
-      state_image:
-        'on': /local/ui/floorplan/lights/2e/Charles_haut.png
-      tap_action:
-        action: none
-      type: image
-    style:
-      left: 50%
-      mix-blend-mode: lighten
-      opacity: "${states['light.charles_haut_white'].state === 'on' ? (states['light.charles_haut_white'].attributes.brightness / 255) : '0'}"
       top: 50%
       width: 100%
   - type: 'custom:config-template-card'
@@ -251,6 +251,26 @@ elements:
       opacity: "${states['light.bathroom_sink_white'].state === 'on' ? (states['light.bathroom_sink_white'].attributes.brightness / 255) : '0'}"
       top: 50%
       width: 100%
+  - type: 'custom:config-template-card'
+    entities: 
+      - light.charles_haut_white
+    element:
+      action: none
+      entity: light.charles_haut_white
+      hold_action:
+        action: none
+      image: /local/transparent.png
+      state_image:
+        'on': /local/ui/floorplan/lights/2e/Charles_haut.png
+      tap_action:
+        action: none
+      type: image
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.charles_haut_white'].state === 'on' ? (states['light.charles_haut_white'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
       
     #########################    TEMPERATURE CONTROL STATE LABELS    #########################
 
@@ -265,7 +285,7 @@ elements:
       - temp: sensor.temperature_charles
       - humidity: sensor.humidity_charles
       - title: Chambre Charles
-      - top: 55%
+      - top: 48%
       - left: 29%
   - type: 'custom:decluttering-card'
     template: climate_state_label
@@ -274,7 +294,7 @@ elements:
       - temp: sensor.temperature_charles
       - humidity: sensor.humidity_charles
       - title: Chambre Charles
-      - top: 55%
+      - top: 48%
       - left: 26.75%
   - type: 'custom:decluttering-card'
     template: climate_state_label
@@ -283,7 +303,7 @@ elements:
       - temp: sensor.temperature_charles
       - humidity: sensor.humidity_charles
       - title: Chambre Charles
-      - top: 55%
+      - top: 48%
       - left: 32.75%
 
   - type: 'custom:decluttering-card'

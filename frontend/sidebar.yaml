@@ -1087,20 +1087,26 @@ elements:
           entity_picture:
             - height: 100%
 
-  #floor change button
   - type: 'custom:button-card'
     template: floors
     variables:
       options: Rez
     entity_picture: >
-      [[[ return (states['input_select.floor'].state == 'Rez') ? '/local/ui/sidebar/Rez_on.png' : '/local/ui/sidebar/Rez_off.png'; ]]]
+      [[[ return (states['input_select.floor'].state == 'Rez') ? '/local/ui/sidebar/rez_on_new.png' : '/local/ui/sidebar/rez_off_new.png'; ]]]
+    styles:
+      entity_picture:
+        - object-position: left
     card_mod:
       style: |
         :host {
           top: 43.25%;
-          right: 50%;
-          width: 44%;
+          left: 4%;
+          width: 28%;
           transform: translate(0, -50%) !important;
+          z-index: {% if is_state('input_select.floor', 'Rez') %} 1 {% else %} initial {%endif%};
+        }
+        #img-cell {
+          overflow: visible !important;
         }
 
   - type: 'custom:button-card'
@@ -1108,27 +1114,38 @@ elements:
     variables:
       options: 1er
     entity_picture: >
-      [[[ return (states['input_select.floor'].state == '1er') ? '/local/ui/sidebar/1er_on.png' : '/local/ui/sidebar/1er_off.png'; ]]]
+      [[[ return (states['input_select.floor'].state == '1er') ? '/local/ui/sidebar/1er_on_new.png' : '/local/ui/sidebar/1er_off_new.png'; ]]]
     card_mod:
       style: |
         :host {
           top: 43.25%;
-          left: 50%;
-          width: 44%;
+          left: 36%;
+          width: 28%;
           transform: translate(0, -50%) !important;
+          z-index: {% if is_state('input_select.floor', '1er') %} 1 {% else %} initial {%endif%};
+        }
+        #img-cell {
+          overflow: visible !important;
         }
 
-  # - type: 'custom:button-card'
-  #   template: floors
-  #   variables:
-  #     options: 2e
-  #   entity_picture: >
-  #     [[[ return (states['input_select.floor'].state == '2e') ? '/local/ui/sidebar/2e_on.png' : '/local/ui/sidebar/2e_off.png'; ]]]
-  #   card_mod:
-  #     style: |
-  #       :host {
-  #         top: 42%;
-  #         left: 50%;
-  #         width: 44%;
-  #         transform: translate(0, -50%) !important;
-  #       }
+  - type: 'custom:button-card'
+    template: floors
+    variables:
+      options: 2e
+    entity_picture: >
+      [[[ return (states['input_select.floor'].state == '2e') ? '/local/ui/sidebar/2e_on_new.png' : '/local/ui/sidebar/2e_off_new.png'; ]]]
+    styles:
+      entity_picture:
+        - object-position: right
+    card_mod:
+      style: |
+        :host {
+          top: 43.25%;
+          left: 68%;
+          width: 28%;     
+          transform: translate(0, -50%) !important;
+          z-index: {% if is_state('input_select.floor', '2e') %} 1 {% else %} initial {%endif%};
+        }
+        #img-cell {
+          overflow: visible !important;
+        }

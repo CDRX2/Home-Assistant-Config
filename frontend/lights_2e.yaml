@@ -106,6 +106,26 @@ elements:
       opacity: "${states['light.lit_parents_blanc'].state === 'on' ? (states['light.lit_parents_blanc'].attributes.brightness / 255) : '0'}"
       top: 50%
       width: 100% 
+  - type: 'custom:config-template-card'
+    entities:
+      - light.plafond_parents_blanc
+    element:
+      action: none
+      entity: light.plafond_parents_blanc
+      hold_action:
+        action: none
+      image: /local/transparent.png
+      state_image:
+        'on': /local/ui/floorplan/lights/2e/parents_leds.png
+      tap_action:
+        action: none
+      type: image   
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.plafond_parents_blanc'].state === 'on' ? (states['light.plafond_parents_blanc'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100% 
   - type: 'custom:decluttering-card'
     template: light_overlay
     variables:
@@ -231,6 +251,26 @@ elements:
       opacity: "${states['light.bathroom_sink_white'].state === 'on' ? (states['light.bathroom_sink_white'].attributes.brightness / 255) : '0'}"
       top: 50%
       width: 100%
+  - type: 'custom:config-template-card'
+    entities: 
+      - light.charles_haut_white
+    element:
+      action: none
+      entity: light.charles_haut_white
+      hold_action:
+        action: none
+      image: /local/transparent.png
+      state_image:
+        'on': /local/ui/floorplan/lights/2e/Charles_haut.png
+      tap_action:
+        action: none
+      type: image
+    style:
+      left: 50%
+      mix-blend-mode: lighten
+      opacity: "${states['light.charles_haut_white'].state === 'on' ? (states['light.charles_haut_white'].attributes.brightness / 255) : '0'}"
+      top: 50%
+      width: 100%
 
     #########################    ROOM/GROUP CONTROL TRANSPARENT IMAGES    #########################
 
@@ -243,10 +283,10 @@ elements:
       - color_picker: false
       - color_temp: false
       - hide_header: false
-      - left: 27.5%
-      - width: 35.2%
-      - top: 55.7%
-      - height: 37.5%
+      - left: 27%
+      - width: 35%
+      - top: 52.6%
+      - height: 38.5%
     card_mod:
       style:
         .: |
@@ -276,5 +316,5 @@ elements:
       - light: light.charles_haut_white
       - title: Charles haut
       - icon: mdi:led-strip-variant
-      - left: 31%
-      - top: 56%
+      - left: 27%
+      - top: 48%
