@@ -25,7 +25,7 @@ views:
         - sidebar: !include frontend/sidebar.yaml
         - card_rez: !include frontend/lights_rez.yaml
         - card_1er: !include frontend/lights_1er.yaml
-        # - card_2e: !include frontend/lights_2e.yaml
+        - card_2e: !include frontend/lights_2e.yaml
 
   #############################################################################################################################################
   #                                                                                                                                           #
@@ -44,7 +44,7 @@ views:
         - sidebar: !include frontend/sidebar.yaml
         - card_rez: !include frontend/climate_rez.yaml
         - card_1er: !include frontend/climate_1er.yaml
-        # - card_2e: !include frontend/climate_2e.yaml
+        - card_2e: !include frontend/climate_2e.yaml
 
 
   #############################################################################################################################################
@@ -64,7 +64,7 @@ views:
         - sidebar: !include frontend/sidebar.yaml
         - card_rez: !include frontend/all_rez.yaml
         - card_1er: !include frontend/all_1er.yaml
-        # - card_2e: !include frontend/all_2e.yaml
+        - card_2e: !include frontend/all_2e.yaml
 
   #############################################################################################################################################
   #                                                                                                                                           #

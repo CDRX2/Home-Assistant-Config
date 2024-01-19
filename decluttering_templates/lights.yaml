@@ -103,6 +103,7 @@ Light_room:
       left: '[[left]]'
       top: '[[top]]'
       width: '[[width]]'
+      # border: 1px solid red
     tap_action:
       action: call-service
       service: homeassistant.toggle
