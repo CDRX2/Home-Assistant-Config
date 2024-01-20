@@ -228,6 +228,36 @@ dimmable_lights:
          padding-bottom: 20%;
         }
 
+consumption:
+  variables:
+    consumption: "var_consumption"
+  custom_fields:
+    consumption:
+      card:
+        type: sensor
+        entity: '[[[ return variables.consumption ]]]'
+        card_mod:
+          style: |
+            ha-card {
+              box-shadow: none;
+              pointer-events: none;
+              overflow: visible !important;
+            }   
+            .header {
+              display: none !important;
+            } 
+            .info {
+              padding: 0 !important;
+              line-height: 1.2vw !important;
+            }
+            .value {
+              font-size: 1.2vw !important;
+              margin: 0 !important;
+            }    
+            .measurement {
+              font-size: 0.8vw !important;
+            }
+
 light_timer:
   variables:
     entity: "var_entity"

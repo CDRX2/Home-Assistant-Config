@@ -111,37 +111,15 @@ elements:
           view_layout:
             grid-area: j
         # - type: 'custom:button-card'
-        #   template: on_off_lights
+        #   template: 
+            # - on_off_lights
+            # - consumption
         #   variables:
         #     gridarea: '"i consumption ." "n n n" ". . ."'
+            # consumption: sensor.consumption_twins
         #   entity: light.jumeaux_prises
         #   icon: 'mdi:power-socket-ch'
         #   name: Jumeaux prises
-        #   custom_fields:
-        #     consumption:
-        #       card:
-        #         type: sensor
-        #         entity: sensor.consumption_twins
-        #         card_mod:
-        #           style: |
-        #             ha-card {
-        #               box-shadow: none;
-        #               pointer-events: none;
-        #             }   
-        #             .header {
-        #               display: none !important;
-        #             } 
-        #             .info {
-        #               padding: 0 !important;
-        #               line-height: 1.2vw !important;
-        #             }
-        #             .value {
-        #               font-size: 1.2vw !important;
-        #               margin: 0 !important;
-        #             }    
-        #             .measurement {
-        #               font-size: 0.8vw !important;
-        #             }
         #   view_layout:
         #     grid-area: j
         - type: 'custom:button-card'
@@ -186,105 +164,39 @@ elements:
           view_layout:
             grid-area: k
         - type: 'custom:button-card'
-          template: on_off_lights
+          template: 
+            - on_off_lights
+            - consumption
           variables:
             gridarea: '"i consumption ." "n n n" ". . ."'
+            consumption: sensor.consumption_entree
           entity: light.escalier_1er
           icon: 'hue:bulb-group-ceiling-flush-circular'
           name: Escalier 1er
-          custom_fields:
-            consumption:
-              card:
-                type: sensor
-                entity: sensor.consumption_entree
-                card_mod:
-                  style: |
-                    ha-card {
-                      box-shadow: none;
-                      pointer-events: none;
-                    }   
-                    .header {
-                      display: none !important;
-                    } 
-                    .info {
-                      padding: 0 !important;
-                      line-height: 1.2vw !important;
-                    }
-                    .value {
-                      font-size: 1.2vw !important;
-                      margin: 0 !important;
-                    }    
-                    .measurement {
-                      font-size: 0.8vw !important;
-                    }
           view_layout:
             grid-area: o
         - type: 'custom:button-card'
-          template: on_off_lights
+          template: 
+            - on_off_lights
+            - consumption
           variables:
             gridarea: '"i consumption ." "n n n" ". . ."'
+            consumption: sensor.consumption_bathroom
           entity: light.bathroom_door
           icon: 'hue:ceiling-fugato-two'
           name: Salle de bains
-          custom_fields:
-            consumption:
-              card:
-                type: sensor
-                entity: sensor.consumption_bathroom
-                card_mod:
-                  style: |
-                    ha-card {
-                      box-shadow: none;
-                      pointer-events: none;
-                    }   
-                    .header {
-                      display: none !important;
-                    } 
-                    .info {
-                      padding: 0 !important;
-                      line-height: 1.2vw !important;
-                    }
-                    .value {
-                      font-size: 1.2vw !important;
-                      margin: 0 !important;
-                    }    
-                    .measurement {
-                      font-size: 0.8vw !important;
-                    }
           view_layout:
             grid-area: d
         - type: 'custom:button-card'
-          template: on_off_lights
+          template: 
+            - on_off_lights
+            - consumption
           variables:
             gridarea: '"i consumption ." "n n n" ". . ."'
+            consumption: sensor.consumption_bathroom
           entity: light.bathroom_mirror
           icon: 'mdi:led-strip-variant'
           name: Mirroir
-          custom_fields:
-            consumption:
-              card:
-                type: sensor
-                entity: sensor.consumption_bathroom
-                card_mod:
-                  style: |
-                    ha-card {
-                      box-shadow: none;
-                      pointer-events: none;
-                    }   
-                    .header {
-                      display: none !important;
-                    } 
-                    .info {
-                      padding: 0 !important;
-                      line-height: 1.2vw !important;
-                    }
-                    .value {
-                      font-size: 1.2vw !important;
-                      margin: 0 !important;
-                    }    
-                    .measurement {
-                      font-size: 0.8vw !important;
-                    }
           view_layout:
             grid-area: h
       style:
