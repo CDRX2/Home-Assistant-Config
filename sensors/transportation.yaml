@@ -1,26 +1,5 @@
 - platform: template
   sensors:
-    depuis_metro_1:
-      friendly_name: "Prochain bus"
-      icon_template: mdi:bus-alert
-      value_template: '{{ as_timestamp(states.sensor.dir_maison_departure.state)| timestamp_custom("%H:%M", True) }}'   
-
-- platform: template
-  sensors:
-    depuis_metro_2:
-      friendly_name: "Bus suivant"
-      icon_template: mdi:bus-clock
-      value_template: '{{ as_timestamp(states.sensor.dir_maison_departure.attributes.next_departure)| timestamp_custom("%H:%M", True) }}'        
-
-- platform: template
-  sensors:
-    depuis_metro_3:
-      friendly_name: "Bus d'après"
-      icon_template: mdi:bus
-      value_template: '{{ as_timestamp(states.sensor.dir_maison_departure.attributes.next_on_departure)| timestamp_custom("%H:%M", True) }}'
-
-- platform: template
-  sensors:
     depuis_maison_1:
       friendly_name: "Prochain bus"
       icon_template: mdi:bus-alert

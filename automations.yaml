@@ -346,3 +346,19 @@
       - light.bathroom_sink_white
       - light.bathroom_sink
   mode: single
+- id: '1705760430224'
+  alias: Update bus departures every 3 minutes
+  description: ''
+  trigger:
+  - platform: time_pattern
+    minutes: /3
+  condition: []
+  action:
+  - service: homeassistant.update_entity
+    metadata: {}
+    data: {}
+    target:
+      entity_id:
+      - sensor.dir_metro_departure
+      - sensor.dir_vclb_departure
+  mode: single

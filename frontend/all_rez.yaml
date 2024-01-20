@@ -32,37 +32,15 @@ elements:
           ". . . . . ."
       cards:
         - type: 'custom:button-card'
-          template: dimmable_lights
+          template: 
+            - dimmable_lights
+            - consumption
           variables:
             entity: light.salon_plafonnier
             gridarea: '"i consumption ." "n n n" "slider slider slider"'
+            consumption: sensor.consumption_salon_plafonnier
           entity: light.salon_plafonnier
           icon: 'hue:recessed-ceiling'
-          custom_fields:
-            consumption:
-              card:
-                type: sensor
-                entity: sensor.consumption_salon_plafonnier
-                card_mod:
-                  style: |
-                    ha-card {
-                      box-shadow: none;
-                      pointer-events: none;
-                    }   
-                    .header {
-                      display: none !important;
-                    } 
-                    .info {
-                      padding: 0 !important;
-                      line-height: 1.2vw !important;
-                    }
-                    .value {
-                      font-size: 1.2vw !important;
-                      margin: 0 !important;
-                    }    
-                    .measurement {
-                      font-size: 0.8vw !important;
-                    }
           view_layout:
             grid-area: a
         - type: 'custom:button-card'
@@ -106,140 +84,52 @@ elements:
           view_layout:
             grid-area: q
         - type: 'custom:button-card'
-          template: on_off_lights
+          template: 
+            - on_off_lights
+            - consumption
           variables:
             gridarea: '"i consumption ." "n n n" ". . ."'
+            consumption: sensor.consumption_manger_cuisine
           entity: light.lampe_salle_a_manger
           icon: 'hue:bulb-filament-alt'
           name: Table
-          custom_fields:
-            consumption:
-              card:
-                type: sensor
-                entity: sensor.consumption_manger_cuisine
-                card_mod:
-                  style: |
-                    ha-card {
-                      box-shadow: none;
-                      pointer-events: none;
-                    }   
-                    .header {
-                      display: none !important;
-                    } 
-                    .info {
-                      padding: 0 !important;
-                      line-height: 1.2vw !important;
-                    }
-                    .value {
-                      font-size: 1.2vw !important;
-                      margin: 0 !important;
-                    }    
-                    .measurement {
-                      font-size: 0.8vw !important;
-                    }
           view_layout:
             grid-area: b
         - type: 'custom:button-card'
-          template: dimmable_lights
+          template: 
+            - dimmable_lights
+            - consumption
           variables:
             entity: light.manger_plafonnier
             gridarea: '"i consumption ." "n n n" "slider slider slider"'
+            consumption: sensor.consumption_manger_plafonnier
           entity: light.manger_plafonnier
           icon: 'hue:recessed-ceiling'
           name: Salle à manger
-          custom_fields:
-            consumption:
-              card:
-                type: sensor
-                entity: sensor.consumption_manger_plafonnier
-                card_mod:
-                  style: |
-                    ha-card {
-                      box-shadow: none;
-                      pointer-events: none;
-                    }   
-                    .header {
-                      display: none !important;
-                    } 
-                    .info {
-                      padding: 0 !important;
-                      line-height: 1.2vw !important;
-                    }
-                    .value {
-                      font-size: 1.2vw !important;
-                      margin: 0 !important;
-                    }    
-                    .measurement {
-                      font-size: 0.8vw !important;
-                    }
           view_layout:
             grid-area: f
         - type: 'custom:button-card'
-          template: on_off_lights
+          template: 
+            - on_off_lights
+            - consumption
           variables:
             gridarea: '"i consumption ." "n n n" ". . ."'
+            consumption: sensor.consumption_amis
           entity: light.amis_plafonnier
           icon: 'hue:recessed-ceiling'
           name: Chambre d'amis
-          custom_fields:
-            consumption:
-              card:
-                type: sensor
-                entity: sensor.consumption_amis
-                card_mod:
-                  style: |
-                    ha-card {
-                      box-shadow: none;
-                      pointer-events: none;
-                    }   
-                    .header {
-                      display: none !important;
-                    } 
-                    .info {
-                      padding: 0 !important;
-                      line-height: 1.2vw !important;
-                    }
-                    .value {
-                      font-size: 1.2vw !important;
-                      margin: 0 !important;
-                    }    
-                    .measurement {
-                      font-size: 0.8vw !important;
-                    }
           view_layout:
             grid-area: j
         - type: 'custom:button-card'
-          template: on_off_lights
+          template: 
+            - on_off_lights
+            - consumption
           variables:
             gridarea: '"i consumption ." "n n n" ". . ."'
+            consumption: sensor.consumption_amis
           entity: light.amis_prises
           icon: 'mdi:led-strip-variant'
           name: Dressing amis
-          custom_fields:
-            consumption:
-              card:
-                type: sensor
-                entity: sensor.consumption_amis
-                card_mod:
-                  style: |
-                    ha-card {
-                      box-shadow: none;
-                      pointer-events: none;
-                    }   
-                    .header {
-                      display: none !important;
-                    } 
-                    .info {
-                      padding: 0 !important;
-                      line-height: 1.2vw !important;
-                    }
-                    .value {
-                      font-size: 1.2vw !important;
-                      margin: 0 !important;
-                    }    
-                    .measurement {
-                      font-size: 0.8vw !important;
-                    }
           view_layout:
             grid-area: n
         - type: 'custom:button-card'
@@ -255,37 +145,15 @@ elements:
           view_layout:
             grid-area: r
         - type: 'custom:button-card'
-          template: on_off_lights
+          template: 
+            - on_off_lights
+            - consumption
           variables:
             gridarea: '"i consumption ." "n n n" ". . ."'
+            consumption: sensor.consumption_manger_cuisine           
           entity: light.cuisine_plafonnier
           icon: 'hue:recessed-ceiling'
           name: Cuisine
-          custom_fields:
-            consumption:
-              card:
-                type: sensor
-                entity: sensor.consumption_manger_cuisine
-                card_mod:
-                  style: |
-                    ha-card {
-                      box-shadow: none;
-                      pointer-events: none;
-                    }   
-                    .header {
-                      display: none !important;
-                    } 
-                    .info {
-                      padding: 0 !important;
-                      line-height: 1.2vw !important;
-                    }
-                    .value {
-                      font-size: 1.2vw !important;
-                      margin: 0 !important;
-                    }    
-                    .measurement {
-                      font-size: 0.8vw !important;
-                    }
           view_layout:
             grid-area: c
         - type: 'custom:button-card'
@@ -299,72 +167,28 @@ elements:
           view_layout:
             grid-area: g
         - type: 'custom:button-card'
-          template: on_off_lights
+          template: 
+            - on_off_lights
+            - consumption
           variables:
             gridarea: '"i consumption ." "n n n" ". . ."'
+            consumption: sensor.consumption_entree
           entity: light.entree
           icon: 'hue:recessed-ceiling'
           name: Entrée
-          custom_fields:
-            consumption:
-              card:
-                type: sensor
-                entity: sensor.consumption_entree
-                card_mod:
-                  style: |
-                    ha-card {
-                      box-shadow: none;
-                      pointer-events: none;
-                    }   
-                    .header {
-                      display: none !important;
-                    } 
-                    .info {
-                      padding: 0 !important;
-                      line-height: 1.2vw !important;
-                    }
-                    .value {
-                      font-size: 1.2vw !important;
-                      margin: 0 !important;
-                    }    
-                    .measurement {
-                      font-size: 0.8vw !important;
-                    }
           view_layout:
             grid-area: k
         - type: 'custom:button-card'
-          template: dimmable_lights
+          template: 
+            - dimmable_lights
+            - consumption
           variables:
             entity: light.terrasse_3
             gridarea: '"i consumption ." "n n n" "slider slider slider"'
+            consumption: sensor.consumption_terrasse_3
           entity: light.terrasse_3
           icon: 'mdi:coach-lamp'
           name: Terrasse
-          custom_fields:
-            consumption:
-              card:
-                type: sensor
-                entity: sensor.consumption_terrasse_3
-                card_mod:
-                  style: |
-                    ha-card {
-                      box-shadow: none;
-                      pointer-events: none;
-                    }   
-                    .header {
-                      display: none !important;
-                    } 
-                    .info {
-                      padding: 0 !important;
-                      line-height: 1.2vw !important;
-                    }
-                    .value {
-                      font-size: 1.2vw !important;
-                      margin: 0 !important;
-                    }    
-                    .measurement {
-                      font-size: 0.8vw !important;
-                    }
           view_layout:
             grid-area: d
         - type: 'custom:button-card'
@@ -387,71 +211,27 @@ elements:
           view_layout:
             grid-area: l
         - type: 'custom:button-card'
-          template: on_off_lights
+          template: 
+            - on_off_lights
+            - consumption
           variables:
             gridarea: '"i consumption ." "n n n" ". . ."'
+            consumption: sensor.consumption_guest_bathroom
           entity: light.guest_bathroom
           icon: 'mdi:spotlight-beam'
           name: Douche
-          custom_fields:
-            consumption:
-              card:
-                type: sensor
-                entity: sensor.consumption_escalier_cave
-                card_mod:
-                  style: |
-                    ha-card {
-                      box-shadow: none;
-                      pointer-events: none;
-                    }   
-                    .header {
-                      display: none !important;
-                    } 
-                    .info {
-                      padding: 0 !important;
-                      line-height: 1.2vw !important;
-                    }
-                    .value {
-                      font-size: 1.2vw !important;
-                      margin: 0 !important;
-                    }    
-                    .measurement {
-                      font-size: 0.8vw !important;
-                    }
           view_layout:
             grid-area: p
         - type: 'custom:button-card'
-          template: on_off_lights
+          template: 
+            - on_off_lights
+            - consumption
           variables:
             gridarea: '"i consumption ." "n n n" ". . ."'
+            consumption: sensor.consumption_escalier_cave            
           entity: light.escalier_cave
           icon: 'mdi:stairs'
           name: Cave
-          custom_fields:
-            consumption:
-              card:
-                type: sensor
-                entity: sensor.consumption_escalier_cave
-                card_mod:
-                  style: |
-                    ha-card {
-                      box-shadow: none;
-                      pointer-events: none;
-                    }   
-                    .header {
-                      display: none !important;
-                    } 
-                    .info {
-                      padding: 0 !important;
-                      line-height: 1.2vw !important;
-                    }
-                    .value {
-                      font-size: 1.2vw !important;
-                      margin: 0 !important;
-                    }    
-                    .measurement {
-                      font-size: 0.8vw !important;
-                    }
           view_layout:
             grid-area: t
         # - type: 'custom:button-card'
