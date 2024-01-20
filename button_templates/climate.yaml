@@ -44,6 +44,8 @@ cover_stop:
           card:
             - background: none
             - padding: 0
+          icon:
+            - --state-cover-active-color: '#9da0a2'
     stop:
       card:
         type: 'custom:button-card'
@@ -86,6 +88,8 @@ cover_stop:
           card:
             - background: none
             - padding: 0
+          icon:
+            - --state-cover-active-color: '#9da0a2'
     up:
       card:
         type: 'custom:button-card'
@@ -128,6 +132,8 @@ cover_stop:
           card:
             - background: none
             - padding: 0
+          icon:
+            - --state-cover-active-color: '#9da0a2'
   tap_action:
     action: fire-dom-event
     browser_mod:
@@ -241,6 +247,8 @@ cover_no_stop_dual:
           card:
             - background: none
             - padding: 0
+          icon:
+            - --state-cover-active-color: '#9da0a2'
     # stop:
     #   card:
     #     type: 'custom:button-card'
@@ -381,6 +389,8 @@ cover_no_stop_dual:
           card:
             - background: none
             - padding: 0
+          icon:
+            - --state-cover-active-color: '#9da0a2'
   tap_action:
     action: fire-dom-event
     browser_mod:
@@ -495,6 +505,8 @@ cover_no_stop:
           card:
             - background: none
             - padding: 0
+          icon:
+            - --state-cover-active-color: '#9da0a2'
     up:
       card:
         type: 'custom:button-card'
@@ -537,6 +549,8 @@ cover_no_stop:
           card:
             - background: none
             - padding: 0
+          icon:
+            - --state-cover-active-color: '#9da0a2'
   tap_action:
     action: fire-dom-event
     browser_mod:

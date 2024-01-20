@@ -34,8 +34,6 @@ elements:
           template: dimmable_lights
           variables:
             entity: light.charles_bas_white
-            gridarea: '"i . ." "n n n" "slider slider slider"'
-          entity: light.charles_bas_white
           icon: 'mdi:led-strip-variant'
           name: Charles bas
           view_layout:
@@ -44,8 +42,6 @@ elements:
           template: dimmable_lights
           variables:
             entity: light.charles_haut_white
-            gridarea: '"i . ." "n n n" "slider slider slider"'
-          entity: light.charles_haut_white
           icon: 'mdi:led-strip-variant'
           name: Charles haut
           view_layout:

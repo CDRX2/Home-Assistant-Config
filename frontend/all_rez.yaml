@@ -59,7 +59,6 @@ elements:
             title: Couleur rez
             gridarea: '"i . color" "n n n" "slider slider slider"'
             color_temp: false
-          entity: light.couleur_rez
           icon: 'mdi:led-strip-variant'
           name: Couleur Rez
           view_layout:
@@ -69,7 +68,6 @@ elements:
           variables:
             entity: light.vinyles
             gridarea: '"i . ." "n n n" "slider slider slider"'
-          entity: light.vinyles
           icon: 'mdi:led-strip-variant'
           name: Meuble vinyles
           view_layout:
@@ -103,7 +101,6 @@ elements:
             entity: light.manger_plafonnier
             gridarea: '"i consumption ." "n n n" "slider slider slider"'
             consumption: sensor.consumption_manger_plafonnier
-          entity: light.manger_plafonnier
           icon: 'hue:recessed-ceiling'
           name: Salle à manger
           view_layout:
@@ -139,7 +136,6 @@ elements:
             title: Chevet amis
             gridarea: '"i . color" "n n n" "slider slider slider"'
             color_temp: true
-          entity: light.chevet_amis
           icon: 'cil:google-home'
           name: Chevet amis
           view_layout:
@@ -161,7 +157,6 @@ elements:
           variables:
             entity: light.cuisine_deco
             gridarea: '"i . ." "n n n" "slider slider slider"'
-          entity: light.cuisine_deco
           icon: 'mdi:led-strip-variant'
           name: Cuisine déco
           view_layout:
@@ -186,7 +181,6 @@ elements:
             entity: light.terrasse_3
             gridarea: '"i consumption ." "n n n" "slider slider slider"'
             consumption: sensor.consumption_terrasse_3
-          entity: light.terrasse_3
           icon: 'mdi:coach-lamp'
           name: Terrasse
           view_layout:
@@ -205,7 +199,6 @@ elements:
           variables:
             entity: light.carport
             gridarea: '"i . ." "n n n" "slider slider slider"'
-          entity: light.carport
           icon: 'hue:wall-fuzo-h'
           name: Carport
           view_layout:

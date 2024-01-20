@@ -1,10 +1,12 @@
 color_lights:
+  template: 
+    - dimmable_lights
+    - on_off_lights
   variables:
-    entity: "var_entity"
     title: "var_title"
+    entity: "var_entity"
     gridarea: "var_gridarea"
     color_temp: "var_color_temp"
-  aspect_ratio: 2/1
   custom_fields:
     color:
       card:
@@ -59,74 +61,14 @@ color_lights:
                               box-shadow: none !important;
                             }
               title: '[[[ return variables.title ]]]'
-    slider:
-      card:
-        type: 'custom:mod-card'
-        card:
-          type: 'custom:slider-entity-row'
-          entity: '[[[ return variables.entity ]]]'
-          full_row: true
-          grow: true
-          hide_state: false
-        card_mod:
-          style:
-            .: |
-              ha-card {
-                box-shadow: none;
-              }
-            slider-entity-row$: 
-              .: |
-                .state {
-                  margin-left: 0 !important;
-                  min-width: 0 !important;
-                  white-space: nowrap;
-                }
-                ha-slider {
-                  min-width: 0 !important;
-                  height: 3vw;
-                }
-                .wrapper {
-                  height: 3vw !important;
-                }
-              ha-slider.full$: |
-                #sliderContainer {
-                  margin-left: 10%;
-                  margin-right: 10%;
-                }
   styles:
-    grid:
-      - grid-template-areas: '[[[ return variables.gridarea ]]]'
-      - grid-template-columns: 1fr 1fr 1fr
-      - grid-template-rows: 1fr min-content 30%
-    card:
-      - border-radius: 0.75vw
-      - padding: 1vw
     icon:
-      - top: 0%
-      - left: 0%
-      - '--paper-item-icon-active-color': "[[[ return typeof entity.attributes.rgb_color !== 'undefined' ? 'rgba(' + entity.attributes.rgb_color + ', 1)' : '#f5d442'; ]]]"
-    name:
-      - font-size: 1.4vw
+      - '--state-light-active-color': "[[[ return typeof entity.attributes.rgb_color !== 'undefined' ? 'rgba(' + entity.attributes.rgb_color + ', 1)' : '#f5d442'; ]]]"
     custom_fields:
-      slider:
-        - width: 100%
-        - font-size: 0.8vw
-        - '--paper-slider-active-color': "[[[ return typeof entity.attributes.rgb_color !== 'undefined' ? 'rgba(' + entity.attributes.rgb_color + ', 1)' : '#f5d442'; ]]]"
-        - '--paper-slider-container-color': lightgrey
       color:
         - align-self: start
         - justify-self: right
         - width: 50%
-  card_mod:
-    style: 
-      .: |
-        :host {
-          --masonry-view-card-margin: 4px !important;
-        }
-      ha-icon$: |
-        ha-svg-icon {
-         padding-bottom: 20%;
-        }
 
 on_off_lights:
   variables:
@@ -143,7 +85,7 @@ on_off_lights:
     icon:
       - top: 0%
       - left: 0%
-      - '--paper-item-icon-active-color': '#f5d442'
+      - '--state-light-active-color': '#f5d442'
     name:
       - font-size: 1.4vw
   card_mod:
@@ -158,10 +100,10 @@ on_off_lights:
         }
 
 dimmable_lights:
+  template: on_off_lights
   variables:
     entity: "var_entity"
-    gridarea: "var_gridarea"
-  aspect_ratio: 2/1
+  entity: '[[[ return variables.entity ]]]'
   custom_fields:
     slider:
       card:
@@ -196,37 +138,14 @@ dimmable_lights:
                 #sliderContainer {
                   margin-left: 10%;
                   margin-right: 10%;
-                }
-  styles:
-    grid:
-      - grid-template-areas: '[[[ return variables.gridarea ]]]'
-      - grid-template-columns: 1fr 1fr 1fr
-      - grid-template-rows: 1fr min-content 30%
-    card:
-      - border-radius: 0.75vw
-      - padding: 1vw
-    icon:
-      - top: 0%
-      - left: 0%
-      - '--paper-item-icon-active-color': '#f5d442'
-    name:
-      - font-size: 1.4vw
+                } 
+  styles: 
     custom_fields:
       slider:
         - width: 100%
         - font-size: 0.8vw
         - '--paper-slider-active-color': '#f5d442'
         - '--paper-slider-container-color': lightgrey
-  card_mod:
-    style: 
-      .: |
-        :host {
-          --masonry-view-card-margin: 4px !important;
-        }
-      ha-icon$: |
-        ha-svg-icon {
-         padding-bottom: 20%;
-        }
 
 consumption:
   variables:
