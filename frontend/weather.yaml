@@ -67,7 +67,7 @@ elements:
       round_temp: false
       type: daily
       number_of_forecasts: 8
-      chart_height: 280
+      chart_height: 200
     units:
       pressure: ''
       speed: ''
