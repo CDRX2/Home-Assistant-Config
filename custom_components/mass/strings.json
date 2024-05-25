@@ -12,16 +12,25 @@
   "config": {
     "flow_title": "{name}",
     "step": {
+      "init": {
+        "data": {
+          "url": "URL of the Music Assistant server",
+          "use_addon": "Use the official Music Assistant Server add-on",
+          "expose_players_assist": "Expose players to Assist"
+        }
+      },
       "manual": {
         "data": {
-          "url": "URL of the Music Assistant server"
+          "url": "URL of the Music Assistant server",
+          "expose_players_assist": "Expose players to Assist"
         }
       },
       "on_supervisor": {
         "title": "Select connection method",
         "description": "Do you want to use the official Music Assistant Server add-on?\n\nIf you are already running the Music Assistant Server in another add-on, in a custom container, natively etc., then do not select this option.",
         "data": {
-          "use_addon": "Use the official Music Assistant Server add-on"
+          "use_addon": "Use the official Music Assistant Server add-on",
+          "expose_players_assist": "Expose players to Assist"
         }
       },
       "install_addon": {
@@ -35,13 +44,16 @@
       },
       "discovery_confirm": {
         "description": "Do you want to add the Music Assistant Server `{url}` to Home Assistant?",
-        "title": "Discovered Music Assistant Server"
+        "title": "Discovered Music Assistant Server",
+        "data": {
+          "expose_players_assist": "Expose players to Assist"
+        }
       }
     },
     "error": {
       "cannot_connect": "Failed to connect",
       "unknown": "Unexpected error"
-  },
+    },
     "abort": {
       "addon_get_discovery_info_failed": "Failed to get Music Assistant Server add-on discovery info.",
       "addon_info_failed": "Failed to get Music Assistant Server add-on info.",
@@ -52,7 +64,7 @@
       "not_matter_addon": "Discovered add-on is not the official Music Assistant Server add-on.",
       "reconfiguration_successful": "Successfully reconfigured the Music Assistant integration.",
       "cannot_connect": "Failed to connect"
-  },
+    },
     "progress": {
       "install_addon": "Please wait while the Music Assistant Server add-on installation finishes. This can take several minutes.",
       "start_addon": "Please wait while the Music Assistant Server add-on starts. This add-on is what powers Music Assistant in Home Assistant. This may take some seconds."
@@ -75,10 +87,6 @@
           "name": "Enqueue",
           "description": "If the content should be played now or be added to the queue. Options are: play, replace, next. replace_next, add"
         },
-        "announce": {
-          "name": "Announce",
-          "description": "If the media should be played as an announcement."
-        },
         "artist": {
           "name": "Artist name",
           "description": "When specifying a track or album by name in the Media ID field, you can optionally restrict results by this artist name."
@@ -90,6 +98,24 @@
         "radio_mode": {
           "name": "Enable Radio Mode",
           "description": "Enable radio mode to auto generate a playlist based on the selection."
+        }
+      }
+    },
+    "play_announcement": {
+      "name": "Play Announcement (advanced)",
+      "description": "Play announcement on a Music Assistant player with more fine grained control options.",
+      "fields": {
+        "media_id": {
+          "name": "URL",
+          "description": "URL to the notification sound."
+        },
+        "use_pre_announce": {
+          "name": "Use pre-announce",
+          "description": "Use pre-announcement sound for the announcement. Omit to use the player default."
+        },
+        "announce_volume": {
+          "name": "Announce volume",
+          "description": "Use a forced volume level for the announcement. Omit to use player default."
         }
       }
     },
@@ -128,6 +154,18 @@
         "add": "Add to queue",
         "replace": "Play now and clear queue",
         "replace_next": "Play next and clear queue"
+      }
+    }
+  },
+  "options": {
+    "flow_title": "{name}",
+    "step": {
+      "init": {
+        "data": {
+          "url": "URL of the Music Assistant server",
+          "use_addon": "Use the official Music Assistant Server add-on",
+          "expose_players_assist": "Expose players to Assist"
+        }
       }
     }
   }

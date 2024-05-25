@@ -5,6 +5,7 @@ elements:
     details: true
     entity: weather.openweathermap
     forecast: true
+    forecast_type: daily
     number_of_forecasts: 8
     name: Météo
     card_mod:
@@ -43,188 +44,33 @@ elements:
         }
     type: 'custom:weather-card'
 
-  # - type: 'custom:weather-chart-card'
-  #   entity: weather.dorighome
-  #   show_main: false
-  #   show_current_condition: true
-  #   show_attributes: false
-  #   show_time: false
-  #   show_day: false
-  #   show_date: false
-  #   show_humidity: true
-  #   show_pressure: true
-  #   show_wind_direction: true
-  #   show_wind_speed: true
-  #   show_sun: true
-  #   forecast:
-  #     precipitation_type: rainfall
-  #     labels_font_size: '11'
-  #     style: style2
-  #     show_wind_forecast: true
-  #     condition_icons: true
-  #     round_temp: false
-  #     type: daily
-  #   units:
-  #     pressure: ''
-  #     speed: ''
-  #   card_mod:
-  #     style: |
-  #       :host {
-  #         left: 50%;
-  #         top: 75%;
-  #         width: 90%;
-  #         height: 40%;
-  #       }
-  #       ha-card {
-  #         /*background: none !important;
-  #         height: 100%;
-  #         left: 50%;
-  #         top: 75%;
-  #         width: 90%;
-  #         height: 40%;*/
-  #       }
-
-  - type: 'custom:apexcharts-card'
-    experimental:
-      color_threshold: true
-    graph_span: 14d
-    span:
-      start: day
-      offset: -7d
-    now:
-      show: true
-      label: 'Présent'
-      color: '#ff1a1a'
-    yaxis:
-      - id: temp
-        show: true
-        apex_config:
-          forceNiceScale: true
-          tickAmount: 5
-          decimalsInFloat: 0
-      - id: rain
-        show: true
-        opposite: true
-        apex_config:
-          forceNiceScale: true
-          tickAmount: 5
-          decimalsInFloat: 0
-    apex_config:
-      dataLabels:
-        enabled: false
-      chart:
-        width: '100%'
-        height: '100%'
-      legend:
-        position: top
-        show: false
-      grid:
-        show: false
-        padding:
-          left: 5
-          right: 20
-      plotOptions:
-        bar:
-          columnWidth: '50%'
-      xaxis:
-        axisBorder:
-          show: false
-        axisTicks:
-          show: false
-        tooltip:
-          enabled: false
-    series:
-      - entity: weather.openweathermap
-        type: area
-        color_threshold:
-          - value: -80
-            color: '#03a8f4'
-            opacity: 0.65
-          - value: 0
-            color: '#ffa31a'
-            opacity: 0.65
-        color: '#ffa31a'
-        opacity: 0.65
-        name: 'Température'
-        unit: °C
-        attribute: temperature
-        stroke_width: 0
-        yaxis_id: temp
-        fill_raw: last
-        show:
-          legend_value: false     
-        group_by:
-          func: avg
-          duration: 1h
-          start_with_last: false
-        extend_to: false 
-      - entity: weather.openweathermap
-        type: area
-        # color: '#ffa31a'
-        opacity: 0.65
-        color_threshold:
-          - value: -80
-            color: '#03a8f4'
-            opacity: 0.65
-          - value: 0
-            color: '#ffa31a'
-            opacity: 0.65
-        stroke_width: 0
-        yaxis_id: temp
-        name: 'Température'
-        unit: °C
-        extend_to: now
-        group_by:
-          func: raw
-          start_with_last: false
-        fill_raw: last
-        show:
-          legend_value: false
-        data_generator: |
-          return entity.attributes.forecast.flatMap((entry) => {
-            let noon = new Date(entry.datetime).setHours(16, 0, 0, 0);
-            let midnight = new Date(entry.datetime).setHours(4, 0, 0, 0);
-            return [[new Date(midnight).getTime(), entry.templow], [new Date(noon).getTime(), entry.temperature]];
-          });
-      - entity: sensor.openweathermap_rain
-        type: column
-        yaxis_id: rain
-        name: 'Précipitations'
-        unit: mm
-        color: '#0b0385'
-        # fill_raw: last
-        opacity: 0.65
-        show:
-          legend_value: false     
-        group_by:
-          func: sum
-          duration: 1d
-      # - entity: sensor.openweathermap_snow
-      #   type: column
-      #   yaxis_id: rain
-      #   name: 'Neige'
-      #   unit: mm
-      #   color: '#0cffdb'
-      #   fill_raw: last
-      #   show:
-      #     legend_value: false     
-      #   group_by:
-      #     func: sum
-      #     duration: 1d
-      - entity: weather.openweathermap
-        type: column
-        yaxis_id: rain
-        color: '#0b0385'
-        name: 'Précipitations'
-        unit: mm
-        # fill_raw: last
-        opacity: 0.65
-        show:
-          legend_value: false
-        data_generator: |
-          return entity.attributes.forecast.map((entry) => {
-            return [new Date(entry.datetime).setHours(24, 0, 0, 0), entry.precipitation];
-          });
+  - type: 'custom:weather-chart-card'
+    entity: weather.openweathermap
+    show_main: false
+    show_current_condition: true
+    show_attributes: false
+    show_time: false
+    show_day: false
+    show_date: false
+    show_humidity: true
+    show_pressure: true
+    show_wind_direction: true
+    show_wind_speed: true
+    show_sun: true
+    locale: fr
+    forecast:
+      precipitation_type: rainfall
+      labels_font_size: '11'
+      style: style2
+      show_wind_forecast: true
+      condition_icons: true
+      round_temp: false
+      type: daily
+      number_of_forecasts: 8
+      chart_height: 280
+    units:
+      pressure: ''
+      speed: ''
     card_mod:
       style: |
         :host {
@@ -235,23 +81,176 @@ elements:
         }
         ha-card {
           background: none !important;
-          height: 100%;
         }
-        .wrapper.with-header {
-          height: 100%;
-        }
-        .apexcharts-tooltip {
-          border: none !important;
-          border-radius: 0.2vw !important;
-        }
-        .apexcharts-tooltip-title {
-          border: none !important;
-          padding-bottom: none;
-          margin-bottom: none;
-        }
-        .apexcharts-xaxis-annotations > rect {
-          display: none;
-        }
+
+#   - type: 'custom:apexcharts-card'
+#     experimental:
+#       color_threshold: true
+#     graph_span: 14d
+#     span:
+#       start: day
+#       offset: -7d
+#     now:
+#       show: true
+#       label: 'Présent'
+#       color: '#ff1a1a'
+#     yaxis:
+#       - id: temp
+#         show: true
+#         apex_config:
+#           forceNiceScale: true
+#           tickAmount: 5
+#           decimalsInFloat: 0
+#       - id: rain
+#         show: true
+#         opposite: true
+#         apex_config:
+#           forceNiceScale: true
+#           tickAmount: 5
+#           decimalsInFloat: 0
+#     apex_config:
+#       dataLabels:
+#         enabled: false
+#       chart:
+#         width: '100%'
+#         height: '100%'
+#       legend:
+#         position: top
+#         show: false
+#       grid:
+#         show: false
+#         padding:
+#           left: 5
+#           right: 20
+#       plotOptions:
+#         bar:
+#           columnWidth: '50%'
+#       xaxis:
+#         axisBorder:
+#           show: false
+#         axisTicks:
+#           show: false
+#         tooltip:
+#           enabled: false
+#     series:
+#       - entity: weather.openweathermap
+#         type: area
+#         color_threshold:
+#           - value: -80
+#             color: '#03a8f4'
+#             opacity: 0.65
+#           - value: 0
+#             color: '#ffa31a'
+#             opacity: 0.65
+#         color: '#ffa31a'
+#         opacity: 0.65
+#         name: 'Température'
+#         unit: °C
+#         attribute: temperature
+#         stroke_width: 0
+#         yaxis_id: temp
+#         fill_raw: last
+#         show:
+#           legend_value: false     
+#         group_by:
+#           func: avg
+#           duration: 1h
+#           start_with_last: false
+#         extend_to: false 
+#       - entity: weather.openweathermap
+#         type: area
+#         # color: '#ffa31a'
+#         opacity: 0.65
+#         color_threshold:
+#           - value: -80
+#             color: '#03a8f4'
+#             opacity: 0.65
+#           - value: 0
+#             color: '#ffa31a'
+#             opacity: 0.65
+#         stroke_width: 0
+#         yaxis_id: temp
+#         name: 'Température'
+#         unit: °C
+#         extend_to: now
+#         group_by:
+#           func: raw
+#           start_with_last: false
+#         fill_raw: last
+#         show:
+#           legend_value: false
+#         data_generator: |
+#           return entity.attributes.forecast.flatMap((entry) => {
+#             let noon = new Date(entry.datetime).setHours(16, 0, 0, 0);
+#             let midnight = new Date(entry.datetime).setHours(4, 0, 0, 0);
+#             return [[new Date(midnight).getTime(), entry.templow], [new Date(noon).getTime(), entry.temperature]];
+#           });
+#       - entity: sensor.openweathermap_rain
+#         type: column
+#         yaxis_id: rain
+#         name: 'Précipitations'
+#         unit: mm
+#         color: '#0b0385'
+#         # fill_raw: last
+#         opacity: 0.65
+#         show:
+#           legend_value: false     
+#         group_by:
+#           func: sum
+#           duration: 1d
+#       # - entity: sensor.openweathermap_snow
+#       #   type: column
+#       #   yaxis_id: rain
+#       #   name: 'Neige'
+#       #   unit: mm
+#       #   color: '#0cffdb'
+#       #   fill_raw: last
+#       #   show:
+#       #     legend_value: false     
+#       #   group_by:
+#       #     func: sum
+#       #     duration: 1d
+#       - entity: weather.openweathermap
+#         type: column
+#         yaxis_id: rain
+#         color: '#0b0385'
+#         name: 'Précipitations'
+#         unit: mm
+#         # fill_raw: last
+#         opacity: 0.65
+#         show:
+#           legend_value: false
+#         data_generator: |
+#           return entity.attributes.forecast.map((entry) => {
+#             return [new Date(entry.datetime).setHours(24, 0, 0, 0), entry.precipitation];
+#           });
+#     card_mod:
+#       style: |
+#         :host {
+#           left: 50%;
+#           top: 75%;
+#           width: 90%;
+#           height: 40%;
+#         }
+#         ha-card {
+#           background: none !important;
+#           height: 100%;
+#         }
+#         .wrapper.with-header {
+#           height: 100%;
+#         }
+#         .apexcharts-tooltip {
+#           border: none !important;
+#           border-radius: 0.2vw !important;
+#         }
+#         .apexcharts-tooltip-title {
+#           border: none !important;
+#           padding-bottom: none;
+#           margin-bottom: none;
+#         }
+#         .apexcharts-xaxis-annotations > rect {
+#           display: none;
+#         }
 image: /local/ui/floorplan/blurredFloorplanRez.png
 card_mod:
   style: |

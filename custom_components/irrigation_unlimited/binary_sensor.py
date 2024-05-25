@@ -1,4 +1,5 @@
 """Binary sensor platform for irrigation_unlimited."""
+
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.entity_component import EntityComponent
@@ -42,13 +43,14 @@ from .const import (
     DOMAIN,
     COORDINATOR,
     CONF_SCHEDULES,
-    CONF_ZONES,
     CONF_ZONE_ID,
     RES_MANUAL,
     RES_NOT_RUNNING,
     RES_NONE,
     ATTR_VOLUME,
     ATTR_FLOW_RATE,
+    ATTR_SEQUENCE_COUNT,
+    ATTR_ZONES,
 )
 
 
@@ -70,9 +72,11 @@ async def async_setup_platform(
     coordinator: IUCoordinator = hass.data[DOMAIN][COORDINATOR]
     entities = []
     for controller in coordinator.controllers:
-        entities.append(IUMasterEntity(coordinator, controller, None))
+        entities.append(IUMasterEntity(coordinator, controller, None, None))
         for zone in controller.zones:
-            entities.append(IUZoneEntity(coordinator, controller, zone))
+            entities.append(IUZoneEntity(coordinator, controller, zone, None))
+        for sequence in controller.sequences:
+            entities.append(IUSequenceEntity(coordinator, controller, None, sequence))
     async_add_entities(entities)
 
     platform = current_platform.get()
@@ -102,10 +106,15 @@ async def async_reload_platform(
 
     for controller in coordinator.controllers:
         if not remove_entity(old_entities, controller.unique_id):
-            new_entities.append(IUMasterEntity(coordinator, controller, None))
+            new_entities.append(IUMasterEntity(coordinator, controller, None, None))
         for zone in controller.zones:
             if not remove_entity(old_entities, zone.unique_id):
-                new_entities.append(IUZoneEntity(coordinator, controller, zone))
+                new_entities.append(IUZoneEntity(coordinator, controller, zone, None))
+        for sequence in controller.sequences:
+            if not remove_entity(old_entities, sequence.unique_id):
+                new_entities.append(
+                    IUSequenceEntity(coordinator, controller, None, sequence)
+                )
     if len(new_entities) > 0:
         await platform.async_add_entities(new_entities)
         coordinator.initialise()
@@ -152,7 +161,8 @@ class IUMasterEntity(IUEntity):
         attr[ATTR_SUSPENDED] = self._controller.suspended
         attr[ATTR_STATUS] = self._controller.status
         attr[ATTR_ZONE_COUNT] = len(self._controller.zones)
-        attr[CONF_ZONES] = ""
+        attr[ATTR_SEQUENCE_COUNT] = len(self._controller.sequences)
+        attr[ATTR_ZONES] = ""
         attr[ATTR_SEQUENCE_STATUS] = self._controller.sequence_status()
         current = self._controller.runs.current_run
         if current is not None:
@@ -265,4 +275,80 @@ class IUZoneEntity(IUEntity):
         attr[ATTR_VOLUME] = self._zone.volume.total
         attr[ATTR_FLOW_RATE] = self._zone.volume.flow_rate
         attr |= self._zone.user
+        return attr
+
+
+class IUSequenceEntity(IUEntity):
+    """irrigation_unlimited sequence binary_sensor class."""
+
+    @property
+    def unique_id(self):
+        """Return a unique ID."""
+        return self._sequence.unique_id
+
+    @property
+    def name(self):
+        """Return the friendly name of the binary_sensor."""
+        return self._sequence.name
+
+    @property
+    def is_on(self):
+        """Return true if the binary_sensor is on."""
+        return self._sequence.is_on
+
+    @property
+    def should_poll(self):
+        """Indicate that we need to poll data"""
+        return False
+
+    @property
+    def icon(self):
+        """Return the icon to use in the frontend."""
+        return self._sequence.icon
+
+    @property
+    def extra_state_attributes(self):
+        """Return the state attributes of the device."""
+        attr = {}
+        attr[ATTR_INDEX] = self._sequence.index
+        attr[ATTR_ENABLED] = self._sequence.enabled
+        attr[ATTR_SUSPENDED] = (
+            dt.as_local(self._sequence.suspended) if self._sequence.suspended else None
+        )
+        attr[ATTR_STATUS] = self._sequence.status
+        attr[ATTR_ZONE_COUNT] = len(self._sequence.zones)
+        attr[ATTR_SCHEDULE_COUNT] = len(self._sequence.schedules)
+        attr[ATTR_ADJUSTMENT] = str(self._sequence.adjustment)
+        attr[ATTR_VOLUME] = self._sequence.volume
+        if (current := self._sequence.runs.current_run) is not None:
+            if current.active_zone is not None:
+                attr[ATTR_CURRENT_ZONE] = current.active_zone.sequence_zone.id1
+            else:
+                attr[ATTR_CURRENT_ZONE] = None
+            attr[ATTR_CURRENT_START] = dt.as_local(current.start_time)
+            attr[ATTR_CURRENT_DURATION] = str(current.total_time)
+            attr[ATTR_TIME_REMAINING] = str(current.time_remaining)
+            attr[ATTR_PERCENT_COMPLETE] = current.percent_complete
+            if current.schedule is not None:
+                attr[ATTR_CURRENT_SCHEDULE] = current.schedule.id1
+                attr[ATTR_CURRENT_NAME] = current.schedule.name
+            else:
+                attr[ATTR_CURRENT_SCHEDULE] = 0
+                attr[ATTR_CURRENT_NAME] = RES_MANUAL
+        else:
+            attr[ATTR_CURRENT_ZONE] = None
+            attr[ATTR_CURRENT_SCHEDULE] = None
+            attr[ATTR_PERCENT_COMPLETE] = 0
+        if (next_run := self._sequence.runs.next_run) is not None:
+            attr[ATTR_NEXT_START] = dt.as_local(next_run.start_time)
+            attr[ATTR_NEXT_DURATION] = str(next_run.total_time)
+            if next_run.schedule is not None:
+                attr[ATTR_NEXT_SCHEDULE] = next_run.schedule.id1
+                attr[ATTR_NEXT_NAME] = next_run.schedule.name
+            else:
+                attr[ATTR_NEXT_SCHEDULE] = 0
+                attr[ATTR_NEXT_NAME] = RES_MANUAL
+        else:
+            attr[ATTR_NEXT_SCHEDULE] = None
+        attr[ATTR_ZONES] = self._sequence.ha_zone_attr()
         return attr

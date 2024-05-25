@@ -18,6 +18,8 @@ from .schema import (
     RELOAD_SERVICE_SCHEMA,
     LOAD_SCHEDULE_SCHEMA,
     SUSPEND_SCHEMA,
+    CANCEL_SCHEMA,
+    PAUSE_RESUME_SCHEMA,
 )
 
 from .const import (
@@ -30,6 +32,9 @@ from .const import (
     SERVICE_TOGGLE,
     SERVICE_LOAD_SCHEDULE,
     SERVICE_SUSPEND,
+    SERVICE_SKIP,
+    SERVICE_PAUSE,
+    SERVICE_RESUME,
 )
 
 
@@ -51,7 +56,7 @@ def register_platform_services(platform: entity_platform.EntityPlatform) -> None
         SERVICE_TOGGLE, ENABLE_DISABLE_SCHEMA, async_entity_service_handler
     )
     platform.async_register_entity_service(
-        SERVICE_CANCEL, ENTITY_SCHEMA, async_entity_service_handler
+        SERVICE_CANCEL, CANCEL_SCHEMA, async_entity_service_handler
     )
     platform.async_register_entity_service(
         SERVICE_TIME_ADJUST, TIME_ADJUST_SCHEMA, async_entity_service_handler
@@ -61,6 +66,17 @@ def register_platform_services(platform: entity_platform.EntityPlatform) -> None
     )
     platform.async_register_entity_service(
         SERVICE_SUSPEND, SUSPEND_SCHEMA, async_entity_service_handler
+    )
+    platform.async_register_entity_service(
+        SERVICE_SKIP, ENTITY_SCHEMA, async_entity_service_handler
+    )
+
+    platform.async_register_entity_service(
+        SERVICE_PAUSE, PAUSE_RESUME_SCHEMA, async_entity_service_handler
+    )
+
+    platform.async_register_entity_service(
+        SERVICE_RESUME, PAUSE_RESUME_SCHEMA, async_entity_service_handler
     )
 
 
@@ -97,7 +113,7 @@ def register_component_services(
     @callback
     async def load_schedule_service_handler(call: ServiceCall) -> None:
         """Reload schedule."""
-        coordinator.service_call(call.service, None, None, call.data)
+        coordinator.service_call(call.service, None, None, None, call.data)
 
     component.hass.services.async_register(
         DOMAIN,

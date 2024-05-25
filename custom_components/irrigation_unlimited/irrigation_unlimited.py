@@ -1,14 +1,18 @@
 """Irrigation Unlimited Coordinator and sub classes"""
+
 # pylint: disable=too-many-lines
 import weakref
 from datetime import datetime, time, timedelta, timezone, date
 from collections import deque
+from collections.abc import Iterator
 from types import MappingProxyType
 from typing import OrderedDict, NamedTuple, Callable, Awaitable
 from logging import WARNING, Logger, getLogger, INFO, DEBUG, ERROR
 import uuid
 import time as tm
 import json
+from decimal import Decimal
+from enum import Enum, Flag, auto
 import voluptuous as vol
 from crontab import CronTab
 from homeassistant.core import (
@@ -17,12 +21,12 @@ from homeassistant.core import (
     CALLBACK_TYPE,
     DOMAIN as HADOMAIN,
     Event as HAEvent,
+    split_entity_id,
 )
 from homeassistant.helpers.entity import Entity
-from homeassistant.helpers.template import Template
+from homeassistant.helpers.template import Template, render_complex
 from homeassistant.helpers.event import (
     async_track_point_in_utc_time,
-    async_call_later,
     async_track_state_change_event,
 )
 from homeassistant.helpers import sun
@@ -43,12 +47,19 @@ from homeassistant.const import (
     EVENT_HOMEASSISTANT_STOP,
     SERVICE_TURN_OFF,
     SERVICE_TURN_ON,
+    SERVICE_CLOSE_VALVE,
+    SERVICE_OPEN_VALVE,
+    SERVICE_CLOSE_COVER,
+    SERVICE_OPEN_COVER,
     STATE_OFF,
     STATE_ON,
+    STATE_CLOSED,
+    STATE_OPEN,
     WEEKDAYS,
     ATTR_ENTITY_ID,
     CONF_FOR,
     CONF_UNTIL,
+    Platform,
 )
 
 from .history import IUHistory
@@ -136,8 +147,10 @@ from .const import (
     ICON_CONTROLLER_OFF,
     ICON_CONTROLLER_ON,
     ICON_CONTROLLER_PAUSED,
+    ICON_CONTROLLER_DELAY,
     ICON_DISABLED,
     ICON_SUSPENDED,
+    ICON_SEQUENCE_DELAY,
     ICON_SEQUENCE_PAUSED,
     ICON_SEQUENCE_ZONE_OFF,
     ICON_SEQUENCE_ZONE_ON,
@@ -171,7 +184,11 @@ from .const import (
     SERVICE_TIME_ADJUST,
     SERVICE_LOAD_SCHEDULE,
     SERVICE_SUSPEND,
+    SERVICE_SKIP,
+    SERVICE_PAUSE,
+    SERVICE_RESUME,
     STATUS_BLOCKED,
+    STATUS_DELAY,
     STATUS_PAUSED,
     STATUS_DISABLED,
     STATUS_SUSPENDED,
@@ -189,17 +206,20 @@ from .const import (
     CONF_RESYNC,
     EVENT_SYNC_ERROR,
     EVENT_SWITCH_ERROR,
+    CONF_FOUND,
     CONF_EXPECTED,
-    CONF_STATE_ON,
-    CONF_STATE_OFF,
     CONF_SCHEDULE_ID,
     CONF_FROM,
     CONF_VOLUME,
-    CONF_PRECISION,
+    CONF_VOLUME_PRECISION,
+    CONF_VOLUME_SCALE,
+    CONF_FLOW_RATE_PRECISION,
+    CONF_FLOW_RATE_SCALE,
     CONF_QUEUE,
     CONF_QUEUE_MANUAL,
     CONF_USER,
     CONF_TOGGLE,
+    CONF_EXTENDED_CONFIG,
 )
 
 _LOGGER: Logger = getLogger(__package__)
@@ -305,13 +325,12 @@ def utc_eot() -> datetime:
     return datetime.max.replace(tzinfo=timezone.utc)
 
 
-def render_positive_time_period(hass: HomeAssistant, data: dict, key: str) -> None:
+def render_positive_time_period(data: dict, key: str) -> None:
     """Resolve a template that specifies a timedelta"""
-    if isinstance(data.get(key), Template):
-        template: Template = data[key]
-        template.hass = hass
+    if key in data:
         schema = vol.Schema({key: cv.positive_time_period})
-        data[key] = schema({key: template.async_render()})[key]
+        rendered = render_complex(data[key])
+        data[key] = schema({key: rendered})[key]
 
 
 def render_positive_float(hass: HomeAssistant, data: dict, key: str) -> None:
@@ -321,6 +340,35 @@ def render_positive_float(hass: HomeAssistant, data: dict, key: str) -> None:
         template.hass = hass
         schema = vol.Schema({key: cv.positive_float})
         data[key] = schema({key: template.async_render()})[key]
+
+
+def check_item(index: int, items: list[int] | None) -> bool:
+    """If items is None or contains only a 0 (match all) then
+    return True. Otherwise check if index + 1 is in the list"""
+    return items is None or (items is not None and items == [0]) or index + 1 in items
+
+
+def s2b(test: bool, service: str) -> bool:
+    """Convert the service code to bool"""
+    if service == SERVICE_ENABLE:
+        return True
+    if service == SERVICE_DISABLE:
+        return False
+    return not test  # Must be SERVICE_TOGGLE
+
+
+def suspend_until_date(
+    data: MappingProxyType,
+    stime: datetime,
+) -> datetime:
+    """Determine the suspend date and time"""
+    if CONF_UNTIL in data:
+        suspend_time = dt.as_utc(data[CONF_UNTIL])
+    elif CONF_FOR in data:
+        suspend_time = stime + data[CONF_FOR]
+    else:
+        suspend_time = None
+    return wash_dt(suspend_time)
 
 
 class IUJSONEncoder(json.JSONEncoder):
@@ -346,6 +394,11 @@ class IUBase:
         return isinstance(other, IUBase) and self._uid == other._uid
 
     def __hash__(self) -> int:
+        return self._uid
+
+    @property
+    def uid(self) -> int:
+        """Return the unique id"""
         return self._uid
 
     @property
@@ -500,6 +553,27 @@ class IUAdjustment:
         if self._maximum is not None:
             result[CONF_MAXIMUM] = self._maximum
         return result
+
+
+class IURQStatus(Flag):
+    """Define the return status of the run queues"""
+
+    NONE = 0
+    CLEARED = auto()
+    EXTENDED = auto()
+    REDUCED = auto()
+    SORTED = auto()
+    UPDATED = auto()
+    CANCELED = auto()
+    CHANGED = auto()
+
+    def is_empty(self) -> bool:
+        """Return True if there are no flags set"""
+        return self.value == 0
+
+    def has_any(self, other: "IURQStatus") -> bool:
+        """Return True if the intersect is not empty"""
+        return other.value & self.value != 0
 
 
 class IUUser(dict):
@@ -756,6 +830,441 @@ class IUSchedule(IUBase):
         return dt.as_utc(next_run)
 
 
+class IUSwitch:
+    """Manager for the phsical switch entity"""
+
+    # pylint: disable=too-many-instance-attributes
+    def __init__(
+        self,
+        hass: HomeAssistant,
+        coordinator: "IUCoordinator",
+        controller: "IUController",
+        zone: "IUZone",
+    ) -> None:
+        # Passed paramaters
+        self._hass = hass
+        self._coordinator = coordinator
+        self._controller = controller
+        self._zone = zone
+        # Config parameters
+        self._switch_entity_id: list[str]
+        self._check_back_states = "all"
+        self._check_back_delay = timedelta(seconds=30)
+        self._check_back_retries: int = 3
+        self._check_back_resync: bool = True
+        self._check_back_entity_id: str = None
+        self._check_back_toggle: bool = False
+        # private variables
+        self._state: bool = None  # This parameter should mirror IUZone._is_on
+        self._check_back_time: timedelta = None
+        self._check_back_resync_count: int = 0
+
+    @property
+    def switch_entity_id(self) -> list[str] | None:
+        """Return the switch entity"""
+        return self._switch_entity_id
+
+    def _state_name(self, entity_id: str, state: bool) -> str:
+        domain = split_entity_id(entity_id)[0]
+        match domain:
+            case Platform.VALVE | Platform.COVER:
+                return STATE_OPEN if state else STATE_CLOSED
+            case _:
+                return STATE_ON if state else STATE_OFF
+
+    def _set_switch(self, entity_id: str | list[str], state: bool) -> None:
+        """Make the HA call to physically turn the switch on/off"""
+
+        def make_call(entity: str) -> None:
+            domain = split_entity_id(entity)[0]
+            match domain:
+                case Platform.VALVE:
+                    service = SERVICE_OPEN_VALVE if state else SERVICE_CLOSE_VALVE
+                case Platform.COVER:
+                    service = SERVICE_OPEN_COVER if state else SERVICE_CLOSE_COVER
+                case _:
+                    domain = HADOMAIN
+                    service = SERVICE_TURN_ON if state else SERVICE_TURN_OFF
+            self._hass.async_create_task(
+                self._hass.services.async_call(
+                    domain,
+                    service,
+                    {ATTR_ENTITY_ID: entity},
+                )
+            )
+
+        if isinstance(entity_id, list):
+            for ent in entity_id:
+                make_call(ent)
+        else:
+            make_call(entity_id)
+
+    def _check_back(self, atime: datetime) -> None:
+        """Recheck the switch in HA to see if state concurs"""
+        if (
+            self._check_back_resync_count >= self._check_back_retries
+            or not self._check_back_resync
+        ):
+            if entities := self.check_switch(atime, False, False):
+                for entity in entities:
+                    state = self._hass.states.get(entity)
+                    found = state.state if state else None
+                    expected = self._state_name(entity, self._state)
+                    self._coordinator.logger.log_switch_error(
+                        atime, expected, found, entity
+                    )
+                    self._coordinator.notify_switch(
+                        EVENT_SWITCH_ERROR,
+                        found,
+                        expected,
+                        entity,
+                        self._controller,
+                        self._zone,
+                    )
+            self._check_back_time = None
+        else:
+            if entities := self.check_switch(atime, self._check_back_resync, True):
+                self._check_back_resync_count += 1
+                self._check_back_time = atime + self._check_back_delay
+            else:
+                self._check_back_time = None
+
+    def next_event(self) -> datetime:
+        """Return the next time of interest"""
+        if self._check_back_time is not None:
+            return self._check_back_time
+        return utc_eot()
+
+    def clear(self) -> None:
+        """Reset this object"""
+        self._state = False
+
+    def load(self, config: OrderedDict, all_zones: OrderedDict) -> "IUSwitch":
+        """Load switch data from the configuration"""
+
+        def load_params(config: OrderedDict) -> None:
+            if config is None:
+                return
+            self._check_back_states = config.get(CONF_STATES, self._check_back_states)
+            self._check_back_retries = config.get(
+                CONF_RETRIES, self._check_back_retries
+            )
+            self._check_back_resync = config.get(CONF_RESYNC, self._check_back_resync)
+            delay = config.get(CONF_DELAY, self._check_back_delay.total_seconds())
+            self._check_back_delay = wash_td(timedelta(seconds=delay))
+            self._check_back_entity_id = config.get(
+                CONF_ENTITY_ID, self._check_back_entity_id
+            )
+            self._check_back_toggle = config.get(CONF_TOGGLE, self._check_back_toggle)
+
+        self.clear()
+        self._switch_entity_id = config.get(CONF_ENTITY_ID)
+        if all_zones is not None:
+            load_params(all_zones.get(CONF_CHECK_BACK))
+        load_params(config.get(CONF_CHECK_BACK))
+        return self
+
+    def muster(self, stime: datetime) -> int:
+        """Muster this switch"""
+        if self._check_back_time is not None and stime >= self._check_back_time:
+            self._check_back(stime)
+
+    def check_switch(self, stime: datetime, resync: bool, log: bool) -> list[str]:
+        """Check the linked entity is in sync. Returns a list of entities
+        that are not in sync"""
+
+        result: list[str] = []
+
+        def _check_entity(entity_id: str, expected: str) -> bool:
+            state = self._hass.states.get(entity_id)
+            found = state.state if state else None
+            is_valid = state is not None and state.state == expected
+            if not is_valid:
+                result.append(entity_id)
+                if log:
+                    self._coordinator.logger.log_sync_error(
+                        stime, expected, found, entity_id
+                    )
+                    self._coordinator.notify_switch(
+                        EVENT_SYNC_ERROR,
+                        found,
+                        expected,
+                        entity_id,
+                        self._controller,
+                        self._zone,
+                    )
+
+            return is_valid
+
+        def do_resync(entity_id: str) -> None:
+            if self._check_back_toggle:
+                self._set_switch(entity_id, not self._state)
+            self._set_switch(entity_id, self._state)
+
+        if self._switch_entity_id is not None:
+            if self._check_back_entity_id is None:
+                for entity_id in self._switch_entity_id:
+                    expected = self._state_name(entity_id, self._state)
+                    if not _check_entity(entity_id, expected):
+                        if resync:
+                            do_resync(entity_id)
+            else:
+                expected = self._state_name(self._check_back_entity_id, self._state)
+                if not _check_entity(self._check_back_entity_id, expected):
+                    if resync and len(self._switch_entity_id) == 1:
+                        do_resync(self._switch_entity_id)
+        return result
+
+    def call_switch(self, state: bool, stime: datetime = None) -> None:
+        """Turn the HA entity on or off"""
+        # pylint: disable=too-many-boolean-expressions
+        if self._switch_entity_id is not None:
+            if self._check_back_time is not None:
+                # Switch state was changed before the recheck. Check now.
+                self.check_switch(stime, False, True)
+                self._check_back_time = None
+            self._state = state
+            self._set_switch(self._switch_entity_id, state)
+            if stime is not None and (
+                self._check_back_states == "all"
+                or (self._check_back_states == "on" and state)
+                or (self._check_back_states == "off" and not state)
+            ):
+                self._check_back_resync_count = 0
+                self._check_back_time = stime + self._check_back_delay
+
+
+class IUVolumeSensorError(Exception):
+    """Error reading sensor"""
+
+
+class IUVolumeSensorReading(NamedTuple):
+    """Irrigation Unlimited volume sensor reading class"""
+
+    timestamp: datetime
+    value: Decimal
+
+
+class IUVolume:
+    """Irrigation Unlimited Volume class"""
+
+    # pylint: disable=too-many-instance-attributes
+
+    MAX_READINGS = 20
+    SMA_WINDOW = 10
+    listeners: int = 0
+    trackers: int = 0
+
+    def __init__(
+        self, hass: HomeAssistant, coordinator: "IUCoordinator", zone: "IUZone"
+    ) -> None:
+        # Passed parameters
+        self._hass = hass
+        self._coordinator = coordinator
+        self._zone = zone
+        # Config parameters
+        self._sensor_id: str = None
+        self._volume_precision: int = 3
+        self._volume_scale: float = 1
+        self._flow_rate_precision: int = 3
+        self._flow_rate_scale: float = 3600
+        # Private variables
+        self._callback_remove: CALLBACK_TYPE = None
+        self._start_volume: Decimal = None
+        self._total_volume: Decimal = None
+        self._start_time: datetime = None
+        self._end_time: datetime = None
+        self._listeners: dict[
+            str, Callable[[datetime, "IUZone", Decimal, Decimal], None]
+        ] = {}
+        self._flow_rates: list[Decimal] = []
+        self._flow_rate_sum = Decimal(0)
+        self._flow_rate_sma: Decimal = None
+        self._sensor_readings: list[IUVolumeSensorReading] = []
+
+    @property
+    def total(self) -> float | None:
+        """Return the total value"""
+        if self._total_volume is not None:
+            return float(self._total_volume)
+        return None
+
+    @property
+    def flow_rate(self) -> float | None:
+        """Return the flow rate"""
+        if self._flow_rate_sma is not None:
+            return float(self._flow_rate_sma)
+        return None
+
+    def load(self, config: OrderedDict, all_zones: OrderedDict) -> "IUSwitch":
+        """Load volume data from the configuration"""
+
+        def load_params(config: OrderedDict) -> None:
+            if config is None:
+                return
+            self._sensor_id = config.get(CONF_ENTITY_ID, self._sensor_id)
+            self._volume_precision = config.get(
+                CONF_VOLUME_PRECISION, self._volume_precision
+            )
+            self._volume_scale = config.get(CONF_VOLUME_SCALE, self._volume_scale)
+            self._flow_rate_precision = config.get(
+                CONF_FLOW_RATE_PRECISION, self._flow_rate_precision
+            )
+            self._flow_rate_scale = config.get(
+                CONF_FLOW_RATE_SCALE, self._flow_rate_scale
+            )
+
+        if all_zones is not None:
+            load_params(all_zones.get(CONF_VOLUME))
+        load_params(config.get(CONF_VOLUME))
+
+    def read_sensor(self, stime: datetime) -> Decimal:
+        """Read the sensor data"""
+        sensor = self._hass.states.get(self._sensor_id)
+        if sensor is None:
+            raise IUVolumeSensorError(f"Sensor not found: {self._sensor_id}")
+        value = float(sensor.state)
+        if value < 0:
+            raise ValueError(f"Negative sensor value: {sensor.state}")
+
+        volume = Decimal(f"{value * self._volume_scale:.{self._volume_precision}f}")
+
+        if len(self._sensor_readings) > 0:
+            last_reading = self._sensor_readings[-1]
+            volume_delta = volume - last_reading.value
+            time_delta = Decimal(
+                f"{(stime - last_reading.timestamp).total_seconds():.6f}"
+            )
+
+            if time_delta == 0:
+                raise ValueError(f"Sensor time has not advanced: {stime}")
+            if time_delta < 0:
+                raise ValueError(
+                    "Sensor time has gone backwards: "
+                    f"previous: {last_reading.timestamp}, "
+                    f"current: {stime}"
+                )
+            if volume_delta < 0:
+                raise ValueError(
+                    "Sensor value has gone backwards: "
+                    f"previous: {last_reading.value}, "
+                    f"current: {volume}"
+                )
+
+            # Update moving average of the rate. Ignore initial reading.
+            if len(self._sensor_readings) > 1:
+                rate = volume_delta * Decimal(self._flow_rate_scale) / time_delta
+                self._flow_rate_sum += rate
+                self._flow_rates.append(rate)
+                if len(self._flow_rates) > IUVolume.SMA_WINDOW:
+                    self._flow_rate_sum -= self._flow_rates.pop(0)
+                self._flow_rate_sma = (
+                    self._flow_rate_sum / len(self._flow_rates)
+                ).quantize(Decimal(10) ** -self._flow_rate_precision)
+
+        # Update bookkeeping
+        self._sensor_readings.append(IUVolumeSensorReading(stime, volume))
+        if len(self._sensor_readings) > IUVolume.MAX_READINGS:
+            self._sensor_readings.pop(0)
+
+        return volume
+
+    def event_hook(self, event: HAEvent) -> HAEvent:
+        """A pass through place for testing to patch and update
+        parameters in the event message"""
+        return event
+
+    def start_record(self, stime: datetime) -> None:
+        """Start recording volume information"""
+
+        def sensor_state_change(event: HAEvent):
+            event = self.event_hook(event)
+            try:
+                value = self.read_sensor(event.time_fired)
+            except ValueError as e:
+                self._coordinator.logger.log_invalid_meter_value(stime, e)
+            except IUVolumeSensorError:
+                self._coordinator.logger.log_invalid_meter_id(stime, self._sensor_id)
+            else:
+                self._total_volume = value - self._start_volume
+
+                # Notifiy our trackers
+                for listener in list(self._listeners.values()):
+                    listener(
+                        event.time_fired,
+                        self._zone,
+                        self._total_volume,
+                        self._flow_rate_sma,
+                    )
+
+        if self._sensor_id is None:
+            return
+        self._start_volume = self._total_volume = None
+        self._start_time = stime
+        self._sensor_readings.clear()
+        self._flow_rates.clear()
+        self._flow_rate_sum = 0
+        self._flow_rate_sma = None
+
+        try:
+            self._start_volume = self.read_sensor(stime)
+        except ValueError as e:
+            self._coordinator.logger.log_invalid_meter_value(stime, e)
+        except IUVolumeSensorError:
+            self._coordinator.logger.log_invalid_meter_id(stime, self._sensor_id)
+        else:
+            self._callback_remove = async_track_state_change_event(
+                self._hass, self._sensor_id, sensor_state_change
+            )
+            IUVolume.trackers += 1
+
+    def end_record(self, stime: datetime) -> None:
+        """Finish recording volume information"""
+        self._end_time = stime
+        if self._callback_remove is not None:
+            self._callback_remove()
+            self._callback_remove = None
+            IUVolume.trackers -= 1
+
+    def track_volume_change(
+        self, uid: int, action: Callable[[datetime, "IUZone", float, float], None]
+    ) -> CALLBACK_TYPE:
+        """Track the volume"""
+
+        def remove_listener() -> None:
+            del self._listeners[uid]
+            IUVolume.listeners -= 1
+
+        self._listeners[uid] = action
+        IUVolume.listeners += 1
+        return remove_listener
+
+
+class IURunStatus(Enum):
+    """Flags for the status of IURun object"""
+
+    UNKNOWN = 0
+    FUTURE = auto()
+    RUNNING = auto()
+    EXPIRED = auto()
+    PAUSED = auto()
+
+    @staticmethod
+    def status(
+        stime: datetime, start_time: datetime, end_time: datetime, paused: datetime
+    ) -> "IURunStatus":
+        """Determine the state of this object"""
+        if paused is not None:
+            return IURunStatus.PAUSED
+        if start_time > stime:
+            return IURunStatus.FUTURE
+        if start_time <= stime < end_time:
+            return IURunStatus.RUNNING
+        if stime >= end_time:
+            return IURunStatus.EXPIRED
+        return IURunStatus.UNKNOWN
+
+
 class IURun(IUBase):
     """Irrigation Unlimited Run class. A run is an actual point
     in time. If schedule is None then it is a manual run.
@@ -766,6 +1275,7 @@ class IURun(IUBase):
 
     def __init__(
         self,
+        stime: datetime,
         start_time: datetime,
         duration: timedelta,
         zone: "IUZone",
@@ -786,19 +1296,52 @@ class IURun(IUBase):
         self._end_time: datetime = self._start_time + self._duration
         self._remaining_time: timedelta = self._end_time - self._start_time
         self._percent_complete: int = 0
+        self._pause_time: datetime = None
+        self._status = self._get_status(stime)
+        self.master_run: "IURun" = None
+
+    @property
+    def expired(self) -> bool:
+        """Indicate if run has expired"""
+        return self._status == IURunStatus.EXPIRED
+
+    @property
+    def running(self) -> bool:
+        """Indicate if run is running"""
+        return self._status == IURunStatus.RUNNING
+
+    @property
+    def future(self) -> bool:
+        """Indicate if run is in the future"""
+        return self._status == IURunStatus.FUTURE
+
+    @property
+    def paused(self) -> bool:
+        """Indicate if run is paused"""
+        return self._status == IURunStatus.PAUSED
 
     @property
     def start_time(self) -> datetime:
         """Return the start time"""
         return self._start_time
 
+    @start_time.setter
+    def start_time(self, value: datetime) -> None:
+        """Set the start time"""
+        self._start_time = value
+
     @property
     def duration(self) -> timedelta:
         """Return the duration"""
         return self._duration
 
+    @duration.setter
+    def duration(self, value: timedelta) -> None:
+        """Set the duration"""
+        self._duration = value
+
     @property
-    def zone(self) -> "IUSchedule":
+    def zone(self) -> "IUZone":
         """Return the zone for this run"""
         return self._zone
 
@@ -827,6 +1370,11 @@ class IURun(IUBase):
     def end_time(self) -> datetime:
         """Return the finish time"""
         return self._end_time
+
+    @end_time.setter
+    def end_time(self, value: datetime) -> None:
+        """Set the end time"""
+        self._end_time = value
 
     @property
     def time_remaining(self) -> timedelta:
@@ -913,29 +1461,42 @@ class IURun(IUBase):
         """Check if this is a manual run"""
         return self._schedule is None
 
-    def is_running(self, stime: datetime) -> bool:
-        """Check if this schedule is running"""
-        return self._start_time <= stime < self._end_time
+    def _get_status(self, stime: datetime) -> IURunStatus:
+        """Determine the state of this run"""
+        return IURunStatus.status(
+            stime, self._start_time, self._end_time, self._pause_time
+        )
 
-    def is_expired(self, stime: datetime) -> bool:
-        """Check if this schedule is expired"""
-        return stime >= self._end_time
-
-    def sequence_update(self, stime: datetime) -> bool:
-        """Update the status of the sequence"""
-        if self._zone_run is not None or not self.is_sequence:
-            return False
-        return self._sequence_run.update(stime, self)
+    def update_status(self, stime: datetime) -> None:
+        """Update the status of the run"""
+        self._status = self._get_status(stime)
 
     def update_time_remaining(self, stime: datetime) -> bool:
         """Update the count down timers"""
-        if self.is_running(stime):
+        if self.running:
             self._remaining_time = self._end_time - stime
             total_duration: timedelta = self._end_time - self._start_time
             time_elapsed: timedelta = stime - self._start_time
             self._percent_complete = int((time_elapsed / total_duration) * 100)
             return True
         return False
+
+    def pause(self, stime: datetime) -> None:
+        """Change the pause status of the run"""
+        if self._pause_time is not None:
+            return
+        self._pause_time = stime
+        self.update_status(stime)
+
+    def resume(self, stime: datetime) -> None:
+        """Resume a paused run"""
+        if self._pause_time is None:
+            return
+        delta = stime - self._pause_time
+        self._start_time += delta
+        self._end_time += delta
+        self._pause_time = None
+        self.update_status(stime)
 
     def as_dict(self) -> OrderedDict:
         """Return this run as a dict"""
@@ -947,20 +1508,32 @@ class IURun(IUBase):
         return result
 
 
+def calc_on_time(runs: list[IURun]) -> timedelta:
+    """Return the total time this list of runs is on. Accounts for
+    overlapping time periods"""
+    result = timedelta(0)
+    period_start: datetime = None
+    period_end: datetime = None
+
+    for run in runs:
+        if period_end is None or run.start_time > period_end:
+            if period_end is not None:
+                result += period_end - period_start
+            period_start = run.start_time
+            period_end = run.end_time
+        else:
+            period_end = max(period_end, run.end_time)
+    if period_end is not None:
+        result += period_end - period_start
+    return result
+
+
 class IURunQueue(list[IURun]):
     """Irrigation Unlimited class to hold the upcoming runs"""
 
     # pylint: disable=too-many-public-methods
 
     DAYS_SPAN: int = 3
-
-    RQ_STATUS_CLEARED: int = 0x01
-    RQ_STATUS_EXTENDED: int = 0x02
-    RQ_STATUS_REDUCED: int = 0x04
-    RQ_STATUS_SORTED: int = 0x08
-    RQ_STATUS_UPDATED: int = 0x10
-    RQ_STATUS_CANCELED: int = 0x20
-    RQ_STATUS_CHANGED: int = 0x40
 
     def __init__(self) -> None:
         super().__init__()
@@ -991,51 +1564,9 @@ class IURunQueue(list[IURun]):
                 return True
         return False
 
-    def is_sequence_running(self, sequence: "IUSequence") -> bool:
-        """Check if the sequence is currently running"""
-        for run in self:
-            if run.sequence_running and run.sequence == sequence:
-                return True
-        return False
-
-    def is_sequence_paused(self, sequence: "IUSequence") -> bool:
-        """Check if the sequence is currently paused"""
-        for run in self:
-            if run.sequence_running and run.sequence == sequence:
-                return run.sequence_run.active_zone is not None
-        return False
-
-    def sequence_duration(self, sequence: "IUSequence") -> timedelta:
-        """If sequence is running then return the duration"""
-        for run in self:
-            if run.sequence_running and run.sequence == sequence:
-                return run.sequence_run.total_time
-        return timedelta(0)
-
-    def find_active_sequence_zone(self, sequence_zone: "IUSequenceZone") -> IURun:
-        """Find the running sequence zone"""
-        for run in self:
-            if (
-                run.sequence_running
-                and run.sequence_run.active_zone is not None
-                and run.sequence_run.active_zone.sequence_zone == sequence_zone
-            ):
-                return run
-        return None
-
-    def is_sequence_zone_running(self, sequence_zone: "IUSequenceZone") -> bool:
-        """Check if the sequence zone is running"""
-        return self.find_active_sequence_zone(sequence_zone) is not None
-
-    def sequence_zone_duration(self, sequence_zone: "IUSequenceZone") -> timedelta:
-        """Return the duration of the running sequence zone"""
-        run = self.find_active_sequence_zone(sequence_zone)
-        if run is not None:
-            return run.duration
-        return timedelta(0)
-
     def add(
         self,
+        stime: datetime,
         start_time: datetime,
         duration: timedelta,
         zone: "IUZone",
@@ -1045,7 +1576,7 @@ class IURunQueue(list[IURun]):
     ) -> IURun:
         # pylint: disable=too-many-arguments
         """Add a run to the queue"""
-        run = IURun(start_time, duration, zone, schedule, sequence_run, zone_run)
+        run = IURun(stime, start_time, duration, zone, schedule, sequence_run, zone_run)
         self.append(run)
         self._sorted = False
         return run
@@ -1054,35 +1585,26 @@ class IURunQueue(list[IURun]):
         """Flag the current run to be cancelled"""
         self._cancel_request = stime
 
-    def clear_all(self) -> bool:
+    def clear_all(self) -> None:
         """Clear out all runs"""
-        modified: bool = False
-        if len(self) > 0:
-            self._current_run = None
-            super().clear()
-            modified = True
-        return modified
+        self._current_run = None
+        self._next_run = None
+        super().clear()
 
-    def clear(self, stime: datetime, sequence=None) -> bool:
-        """Clear out the queue except for manual or running
-        schedules. Filter by sequence if supplied"""
-        modified: bool = False
-        if len(self) > 0:
-            i = len(self) - 1
-            while i >= 0:
-                item = self[i]
-                if not (
-                    item.is_running(stime) or item.is_manual() or item.sequence_running
-                ) and (
-                    sequence is None
-                    or (sequence is not None and item.sequence == sequence)
-                ):
-                    self.pop(i)
-                    modified = True
-                i -= 1
-            if modified:
-                self._next_run = None
-                self._sorted = True
+    def clear_runs(self, include_sequence: bool) -> bool:
+        """Clear out the queue except for manual and running schedules"""
+        modified = False
+        i = len(self) - 1
+        while i >= 0:
+            run = self[i]
+            if (include_sequence or not run.is_sequence) and not (
+                run.running or run.is_manual()
+            ):
+                self.pop_run(i)
+                modified = True
+            i -= 1
+        if modified:
+            self._next_run = None
         return modified
 
     def find_last_index(self, schedule: IUSchedule) -> int:
@@ -1123,10 +1645,10 @@ class IURunQueue(list[IURun]):
         def sorter(run: IURun) -> datetime:
             """Sort call back routine. Items are sorted by start_time."""
             if run.is_manual():
-                return datetime.min.replace(
-                    tzinfo=dt.UTC
-                )  # Always put manual run at head
-            return run.start_time
+                start = datetime.min  # Always put manual run at head
+            else:
+                start = run.start_time
+            return start.replace(tzinfo=None).isoformat(timespec="seconds")
 
         modified: bool = False
         if not self._sorted:
@@ -1137,18 +1659,26 @@ class IURunQueue(list[IURun]):
             modified = True
         return modified
 
-    def remove_expired(self, stime: datetime) -> bool:
+    def remove_expired(self, stime: datetime, postamble: timedelta) -> bool:
         """Remove any expired runs from the queue"""
         modified: bool = False
-
+        if postamble is None:
+            postamble = timedelta(0)
         i = len(self) - 1
         while i >= 0:
-            run: IURun = self[i]
-            if run.is_expired(stime):
-                self._current_run = None
-                self._next_run = None
-                self.pop(i)
-                modified = True
+            run = self[i]
+            if not run.is_sequence:
+                if run.expired and stime > run.end_time + postamble:
+                    self.pop_run(i)
+                    modified = True
+            else:
+                if (
+                    run.sequence_run.expired
+                    and run.expired
+                    and stime > run.end_time + postamble
+                ):
+                    self.pop_run(i)
+                    modified = True
             i -= 1
         return modified
 
@@ -1159,13 +1689,35 @@ class IURunQueue(list[IURun]):
             self._next_run is not None and self._next_run.is_manual()
         ):
             if len(self) > 0:
-                self.pop(0)
+                self.pop_run(0)
             self._current_run = None
             self._next_run = None
             modified = True
         return modified
 
-    def update_queue(self, stime: datetime) -> int:
+    def pop_run(self, index) -> "IURun":
+        """Remove run from queue by index"""
+        run = self.pop(index)
+        if run == self._current_run:
+            self._current_run = None
+            self._next_run = None
+        if run == self._next_run:
+            self._next_run = None
+        if run.master_run is not None:
+            run.zone.controller.runs.remove_run(run.master_run)
+            run.master_run = None
+        return run
+
+    def remove_run(self, run: IURun) -> "IURun":
+        """Remove the run from the queue"""
+        return self.pop_run(self.index(run))
+
+    def update_run_status(self, stime) -> None:
+        """Update the status of the runs"""
+        for run in self:
+            run.update_status(stime)
+
+    def update_queue(self) -> IURQStatus:
         """Update the run queue. Sort the queue, remove expired runs
         and set current and next runs. This is the final operation after
         all additions and deletions.
@@ -1173,47 +1725,48 @@ class IURunQueue(list[IURun]):
         Returns a bit field of changes to queue.
         """
         # pylint: disable=too-many-branches
-        status: int = 0
+        status = IURQStatus(0)
 
         if self.sort():
-            status |= self.RQ_STATUS_SORTED
-
-        for run in self:
-            if run.sequence_update(stime):
-                status |= self.RQ_STATUS_CHANGED
+            status |= IURQStatus.SORTED
 
         if self._cancel_request is not None:
             if self.remove_current():
-                status |= self.RQ_STATUS_CANCELED
+                status |= IURQStatus.CANCELED
             self._cancel_request = None
 
-        if self.remove_expired(stime):
-            status |= self.RQ_STATUS_REDUCED
-
         # Try to find a running schedule
+        if self._current_run is not None and self._current_run.expired:
+            self._current_run = None
+            status |= IURQStatus.UPDATED
         if self._current_run is None:
             for run in self:
-                if run.is_running(stime) and run.duration != timedelta(0):
+                if run.running and run.duration != timedelta(0):
                     self._current_run = run
                     self._next_run = None
-                    status |= self.RQ_STATUS_UPDATED
+                    status |= IURQStatus.UPDATED
                     break
 
         # Try to find the next schedule
+        if self._next_run is not None and self._next_run.expired:
+            self._next_run = None
+            status |= IURQStatus.UPDATED
         if self._next_run is None:
             for run in self:
-                if not run.is_running(stime) and run.duration != timedelta(0):
+                if run.future and run.duration != timedelta(0):
                     self._next_run = run
-                    status |= self.RQ_STATUS_UPDATED
+                    status |= IURQStatus.UPDATED
                     break
 
         # Figure out the next state change
-        self._next_event = utc_eot()
+        dates: list[datetime] = [utc_eot()]
         for run in self:
-            if run.is_running(stime):
-                self._next_event = min(run.end_time, self._next_event)
-            else:
-                self._next_event = min(run.start_time, self._next_event)
+            if not (run.expired or run.paused):
+                if run.running:
+                    dates.append(run.end_time)
+                else:
+                    dates.append(run.start_time)
+        self._next_event = min(dates)
 
         return status
 
@@ -1254,8 +1807,14 @@ class IUScheduleQueue(IURunQueue):
             duration = min(duration, self._maximum)
         return duration
 
+    def clear_runs(self) -> bool:
+        """Clear out the queue except for manual and running schedules"""
+        # pylint: disable=arguments-differ
+        return super().clear_runs(False)
+
     def add(
         self,
+        stime: datetime,
         start_time: datetime,
         duration: timedelta,
         zone: "IUZone",
@@ -1266,27 +1825,38 @@ class IUScheduleQueue(IURunQueue):
         # pylint: disable=arguments-differ
         # pylint: disable=too-many-arguments
         return super().add(
-            start_time, self.constrain(duration), zone, schedule, sequence_run, None
+            stime,
+            start_time,
+            self.constrain(duration),
+            zone,
+            schedule,
+            sequence_run,
+            None,
         )
 
     def add_manual(
-        self, start_time: datetime, duration: timedelta, zone: "IUZone", queue: bool
+        self,
+        stime: datetime,
+        start_time: datetime,
+        duration: timedelta,
+        zone: "IUZone",
+        queue: bool,
     ) -> IURun:
         """Add a manual run to the queue. Cancel any existing
         manual or running schedule"""
 
         if self._current_run is not None:
-            self.pop(0)
+            self.pop_run(0)
 
         # Remove any existing manual schedules
         if not queue:
             for manual in (run for run in self if run.is_manual()):
-                self.remove(manual)
+                self.remove_run(manual)
 
         self._current_run = None
         self._next_run = None
         duration = max(duration, granularity_time())
-        return self.add(start_time, duration, zone, None, None)
+        return self.add(stime, start_time, duration, zone, None, None)
 
     def merge_one(
         self,
@@ -1303,7 +1873,7 @@ class IUScheduleQueue(IURunQueue):
         last_run = self.find_last_run(schedule)
         if last_run is not None:
             next_time = last_run.end_time + granularity_time()
-            is_running = last_run.is_running(stime)
+            is_running = last_run.running
         else:
             next_time = stime
             is_running = False
@@ -1314,7 +1884,7 @@ class IUScheduleQueue(IURunQueue):
         )
 
         if next_run is not None:
-            self.add(next_run, duration, zone, schedule, None)
+            self.add(stime, next_run, duration, zone, schedule, None)
             modified = True
 
         return modified
@@ -1347,280 +1917,6 @@ class IUScheduleQueue(IURunQueue):
         self._minimum = wash_td(config.get(CONF_MINIMUM, self._minimum))
         self._maximum = wash_td(config.get(CONF_MAXIMUM, self._maximum))
         return self
-
-
-class IUSwitch:
-    """Manager for the phsical switch entity"""
-
-    # pylint: disable=too-many-instance-attributes
-    def __init__(
-        self,
-        hass: HomeAssistant,
-        coordinator: "IUCoordinator",
-        controller: "IUController",
-        zone: "IUZone",
-    ) -> None:
-        # Passed paramaters
-        self._hass = hass
-        self._coordinator = coordinator
-        self._controller = controller
-        self._zone = zone
-        # Config parameters
-        self._switch_entity_id: list[str]
-        self._check_back_states = "all"
-        self._check_back_delay = timedelta(seconds=30)
-        self._check_back_retries: int = 3
-        self._check_back_resync: bool = True
-        self._state_on = STATE_ON
-        self._state_off = STATE_OFF
-        self._check_back_entity_id: str = None
-        self._check_back_toggle: bool = False
-        # private variables
-        self._state: bool = None  # This parameter should mirror IUZone._is_on
-        self._check_back_time: timedelta = None
-        self._check_back_resync_count: int = 0
-
-    @property
-    def switch_entity_id(self) -> list[str] | None:
-        """Return the switch entity"""
-        return self._switch_entity_id
-
-    def _set_switch(self, entity_id: str | list[str], state: bool) -> None:
-        """Make the HA call to physically turn the switch on/off"""
-        self._hass.async_create_task(
-            self._hass.services.async_call(
-                HADOMAIN,
-                SERVICE_TURN_ON if state else SERVICE_TURN_OFF,
-                {ATTR_ENTITY_ID: entity_id},
-            )
-        )
-
-    def _check_back(self, atime: datetime) -> None:
-        """Recheck the switch in HA to see if state concurs"""
-        if (
-            self._check_back_resync_count >= self._check_back_retries
-            or not self._check_back_resync
-        ):
-            if entities := self.check_switch(atime, False, False):
-                expected = self._state_on if self._state else self._state_off
-                self._coordinator.logger.log_switch_error(atime, expected, entities)
-                self._coordinator.notify_switch(
-                    EVENT_SWITCH_ERROR, expected, entities, self._controller, self._zone
-                )
-            self._check_back_time = None
-        else:
-            if entities := self.check_switch(atime, self._check_back_resync, True):
-                self._check_back_resync_count += 1
-                self._check_back_time = atime + self._check_back_delay
-            else:
-                self._check_back_time = None
-
-    def next_event(self) -> datetime:
-        """Return the next time of interest"""
-        if self._check_back_time is not None:
-            return self._check_back_time
-        return utc_eot()
-
-    def clear(self) -> None:
-        """Reset this object"""
-        self._state = False
-
-    def load(self, config: OrderedDict, all_zones: OrderedDict) -> "IUSwitch":
-        """Load switch data from the configuration"""
-
-        def load_params(config: OrderedDict) -> None:
-            if config is None:
-                return
-            self._check_back_states = config.get(CONF_STATES, self._check_back_states)
-            self._check_back_retries = config.get(
-                CONF_RETRIES, self._check_back_retries
-            )
-            self._check_back_resync = config.get(CONF_RESYNC, self._check_back_resync)
-            self._state_on = config.get(CONF_STATE_ON, self._state_on)
-            self._state_off = config.get(CONF_STATE_OFF, self._state_off)
-            delay = config.get(CONF_DELAY, self._check_back_delay.total_seconds())
-            self._check_back_delay = wash_td(timedelta(seconds=delay))
-            self._check_back_entity_id = config.get(
-                CONF_ENTITY_ID, self._check_back_entity_id
-            )
-            self._check_back_toggle = config.get(CONF_TOGGLE, self._check_back_toggle)
-
-        self.clear()
-        self._switch_entity_id = config.get(CONF_ENTITY_ID)
-        if all_zones is not None:
-            load_params(all_zones.get(CONF_CHECK_BACK))
-        load_params(config.get(CONF_CHECK_BACK))
-        return self
-
-    def muster(self, stime: datetime) -> int:
-        """Muster this switch"""
-        if self._check_back_time is not None and stime >= self._check_back_time:
-            self._check_back(stime)
-
-    def check_switch(self, stime: datetime, resync: bool, log: bool) -> list[str]:
-        """Check the linked entity is in sync. Returns a list of entities
-        that are not in sync"""
-
-        result: list[str] = []
-
-        def _check_entity(entity_id: str, expected: str) -> bool:
-            is_valid = self._hass.states.is_state(entity_id, expected)
-            if not is_valid:
-                result.append(entity_id)
-                if log:
-                    self._coordinator.logger.log_sync_error(stime, expected, entity_id)
-                    self._coordinator.notify_switch(
-                        EVENT_SYNC_ERROR,
-                        expected,
-                        [entity_id],
-                        self._controller,
-                        self._zone,
-                    )
-
-            return is_valid
-
-        def do_resync(entity_id: str) -> None:
-            if self._check_back_toggle:
-                self._set_switch(entity_id, not self._state)
-            self._set_switch(entity_id, self._state)
-
-        if self._switch_entity_id is not None:
-            expected = self._state_on if self._state else self._state_off
-            if self._check_back_entity_id is None:
-                for entity_id in self._switch_entity_id:
-                    if not _check_entity(entity_id, expected):
-                        if resync:
-                            do_resync(entity_id)
-            else:
-                if not _check_entity(self._check_back_entity_id, expected):
-                    if resync and len(self._switch_entity_id) == 1:
-                        do_resync(self._switch_entity_id)
-        return result
-
-    def call_switch(self, state: bool, stime: datetime = None) -> None:
-        """Turn the HA entity on or off"""
-        # pylint: disable=too-many-boolean-expressions
-        if self._switch_entity_id is not None:
-            if self._check_back_time is not None:
-                # Switch state was changed before the recheck. Check now.
-                self.check_switch(stime, False, True)
-                self._check_back_time = None
-            self._state = state
-            self._set_switch(self._switch_entity_id, state)
-            if stime is not None and (
-                self._check_back_states == "all"
-                or (self._check_back_states == "on" and state)
-                or (self._check_back_states == "off" and not state)
-            ):
-                self._check_back_resync_count = 0
-                self._check_back_time = stime + self._check_back_delay
-
-
-class IUVolume:
-    """Irrigation Unlimited Volume class"""
-
-    # pylint: disable=too-many-instance-attributes
-
-    def __init__(self, hass: HomeAssistant, coordinator: "IUCoordinator") -> None:
-        # Passed parameters
-        self._hass = hass
-        self._coordinator = coordinator
-        # Config parameters
-        self._sensor_id: str = None
-        self._volume_rounding = 3
-        self._volume_scale = 1
-        self._flow_rounding = 3
-        self._flow_scale = 3600
-        # Private variables
-        self._callback_remove: CALLBACK_TYPE = None
-        self._start_volume: float = None
-        self._total_volume: float = None
-        self._start_time: datetime = None
-        self._duration: timedelta = None
-
-    @property
-    def total(self) -> float | None:
-        """Return the total value"""
-        if self._total_volume is not None:
-            return round(self._total_volume * self._volume_scale, self._volume_rounding)
-        return None
-
-    @property
-    def flow_rate(self) -> str | None:
-        """Return the flow rate"""
-        if self._total_volume is not None and self._duration is not None:
-            rate = (
-                self._total_volume * self._flow_scale / self._duration.total_seconds()
-            )
-            return round(rate, self._flow_rounding)
-        return None
-
-    def load(self, config: OrderedDict, all_zones: OrderedDict) -> "IUSwitch":
-        """Load volume data from the configuration"""
-
-        def load_params(config: OrderedDict) -> None:
-            if config is None:
-                return
-            self._sensor_id = config.get(CONF_ENTITY_ID, self._sensor_id)
-            self._volume_rounding = config.get(CONF_PRECISION, self._volume_rounding)
-
-        if all_zones is not None:
-            load_params(all_zones.get(CONF_VOLUME))
-        load_params(config.get(CONF_VOLUME))
-
-    def start_record(self, stime: datetime) -> None:
-        """Start recording volume information"""
-        if self._sensor_id is None:
-            return
-
-        def sensor_state_change(event: HAEvent):
-            # pylint: disable=unused-argument
-            sensor = self._hass.states.get(self._sensor_id)
-            if sensor is not None:
-                try:
-                    value = float(sensor.state)
-                except ValueError:
-                    return
-                self._total_volume = value - self._start_volume
-
-        self._start_volume = self._total_volume = None
-        self._start_time = self._duration = None
-        sensor = self._hass.states.get(self._sensor_id)
-        if sensor is not None:
-            try:
-                self._start_volume = float(sensor.state)
-            except ValueError:
-                self._coordinator.logger.log_invalid_meter_value(stime, sensor.state)
-            else:
-                self._callback_remove = async_track_state_change_event(
-                    self._hass, self._sensor_id, sensor_state_change
-                )
-                self._start_time = stime
-        else:
-            self._coordinator.logger.log_invalid_meter_id(stime, self._sensor_id)
-
-    def end_record(self, stime: datetime) -> None:
-        """Finish recording volume information"""
-        if self._callback_remove is not None:
-            self._callback_remove()
-            self._callback_remove = None
-        if self._start_volume is not None:
-            sensor = self._hass.states.get(self._sensor_id)
-            if sensor is not None:
-                try:
-                    value = float(sensor.state)
-                except ValueError:
-                    self._coordinator.logger.log_invalid_meter_value(
-                        stime, sensor.state
-                    )
-                    self._total_volume = None
-                else:
-                    self._total_volume = value - self._start_volume
-                    self._duration = stime - self._start_time
-            else:
-                self._coordinator.logger.log_invalid_meter_id(stime, self._sensor_id)
-                self._total_volume = None
-                self._duration = None
 
 
 class IUZone(IUBase):
@@ -1662,8 +1958,13 @@ class IUZone(IUBase):
         self._suspend_until: datetime = None
         self._dirty: bool = True
         self._switch = IUSwitch(hass, coordinator, controller, self)
-        self._volume = IUVolume(hass, coordinator)
+        self._volume = IUVolume(hass, coordinator, self)
         self._user = IUUser()
+
+    @property
+    def controller(self) -> "IUController":
+        """Return our parent (controller)"""
+        return self._controller
 
     @property
     def unique_id(self) -> str:
@@ -1835,7 +2136,7 @@ class IUZone(IUBase):
             return STATUS_BLOCKED
         return STATUS_INITIALISING
 
-    def service_call(
+    def service_edt(
         self, data: MappingProxyType, stime: datetime, service: str
     ) -> bool:
         """Handler for enable/disable/toggle service call"""
@@ -1858,7 +2159,7 @@ class IUZone(IUBase):
         sequence_id = data.get(CONF_SEQUENCE_ID)
         if sequence_id is not None:
             self._coordinator.logger.log_sequence_entity(stime)
-        suspend_time = self._controller.suspend_until_date(data, stime)
+        suspend_time = suspend_until_date(data, stime)
         if suspend_time != self._suspend_until:
             self.suspended = suspend_time
             return True
@@ -1869,10 +2170,7 @@ class IUZone(IUBase):
         sequence_id = data.get(CONF_SEQUENCE_ID)
         if sequence_id is not None:
             self._coordinator.logger.log_sequence_entity(stime)
-        result = self._adjustment.load(data)
-        if result:
-            self._run_queue.clear(stime)
-        return result
+        return self._adjustment.load(data)
 
     def service_manual_run(self, data: MappingProxyType, stime: datetime) -> None:
         """Add a manual run."""
@@ -1886,6 +2184,7 @@ class IUZone(IUBase):
                     return
                 duration = self._adjustment.adjust(duration)
             self._run_queue.add_manual(
+                stime,
                 self._controller.manual_run_start(stime, delay, queue),
                 duration,
                 self,
@@ -1911,15 +2210,7 @@ class IUZone(IUBase):
     def clear(self) -> None:
         """Reset this zone"""
         self._schedules.clear()
-        self.clear_run_queue()
-
-    def clear_sequence_runs(self, stime: datetime, sequence: "IUSequence") -> None:
-        """Clear out the run queue except for current or manual runs"""
-        self._run_queue.clear(stime, sequence)
-
-    def clear_run_queue(self) -> None:
-        """Clear out the run queue completely"""
-        self._run_queue.clear_all()
+        self.controller.clear_zones([self])
 
     def load(self, config: OrderedDict, all_zones: OrderedDict) -> "IUZone":
         """Load zone data from the configuration"""
@@ -1962,26 +2253,27 @@ class IUZone(IUBase):
             self.clear()
             self._finalised = True
 
-    def as_dict(self) -> OrderedDict:
+    def as_dict(self, extended=False) -> OrderedDict:
         """Return this zone as a dict"""
-        if self.runs.current_run is not None:
-            current_duration = self.runs.current_run.duration
-        else:
-            current_duration = timedelta(0)
         result = OrderedDict()
         result[CONF_INDEX] = self._index
         result[CONF_NAME] = self.name
         result[CONF_STATE] = STATE_ON if self.is_on else STATE_OFF
         result[CONF_ENABLED] = self.enabled
         result[ATTR_SUSPENDED] = self.suspended
-        result[CONF_ICON] = self.icon
-        result[CONF_ZONE_ID] = self._zone_id
-        result[CONF_ENTITY_BASE] = self.entity_base
-        result[ATTR_STATUS] = self.status
         result[ATTR_ADJUSTMENT] = str(self._adjustment)
-        result[ATTR_CURRENT_DURATION] = current_duration
-        result[CONF_SCHEDULES] = [sch.as_dict() for sch in self._schedules]
-        result[ATTR_SWITCH_ENTITIES] = self._switch.switch_entity_id
+        if extended:
+            if self.runs.current_run is not None:
+                current_duration = self.runs.current_run.duration
+            else:
+                current_duration = timedelta(0)
+            result[CONF_ICON] = self.icon
+            result[CONF_ZONE_ID] = self._zone_id
+            result[CONF_ENTITY_BASE] = self.entity_base
+            result[ATTR_STATUS] = self.status
+            result[ATTR_CURRENT_DURATION] = current_duration
+            result[CONF_SCHEDULES] = [sch.as_dict() for sch in self._schedules]
+            result[ATTR_SWITCH_ENTITIES] = self._switch.switch_entity_id
         return result
 
     def timeline(self) -> list:
@@ -1991,10 +2283,9 @@ class IUZone(IUBase):
         for run in run_list:
             run[TIMELINE_STATUS] = RES_TIMELINE_HISTORY
 
-        stime = self._coordinator.service_time()
         for run in self._run_queue:
             dct = run.as_dict()
-            if run.is_running(stime):
+            if run.running:
                 dct[TIMELINE_STATUS] = RES_TIMELINE_RUNNING
             elif run == self._run_queue.next_run:
                 dct[TIMELINE_STATUS] = RES_TIMELINE_NEXT
@@ -2004,40 +2295,40 @@ class IUZone(IUBase):
         run_list.reverse()
         return run_list
 
-    def muster(self, stime: datetime) -> int:
+    def muster(self, stime: datetime) -> IURQStatus:
         """Muster this zone"""
         # pylint: disable=unused-argument
-        status: int = 0
+        status = IURQStatus(0)
 
         if self._dirty:
-            self._run_queue.clear_all()
-            status |= IURunQueue.RQ_STATUS_CLEARED
+            self.controller.clear_zones([self])
+            status |= IURQStatus.CLEARED
 
         if self._suspend_until is not None and stime >= self._suspend_until:
             self._suspend_until = None
-            status |= IURunQueue.RQ_STATUS_CHANGED
+            status |= IURQStatus.CHANGED
 
         self._switch.muster(stime)
 
         self._dirty = False
         return status
 
-    def muster_schedules(self, stime: datetime) -> int:
+    def muster_schedules(self, stime: datetime) -> IURQStatus:
         """Calculate run times for this zone"""
-        status: int = 0
+        status = IURQStatus(0)
 
         for schedule in self._schedules:
             if not schedule.enabled:
                 continue
             if self._run_queue.merge_fill(stime, self, schedule, self._adjustment):
-                status |= IURunQueue.RQ_STATUS_EXTENDED
+                status |= IURQStatus.EXTENDED
 
-        if status != 0:
+        if not status.is_empty():
             self.request_update()
 
         return status
 
-    def check_run(self, stime: datetime, parent_enabled: bool) -> bool:
+    def check_run(self, parent_enabled: bool) -> bool:
         """Update the run status"""
         is_running: bool = False
         state_changed: bool = False
@@ -2046,7 +2337,7 @@ class IUZone(IUBase):
             (
                 self.is_enabled
                 and self._run_queue.current_run is not None
-                and self._run_queue.current_run.is_running(stime)
+                and self._run_queue.current_run.running
             )
             or (
                 self._allow_manual
@@ -2128,25 +2419,9 @@ class IUZone(IUBase):
 class IUZoneQueue(IURunQueue):
     """Class to hold the upcoming zones to run"""
 
-    def find_run(
-        self,
-        start_time: datetime,
-        zone_run: IURun,
-    ) -> IURun:
-        """Find the specified run in the queue"""
-        for run in self:
-            if (
-                start_time == run.start_time
-                and zone_run.zone == run.zone
-                and run.schedule is not None
-                and zone_run.schedule is not None
-                and run.schedule == zone_run.schedule
-            ):
-                return run
-        return None
-
     def add_zone(
         self,
+        stime: datetime,
         zone_run: IURun,
         preamble: timedelta,
         postamble: timedelta,
@@ -2159,38 +2434,32 @@ class IUZoneQueue(IURunQueue):
             duration += preamble
         if postamble is not None:
             duration += postamble
-        run = self.find_run(start_time, zone_run)
-        if run is None:
-            run = self.add(
-                start_time,
-                duration,
-                zone_run.zone,
-                zone_run.schedule,
-                zone_run.sequence_run,
-                zone_run,
-            )
+        run = self.add(
+            stime,
+            start_time,
+            duration,
+            zone_run.zone,
+            zone_run.schedule,
+            zone_run.sequence_run,
+            zone_run,
+        )
         return run
 
     def rebuild_schedule(
         self,
         stime: datetime,
-        zones: "list[IUZone]",
+        zones: list[IUZone],
         preamble: timedelta,
         postamble: timedelta,
-        clear_all: bool,
-    ) -> int:
+    ) -> IURQStatus:
         """Create a superset of all the zones."""
-        # pylint: disable=too-many-arguments
-        status: int = 0
-        if clear_all:
-            self.clear_all()
-        else:
-            self.clear(stime)
+
+        status = IURQStatus(0)
         for zone in zones:
             for run in zone.runs:
-                self.add_zone(run, preamble, postamble)
-        status |= IURunQueue.RQ_STATUS_EXTENDED | IURunQueue.RQ_STATUS_REDUCED
-        status |= self.update_queue(stime)
+                if run.master_run is None:
+                    run.master_run = self.add_zone(stime, run, preamble, postamble)
+        status |= IURQStatus.EXTENDED | IURQStatus.REDUCED
         return status
 
 
@@ -2213,18 +2482,25 @@ class IUSequenceZone(IUBase):
         self._sequence = sequence
         # Config parameters
         self._zone_ids: list[str] = None
+        self._zones: list[IUZone] = []
         self._delay: timedelta = None
         self._duration: timedelta = None
         self._repeat: int = None
         self._enabled: bool = True
+        self._volume: float = None
         # Private variables
         self._adjustment = IUAdjustment()
         self._suspend_until: datetime = None
 
     @property
-    def zone_ids(self) -> "list[str]":
+    def zone_ids(self) -> list[str]:
         """Returns a list of zone_id's"""
         return self._zone_ids
+
+    @property
+    def zones(self) -> list[IUZone]:
+        """Return the list of associated zones"""
+        return self._zones
 
     @property
     def duration(self) -> timedelta:
@@ -2240,6 +2516,11 @@ class IUSequenceZone(IUBase):
     def repeat(self) -> int:
         """Returns the number of repeats for this sequence"""
         return self._repeat
+
+    @property
+    def volume(self) -> float:
+        """Return the volume limit for this sequence"""
+        return self._volume
 
     @property
     def is_enabled(self) -> bool:
@@ -2278,7 +2559,8 @@ class IUSequenceZone(IUBase):
     @property
     def is_on(self) -> bool:
         """Return if this sequence zone is running"""
-        return self._controller.runs.is_sequence_zone_running(self)
+        active_zone = self._sequence.runs.active_zone
+        return active_zone is not None and active_zone.sequence_zone == self
 
     def icon(self, is_on: bool = None) -> str:
         """Return the icon to use in the frontend."""
@@ -2312,49 +2594,80 @@ class IUSequenceZone(IUBase):
 
     def load(self, config: OrderedDict) -> "IUSequenceZone":
         """Load sequence zone data from the configuration"""
+
+        def build_zones() -> None:
+            """Construct a local list of IUZones"""
+            self._zones.clear()
+            for zone_id in self._zone_ids:
+                if (zone := self._controller.find_zone_by_zone_id(zone_id)) is not None:
+                    self._zones.append(zone)
+
         self._zone_ids = config[CONF_ZONE_ID]
         self._delay = wash_td(config.get(CONF_DELAY))
         self._duration = wash_td(config.get(CONF_DURATION))
         self._repeat = config.get(CONF_REPEAT, 1)
         self._enabled = config.get(CONF_ENABLED, self._enabled)
+        self._volume = config.get(CONF_VOLUME, self._volume)
+        build_zones()
         return self
 
-    def zone_indexes(self) -> int:
-        """Generator to list zone indexes"""
-        for zone_id in self.zone_ids:
-            zone = self._controller.find_zone_by_zone_id(zone_id)
-            if zone is not None:
-                yield zone.index
-
-    def as_dict(self, duration_factor: float, sqr: "IUSequenceRun" = None) -> dict:
+    def as_dict(
+        self, duration_factor: float, extended=False, sqr: "IUSequenceRun" = None
+    ) -> dict:
         """Return this sequence zone as a dict"""
-        is_on = self.is_on
         result = OrderedDict()
         result[CONF_INDEX] = self._index
-        result[CONF_STATE] = STATE_ON if is_on else STATE_OFF
+        result[CONF_STATE] = STATE_ON if self.is_on else STATE_OFF
         result[CONF_ENABLED] = self.enabled
         result[ATTR_SUSPENDED] = self.suspended
-        result[CONF_ICON] = self.icon(is_on)
-        result[ATTR_STATUS] = self.status(is_on)
-        result[CONF_DELAY] = self._sequence.zone_delay(self, sqr)
-        result[ATTR_BASE_DURATION] = self._sequence.zone_duration_base(self, sqr)
-        result[ATTR_ADJUSTED_DURATION] = self._sequence.zone_duration(self, sqr)
-        result[ATTR_FINAL_DURATION] = self._sequence.zone_duration_final(
-            self, duration_factor, sqr
-        )
-        result[CONF_ZONES] = list(idx + self.ZONE_OFFSET for idx in self.zone_indexes())
-        result[ATTR_CURRENT_DURATION] = self._controller.runs.sequence_zone_duration(
-            self
-        )
         result[ATTR_ADJUSTMENT] = str(self._adjustment)
+        if extended:
+            result[CONF_ICON] = self.icon()
+            result[ATTR_STATUS] = self.status()
+            result[CONF_DELAY] = self._sequence.zone_delay(self, sqr)
+            result[ATTR_BASE_DURATION] = self._sequence.zone_duration_base(self, sqr)
+            result[ATTR_ADJUSTED_DURATION] = self._sequence.zone_duration(self, sqr)
+            result[ATTR_FINAL_DURATION] = self._sequence.zone_duration_final(
+                self, duration_factor, sqr
+            )
+            result[CONF_ZONES] = list(
+                zone.index + self.ZONE_OFFSET for zone in self._zones
+            )
+            result[ATTR_CURRENT_DURATION] = self._sequence.runs.active_zone_duration(
+                self
+            )
         return result
 
-    def muster(self, stime: datetime) -> int:
+    def ha_attr(self) -> dict:
+        """Return the HA attributes"""
+
+        def zone_runs() -> list[IURun]:
+            result: list[IURun] = []
+            if (sqr := self._sequence.runs.current_run) is None:
+                sqr = self._sequence.runs.next_run
+            if sqr is not None:
+                for run in sqr.zone_runs(self):
+                    if not run.expired:
+                        result.append(run)
+            return result
+
+        result = {}
+        result[ATTR_INDEX] = self.index
+        result[ATTR_ENABLED] = self.enabled
+        result[ATTR_SUSPENDED] = self.suspended
+        result[ATTR_STATUS] = self.status()
+        result[ATTR_ICON] = self.icon()
+        result[ATTR_ADJUSTMENT] = str(self.adjustment)
+        result[ATTR_ZONE_IDS] = self.zone_ids
+        result[ATTR_DURATION] = str(calc_on_time(zone_runs()))
+        return result
+
+    def muster(self, stime: datetime) -> IURQStatus:
         """Muster this sequence zone"""
-        status: int = 0
+        status = IURQStatus(0)
         if self._suspend_until is not None and stime >= self._suspend_until:
             self._suspend_until = None
-            status |= IURunQueue.RQ_STATUS_CHANGED
+            status |= IURQStatus.CHANGED
         return status
 
     def next_awakening(self) -> datetime:
@@ -2363,6 +2676,797 @@ class IUSequenceZone(IUBase):
         if self._suspend_until is not None:
             result = min(self._suspend_until, result)
         return result
+
+
+class IUSequenceZoneRun(NamedTuple):
+    """Irrigation Unlimited sequence zone run class"""
+
+    sequence_zone: IUSequenceZone
+    sequence_repeat: int
+    zone_repeat: int
+
+
+class IUSequenceRunAllocation(NamedTuple):
+    """Irrigation Unlimited sequence zone allocation class"""
+
+    start: datetime
+    duration: timedelta
+    zone: IUZone
+    sequence_zone_run: IUSequenceZoneRun
+
+
+class IUSequenceRun(IUBase):
+    """Irrigation Unlimited sequence run manager class. Ties together the
+    individual sequence zones"""
+
+    # pylint: disable=too-many-instance-attributes
+    # pylint: disable=too-many-public-methods
+    def __init__(
+        self,
+        coordinator: "IUCoordinator",
+        controller: "IUController",
+        sequence: "IUSequence",
+        schedule: IUSchedule,
+    ) -> None:
+        # pylint: disable=too-many-arguments
+        super().__init__(None)
+        # Passed parameters
+        self._coordinator = coordinator
+        self._controller = controller
+        self._sequence = sequence
+        self._schedule = schedule
+        # Private variables
+        self._runs_pre_allocate: list[IUSequenceRunAllocation] = []
+        self._runs: dict[IURun, IUSequenceZoneRun] = weakref.WeakKeyDictionary()
+        self._active_zone: IUSequenceZoneRun = None
+        self._current_zone: IUSequenceZoneRun = None
+        self._start_time: datetime = None
+        self._end_time: datetime = None
+        self._accumulated_duration = timedelta(0)
+        self._first_zone: IUZone = None
+        self._status = IURunStatus.UNKNOWN
+        self._paused: datetime = None
+        self._last_pause: datetime = None
+        self._volume_trackers: list[CALLBACK_TYPE] = []
+        self._volume_stats: dict[IUSequenceZoneRun, dict[IUZone, Decimal]] = {}
+        self._remaining_time = timedelta(0)
+        self._percent_complete: int = 0
+
+    @property
+    def sequence(self) -> "IUSequence":
+        """Return the sequence associated with this run"""
+        return self._sequence
+
+    @property
+    def schedule(self) -> IUSchedule:
+        """Return the schedule associated with this run"""
+        return self._schedule
+
+    @property
+    def start_time(self) -> datetime:
+        """Return the start time for this sequence"""
+        return self._start_time
+
+    @property
+    def end_time(self) -> datetime:
+        """Return the end time for this sequence"""
+        return self._end_time
+
+    @property
+    def total_time(self) -> timedelta:
+        """Return the total run time for this sequence"""
+        return self._end_time - self._start_time
+
+    @property
+    def running(self) -> bool:
+        """Indicate if this sequence is running"""
+        return self._status == IURunStatus.RUNNING
+
+    @property
+    def expired(self) -> bool:
+        """Indicate if this sequence has expired"""
+        return self._status == IURunStatus.EXPIRED
+
+    @property
+    def future(self) -> bool:
+        """Indicate if this sequence starts in the future"""
+        return self._status == IURunStatus.FUTURE
+
+    @property
+    def paused(self) -> bool:
+        """Indicate if this sequence is paused"""
+        return self._status == IURunStatus.PAUSED
+
+    @property
+    def active_zone(self) -> IUSequenceZoneRun:
+        """Return the active zone in the sequence"""
+        return self._active_zone
+
+    @property
+    def runs(self) -> dict[IURun, IUSequenceZoneRun]:
+        """Return the runs"""
+        return self._runs
+
+    @property
+    def time_remaining(self) -> timedelta:
+        """Return the amount of time left to run"""
+        return self._remaining_time
+
+    @property
+    def percent_complete(self) -> float:
+        """Return the percentage completed"""
+        return self._percent_complete
+
+    def is_manual(self) -> bool:
+        """Check if this is a manual run"""
+        return self._schedule is None
+
+    def zone_enabled(self, zone: IUZone) -> bool:
+        """Return true if the zone is enabled"""
+        return zone is not None and (
+            zone.is_enabled or (self.is_manual() and zone.allow_manual)
+        )
+
+    def calc_total_time(self, total_time: timedelta) -> timedelta:
+        """Calculate the total duration of the sequence"""
+        if total_time is None:
+            if self._schedule is not None and self._schedule.duration is not None:
+                return self._sequence.total_time_final(self._schedule.duration, self)
+            return self.sequence.total_time_final(None, self)
+
+        if self._schedule is not None:
+            return self._sequence.total_time_final(total_time, self)
+        return total_time
+
+    def build(self, duration_factor: float) -> timedelta:
+        """Build out the sequence. Pre allocate runs and determine
+        the duration"""
+        # pylint: disable=too-many-nested-blocks
+        next_run = self._start_time = self._end_time = wash_dt(dt.utcnow())
+        for sequence_repeat in range(self._sequence.repeat):
+            for sequence_zone in self._sequence.zones:
+                if not self._sequence.zone_enabled(sequence_zone, self):
+                    continue
+                duration = self._sequence.zone_duration_final(
+                    sequence_zone, duration_factor, self
+                )
+                duration_max = timedelta(0)
+                delay = self._sequence.zone_delay(sequence_zone, self)
+                for zone in sequence_zone.zones:
+                    if self.zone_enabled(zone):
+                        # Don't adjust manual run and no adjustment on adjustment
+                        # This code should not really be here. It would be a breaking
+                        # change if removed.
+                        if not self.is_manual() and not self._sequence.has_adjustment(
+                            True
+                        ):
+                            duration_adjusted = zone.adjustment.adjust(duration)
+                            duration_adjusted = zone.runs.constrain(duration_adjusted)
+                        else:
+                            duration_adjusted = duration
+
+                        zone_run_time = next_run
+                        for zone_repeat in range(sequence_zone.repeat):
+                            self._runs_pre_allocate.append(
+                                IUSequenceRunAllocation(
+                                    zone_run_time,
+                                    duration_adjusted,
+                                    zone,
+                                    IUSequenceZoneRun(
+                                        sequence_zone, sequence_repeat, zone_repeat
+                                    ),
+                                )
+                            )
+                            if self._first_zone is None:
+                                self._first_zone = zone
+                            if zone_run_time + duration_adjusted > self._end_time:
+                                self._end_time = zone_run_time + duration_adjusted
+                            zone_run_time += duration_adjusted + delay
+                        duration_max = max(duration_max, zone_run_time - next_run)
+                next_run += duration_max
+
+        self._remaining_time = self._end_time - self._start_time
+        return self._remaining_time
+
+    def allocate_runs(self, stime: datetime, start_time: datetime) -> None:
+        """Allocate runs"""
+        delta = start_time - self._start_time
+        self._start_time += delta
+        self._end_time += delta
+        for item in self._runs_pre_allocate:
+            zone = item.zone
+            run = zone.runs.add(
+                stime, item.start + delta, item.duration, zone, self._schedule, self
+            )
+            self._runs[run] = item.sequence_zone_run
+            self._accumulated_duration += run.duration
+            zone.request_update()
+        self._runs_pre_allocate.clear()
+        self._status = IURunStatus.status(
+            stime, self.start_time, self.end_time, self._paused
+        )
+
+    def first_zone(self) -> IUZone:
+        """Return the first zone"""
+        return self._first_zone
+
+    def on_time(self, include_expired=False) -> timedelta:
+        """Return the total time this run is on"""
+        return calc_on_time(
+            run for run in self._runs if include_expired or not run.expired
+        )
+
+    def zone_runs(self, sequence_zone: IUSequenceZone) -> list[IURun]:
+        """Get the list of runs associated with the sequence zone"""
+        return [
+            run
+            for run, sqz in self._runs.items()
+            if sqz is not None and sqz.sequence_zone == sequence_zone
+        ]
+
+    def run_index(self, run: IURun) -> int:
+        """Extract the index from the supplied run"""
+        for i, key in enumerate(self._runs):
+            if key == run:
+                return i
+        return None
+
+    def sequence_zone(self, run: IURun) -> IUSequenceZone:
+        """Extract the sequence zone from the run"""
+        szr = self._runs.get(run, None)
+        return szr.sequence_zone if szr is not None else None
+
+    def next_sequence_zone(
+        self, sequence_zone_run: IUSequenceZoneRun
+    ) -> IUSequenceZoneRun:
+        """Return the next sequence zone run in the run queue"""
+        result: IUSequenceZoneRun = None
+        found = False
+        for szr in self.runs.values():
+            if szr is None:
+                continue
+            if not found and szr == sequence_zone_run:
+                found = True
+            if found and szr.sequence_zone != sequence_zone_run.sequence_zone:
+                result = szr
+                break
+        return result
+
+    def sequence_zone_runs(self, sequence_zone_run: IUSequenceZoneRun) -> list[IURun]:
+        """Return all the run associated with the sequence zone"""
+        result: list[IURun] = []
+        found = False
+        for run, szr in self.runs.items():
+            if not found and szr == sequence_zone_run:
+                found = True
+            if found and szr.sequence_zone == sequence_zone_run.sequence_zone:
+                result.append(run)
+            if found and szr.sequence_zone != sequence_zone_run.sequence_zone:
+                break
+        return result
+
+    def advance(
+        self,
+        stime: datetime,
+        duration: timedelta,
+        runs: list[IURun] = None,
+        shift_start: bool = False,
+    ) -> None:
+        """Advance the sequence run. If duration is positive runs will be
+        extended if running or delayed if in the future. If duration is
+        negative runs will shortened or even skipped. The system will
+        require a full muster as the status of runs, zones and sequences
+        could have altered."""
+
+        def update_run(stime: datetime, duration: timedelta, run: IURun) -> None:
+            if run.expired:
+                return
+            if duration > timedelta(0):
+                if run.running:
+                    if shift_start:
+                        run.start_time += duration
+                    run.end_time += duration
+                elif run.future:
+                    run.start_time += duration
+                    run.end_time += duration
+            else:
+                if run.running:
+                    run.end_time = max(run.end_time + duration, run.start_time)
+                elif run.future:
+                    run.start_time = max(run.start_time + duration, stime)
+                    run.end_time = max(run.end_time + duration, run.start_time)
+            run.duration = run.end_time - run.start_time
+            run.update_status(stime)
+            run.update_time_remaining(stime)
+
+        if self.running:
+            if runs is None:
+                runs = self.runs
+            for run in runs:
+                if not run.expired:
+                    update_run(stime, duration, run)
+                    if run.master_run is not None:
+                        update_run(stime, duration, run.master_run)
+
+            end_time: datetime = None
+            for run in self.runs:
+                if end_time is None or run.end_time > end_time:
+                    end_time = run.end_time
+            self._end_time = end_time
+
+            self.update()
+
+    def skip(self, stime: datetime) -> None:
+        """Skip to the next sequence zone"""
+        current_start: datetime = None
+        current_end: datetime = None
+        current_runs = self.sequence_zone_runs(self._current_zone)
+        for run in current_runs:
+            if current_start is None or run.start_time < current_start:
+                current_start = run.start_time
+            if current_end is None or run.end_time > current_end:
+                current_end = run.end_time
+
+        next_start: datetime = None
+        next_end: datetime = None
+        nsz = self.next_sequence_zone(self._current_zone)
+        if nsz is not None:
+            for run in self.sequence_zone_runs(nsz):
+                if next_start is None or run.start_time < next_start:
+                    next_start = run.start_time
+                if next_end is None or run.end_time > next_end:
+                    next_end = run.end_time
+            duration = next_start - stime
+            if self._active_zone is not None:
+                delay = max(next_start - current_end, timedelta(0))
+            else:
+                delay = max(current_start - stime, timedelta(0))
+        else:
+            duration = current_end - stime
+            delay = timedelta(0)
+
+        # Next zone is overlapped with current
+        if next_start is not None and next_start < current_end:
+            self.advance(stime, -(current_end - stime), current_runs)
+        self.advance(stime, -(duration - delay), self._runs)
+
+    def pause(self, stime: datetime) -> None:
+        """Pause the sequence run"""
+
+        def pause_run(stime: datetime, runs: list[IURun]) -> None:
+            """Put the run and master into pause state"""
+            for run in runs:
+                run.pause(stime)
+                if run.master_run is not None:
+                    run.master_run.pause(stime)
+
+        def run_state(run: IURun) -> int:
+            """Return the state of the run.
+            1 = expired
+            2 = preamble (positive)
+            3 = running
+            4 = postamble (positive)
+            5 = preamble (negative)
+            6 = postamble (negative)
+            7 = future
+            """
+            if run.expired and run.master_run.expired:
+                return 1
+            if run.future and run.master_run.running:
+                return 2
+            if run.expired and run.master_run.running:
+                return 4
+            if run.running and run.master_run.future:
+                return 5
+            if run.running and run.master_run.expired:
+                return 6
+            if run.future and run.master_run.future:
+                return 7
+            if run.running:
+                return 3
+            return 0
+
+        def split_run(run: IURun, start: datetime, duration=timedelta(0)) -> None:
+            split = run.zone.runs.add(
+                stime,
+                start,
+                duration,
+                run.zone,
+                run.schedule,
+                self,
+            )
+            self._runs[split] = None
+
+        if self._paused is not None:
+            return
+        runs = self._runs.copy()
+        pause_list = self._runs.copy()
+        over_run = timedelta(0)
+        for run in runs:
+            state = run_state(run)
+            if state == 2:
+                split_run(run, stime - self._controller.postamble)
+            elif state == 3:
+                # Create a master postamble run out
+                if (
+                    self._controller.postamble is not None
+                    and self._controller.postamble < timedelta(0)
+                ):
+                    over_run = -self._controller.postamble
+                    run.master_run.start_time = stime + over_run
+                run.start_time = stime
+                split_run(run, stime, over_run)
+            elif state == 6:
+                pause_list.pop(run)
+            elif state == 5:
+                split_run(run, stime)
+                run.start_time = stime
+                run.master_run.start_time = stime - self._controller.preamble
+            elif state == 4:
+                split_run(run, run.master_run.end_time - self._controller.postamble)
+        if over_run != timedelta(0):
+            self.advance(stime, -over_run, runs)
+        pause_run(stime, pause_list)
+        self._paused = stime
+        self._status = IURunStatus.PAUSED
+
+    def resume(self, stime: datetime) -> None:
+        """Resume the sequence run"""
+
+        def resume_run(stime: datetime, runs: list[IURun]) -> None:
+            """Take the run and master out of pause state"""
+            for run in runs:
+                run.resume(stime)
+                if run.master_run is not None:
+                    run.master_run.resume(stime)
+
+        if self._paused is None:
+            return
+        resume_run(stime, self._runs)
+        self._end_time += stime - self._paused
+        self._paused = None
+        self._status = IURunStatus.status(
+            stime, self._start_time, self._end_time, self._paused
+        )
+
+        next_start = min(
+            (run.start_time for run in self._runs if not run.expired), default=None
+        )
+        if next_start is not None:
+            offset = stime - next_start
+            if (
+                self._controller.preamble is not None
+                and self._controller.preamble > timedelta(0)
+            ):
+                offset += self._controller.preamble
+            self.advance(stime, offset, self._runs, shift_start=True)
+
+    def cancel(self, stime: datetime) -> None:
+        """Cancel the sequence run"""
+        self.advance(stime, -(self._end_time - stime))
+
+    def update(self) -> bool:
+        """Update the status of the sequence"""
+
+        def update_volume(
+            stime: datetime, zone: IUZone, volume: Decimal, rate: Decimal
+        ) -> None:
+            # pylint: disable=unused-argument
+            if self._active_zone not in self._volume_stats:
+                self._volume_stats[self._active_zone] = {}
+            self._volume_stats[self._active_zone][zone] = volume
+            self._sequence.volume = sum(
+                sum(sta.values()) for sta in self._volume_stats.values()
+            )
+            if (limit := self._active_zone.sequence_zone.volume) is not None:
+                current_vol = sum(self._volume_stats[self._active_zone].values())
+                if current_vol >= limit:
+                    self._coordinator.service_call(
+                        SERVICE_SKIP, self._controller, None, self._sequence, {}
+                    )
+
+        def enable_trackers(sequence_zone: IUSequenceZone) -> None:
+            for zone in sequence_zone.zones:
+                self._volume_trackers.append(
+                    zone.volume.track_volume_change(self.uid, update_volume)
+                )
+
+        def remove_trackers() -> None:
+            for tracker in self._volume_trackers:
+                tracker()
+            self._volume_trackers.clear()
+
+        if self.paused:
+            return False
+        result = False
+        for run, sequence_zone_run in self._runs.items():
+            if sequence_zone_run is None:
+                continue
+            if run.running and not self.running:
+                # Sequence/sequence zone is starting
+                self._status = IURunStatus.RUNNING
+                self._active_zone = sequence_zone_run
+                self._current_zone = sequence_zone_run
+                self._coordinator.notify_sequence(
+                    EVENT_START,
+                    self._controller,
+                    self._sequence,
+                    self._schedule,
+                    self,
+                )
+                enable_trackers(sequence_zone_run.sequence_zone)
+                self._sequence.volume = None
+                result |= True
+
+            elif run.running and sequence_zone_run != self._active_zone:
+                # Sequence zone is changing
+                self._active_zone = sequence_zone_run
+                self._current_zone = sequence_zone_run
+                remove_trackers()
+                enable_trackers(sequence_zone_run.sequence_zone)
+                result |= True
+
+            elif not run.running and sequence_zone_run == self._active_zone:
+                # Sequence zone is finishing
+                self._active_zone = None
+                remove_trackers()
+                self._current_zone = self.next_sequence_zone(sequence_zone_run)
+                if self.run_index(run) == len(self._runs) - 1:
+                    # Sequence is finishing
+                    self._status = IURunStatus.EXPIRED
+                    self._coordinator.notify_sequence(
+                        EVENT_FINISH,
+                        self._controller,
+                        self._sequence,
+                        self._schedule,
+                        self,
+                    )
+                result |= True
+
+        return result
+
+    def update_time_remaining(self, stime: datetime) -> bool:
+        """Update the count down timers"""
+        if not self.running:
+            return False
+        self._remaining_time = self._end_time - stime
+        elapsed = stime - self._start_time
+        duration = self._end_time - self._start_time
+        self._percent_complete = (
+            int((elapsed / duration) * 100) if duration > timedelta(0) else 0
+        )
+        return True
+
+    def as_dict(self, include_expired=False) -> dict:
+        """Return this sequence run as a dict"""
+        result = {}
+        result[ATTR_INDEX] = self._sequence.index
+        result[ATTR_NAME] = self._sequence.name
+        result[ATTR_ENABLED] = self._sequence.enabled
+        result[ATTR_SUSPENDED] = self._sequence.suspended
+        result[ATTR_STATUS] = self._sequence.status
+        result[ATTR_ICON] = self._sequence.icon
+        result[ATTR_START] = dt.as_local(self._start_time)
+        result[ATTR_DURATION] = to_secs(self.on_time(include_expired))
+        result[ATTR_ADJUSTMENT] = str(self._sequence.adjustment)
+        if not self.is_manual():
+            result[ATTR_SCHEDULE] = {
+                ATTR_INDEX: self._schedule.index,
+                ATTR_NAME: self._schedule.name,
+            }
+        else:
+            result[ATTR_SCHEDULE] = {
+                ATTR_INDEX: None,
+                ATTR_NAME: RES_MANUAL,
+            }
+        result[ATTR_ZONES] = []
+        for zone in self._sequence.zones:
+            runs = (
+                run
+                for run in self.zone_runs(zone)
+                if include_expired or not run.expired
+            )
+            sqr = {}
+            sqr[ATTR_INDEX] = zone.index
+            sqr[ATTR_ENABLED] = zone.enabled
+            sqr[ATTR_SUSPENDED] = zone.suspended
+            sqr[ATTR_STATUS] = zone.status()
+            sqr[ATTR_ICON] = zone.icon()
+            sqr[ATTR_DURATION] = to_secs(calc_on_time(runs))
+            sqr[ATTR_ADJUSTMENT] = str(zone.adjustment)
+            sqr[ATTR_ZONE_IDS] = zone.zone_ids
+            result[ATTR_ZONES].append(sqr)
+        return result
+
+    @staticmethod
+    def skeleton(sequence: "IUSequence") -> dict:
+        """Return a skeleton dict for when no sequence run is
+        active. Must match the as_dict method"""
+
+        result = {}
+        result[ATTR_INDEX] = sequence.index
+        result[ATTR_NAME] = sequence.name
+        result[ATTR_ENABLED] = sequence.enabled
+        result[ATTR_SUSPENDED] = sequence.suspended
+        result[ATTR_STATUS] = sequence.status
+        result[ATTR_ICON] = sequence.icon
+        result[ATTR_START] = None
+        result[ATTR_DURATION] = 0
+        result[ATTR_ADJUSTMENT] = str(sequence.adjustment)
+        result[ATTR_SCHEDULE] = {
+            ATTR_INDEX: None,
+            ATTR_NAME: None,
+        }
+        result[ATTR_ZONES] = []
+        for zone in sequence.zones:
+            sqr = {}
+            sqr[ATTR_INDEX] = zone.index
+            sqr[ATTR_ENABLED] = zone.enabled
+            sqr[ATTR_SUSPENDED] = zone.suspended
+            sqr[ATTR_STATUS] = zone.status(False)
+            sqr[ATTR_ICON] = zone.icon(False)
+            sqr[ATTR_DURATION] = 0
+            sqr[ATTR_ADJUSTMENT] = str(zone.adjustment)
+            sqr[ATTR_ZONE_IDS] = zone.zone_ids
+            result[ATTR_ZONES].append(sqr)
+        return result
+
+
+class IUSequenceQueue(list[IUSequenceRun]):
+    """Irrigation Unlimited class to hold the upcoming sequences"""
+
+    DAYS_SPAN: int = 3
+
+    def __init__(self) -> None:
+        super().__init__()
+        # Config parameters
+        self._future_span = timedelta(days=self.DAYS_SPAN)
+        # Private variables
+        self._current_run: IUSequenceRun = None
+        self._next_run: IUSequenceRun = None
+        self._sorted: bool = False
+        self._next_event: datetime = None
+
+    @property
+    def current_run(self) -> IUSequenceRun | None:
+        """Return the current sequence run"""
+        return self._current_run
+
+    @property
+    def next_run(self) -> IUSequenceRun | None:
+        """Return the next sequence run"""
+        return self._next_run
+
+    @property
+    def current_duration(self) -> timedelta:
+        """Return the current active duration"""
+        if self._current_run is not None:
+            return self._current_run.total_time
+        return timedelta(0)
+
+    @property
+    def active_zone(self) -> IUSequenceZoneRun | None:
+        """Return the current active sequence zone"""
+        if self._current_run is not None:
+            return self._current_run.active_zone
+        return None
+
+    def active_zone_duration(self, sequence_zone: IUSequenceZone) -> timedelta:
+        """Return the current duration for the specified sequence zone"""
+        if self._current_run is not None:
+            for run in self._current_run.zone_runs(sequence_zone):
+                return run.duration
+        return timedelta(0)
+
+    def add(self, run: IUSequenceRun) -> IUSequenceRun:
+        """Add a sequence run to the queue"""
+        self.append(run)
+        self._sorted = False
+        return run
+
+    def clear_all(self) -> None:
+        """Clear out all runs"""
+        self._current_run = None
+        super().clear()
+
+    def clear_runs(self) -> bool:
+        """Clear out the queue except for manual and running schedules."""
+        modified = False
+        i = len(self) - 1
+        while i >= 0:
+            sqr = self[i]
+            if not (sqr.is_manual() or sqr.running):
+                for run in sqr.runs:
+                    run.zone.runs.remove_run(run)
+                self.pop(i)
+                modified = True
+            i -= 1
+        if modified:
+            self._next_run = None
+        return modified
+
+    def sort(self) -> bool:
+        """Sort the run queue"""
+
+        def sorter(run: IUSequenceRun) -> datetime:
+            """Sort call back routine. Items are sorted by start_time"""
+            if run.is_manual():
+                return datetime.min.replace(tzinfo=dt.UTC)
+            return run.start_time
+
+        if self._sorted:
+            return False
+        super().sort(key=sorter)
+        self._current_run = None
+        self._next_run = None
+        self._sorted = True
+        return True
+
+    def remove_expired(self, stime: datetime, postamble: timedelta) -> bool:
+        """Remove any expired sequence runs from the queue"""
+        if postamble is None:
+            postamble = timedelta(0)
+        modified: bool = False
+        i = len(self) - 1
+        while i >= 0:
+            sqr = self[i]
+            if sqr.expired and stime > sqr.end_time + postamble:
+                self._current_run = None
+                self._next_run = None
+                self.pop(i)
+                modified = True
+            i -= 1
+        return modified
+
+    def update_queue(self) -> IURQStatus:
+        """Update the run queue"""
+        # pylint: disable=too-many-branches
+        status = IURQStatus(0)
+
+        if self.sort():
+            status |= IURQStatus.SORTED
+
+        for run in self:
+            if run.update():
+                self._current_run = None
+                self._next_run = None
+                status |= IURQStatus.CHANGED
+
+        if self._current_run is None:
+            for run in self:
+                if run.running and run.on_time() != timedelta(0):
+                    self._current_run = run
+                    self._next_run = None
+                    status |= IURQStatus.UPDATED
+                    break
+
+        if self._next_run is None:
+            for run in self:
+                if not run.running and run.on_time() != timedelta(0):
+                    self._next_run = run
+                    status |= IURQStatus.UPDATED
+                    break
+
+        dates: list[datetime] = [utc_eot()]
+        for run in self:
+            if run.running:
+                dates.append(run.end_time)
+            else:
+                dates.append(run.start_time)
+        self._next_event = min(dates)
+
+        return status
+
+    def update_sensor(self, stime: datetime) -> bool:
+        """Update the count down timers"""
+        result = False
+        for run in self:
+            result |= run.update_time_remaining(stime)
+        return result
+
+    def as_list(self) -> list:
+        """Return a list of runs"""
+        return [run.as_dict() for run in self]
 
 
 class IUSequence(IUBase):
@@ -2390,18 +3494,80 @@ class IUSequence(IUBase):
         self._repeat: int = None
         self._enabled: bool = True
         # Private variables
+        self._is_on = False
+        self._is_in_delay = False
+        self._paused = False
+        self._run_queue = IUSequenceQueue()
         self._schedules: list[IUSchedule] = []
         self._zones: list[IUSequenceZone] = []
         self._adjustment = IUAdjustment()
         self._suspend_until: datetime = None
+        self._sensor_update_required: bool = False
+        self._sensor_last_update: datetime = None
+        self._initialised: bool = False
+        self._finalised: bool = False
+        self._sequence_sensor: Entity = None
+        self._volume: Decimal = None
+        self._dirty = True
 
     @property
-    def schedules(self) -> "list[IUSchedule]":
+    def unique_id(self) -> str:
+        """Return the HA unique_id for the sequence"""
+        return f"c{self._controller.index + 1}_s{self.index + 1}"
+
+    @property
+    def entity_base(self) -> str:
+        """Return the base of the entity_id. Entity rename
+        not currently supported"""
+        return self.unique_id
+
+    @property
+    def entity_id(self) -> str:
+        """Return the HA entity_id for the sequence"""
+        return f"{BINARY_SENSOR}.{DOMAIN}_{self.entity_base}"
+
+    @property
+    def runs(self) -> IUSequenceQueue:
+        """Return the run queue for this sequence"""
+        return self._run_queue
+
+    @property
+    def sequence_sensor(self) -> Entity:
+        """Return the HA entity associated with this sequence"""
+        return self._sequence_sensor
+
+    @sequence_sensor.setter
+    def sequence_sensor(self, value: Entity) -> None:
+        self._sequence_sensor = value
+
+    @property
+    def volume(self) -> float:
+        """Return the volume consumption"""
+        if self._volume is not None:
+            return float(self._volume)
+        return None
+
+    @volume.setter
+    def volume(self, value: Decimal) -> None:
+        self._volume = value
+
+    @property
+    def is_setup(self) -> bool:
+        """Return True if this sequence is setup and ready to go"""
+        self._initialised = self._sequence_sensor is not None
+
+        if self._initialised:
+            for schedule in self._schedules:
+                self._initialised = self._initialised and schedule.is_setup
+        return self._initialised
+
+    @property
+    def schedules(self) -> list[IUSchedule]:
         """Return the list of schedules for this sequence"""
         return self._schedules
 
     @property
-    def zones(self) -> "list[IUSequenceZone]":
+    def zones(self) -> list[IUSequenceZone]:
         """Return the list of sequence zones"""
         return self._zones
 
@@ -2438,7 +3604,10 @@ class IUSequence(IUBase):
     @enabled.setter
     def enabled(self, value: bool) -> None:
         """Set the enabled state"""
-        self._enabled = value
+        if value != self._enabled:
+            self._enabled = value
+            self._dirty = True
+            self.request_update()
 
     @property
     def suspended(self) -> datetime:
@@ -2450,6 +3619,8 @@ class IUSequence(IUBase):
         """Set the suspend date for this sequence"""
         if value != self._suspend_until:
             self._suspend_until = value
+            self._dirty = True
+            self.request_update()
 
     @property
     def adjustment(self) -> IUAdjustment:
@@ -2459,43 +3630,46 @@ class IUSequence(IUBase):
     @property
     def is_on(self) -> bool:
         """Return if the sequence is on or off"""
-        return self._controller.runs.is_sequence_running(self)
+        return self._is_on
+
+    @property
+    def is_in_delay(self) -> bool:
+        """Return is the sequence is waiting between zones"""
+        return self._is_in_delay
 
     @property
     def is_paused(self) -> bool:
-        """Return is the sequence is paused"""
-        return self._controller.runs.is_sequence_paused(self)
+        """Return true is the sequence is paused"""
+        return self._paused
 
-    def icon(self, is_on: bool = None, is_paused: bool = None) -> str:
+    @property
+    def icon(self) -> str:
         """Return the icon to use in the frontend."""
         if self._controller.is_enabled:
             if self.enabled:
                 if self.suspended is None:
-                    if is_on is None:
-                        is_on = self.is_on
-                    if is_paused is None:
-                        is_paused = self.is_paused
-                    if is_on:
-                        if is_paused:
+                    if self.is_on:
+                        if self.is_paused:
                             return ICON_SEQUENCE_PAUSED
+                        if self.is_in_delay:
+                            return ICON_SEQUENCE_DELAY
                         return ICON_SEQUENCE_ON
                     return ICON_SEQUENCE_OFF
                 return ICON_SUSPENDED
             return ICON_DISABLED
         return ICON_BLOCKED
 
-    def status(self, is_on: bool = None, is_paused: bool = None) -> str:
+    @property
+    def status(self) -> str:
         """Return status of the sequence"""
         if self._controller.is_enabled:
             if self.enabled:
                 if self.suspended is None:
-                    if is_on is None:
-                        is_on = self.is_on
-                    if is_paused is None:
-                        is_paused = self.is_paused
-                    if is_on:
-                        if is_paused:
+                    if self.is_on:
+                        if self.is_paused:
                             return STATUS_PAUSED
+                        if self.is_in_delay:
+                            return STATUS_DELAY
                         return STATE_ON
                     return STATE_OFF
                 return STATUS_SUSPENDED
@@ -2513,7 +3687,7 @@ class IUSequence(IUBase):
         return False
 
     def zone_enabled(
-        self, sequence_zone: IUSequenceZone, sqr: "IUSequenceRun" = None
+        self, sequence_zone: IUSequenceZone, sqr: IUSequenceRun = None
     ) -> bool:
         """Return True if at least one real zone referenced by the
         sequence_zone is enabled"""
@@ -2522,11 +3696,8 @@ class IUSequence(IUBase):
             and self.is_enabled
             and sequence_zone.is_enabled
         ):
-            for zone_id in sequence_zone.zone_ids:
-                zone = self._controller.find_zone_by_zone_id(zone_id)
-                if (zone is not None and zone.is_enabled) or (
-                    sqr is not None and sqr.zone_enabled(zone)
-                ):
+            for zone in sequence_zone.zones:
+                if zone.is_enabled or (sqr is not None and sqr.zone_enabled(zone)):
                     return True
         return False
 
@@ -2534,10 +3705,8 @@ class IUSequence(IUBase):
         self, sequence_zone: IUSequenceZone, duration: timedelta
     ) -> timedelta:
         """Apply the zone entity constraints"""
-        for zone_id in sequence_zone.zone_ids:
-            zone = self._controller.find_zone_by_zone_id(zone_id)
-            if zone is not None:
-                duration = zone.runs.constrain(duration)
+        for zone in sequence_zone.zones:
+            duration = zone.runs.constrain(duration)
         return duration
 
     def zone_delay_config(self, sequence_zone: IUSequenceZone) -> timedelta:
@@ -2551,14 +3720,14 @@ class IUSequence(IUBase):
         return delay
 
     def zone_delay(
-        self, sequence_zone: IUSequenceZone, sqr: "IUSequenceRun"
+        self, sequence_zone: IUSequenceZone, sqr: IUSequenceRun
     ) -> timedelta:
         """Return the delay for the specified zone"""
         if self.zone_enabled(sequence_zone, sqr):
             return self.zone_delay_config(sequence_zone)
         return timedelta(0)
 
-    def total_delay(self, sqr: "IUSequenceRun") -> timedelta:
+    def total_delay(self, sqr: IUSequenceRun) -> timedelta:
         """Return the total delay for all the zones"""
         delay = timedelta(0)
         last_zone: IUSequenceZone = None
@@ -2583,7 +3752,7 @@ class IUSequence(IUBase):
         return duration
 
     def zone_duration_base(
-        self, sequence_zone: IUSequenceZone, sqr: "IUSequenceRun"
+        self, sequence_zone: IUSequenceZone, sqr: IUSequenceRun
     ) -> timedelta:
         """Return the base duration for the specified zone"""
         if self.zone_enabled(sequence_zone, sqr):
@@ -2591,7 +3760,7 @@ class IUSequence(IUBase):
         return timedelta(0)
 
     def zone_duration(
-        self, sequence_zone: IUSequenceZone, sqr: "IUSequenceRun"
+        self, sequence_zone: IUSequenceZone, sqr: IUSequenceRun
     ) -> timedelta:
         """Return the duration for the specified zone including adjustments
         and constraints"""
@@ -2605,14 +3774,14 @@ class IUSequence(IUBase):
         self,
         sequence_zone: IUSequenceZone,
         duration_factor: float,
-        sqr: "IUSequenceRun",
+        sqr: IUSequenceRun,
     ) -> timedelta:
         """Return the final zone time after the factor has been applied"""
         duration = self.zone_duration(sequence_zone, sqr) * duration_factor
         duration = self.constrain(sequence_zone, duration)
         return round_td(duration)
 
-    def total_duration(self, sqr: "IUSequenceRun") -> timedelta:
+    def total_duration(self, sqr: IUSequenceRun) -> timedelta:
         """Return the total duration for all the zones"""
         duration = timedelta(0)
         for zone in self._zones:
@@ -2620,9 +3789,7 @@ class IUSequence(IUBase):
         duration *= self._repeat
         return duration
 
-    def total_duration_adjusted(
-        self, total_duration, sqr: "IUSequenceRun"
-    ) -> timedelta:
+    def total_duration_adjusted(self, total_duration, sqr: IUSequenceRun) -> timedelta:
         """Return the adjusted duration"""
         if total_duration is None:
             total_duration = self.total_duration(sqr)
@@ -2631,9 +3798,7 @@ class IUSequence(IUBase):
             total_duration = max(total_duration, timedelta(0))
         return total_duration
 
-    def total_time_final(
-        self, total_time: timedelta, sqr: "IUSequenceRun"
-    ) -> timedelta:
+    def total_time_final(self, total_time: timedelta, sqr: IUSequenceRun) -> timedelta:
         """Return the adjusted total time for the sequence"""
         if total_time is not None and self.has_adjustment(False):
             total_delay = self.total_delay(sqr)
@@ -2645,7 +3810,7 @@ class IUSequence(IUBase):
 
         return total_time
 
-    def duration_factor(self, total_time: timedelta, sqr: "IUSequenceRun") -> float:
+    def duration_factor(self, total_time: timedelta, sqr: IUSequenceRun) -> float:
         """Given a new total run time, calculate how much to shrink or expand each
         zone duration. Final time will be approximate as the new durations must
         be rounded to internal boundaries"""
@@ -2690,14 +3855,13 @@ class IUSequence(IUBase):
             result = self.add_zone(IUSequenceZone(self._controller, self, index))
         return result
 
-    def zone_ids(self) -> str:
-        """Generator to return the zone_id's"""
-        result = set()
+    def zone_list(self) -> Iterator[list[IUZone]]:
+        """Generator to return all referenced zones"""
+        result: set[IUZone] = set()
         for sequence_zone in self._zones:
-            for zone_id in sequence_zone.zone_ids:
-                result.add(zone_id)
-        for zone_id in result:
-            yield zone_id
+            result.update(sequence_zone.zones)
+        for zone in result:
+            yield zone
 
     def load(self, config: OrderedDict) -> "IUSequence":
         """Load sequence data from the configuration"""
@@ -2715,9 +3879,10 @@ class IUSequence(IUBase):
         if CONF_SCHEDULES in config:
             for sidx, schedule_config in enumerate(config[CONF_SCHEDULES]):
                 self.find_add_schedule(sidx).load(schedule_config)
+        self._dirty = True
         return self
 
-    def as_dict(self, sqr: "IUSequenceRun" = None) -> OrderedDict:
+    def as_dict(self, extended=False, sqr: IUSequenceRun = None) -> OrderedDict:
         """Return this sequence as a dict"""
         total_delay = self.total_delay(sqr)
         total_duration = self.total_duration(sqr)
@@ -2725,41 +3890,112 @@ class IUSequence(IUBase):
         duration_factor = self.duration_factor(
             total_duration_adjusted + total_delay, sqr
         )
-        is_on = self.is_on
-        is_paused = self.is_paused
         result = OrderedDict()
         result[CONF_INDEX] = self._index
         result[CONF_NAME] = self._name
-        result[CONF_STATE] = STATE_ON if is_on else STATE_OFF
+        result[CONF_STATE] = STATE_ON if self.is_on else STATE_OFF
         result[CONF_ENABLED] = self._enabled
         result[ATTR_SUSPENDED] = self.suspended
-        result[ATTR_ICON] = self.icon(is_on, is_paused)
-        result[ATTR_STATUS] = self.status(is_on, is_paused)
-        result[ATTR_DEFAULT_DURATION] = self._duration
-        result[ATTR_DEFAULT_DELAY] = self._delay
-        result[ATTR_DURATION_FACTOR] = duration_factor
-        result[ATTR_TOTAL_DELAY] = total_delay
-        result[ATTR_TOTAL_DURATION] = total_duration
-        result[ATTR_ADJUSTED_DURATION] = total_duration_adjusted
-        result[ATTR_CURRENT_DURATION] = self._controller.runs.sequence_duration(self)
         result[ATTR_ADJUSTMENT] = str(self._adjustment)
-        result[CONF_SCHEDULES] = [sch.as_dict() for sch in self._schedules]
         result[CONF_SEQUENCE_ZONES] = [
-            szn.as_dict(duration_factor) for szn in self._zones
+            szn.as_dict(duration_factor, extended) for szn in self._zones
         ]
+        if extended:
+            result[ATTR_ICON] = self.icon
+            result[ATTR_STATUS] = self.status
+            result[ATTR_DEFAULT_DURATION] = self._duration
+            result[ATTR_DEFAULT_DELAY] = self._delay
+            result[ATTR_DURATION_FACTOR] = duration_factor
+            result[ATTR_TOTAL_DELAY] = total_delay
+            result[ATTR_TOTAL_DURATION] = total_duration
+            result[ATTR_ADJUSTED_DURATION] = total_duration_adjusted
+            result[ATTR_CURRENT_DURATION] = self.runs.current_duration
+            result[CONF_SCHEDULES] = [sch.as_dict() for sch in self._schedules]
         return result
 
-    def muster(self, stime: datetime) -> int:
+    def ha_zone_attr(self) -> list[dict]:
+        """Return the HA zone attributes"""
+        return [szn.ha_attr() for szn in self._zones]
+
+    def muster(self, stime: datetime) -> IURQStatus:
         """Muster this sequence"""
-        status: int = 0
+        status = IURQStatus(0)
+
+        if self._dirty:
+            self._run_queue.clear_all()
+            status |= IURQStatus.CLEARED
+
         if self._suspend_until is not None and stime >= self._suspend_until:
             self._suspend_until = None
-            status |= IURunQueue.RQ_STATUS_CHANGED
+            status |= IURQStatus.CHANGED
 
         for sequence_zone in self._zones:
             status |= sequence_zone.muster(stime)
 
+        self._dirty = False
         return status
+
+    def check_run(self, stime: datetime, parent_enabled: bool) -> bool:
+        """Update the run status"""
+        # pylint: disable=unused-argument
+        is_running = parent_enabled and (
+            self.is_enabled
+            and self._run_queue.current_run is not None
+            and (
+                self._run_queue.current_run.running
+                or self._run_queue.current_run.paused
+            )
+        )
+
+        state_changed = is_running ^ self._is_on
+        if state_changed:
+            self._is_on = not self._is_on
+            self.request_update()
+
+        is_in_delay = is_running and self._run_queue.current_run.active_zone is None
+        if is_in_delay ^ self._is_in_delay:
+            self._is_in_delay = not self._is_in_delay
+            self.request_update()
+
+        is_paused = is_running and self._run_queue.current_run.paused
+        if is_paused ^ self._paused:
+            self._paused = not self._paused
+            self.request_update()
+
+        return state_changed
+
+    def request_update(self) -> None:
+        """Flag the sensor needs an update"""
+        self._sensor_update_required = True
+
+    def update_sensor(self, stime: datetime, do_on: bool) -> bool:
+        """Lazy sensor updater"""
+        updated: bool = False
+        do_update: bool = False
+
+        if self._sequence_sensor is not None:
+            if do_on is False:
+                updated |= self._run_queue.update_sensor(stime)
+                do_update = not self.is_on and self._sensor_update_required
+            else:
+                if self.is_on:
+                    # If we are running then update sensor according to refresh_interval
+                    do_update = (
+                        self._sensor_last_update is None
+                        or stime - self._sensor_last_update
+                        >= self._coordinator.refresh_interval
+                    )
+                    do_update |= self._sensor_update_required
+        else:
+            do_update = False
+
+        if do_update:
+            self._sequence_sensor.schedule_update_ha_state()
+            self._sensor_update_required = False
+            self._sensor_last_update = stime
+            updated = True
+
+        return updated
 
     def next_awakening(self) -> datetime:
         """Return the next event time"""
@@ -2768,344 +4004,128 @@ class IUSequence(IUBase):
         dates.extend(sqz.next_awakening() for sqz in self._zones)
         return min(d for d in dates if d is not None)
 
+    def finalise(self) -> None:
+        """Shutdown the sequence"""
+        if not self._finalised:
+            self._finalised = True
 
-class IUSequenceZoneRun(NamedTuple):
-    """Irrigation Unlimited sequence zone run class"""
-
-    sequence_zone: IUSequenceZone
-    sequence_repeat: int
-    zone_repeat: int
-
-
-class IUSequenceRunAllocation(NamedTuple):
-    """Irrigation Unlimited sequence zone allocation class"""
-
-    start: datetime
-    duration: timedelta
-    zone: IUZone
-    sequence_zone_run: IUSequenceZoneRun
-
-
-class IUSequenceRun(IUBase):
-    """Irrigation Unlimited sequence run manager class. Ties together the
-    individual sequence zones"""
-
-    # pylint: disable=too-many-instance-attributes
-    # pylint: disable=too-many-public-methods
-    def __init__(
-        self,
-        coordinator: "IUCoordinator",
-        controller: "IUController",
-        sequence: IUSequence,
-        schedule: IUSchedule,
-    ) -> None:
-        # pylint: disable=too-many-arguments
-        super().__init__(None)
-        # Passed parameters
-        self._coordinator = coordinator
-        self._controller = controller
-        self._sequence = sequence
-        self._schedule = schedule
-        # Private variables
-        self._runs_pre_allocate: list[IUSequenceRunAllocation] = []
-        self._runs: dict[IURun, IUSequenceZoneRun] = weakref.WeakKeyDictionary()
-        self._active_zone: IUSequenceZoneRun = None
-        self._running = False
-        self._start_time: datetime = None
-        self._end_time: datetime = None
-        self._accumulated_duration = timedelta(0)
-        self._first_zone: IUZone = None
-
-    @property
-    def sequence(self) -> IUSequence:
-        """Return the sequence associated with this run"""
-        return self._sequence
-
-    @property
-    def schedule(self) -> IUSchedule:
-        """Return the schedule associated with this run"""
-        return self._schedule
-
-    @property
-    def start_time(self) -> datetime:
-        """Return the start time for this sequence"""
-        return self._start_time
-
-    @property
-    def end_time(self) -> datetime:
-        """Return the end time for this sequence"""
-        return self._end_time
-
-    @property
-    def total_time(self) -> timedelta:
-        """Return the total run time for this sequence"""
-        return self._end_time - self._start_time
-
-    @property
-    def running(self) -> bool:
-        """Indicate if this sequence is running"""
-        return self._running
-
-    @property
-    def active_zone(self) -> IUSequenceZoneRun:
-        """Return the active zone in the sequence"""
-        return self._active_zone
-
-    def is_manual(self) -> bool:
-        """Check if this is a manual run"""
-        return self._schedule is None
-
-    def is_expired(self, stime: datetime) -> bool:
-        """Check if this sequence run is expired"""
-        return stime >= self._end_time
-
-    def zone_enabled(self, zone: IUZone) -> bool:
-        """Return true if the zone is enabled"""
-        return zone is not None and (
-            zone.is_enabled or (self.is_manual() and zone.allow_manual)
-        )
-
-    def calc_total_time(self, total_time: timedelta) -> timedelta:
-        """Calculate the total duration of the sequence"""
-        if total_time is None:
-            if self._schedule is not None and self._schedule.duration is not None:
-                return self._sequence.total_time_final(self._schedule.duration, self)
-            return self.sequence.total_time_final(None, self)
-
-        if self._schedule is not None:
-            return self._sequence.total_time_final(total_time, self)
-        return total_time
-
-    def build(self, duration_factor: float) -> timedelta:
-        """Build out the sequence. Pre allocate runs and determine
-        the duration"""
-        # pylint: disable=too-many-nested-blocks
-        next_run = self._start_time = self._end_time = wash_dt(dt.utcnow())
-        for sequence_repeat in range(self._sequence.repeat):
-            for sequence_zone in self._sequence.zones:
-                if not self._sequence.zone_enabled(sequence_zone, self):
-                    continue
-                duration = self._sequence.zone_duration_final(
-                    sequence_zone, duration_factor, self
-                )
-                duration_max = timedelta(0)
-                delay = self._sequence.zone_delay(sequence_zone, self)
-                for zone in (
-                    self._controller.find_zone_by_zone_id(zone_id)
-                    for zone_id in sequence_zone.zone_ids
-                ):
-                    if self.zone_enabled(zone):
-                        # Don't adjust manual run and no adjustment on adjustment
-                        # This code should not really be here. It would be a breaking
-                        # change if removed.
-                        if not self.is_manual() and not self._sequence.has_adjustment(
-                            True
-                        ):
-                            duration_adjusted = zone.adjustment.adjust(duration)
-                            duration_adjusted = zone.runs.constrain(duration_adjusted)
-                        else:
-                            duration_adjusted = duration
-
-                        zone_run_time = next_run
-                        for zone_repeat in range(  # pylint: disable=unused-variable
-                            sequence_zone.repeat
-                        ):
-                            self._runs_pre_allocate.append(
-                                IUSequenceRunAllocation(
-                                    zone_run_time,
-                                    duration_adjusted,
-                                    zone,
-                                    IUSequenceZoneRun(
-                                        sequence_zone, sequence_repeat, zone_repeat
-                                    ),
-                                )
-                            )
-                            if self._first_zone is None:
-                                self._first_zone = zone
-                            if zone_run_time + duration_adjusted > self._end_time:
-                                self._end_time = zone_run_time + duration_adjusted
-                            zone_run_time += duration_adjusted + delay
-                        duration_max = max(duration_max, zone_run_time - next_run)
-                next_run += duration_max
-
-        return self._end_time - self._start_time
-
-    def allocate_runs(self, start_time: datetime) -> None:
-        """Allocate runs"""
-        delta = start_time - self._start_time
-        self._start_time += delta
-        self._end_time += delta
-        for item in self._runs_pre_allocate:
-            zone = item.zone
-            run = zone.runs.add(
-                item.start + delta, item.duration, zone, self._schedule, self
-            )
-            self._runs[run] = item.sequence_zone_run
-            self._accumulated_duration += run.duration
-            zone.request_update()
-        self._runs_pre_allocate.clear()
-
-    def first_zone(self) -> IUZone:
-        """Return the first zone"""
-        return self._first_zone
-
-    @staticmethod
-    def _calc_on_time(runs: list[IURun]) -> timedelta:
-        """Return the total time this list of runs is on. Accounts for
-        overlapping time periods"""
-        result = timedelta(0)
-        period_start: datetime = None
-        period_end: datetime = None
-
-        for run in runs:
-            if period_end is None or run.start_time > period_end:
-                if period_end is not None:
-                    result += period_end - period_start
-                period_start = run.start_time
-                period_end = run.end_time
-            else:
-                period_end = max(period_end, run.end_time)
-        if period_end is not None:
-            result += period_end - period_start
-        return result
-
-    def on_time(self) -> timedelta:
-        """Return the total time this run is on"""
-        return self._calc_on_time(self._runs.keys())
-
-    def zone_runs(self, sequence_zone: IUSequenceZone) -> list[IURun]:
-        """Get the list of runs associated with the sequence zone"""
-        return [
-            run for run, sqz in self._runs.items() if sqz.sequence_zone == sequence_zone
-        ]
-
-    def run_index(self, run: IURun) -> int:
-        """Extract the index from the supplied run"""
-        return list(self._runs.keys()).index(run)
-
-    def sequence_zone(self, run: IURun) -> IUSequenceZone:
-        """Extract the sequence zone from the run"""
-        sequence_zone_run = self._runs.get(run, None)
-        if sequence_zone_run is not None:
-            return sequence_zone_run.sequence_zone
-        return None
-
-    def update(self, stime: datetime, run: IURun) -> bool:
-        """Update the status of the sequence"""
-        is_running = run.is_running(stime)
-        sequence_zone_run = self._runs.get(run)
-
-        if is_running and not self._running:
-            # Sequence/sequence zone is starting
-            self._running = True
-            self._active_zone = sequence_zone_run
-            self._coordinator.notify_sequence(
-                EVENT_START,
-                self._controller,
-                self._sequence,
-                self._schedule,
-                self,
-            )
-            return True
-
-        if is_running and sequence_zone_run != self._active_zone:
-            # Sequence zone is changing
-            self._active_zone = sequence_zone_run
-            return True
-
-        if not is_running and sequence_zone_run == self._active_zone:
-            # Sequence zone is finishing
-            self._active_zone = None
-            if self.run_index(run) == len(self._runs) - 1:
-                # Sequence is finishing
-                self._coordinator.notify_sequence(
-                    EVENT_FINISH,
-                    self._controller,
-                    self._sequence,
-                    self._schedule,
-                    self,
-                )
-            return True
-
-        return False
-
-    def as_dict(self) -> dict:
-        """Return this sequence run as a dict"""
-        result = {}
-        result[ATTR_INDEX] = self._sequence.index
-        result[ATTR_NAME] = self._sequence.name
-        result[ATTR_ENABLED] = self._sequence.enabled
-        result[ATTR_SUSPENDED] = self._sequence.suspended
-        result[ATTR_STATUS] = self._sequence.status(
-            self._running, self._active_zone is None
-        )
-        result[ATTR_ICON] = self._sequence.icon(
-            self._running, self._active_zone is None
-        )
-        result[ATTR_START] = dt.as_local(self._start_time)
-        result[ATTR_DURATION] = to_secs(self.on_time())
-        result[ATTR_ADJUSTMENT] = str(self._sequence.adjustment)
-        if not self.is_manual():
-            result[ATTR_SCHEDULE] = {
-                ATTR_INDEX: self._schedule.index,
-                ATTR_NAME: self._schedule.name,
-            }
+    def service_edt(
+        self, data: MappingProxyType, stime: datetime, service: str
+    ) -> bool:
+        """Service handler for enable/disable/toggle"""
+        # pylint: disable=unused-argument
+        changed = False
+        zone_list: list[int] = data.get(CONF_ZONES)
+        if zone_list is None:
+            new_state = s2b(self.enabled, service)
+            if self.enabled != new_state:
+                self.enabled = new_state
+                changed = True
         else:
-            result[ATTR_SCHEDULE] = {
-                ATTR_INDEX: None,
-                ATTR_NAME: RES_MANUAL,
-            }
-        result[ATTR_ZONES] = []
-        for zone in self._sequence.zones:
-            runs = self.zone_runs(zone)
-            if self._active_zone is not None:
-                is_on = zone == self._active_zone.sequence_zone
-            else:
-                is_on = False
-            sqr = {}
-            sqr[ATTR_INDEX] = zone.index
-            sqr[ATTR_ENABLED] = zone.enabled
-            sqr[ATTR_SUSPENDED] = zone.suspended
-            sqr[ATTR_STATUS] = zone.status(is_on)
-            sqr[ATTR_ICON] = zone.icon(is_on)
-            sqr[ATTR_DURATION] = to_secs(self._calc_on_time(runs))
-            sqr[ATTR_ADJUSTMENT] = str(zone.adjustment)
-            sqr[ATTR_ZONE_IDS] = zone.zone_ids
-            result[ATTR_ZONES].append(sqr)
-        return result
+            for sequence_zone in self.zones:
+                if check_item(sequence_zone.index, zone_list):
+                    new_state = s2b(sequence_zone.enabled, service)
+                    if sequence_zone.enabled != new_state:
+                        sequence_zone.enabled = new_state
+                        changed = True
+        if changed:
+            self._run_queue.clear_runs()
+        return changed
 
-    @staticmethod
-    def skeleton(sequence: IUSequence) -> dict:
-        """Return a skeleton dict for when no sequence run is
-        active. Must match the as_dict method"""
+    def service_suspend(self, data: MappingProxyType, stime: datetime) -> bool:
+        """Service handler for suspend"""
+        changed = False
+        suspend_time = suspend_until_date(data, stime)
+        zone_list: list[int] = data.get(CONF_ZONES)
+        if zone_list is None:
+            if self.suspended != suspend_time:
+                self.suspended = suspend_time
+                changed = True
+        else:
+            for sequence_zone in self.zones:
+                if check_item(sequence_zone.index, zone_list):
+                    if sequence_zone.suspended != suspend_time:
+                        sequence_zone.suspended = suspend_time
+                        changed = True
+        if changed:
+            self._run_queue.clear_runs()
+        return changed
 
-        result = {}
-        result[ATTR_INDEX] = sequence.index
-        result[ATTR_NAME] = sequence.name
-        result[ATTR_ENABLED] = sequence.enabled
-        result[ATTR_SUSPENDED] = sequence.suspended
-        result[ATTR_STATUS] = sequence.status(False, False)
-        result[ATTR_ICON] = sequence.icon(False, False)
-        result[ATTR_START] = None
-        result[ATTR_DURATION] = 0
-        result[ATTR_ADJUSTMENT] = str(sequence.adjustment)
-        result[ATTR_SCHEDULE] = {
-            ATTR_INDEX: None,
-            ATTR_NAME: None,
-        }
-        result[ATTR_ZONES] = []
-        for zone in sequence.zones:
-            sqr = {}
-            sqr[ATTR_INDEX] = zone.index
-            sqr[ATTR_ENABLED] = zone.enabled
-            sqr[ATTR_SUSPENDED] = zone.suspended
-            sqr[ATTR_STATUS] = zone.status(False)
-            sqr[ATTR_ICON] = zone.icon(False)
-            sqr[ATTR_DURATION] = 0
-            sqr[ATTR_ADJUSTMENT] = str(zone.adjustment)
-            sqr[ATTR_ZONE_IDS] = zone.zone_ids
-            result[ATTR_ZONES].append(sqr)
-        return result
+    def service_adjust_time(self, data: MappingProxyType, stime: datetime) -> bool:
+        """Service handler for adjust_time"""
+        # pylint: disable=unused-argument
+        changed = False
+        zone_list: list[int] = data.get(CONF_ZONES)
+        if zone_list is None:
+            changed = self.adjustment.load(data)
+        else:
+            for sequence_zone in self.zones:
+                if check_item(sequence_zone.index, zone_list):
+                    changed |= sequence_zone.adjustment.load(data)
+        if changed:
+            self._run_queue.clear_runs()
+        return changed
+
+    def service_manual_run(self, data: MappingProxyType, stime: datetime) -> None:
+        """Service handler for manual_run"""
+        duration = wash_td(data.get(CONF_TIME))
+        delay = wash_td(data.get(CONF_DELAY, timedelta(0)))
+        queue = data.get(CONF_QUEUE, self._controller.queue_manual)
+        if duration is not None and duration == timedelta(0):
+            duration = None
+        self._controller.muster_sequence(
+            self._controller.manual_run_start(stime, delay, queue), self, None, duration
+        )
+
+    def service_cancel(self, data: MappingProxyType, stime: datetime) -> bool:
+        """Cancel the sequence"""
+        # pylint: disable=unused-argument
+        changed = False
+        for sqr in self._run_queue:
+            if sqr.running:
+                sqr.cancel(stime)
+                changed = True
+        return changed
+
+    def service_skip(self, data: MappingProxyType, stime: datetime) -> bool:
+        """Skip to the next sequence zone"""
+        # pylint: disable=unused-argument
+        changed = False
+        for sqr in self._run_queue:
+            if sqr.running:
+                sqr.skip(stime)
+                changed = True
+        return changed
+
+    def service_pause(self, data: MappingProxyType, stime: datetime) -> bool:
+        """Pause the sequence"""
+        # pylint: disable=unused-argument
+
+        def is_preamble(sqr: IUSequenceRun) -> bool:
+            return (
+                self._controller.preamble is not None
+                and sqr.future
+                and stime > sqr.start_time - self._controller.preamble
+            )
+
+        changed = False
+        for sqr in self._run_queue:
+            if not sqr.paused and (
+                is_preamble(sqr) or (sqr.end_time >= stime and sqr.running)
+            ):
+                sqr.pause(stime)
+                changed = True
+        return changed
+
+    def service_resume(self, data: MappingProxyType, stime: datetime) -> bool:
+        """Resume the sequence"""
+        # pylint: disable=unused-argument
+        changed = False
+        for sqr in self._run_queue:
+            if sqr.paused:
+                sqr.resume(stime)
+                changed = True
+        return changed
 
 
 class IUController(IUBase):
@@ -3139,7 +4159,7 @@ class IUController(IUBase):
         self._sensor_update_required: bool = False
         self._sensor_last_update: datetime = None
         self._suspend_until: datetime = None
-        self._volume = IUVolume(hass, coordinator)
+        self._volume = IUVolume(hass, coordinator, None)
         self._user = IUUser()
         self._dirty: bool = True
 
@@ -3241,6 +4261,11 @@ class IUController(IUBase):
         return self._preamble
 
     @property
+    def postamble(self) -> timedelta:
+        """Return the postamble time for the controller"""
+        return self._postamble
+
+    @property
     def queue_manual(self) -> bool:
         """Return if manual runs should be queue"""
         return self._queue_manual
@@ -3264,7 +4289,7 @@ class IUController(IUBase):
                 if self.is_on:
                     return ICON_CONTROLLER_ON
                 if self.is_paused:
-                    return ICON_CONTROLLER_PAUSED
+                    return ICON_CONTROLLER_DELAY
                 return ICON_CONTROLLER_OFF
             return ICON_SUSPENDED
         return ICON_DISABLED
@@ -3287,7 +4312,7 @@ class IUController(IUBase):
                     if self._is_on:
                         return STATE_ON
                     if self._run_queue.in_sequence:
-                        return STATUS_PAUSED
+                        return STATUS_DELAY
                     return STATE_OFF
                 return STATUS_SUSPENDED
             return STATUS_DISABLED
@@ -3299,6 +4324,8 @@ class IUController(IUBase):
         if self._initialised:
             for zone in self._zones:
                 self._initialised = self._initialised and zone.is_setup
+            for sequence in self._sequences:
+                self._initialised = self._initialised and sequence.is_setup
         return self._initialised
 
     def add_zone(self, zone: IUZone) -> IUZone:
@@ -3350,18 +4377,33 @@ class IUController(IUBase):
         """Clear out the controller"""
         # Don't clear zones
         # self._zones.clear()
-        self._run_queue.clear_all()
+        self.clear_zones(None)
 
-    def clear_sequence_runs(self, stime: datetime, sequence: IUSequence = None) -> None:
-        """Clear out zone run queue with matching sequence"""
-        if sequence is None:
+    def clear_zones(self, zones: list[IUZone]) -> None:
+        """Clear out the specified zone run queues"""
+        if zones is None:
+            self.runs.clear_all()
+            for sequence in self._sequences:
+                sequence.runs.clear_all()
             for zone in self._zones:
-                zone.clear_sequence_runs(stime, None)
+                zone.runs.clear_all()
         else:
-            for zone_id in sequence.zone_ids():
-                zone = self.find_zone_by_zone_id(zone_id)
-                if zone is not None:
-                    zone.clear_sequence_runs(stime, sequence)
+            for run in self.runs:
+                if run.zone in zones:
+                    self.runs.remove(run)
+            for sequence in self._sequences:
+                for zone in sequence.zone_list():
+                    if zone in zones:
+                        sequence.runs.clear_all()
+            for zone in zones:
+                zone.runs.clear_all()
+
+    def clear_zone_runs(self, zone: IUZone) -> None:
+        """Clear out zone run queues"""
+        zone.runs.clear_runs()
+        for sequence in self._sequences:
+            if zone in sequence.zone_list():
+                sequence.runs.clear_runs()
 
     def load(self, config: OrderedDict) -> "IUController":
         """Load config data for the controller"""
@@ -3406,53 +4448,49 @@ class IUController(IUBase):
             self.clear()
             self._finalised = True
 
-    def as_dict(self) -> OrderedDict:
+    def as_dict(self, extended=False) -> OrderedDict:
         """Return this controller as a dict"""
         result = OrderedDict()
         result[CONF_INDEX] = self._index
         result[CONF_NAME] = self._name
-        result[CONF_CONTROLLER_ID] = self._controller_id
-        result[CONF_ENTITY_BASE] = self.entity_base
-        result[CONF_STATE] = STATE_ON if self.is_on else STATE_OFF
         result[CONF_ENABLED] = self._enabled
         result[ATTR_SUSPENDED] = self.suspended
-        result[CONF_ICON] = self.icon
-        result[ATTR_STATUS] = self.status
-        result[CONF_ZONES] = [zone.as_dict() for zone in self._zones]
-        result[CONF_SEQUENCES] = [seq.as_dict() for seq in self._sequences]
+        result[CONF_ZONES] = [zone.as_dict(extended) for zone in self._zones]
+        result[CONF_SEQUENCES] = [seq.as_dict(extended) for seq in self._sequences]
+        result[CONF_STATE] = STATE_ON if self.is_on else STATE_OFF
+        if extended:
+            result[CONF_CONTROLLER_ID] = self._controller_id
+            result[CONF_ENTITY_BASE] = self.entity_base
+            result[CONF_ICON] = self.icon
+            result[ATTR_STATUS] = self.status
         return result
 
-    def sequence_runs(
-        self,
-        schedule: IUSchedule,
-    ) -> set[IUSequenceRun]:
+    def sequence_runs(self) -> list[IUSequenceRun]:
         """Gather all the sequence runs"""
-        result: set[IUSequenceRun] = set()
-        for zone in self._zones:
-            for run in zone.runs:
-                if run.is_sequence and (schedule is None or schedule == run.schedule):
-                    result.add(run.sequence_run)
+        result: list[IUSequenceRun] = []
+        for sequence in self._sequences:
+            for run in sequence.runs:
+                result.append(run)
         return result
 
     def up_next(self) -> dict[IUSequence, IUSequenceRun]:
         """Return a list of sequences and their next start times filtered"""
-        stime = self._coordinator.service_time()
         sequences: dict[IUSequence, IUSequenceRun] = {}
-        for run in self.sequence_runs(None):
-            if not run.is_expired(stime):
+        for run in self.sequence_runs():
+            if not run.expired:
                 sample = sequences.get(run.sequence)
                 if sample is None or run.start_time < sample.start_time:
                     sequences[run.sequence] = run
         return sequences
 
-    def sequence_status(self) -> list[dict]:
+    def sequence_status(self, include_expired=False) -> list[dict]:
         """Return the sequence status or run information"""
         result: list[dict] = []
         runs = self.up_next()
         for sequence in self._sequences:
             run = runs.get(sequence)
             if run is not None:
-                result.append(run.as_dict())
+                result.append(run.as_dict(include_expired))
             else:
                 result.append(IUSequenceRun.skeleton(sequence))
         return result
@@ -3463,37 +4501,37 @@ class IUController(IUBase):
         sequence: IUSequence,
         schedule: IUSchedule,
         total_time: timedelta = None,
-    ) -> IUSequenceRun:
-        # pylint: disable=too-many-locals
-        # pylint: disable=too-many-statements
+    ) -> IURQStatus:
+        # pylint: disable=too-many-locals, too-many-statements
         """Muster the sequences for the controller"""
 
         def init_run_time(
             stime: datetime,
+            sequence: IUSequence,
             schedule: IUSchedule,
             zone: IUZone,
             total_duration: timedelta,
         ) -> datetime:
-            def is_running(schedule: IUSchedule) -> bool:
-                """Return True is this sequence is currently running"""
-                for srn in self.sequence_runs(schedule):
-                    if srn.running:
+            def is_running(sequence: IUSequence, schedule: IUSchedule) -> bool:
+                """Return True is this sequence & schedule is currently running"""
+                for srn in sequence.runs:
+                    if srn.schedule == schedule and srn.running:
                         return True
                 return False
 
-            def find_last_run(schedule: IUSchedule) -> IURun:
-                result: IURun = None
+            def find_last_run(sequence: IUSequence, schedule: IUSchedule) -> IURun:
+                result: IUSequenceRun = None
                 next_time: datetime = None
-                for zone in self._zones:
-                    for run in zone.runs:
-                        if run.is_sequence and run.schedule == schedule:
+                for sqr in sequence.runs:
+                    if sqr.schedule == schedule:
+                        for run in sqr.runs:
                             if next_time is None or run.end_time > next_time:
                                 next_time = run.start_time
                                 result = run
                 return result
 
             if schedule is not None:
-                last_run = find_last_run(schedule)
+                last_run = find_last_run(sequence, schedule)
                 if last_run is not None:
                     next_time = last_run.sequence_run.end_time
                 else:
@@ -3502,12 +4540,13 @@ class IUController(IUBase):
                     next_time,
                     zone.runs.last_time(stime),
                     total_duration,
-                    is_running(schedule),
+                    is_running(sequence, schedule),
                 )
             else:
                 next_run = stime
             return next_run
 
+        status = IURQStatus(0)
         sequence_run = IUSequenceRun(self._coordinator, self, sequence, schedule)
         total_time = sequence_run.calc_total_time(total_time)
         duration_factor = sequence.duration_factor(total_time, sequence_run)
@@ -3515,90 +4554,98 @@ class IUController(IUBase):
         total_time = sequence_run.build(duration_factor)
         if total_time > timedelta(0):
             start_time = init_run_time(
-                stime, schedule, sequence_run.first_zone(), total_time
+                stime, sequence, schedule, sequence_run.first_zone(), total_time
             )
             if start_time is not None:
-                sequence_run.allocate_runs(start_time)
-                return sequence_run
-        return None
+                sequence_run.allocate_runs(stime, start_time)
+                sequence.runs.add(sequence_run)
+                status |= IURQStatus.EXTENDED
+        return status
 
-    def muster(self, stime: datetime, force: bool) -> int:
+    def muster(self, stime: datetime, force: bool) -> IURQStatus:
         """Calculate run times for this controller. This is where most of the hard yakka
         is done."""
         # pylint: disable=too-many-branches
-        status: int = 0
+        status = IURQStatus(0)
 
         if self._dirty or force:
-            self._run_queue.clear_all()
+            self.clear_zones(None)
+            status |= IURQStatus.CLEARED
+        else:
             for zone in self._zones:
-                zone.clear_run_queue()
-            status |= IURunQueue.RQ_STATUS_CLEARED
+                zone.runs.update_run_status(stime)
+            self._run_queue.update_run_status(stime)
 
         if self._suspend_until is not None and stime >= self._suspend_until:
             self._suspend_until = None
-            status |= IURunQueue.RQ_STATUS_CHANGED
+            status |= IURQStatus.CHANGED
 
         self._switch.muster(stime)
 
-        zone_status: int = 0
+        zone_status = IURQStatus(0)
 
         # Handle initialisation
         for zone in self._zones:
             zone_status |= zone.muster(stime)
 
         for sequence in self._sequences:
-            if sequence.muster(stime) != 0:
-                self.clear_sequence_runs(stime, sequence)
+            sms = sequence.muster(stime)
+            if not sms.is_empty():
+                sequence.runs.clear_runs()
+                zone_status |= sms
 
-        # Process sequence schedules
-        for sequence in self._sequences:
-            if sequence.is_enabled:
-                for schedule in sequence.schedules:
-                    if not schedule.enabled:
-                        continue
-                    next_time = stime
-                    while True:
-                        sequence_run = self.muster_sequence(
-                            next_time, sequence, schedule, None
-                        )
-                        if sequence_run is None:
-                            break
-                        zone_status |= IURunQueue.RQ_STATUS_EXTENDED
+        if not self._coordinator.tester.enabled or self._coordinator.tester.is_testing:
+            # pylint: disable=too-many-nested-blocks
+            # Process sequence schedules
+            for sequence in self._sequences:
+                if sequence.is_enabled:
+                    for schedule in sequence.schedules:
+                        if not schedule.enabled:
+                            continue
+                        next_time = stime
+                        while True:
+                            if self.muster_sequence(
+                                next_time, sequence, schedule, None
+                            ).is_empty():
+                                break
+                            zone_status |= IURQStatus.EXTENDED
 
-        # Process zone schedules
-        for zone in self._zones:
-            if zone.is_enabled:
-                zone_status |= zone.muster_schedules(stime)
+            # Process zone schedules
+            for zone in self._zones:
+                if zone.is_enabled:
+                    zone_status |= zone.muster_schedules(stime)
 
         # Post processing
+        for sequence in self._sequences:
+            zone_status |= sequence.runs.update_queue()
+
         for zone in self._zones:
-            zts = zone.runs.update_queue(stime)
-            if zts & IURunQueue.RQ_STATUS_CANCELED:
+            zts = zone.runs.update_queue()
+            if IURQStatus.CANCELED in zts:
                 zone.request_update()
             zone_status |= zts
 
-        if (
-            zone_status
-            & (
-                IURunQueue.RQ_STATUS_CLEARED
-                | IURunQueue.RQ_STATUS_EXTENDED
-                | IURunQueue.RQ_STATUS_SORTED
-                | IURunQueue.RQ_STATUS_CANCELED
-                | IURunQueue.RQ_STATUS_CHANGED
-            )
-            != 0
+        if zone_status.has_any(
+            IURQStatus.CLEARED
+            | IURQStatus.EXTENDED
+            | IURQStatus.SORTED
+            | IURQStatus.CANCELED
+            | IURQStatus.CHANGED
         ):
-            clear_all = bool(
-                zone_status
-                & (IURunQueue.RQ_STATUS_CLEARED | IURunQueue.RQ_STATUS_CANCELED)
-            )
             status |= self._run_queue.rebuild_schedule(
-                stime, self._zones, self._preamble, self._postamble, clear_all
+                stime, self._zones, self._preamble, self._postamble
             )
-        else:
-            status |= self._run_queue.update_queue(stime)
+        status |= self._run_queue.update_queue()
 
-        if status != 0:
+        # Purge expired runs
+        for sequence in self._sequences:
+            if sequence.runs.remove_expired(stime, self._postamble):
+                zone_status |= IURQStatus.REDUCED
+        for zone in self._zones:
+            if zone.runs.remove_expired(stime, self._postamble):
+                status |= IURQStatus.REDUCED
+
+        if not status.is_empty():
             self.request_update(False)
 
         self._dirty = False
@@ -3607,6 +4654,10 @@ class IUController(IUBase):
     def check_run(self, stime: datetime) -> bool:
         """Check the run status and update sensors. Return flag
         if anything has changed."""
+
+        for sequence in self._sequences:
+            sequence.check_run(stime, self.is_enabled)
+
         zones_changed: list[int] = []
 
         run = self._run_queue.current_run
@@ -3616,7 +4667,7 @@ class IUController(IUBase):
 
         # Gather zones that have changed status
         for zone in self._zones:
-            if zone.check_run(stime, is_enabled):
+            if zone.check_run(is_enabled):
                 zones_changed.append(zone.index)
 
         # Handle off zones before master
@@ -3673,12 +4724,18 @@ class IUController(IUBase):
             for zone in self._zones:
                 zone.request_update()
 
+            for sequence in self._sequences:
+                sequence.request_update()
+
     def update_sensor(self, stime: datetime) -> None:
         """Lazy sensor updater."""
         self._run_queue.update_sensor(stime)
 
         for zone in self._zones:
             zone.update_sensor(stime, False)
+
+        for sequence in self._sequences:
+            sequence.update_sensor(stime, False)
 
         if self._master_sensor is not None:
             do_update: bool = self._sensor_update_required
@@ -3699,6 +4756,9 @@ class IUController(IUBase):
 
         for zone in self._zones:
             zone.update_sensor(stime, True)
+
+        for sequence in self._sequences:
+            sequence.update_sensor(stime, True)
 
     def next_awakening(self) -> datetime:
         """Return the next event time"""
@@ -3725,13 +4785,6 @@ class IUController(IUBase):
         """Update the linked entity if enabled"""
         self._switch.call_switch(state, stime)
         self._coordinator.status_changed(stime, self, None, state)
-
-    def check_item(self, index: int, items: list[int] | None) -> bool:
-        """If items is None or contains only a 0 (match all) then
-        return True. Otherwise check if index + 1 is in the list"""
-        return (
-            items is None or (items is not None and items == [0]) or index + 1 in items
-        )
 
     def decode_sequence_id(
         self, stime: datetime, sequence_id: int | None
@@ -3771,129 +4824,60 @@ class IUController(IUBase):
                 nst = max(end_times) + delay
         return nst
 
-    def suspend_until_date(
-        self,
-        data: MappingProxyType,
-        stime: datetime,
-    ) -> datetime:
-        """Determine the suspend date and time"""
-        if CONF_UNTIL in data:
-            suspend_time = dt.as_utc(data[CONF_UNTIL])
-        elif CONF_FOR in data:
-            suspend_time = stime + data[CONF_FOR]
-        else:
-            suspend_time = None
-        return wash_dt(suspend_time)
-
-    def service_call(
+    def service_edt(
         self, data: MappingProxyType, stime: datetime, service: str
     ) -> bool:
         """Handler for enable/disable/toggle service call"""
-        # pylint: disable=too-many-branches, disable=too-many-nested-blocks
-
-        def s2b(test: bool, service: str) -> bool:
-            """Convert the service code to bool"""
-            if service == SERVICE_ENABLE:
-                return True
-            if service == SERVICE_DISABLE:
-                return False
-            return not test  # Must be SERVICE_TOGGLE
-
-        result = False
-        zone_list: list[int] = data.get(CONF_ZONES)
+        # pylint: disable=too-many-branches, too-many-nested-blocks
+        changed = False
         sequence_list = self.decode_sequence_id(stime, data.get(CONF_SEQUENCE_ID))
         if sequence_list is None:
             new_state = s2b(self.enabled, service)
             if self.enabled != new_state:
                 self.enabled = new_state
-                result = True
+                changed = True
         else:
-            sequences_changed = False
             for sequence in (self.get_sequence(sqid) for sqid in sequence_list):
-                changed = False
-                if zone_list is None:
-                    new_state = s2b(sequence.enabled, service)
-                    if sequence.enabled != new_state:
-                        sequence.enabled = new_state
-                        changed = True
-                else:
-                    for sequence_zone in sequence.zones:
-                        if self.check_item(sequence_zone.index, zone_list):
-                            new_state = s2b(sequence_zone.enabled, service)
-                            if sequence_zone.enabled != new_state:
-                                sequence_zone.enabled = new_state
-                                changed = True
-                if changed:
-                    self.clear_sequence_runs(stime, sequence)
-                    sequences_changed = True
-            if sequences_changed:
-                self._run_queue.clear(stime)
+                changed |= sequence.service_edt(data, stime, service)
+            if changed:
                 self.request_update(True)
-                result = True
-        return result
+        return changed
 
     def service_suspend(self, data: MappingProxyType, stime: datetime) -> bool:
         """Handler for the suspend service call"""
         # pylint: disable=too-many-nested-blocks
-        result = False
-        suspend_time = self.suspend_until_date(data, stime)
+        changed = False
+        suspend_time = suspend_until_date(data, stime)
         sequence_list = self.decode_sequence_id(stime, data.get(CONF_SEQUENCE_ID))
         if sequence_list is None:
             if suspend_time != self._suspend_until:
                 self.suspended = suspend_time
-                result = True
+                changed = True
         else:
-            zone_list: list[int] = data.get(CONF_ZONES)
-            sequences_changed = False
             for sequence in (self.get_sequence(sqid) for sqid in sequence_list):
-                changed = False
-                if zone_list is None:
-                    if sequence.suspended != suspend_time:
-                        sequence.suspended = suspend_time
-                        changed = True
-                else:
-                    for sequence_zone in sequence.zones:
-                        if self.check_item(sequence_zone.index, zone_list):
-                            if sequence_zone.suspended != suspend_time:
-                                sequence_zone.suspended = suspend_time
-                                changed = True
-                if changed:
-                    self.clear_sequence_runs(stime, sequence)
-                    sequences_changed = True
-            if sequences_changed:
-                self._run_queue.clear(stime)
+                changed |= sequence.service_suspend(data, stime)
+            if changed:
                 self.request_update(True)
-                result = True
-        return result
+        return changed
 
     def service_adjust_time(self, data: MappingProxyType, stime: datetime) -> bool:
         """Handler for the adjust_time service call"""
         # pylint: disable=too-many-nested-blocks
-        result = False
+        changed = False
         zone_list: list[int] = data.get(CONF_ZONES)
         sequence_list = self.decode_sequence_id(stime, data.get(CONF_SEQUENCE_ID))
         if sequence_list is None:
             for zone in self._zones:
-                if self.check_item(zone.index, zone_list):
-                    result |= zone.service_adjust_time(data, stime)
+                if check_item(zone.index, zone_list):
+                    if zone.service_adjust_time(data, stime):
+                        self.clear_zone_runs(zone)
+                        changed = True
         else:
-            sequences_changed = False
             for sequence in (self.get_sequence(sqid) for sqid in sequence_list):
-                changed = False
-                if zone_list is None:
-                    changed = sequence.adjustment.load(data)
-                else:
-                    for sequence_zone in sequence.zones:
-                        if self.check_item(sequence_zone.index, zone_list):
-                            changed |= sequence_zone.adjustment.load(data)
-                if changed:
-                    self.clear_sequence_runs(stime, sequence)
-                    sequences_changed = True
-            if sequences_changed:
-                self._run_queue.clear(stime)
+                changed |= sequence.service_adjust_time(data, stime)
+            if changed:
                 self.request_update(True)
-                result = True
-        return result
+        return changed
 
     def service_manual_run(self, data: MappingProxyType, stime: datetime) -> None:
         """Handler for the manual_run service call"""
@@ -3904,25 +4888,45 @@ class IUController(IUBase):
                 if zone_list is None or zone.index + 1 in zone_list:
                     zone.service_manual_run(data, stime)
         else:
-            sequence = self.get_sequence(sequence_id - 1)
-            if sequence is not None:
-                duration = wash_td(data.get(CONF_TIME))
-                delay = wash_td(data.get(CONF_DELAY, timedelta(0)))
-                queue = data.get(CONF_QUEUE, self._queue_manual)
-                if duration is not None and duration == timedelta(0):
-                    duration = None
-                self.muster_sequence(
-                    self.manual_run_start(stime, delay, queue), sequence, None, duration
-                )
+            if (sequence := self.get_sequence(sequence_id - 1)) is not None:
+                sequence.service_manual_run(data, stime)
             else:
                 self._coordinator.logger.log_invalid_sequence(stime, self, sequence_id)
 
-    def service_cancel(self, data: MappingProxyType, stime: datetime) -> None:
+    def service_cancel(self, data: MappingProxyType, stime: datetime) -> bool:
         """Handler for the cancel service call"""
+        changed = False
         zone_list: list[int] = data.get(CONF_ZONES, None)
-        for zone in self._zones:
-            if zone_list is None or zone.index + 1 in zone_list:
-                zone.service_cancel(data, stime)
+        sequence_list = self.decode_sequence_id(stime, data.get(CONF_SEQUENCE_ID))
+        if sequence_list is None:
+            for zone in self._zones:
+                if zone_list is None or zone.index + 1 in zone_list:
+                    zone.service_cancel(data, stime)
+                    changed = True
+        else:
+            for sequence in (self.get_sequence(sqid) for sqid in sequence_list):
+                changed |= sequence.service_cancel(data, stime)
+            if changed:
+                self.request_update(True)
+        return changed
+
+    def service_pause(self, data: MappingProxyType, stime: datetime) -> bool:
+        """Handler for the pause service call"""
+        changed = False
+        sequence_list = self.decode_sequence_id(stime, data.get(CONF_SEQUENCE_ID))
+        if sequence_list is not None:
+            for sequence in (self.get_sequence(sqid) for sqid in sequence_list):
+                changed |= sequence.service_pause(data, stime)
+        return changed
+
+    def service_resume(self, data: MappingProxyType, stime: datetime) -> bool:
+        """Handler for the resume service call"""
+        changed = False
+        sequence_list = self.decode_sequence_id(stime, data.get(CONF_SEQUENCE_ID))
+        if sequence_list is not None:
+            for sequence in (self.get_sequence(sqid) for sqid in sequence_list):
+                changed |= sequence.service_resume(data, stime)
+        return changed
 
 
 class IUEvent:
@@ -3946,7 +4950,7 @@ class IUEvent:
 
     def __str__(self) -> str:
         return (
-            f"{{t: '{dt2lstr(self._time)}', "
+            f"- {{t: '{dt2lstr(self._time)}', "
             f"c: {self._controller}, "
             f"z: {self._zone}, "
             f"s: {str(int(self._state))}}}"
@@ -4364,6 +5368,7 @@ class IUTester:
                 poll_func(test.start, True)
                 self._test_initialised = True
             elif test.is_finished(atime):  # End of current test
+                poll_func(test.end, False)
                 if self._autoplay:
                     test = self.next_test(atime)
                     if test is not None:
@@ -4381,7 +5386,6 @@ class IUTester:
                         poll_func(atime, True)
                 else:  # End single test
                     self.end_test(atime)
-                    # poll_func(atime, True)
             else:  # Continue existing test
                 poll_func(test.virtual_time(atime))
         else:  # Out of tests to run
@@ -4446,13 +5450,13 @@ class IULogger:
             msg += " " + data
         self._output(level, msg)
 
-    def log_start(self) -> None:
+    def log_start(self, stime: datetime) -> None:
         """Message for system clock starting"""
-        self._format(DEBUG, "START")
+        self._format(DEBUG, "START", stime)
 
-    def log_stop(self) -> None:
+    def log_stop(self, stime: datetime) -> None:
         """Message for system clock stopping"""
-        self._format(DEBUG, "STOP")
+        self._format(DEBUG, "STOP", stime)
 
     def log_load(self, data: OrderedDict) -> None:
         """Message that the config is loaded"""
@@ -4486,12 +5490,13 @@ class IULogger:
         stime: datetime,
         controller: IUController,
         zone: IUZone,
+        sequence: IUSequence,
         data: MappingProxyType,
         level=INFO,
     ) -> None:
         """Message that we have received a service call"""
         # pylint: disable=too-many-arguments
-        idl = IUBase.idl([controller, zone], "0", 1)
+        idl = IUBase.idl([controller, zone, sequence], "0", 1)
         self._format(
             level,
             "CALL",
@@ -4499,31 +5504,50 @@ class IULogger:
             f"service: {service}, "
             f"controller: {idl[0]}, "
             f"zone: {idl[1]}, "
+            f"sequence: {idl[2]}, "
             f"data: {json.dumps(data, default=str)}",
         )
 
     def log_register_entity(
-        self, stime: datetime, controller: IUController, zone: IUZone, entity: Entity
+        # pylint: disable=too-many-arguments
+        self,
+        stime: datetime,
+        controller: IUController,
+        zone: IUZone,
+        sequence: IUSequence,
+        entity: Entity,
     ) -> None:
         """Message that HA has registered an entity"""
-        idl = IUBase.idl([controller, zone], "0", 1)
+        idl = IUBase.idl([controller, zone, sequence], "0", 1)
         self._format(
             DEBUG,
             "REGISTER",
             stime,
-            f"controller: {idl[0]}, " f"zone: {idl[1]}, " f"entity: {entity.entity_id}",
+            f"controller: {idl[0]}, "
+            f"zone: {idl[1]}, "
+            f"sequence: {idl[2]}, "
+            f"entity: {entity.entity_id}",
         )
 
     def log_deregister_entity(
-        self, stime: datetime, controller: IUController, zone: IUZone, entity: Entity
+        # pylint: disable=too-many-arguments
+        self,
+        stime: datetime,
+        controller: IUController,
+        zone: IUZone,
+        sequence: IUSequence,
+        entity: Entity,
     ) -> None:
         """Message that HA is removing an entity"""
-        idl = IUBase.idl([controller, zone], "0", 1)
+        idl = IUBase.idl([controller, zone, sequence], "0", 1)
         self._format(
             DEBUG,
             "DEREGISTER",
             stime,
-            f"controller: {idl[0]}, " f"zone: {idl[1]}, " f"entity: {entity.entity_id}",
+            f"controller: {idl[0]}, "
+            f"zone: {idl[1]}, "
+            f"sequence: {idl[2]}, "
+            f"entity: {entity.entity_id}",
         )
 
     def log_test_start(self, vtime: datetime, test: IUTest, level=DEBUG) -> None:
@@ -4608,7 +5632,12 @@ class IULogger:
         )
 
     def log_sync_error(
-        self, vtime: datetime, expected: str, switch_entity_id: str, level=WARNING
+        self,
+        vtime: datetime,
+        expected: str,
+        found: str,
+        switch_entity_id: str,
+        level=WARNING,
     ) -> None:
         """Warn that switch and entity are out of sync"""
         self._format(
@@ -4617,11 +5646,17 @@ class IULogger:
             vtime,
             f"Switch does not match current state: "
             f"expected: {expected}, "
+            f"found: {found}, "
             f"switch: {switch_entity_id}",
         )
 
     def log_switch_error(
-        self, vtime: datetime, expected: str, switch_entity_id: list[str], level=ERROR
+        self,
+        vtime: datetime,
+        expected: str,
+        found: str,
+        switch_entity_id: str,
+        level=ERROR,
     ) -> None:
         """Warn that switch(s) was unable to be set"""
         self._format(
@@ -4630,7 +5665,8 @@ class IULogger:
             vtime,
             f"Unable to set switch state: "
             f"expected: {expected}, "
-            f"switch: {','.join(switch_entity_id)}",
+            f"found: {found}, "
+            f"switch: {switch_entity_id}",
         )
 
     def log_duplicate_id(
@@ -4736,7 +5772,7 @@ class IULogger:
 
     def log_invalid_meter_value(self, stime: datetime, value: str, level=ERROR) -> None:
         """Warn the volume meter value is invalid"""
-        self._format(level, "VOLUME_VALUE", stime, f"value: {value}")
+        self._format(level, "VOLUME_VALUE", stime, f"{value}")
 
 
 class IUClock:
@@ -4793,13 +5829,14 @@ class IUClock:
     def start(self) -> None:
         """Start the system clock"""
         self.stop()
-        self._schedule_next_poll(dt.utcnow())
-        self._coordinator.logger.log_start()
+        now = dt.utcnow()
+        self._schedule_next_poll(now)
+        self._coordinator.logger.log_start(now)
 
     def stop(self) -> None:
         """Stop the system clock"""
         if self._remove_timer():
-            self._coordinator.logger.log_stop()
+            self._coordinator.logger.log_stop(dt.utcnow())
 
     def next_awakening(self, atime: datetime) -> datetime:
         """Return the time for the next event"""
@@ -4937,6 +5974,9 @@ class IUCoordinator:
         self._hass = hass
         # Config parameters
         self._refresh_interval: timedelta = None
+        self._sync_switches: bool = True
+        self._rename_entities = False
+        self._extended_config = False
         # Private variables
         self._controllers: list[IUController] = []
         self._is_on: bool = False
@@ -4954,8 +5994,6 @@ class IUCoordinator:
         self._clock = IUClock(self._hass, self, self._async_timer)
         self._history = IUHistory(self._hass, self.service_history)
         self._restored_from_configuration: bool = False
-        self._sync_switches: bool = True
-        self._rename_entities = False
         self._finalised = False
 
     @property
@@ -5016,7 +6054,7 @@ class IUCoordinator:
     @property
     def configuration(self) -> str:
         """Return the system configuration as JSON"""
-        return json.dumps(self.as_dict(), cls=IUJSONEncoder)
+        return json.dumps(self.as_dict(self._extended_config), cls=IUJSONEncoder)
 
     @property
     def restored_from_configuration(self) -> bool:
@@ -5081,6 +6119,7 @@ class IUCoordinator:
         )
         self._sync_switches = config.get(CONF_SYNC_SWITCHES, True)
         self._rename_entities = config.get(CONF_RENAME_ENTITIES, self._rename_entities)
+        self._extended_config = config.get(CONF_EXTENDED_CONFIG, self._extended_config)
 
         cidx: int = 0
         for cidx, controller_config in enumerate(config[CONF_CONTROLLERS]):
@@ -5101,16 +6140,16 @@ class IUCoordinator:
 
         return self
 
-    def as_dict(self) -> OrderedDict:
+    def as_dict(self, extended=False) -> OrderedDict:
         """Returns the coordinator as a dict"""
         result = OrderedDict()
-        result[CONF_VERSION] = "1.0.0"
-        result[CONF_CONTROLLERS] = [ctr.as_dict() for ctr in self._controllers]
+        result[CONF_VERSION] = "1.0.1"
+        result[CONF_CONTROLLERS] = [ctr.as_dict(extended) for ctr in self._controllers]
         return result
 
-    def muster(self, stime: datetime, force: bool) -> int:
+    def muster(self, stime: datetime, force: bool) -> IURQStatus:
         """Calculate run times for system"""
-        status: int = 0
+        status = IURQStatus(0)
 
         self._history.muster(stime, force)
 
@@ -5191,8 +6230,8 @@ class IUCoordinator:
         vtime is the virtual time if in testing mode, if not then
         it is the actual time"""
         wtime: datetime = wash_dt(vtime)
-        if (wtime != self._last_muster) or self._muster_required:
-            if self.muster(wtime, force) != 0:
+        if (wtime != self._last_muster) or self._muster_required or force:
+            if not self.muster(wtime, force).is_empty():
                 self.check_run(wtime)
             self._muster_required = False
             self._last_muster = wtime
@@ -5249,9 +6288,8 @@ class IUCoordinator:
             EVENT_HOMEASSISTANT_STOP, self._async_shutdown_listener
         )
 
-    async def _async_replay_last_timer(self, atime: datetime) -> None:
+    def _replay_last_timer(self, atime: datetime) -> None:
         """Update after a service call"""
-        # pylint: disable=unused-argument
         self.request_update(False)
         self._muster_required = True
         if self._tester.is_testing:
@@ -5300,8 +6338,9 @@ class IUCoordinator:
     def notify_switch(
         self,
         event_type: str,
+        found: str,
         expected: str,
-        entities: list[str],
+        entity_id: str,
         controller: IUController,
         zone: IUZone,
     ) -> None:
@@ -5309,7 +6348,8 @@ class IUCoordinator:
         # pylint: disable=too-many-arguments
         data = {
             CONF_EXPECTED: expected,
-            CONF_ENTITY_ID: ",".join(entities),
+            CONF_FOUND: found,
+            CONF_ENTITY_ID: entity_id,
             CONF_CONTROLLER: {CONF_INDEX: controller.index, CONF_NAME: controller.name},
         }
         if zone is not None:
@@ -5319,33 +6359,46 @@ class IUCoordinator:
         self._hass.bus.fire(f"{DOMAIN}_{event_type}", data)
 
     def register_entity(
-        self, controller: IUController, zone: IUZone, entity: Entity
+        self,
+        controller: IUController,
+        zone: IUZone,
+        sequence: IUSequence,
+        entity: Entity,
     ) -> None:
         """A HA entity has been registered"""
         stime = self.service_time()
-        if controller is None:
-            self._component = entity
-        elif zone is None:
+        if sequence is not None:
+            sequence.sequence_sensor = entity
+        elif zone is not None:
+            zone.zone_sensor = entity
+        elif controller is not None:
             controller.master_sensor = entity
         else:
-            zone.zone_sensor = entity
-        self._logger.log_register_entity(stime, controller, zone, entity)
+            self._component = entity
+        self._logger.log_register_entity(stime, controller, zone, sequence, entity)
 
     def deregister_entity(
-        self, controller: IUController, zone: IUZone, entity: Entity
+        self,
+        controller: IUController,
+        zone: IUZone,
+        sequence: IUSequence,
+        entity: Entity,
     ) -> None:
         """A HA entity has been removed"""
         stime = self.service_time()
-        if controller is None:
-            self.finalise(True)
-            self._component = None
-        elif zone is None:
+        if sequence is not None:
+            sequence.finalise()
+            sequence.sequence_sensor = None
+        elif zone is not None:
+            zone.finalise(True)
+            zone.zone_sensor = None
+        elif controller is not None:
             controller.finalise(True)
             controller.master_sensor = None
         else:
-            zone.finalise(True)
-            zone.zone_sensor = None
-        self._logger.log_deregister_entity(stime, controller, zone, entity)
+            self.finalise(True)
+            self._component = None
+        self._logger.log_deregister_entity(stime, controller, zone, sequence, entity)
 
     def service_time(self) -> datetime:
         """Return a time midway between last and next future tick"""
@@ -5358,20 +6411,27 @@ class IUCoordinator:
             result = dt.utcnow()
         return wash_dt(result)
 
-    def service_load_schedule(self, data: MappingProxyType, stime: datetime) -> None:
+    def service_load_schedule(self, data: MappingProxyType) -> None:
         """Handle the load_schedule service call"""
+        # pylint: disable=too-many-nested-blocks
         for controller in self._controllers:
             for zone in controller.zones:
                 for schedule in zone.schedules:
                     if schedule.schedule_id == data[CONF_SCHEDULE_ID]:
                         schedule.load(data, True)
-                        zone.runs.clear(stime)
+                        runs: list[IURun] = []
+                        for run in zone.runs:
+                            if not run.is_sequence and run.schedule == schedule:
+                                runs.append(run)
+                        for run in runs:
+                            zone.runs.remove_run(run)
                         return
+
             for sequence in controller.sequences:
                 for schedule in sequence.schedules:
                     if schedule.schedule_id == data[CONF_SCHEDULE_ID]:
                         schedule.load(data, True)
-                        controller.clear_sequence_runs(stime, sequence)
+                        sequence.runs.clear_runs()
                         return
 
     def service_call(
@@ -5379,64 +6439,94 @@ class IUCoordinator:
         service: str,
         controller: IUController,
         zone: IUZone,
+        sequence: IUSequence,
         data: MappingProxyType,
     ) -> None:
         """Entry point for all service calls."""
-        # pylint: disable=too-many-branches
+        # pylint: disable=too-many-branches,too-many-arguments,too-many-statements
         changed = True
         stime = self.service_time()
 
         data1 = dict(data)
 
         if service in [SERVICE_ENABLE, SERVICE_DISABLE, SERVICE_TOGGLE]:
-            if zone is not None:
-                if changed := zone.service_call(data1, stime, service):
-                    controller.clear_sequence_runs(stime)
+            if sequence is not None:
+                changed = sequence.service_edt(data1, stime, service)
+            elif zone is not None:
+                if changed := zone.service_edt(data1, stime, service):
+                    controller.clear_zone_runs(zone)
             else:
-                changed = controller.service_call(data1, stime, service)
+                changed = controller.service_edt(data1, stime, service)
         elif service == SERVICE_SUSPEND:
-            render_positive_time_period(self._hass, data1, CONF_FOR)
-            if zone is not None:
+            render_positive_time_period(data1, CONF_FOR)
+            if sequence is not None:
+                changed = sequence.service_suspend(data1, stime)
+            elif zone is not None:
                 if changed := zone.service_suspend(data1, stime):
-                    controller.clear_sequence_runs(stime)
+                    controller.clear_zone_runs(zone)
             else:
                 changed = controller.service_suspend(data1, stime)
-
         elif service == SERVICE_CANCEL:
-            if zone is not None:
+            if sequence is not None:
+                changed = sequence.service_cancel(data1, stime)
+            elif zone is not None:
                 zone.service_cancel(data1, stime)
             else:
-                controller.service_cancel(data1, stime)
+                changed = controller.service_cancel(data1, stime)
         elif service == SERVICE_TIME_ADJUST:
-            render_positive_time_period(self._hass, data1, CONF_ACTUAL)
-            render_positive_time_period(self._hass, data1, CONF_INCREASE)
-            render_positive_time_period(self._hass, data1, CONF_DECREASE)
-            render_positive_time_period(self._hass, data1, CONF_MINIMUM)
-            render_positive_time_period(self._hass, data1, CONF_MAXIMUM)
+            render_positive_time_period(data1, CONF_ACTUAL)
+            render_positive_time_period(data1, CONF_INCREASE)
+            render_positive_time_period(data1, CONF_DECREASE)
+            render_positive_time_period(data1, CONF_MINIMUM)
+            render_positive_time_period(data1, CONF_MAXIMUM)
             render_positive_float(self._hass, data1, CONF_PERCENTAGE)
-            if zone is not None:
-                changed = zone.service_adjust_time(data1, stime)
+            if sequence is not None:
+                changed = sequence.service_adjust_time(data1, stime)
+            elif zone is not None:
+                if changed := zone.service_adjust_time(data1, stime):
+                    controller.clear_zone_runs(zone)
             else:
                 changed = controller.service_adjust_time(data1, stime)
         elif service == SERVICE_MANUAL_RUN:
-            render_positive_time_period(self._hass, data1, CONF_TIME)
-            if zone is not None:
+            render_positive_time_period(data1, CONF_TIME)
+            if sequence is not None:
+                sequence.service_manual_run(data1, stime)
+            elif zone is not None:
                 zone.service_manual_run(data1, stime)
             else:
                 controller.service_manual_run(data1, stime)
+        elif service == SERVICE_SKIP:
+            if sequence is not None:
+                sequence.service_skip(data1, stime)
+        elif service == SERVICE_PAUSE:
+            if sequence is not None:
+                changed = sequence.service_pause(data1, stime)
+            elif zone is not None:
+                pass
+            else:
+                controller.service_pause(data1, stime)
+        elif service == SERVICE_RESUME:
+            if sequence is not None:
+                changed = sequence.service_resume(data1, stime)
+            elif zone is not None:
+                pass
+            else:
+                controller.service_resume(data1, stime)
         elif service == SERVICE_LOAD_SCHEDULE:
-            render_positive_time_period(self._hass, data1, CONF_DURATION)
-            self.service_load_schedule(data1, stime)
+            render_positive_time_period(data1, CONF_DURATION)
+            self.service_load_schedule(data1)
         else:
             return
 
         if changed:
             self._last_tick = stime
-            self._logger.log_service_call(service, stime, controller, zone, data1)
-            async_call_later(self._hass, 0, self._async_replay_last_timer)
+            self._logger.log_service_call(
+                service, stime, controller, zone, sequence, data1
+            )
+            self._replay_last_timer(stime)
         else:
             self._logger.log_service_call(
-                service, stime, controller, zone, data1, DEBUG
+                service, stime, controller, zone, sequence, data1, DEBUG
             )
 
     def service_history(self, entity_ids: set[str]) -> None:
@@ -5453,6 +6543,7 @@ class IUCoordinator:
     def start_test(self, test_no: int) -> datetime:
         """Main entry to start a test"""
         self._last_tick = None
+        self._last_muster = None
         next_time = dt.utcnow()
         if self._tester.start_test(test_no, next_time) is not None:
             self.timer(next_time)

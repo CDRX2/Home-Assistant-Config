@@ -1,7 +1,9 @@
 """MediaPlayer platform for Music Assistant integration."""
+
 from __future__ import annotations
 
 import asyncio
+import os
 from collections.abc import Mapping
 from contextlib import suppress
 from typing import TYPE_CHECKING, Any
@@ -9,23 +11,29 @@ from typing import TYPE_CHECKING, Any
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
 from homeassistant.components import media_source
+from homeassistant.components.homeassistant.exposed_entities import async_expose_entity
 from homeassistant.components.media_player import (
     BrowseMedia,
     MediaPlayerDeviceClass,
     MediaPlayerEnqueue,
     MediaPlayerEntity,
 )
-from homeassistant.components.media_player.browse_media import async_process_play_media_url
+from homeassistant.components.media_player.browse_media import (
+    async_process_play_media_url,
+)
 from homeassistant.components.media_player.const import (
     ATTR_MEDIA_ANNOUNCE,
     ATTR_MEDIA_ENQUEUE,
     ATTR_MEDIA_EXTRA,
     MediaPlayerEntityFeature,
 )
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.config_entries import ConfigEntry, ConfigEntryState
 from homeassistant.const import STATE_IDLE, STATE_OFF, STATE_PAUSED, STATE_PLAYING
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity_platform import AddEntitiesCallback, async_get_current_platform
+from homeassistant.helpers.entity_platform import (
+    AddEntitiesCallback,
+    async_get_current_platform,
+)
 from music_assistant.common.helpers.datetime import from_utc_timestamp
 from music_assistant.common.models.enums import (
     EventType,
@@ -56,6 +64,7 @@ from .media_browser import async_browse_media
 
 if TYPE_CHECKING:
     from music_assistant.client import MusicAssistantClient
+    from music_assistant.common.models.player import Player
     from music_assistant.common.models.player_queue import PlayerQueue
 
 SUPPORTED_FEATURES = (
@@ -73,8 +82,6 @@ SUPPORTED_FEATURES = (
     | MediaPlayerEntityFeature.VOLUME_STEP
     | MediaPlayerEntityFeature.CLEAR_PLAYLIST
     | MediaPlayerEntityFeature.BROWSE_MEDIA
-    | MediaPlayerEntityFeature.SEEK
-    | MediaPlayerEntityFeature.VOLUME_MUTE
     | MediaPlayerEntityFeature.MEDIA_ENQUEUE
     | MediaPlayerEntityFeature.MEDIA_ANNOUNCE
 )
@@ -95,11 +102,15 @@ QUEUE_OPTION_MAP = {
 }
 
 SERVICE_PLAY_MEDIA_ADVANCED = "play_media"
+SERVICE_PLAY_ANNOUNCEMEMT = "play_announcement"
 ATTR_RADIO_MODE = "radio_mode"
 ATTR_MEDIA_ID = "media_id"
 ATTR_MEDIA_TYPE = "media_type"
 ATTR_ARTIST = "artist"
 ATTR_ALBUM = "album"
+ATTR_URL = "url"
+ATTR_USE_PRE_ANNOUNCE = "use_pre_announce"
+ATTR_ANNOUNCE_VOLUME = "announce_volume"
 
 # pylint: disable=too-many-public-methods
 
@@ -121,7 +132,9 @@ async def async_setup_entry(
         async_add_entities([MassPlayer(mass, event.object_id)])
 
     # register listener for new players
-    config_entry.async_on_unload(mass.subscribe(handle_player_added, EventType.PLAYER_ADDED))
+    config_entry.async_on_unload(
+        mass.subscribe(handle_player_added, EventType.PLAYER_ADDED)
+    )
     # add all current players
     for player in mass.players:
         added_ids.add(player.player_id)
@@ -134,24 +147,40 @@ async def async_setup_entry(
         {
             vol.Required(ATTR_MEDIA_ID): vol.All(cv.ensure_list, [cv.string]),
             vol.Optional(ATTR_MEDIA_TYPE): vol.Coerce(MediaType),
-            vol.Exclusive(ATTR_MEDIA_ENQUEUE, "enqueue_announce"): vol.Coerce(QueueOption),
+            vol.Exclusive(ATTR_MEDIA_ENQUEUE, "enqueue_announce"): vol.Coerce(
+                QueueOption
+            ),
             vol.Exclusive(ATTR_MEDIA_ANNOUNCE, "enqueue_announce"): cv.boolean,
             vol.Optional(ATTR_ARTIST): cv.string,
             vol.Optional(ATTR_ALBUM): cv.string,
             vol.Optional(ATTR_RADIO_MODE): vol.Coerce(bool),
+            vol.Optional(ATTR_USE_PRE_ANNOUNCE): vol.Coerce(bool),
+            vol.Optional(ATTR_ANNOUNCE_VOLUME): vol.Coerce(int),
         },
         "_async_play_media_advanced",
+    )
+    platform.async_register_entity_service(
+        SERVICE_PLAY_ANNOUNCEMEMT,
+        {
+            vol.Required(ATTR_URL): cv.string,
+            vol.Optional(ATTR_USE_PRE_ANNOUNCE): vol.Coerce(bool),
+            vol.Optional(ATTR_ANNOUNCE_VOLUME): vol.Coerce(int),
+        },
+        "_async_play_announcement",
     )
 
 
 class MassPlayer(MassBaseEntity, MediaPlayerEntity):
     """Representation of MediaPlayerEntity from Music Assistant Player."""
 
+    # pylint: disable=abstract-method,too-many-instance-attributes
+
     _attr_name = None
 
     def __init__(self, mass: MusicAssistantClient, player_id: str) -> None:
         """Initialize MediaPlayer entity."""
         super().__init__(mass, player_id)
+        self._attr_icon = self.player.icon.replace("mdi-", "mdi:")
         self._attr_media_image_remotely_accessible = True
         self._attr_supported_features = SUPPORTED_FEATURES
         if PlayerFeature.SYNC in self.player.supported_features:
@@ -172,10 +201,14 @@ class MassPlayer(MassBaseEntity, MediaPlayerEntity):
     async def async_added_to_hass(self) -> None:
         """Register callbacks."""
         await super().async_added_to_hass()
+        # we need to get the hass object in order to get our config entry
+        # and expose the player to the conversation component, assuming that
+        # the config entry has the option enabled.
+        await self._expose_players_assist()
 
         # we subscribe to player queue time update but we only
         # accept a state change on big time jumps (e.g. seeking)
-        async def queue_time_updated(event: MassEvent):
+        async def queue_time_updated(event: MassEvent) -> None:
             if event.object_id != self.player.active_source:
                 return
             if abs(self._prev_time - event.data) > 5:
@@ -194,7 +227,7 @@ class MassPlayer(MassBaseEntity, MediaPlayerEntity):
     def extra_state_attributes(self) -> Mapping[str, Any]:
         """Return additional state attributes."""
         player = self.player
-        queue = self.mass.players.get_player_queue(player.active_source)
+        queue = self.mass.player_queues.get(player.active_source)
         attrs = {
             ATTR_MASS_PLAYER_ID: self.player_id,
             ATTR_MASS_PLAYER_TYPE: player.type.value,
@@ -219,7 +252,9 @@ class MassPlayer(MassBaseEntity, MediaPlayerEntity):
             and queue.current_item.media_item
             and queue.current_item.media_item.metadata
         ):
-            attrs[ATTR_STREAM_TITLE] = queue.current_item.media_item.metadata.description
+            attrs[ATTR_STREAM_TITLE] = (
+                queue.current_item.media_item.metadata.description
+            )
         return attrs
 
     async def async_on_update(self) -> None:
@@ -229,7 +264,7 @@ class MassPlayer(MassBaseEntity, MediaPlayerEntity):
         if not self.available:
             return
         player = self.player
-        queue = self.mass.players.get_player_queue(player.active_source)
+        queue = self.mass.player_queues.get(player.active_source)
         # update generic attributes
         if player.powered:
             self._attr_state = STATE_MAPPING[self.player.state]
@@ -238,110 +273,45 @@ class MassPlayer(MassBaseEntity, MediaPlayerEntity):
         self._attr_group_members = player.group_childs
         self._attr_volume_level = player.volume_level / 100
         self._attr_is_volume_muted = player.volume_muted
-        if queue is not None:
-            # player has MA as active source (either a group player or the players own queue)
-            self._attr_app_id = DOMAIN
-            self._attr_shuffle = queue.shuffle_enabled
-            self._attr_repeat = queue.repeat_mode.value
-            self._attr_media_position = queue.elapsed_time
-            self._attr_media_position_updated_at = from_utc_timestamp(
-                queue.elapsed_time_last_updated
-            )
-            self._prev_time = queue.elapsed_time
-        else:
-            # player has some external source active
-            self._attr_app_id = player.active_source
-            self._attr_shuffle = None
-            self._attr_repeat = None
-            self._attr_media_position = player.elapsed_time
-            self._attr_media_position_updated_at = from_utc_timestamp(
-                player.elapsed_time_last_updated
-            )
-            self._prev_time = player.elapsed_time
-        self._attr_source = player.active_source
-        self._update_media_image_url(queue)
-        # update current media item infos
-        media_artist = None
-        media_album_artist = None
-        media_album_name = None
-        media_title = player.active_source
-        media_content_id = player.current_url
-        media_duration = None
-        # Music Assistant is the active source and actually has a MediaItem loaded
-        if queue and queue.current_item and queue.current_item.media_item:
-            media_item = queue.current_item.media_item
-            media_title = media_item.name
-            media_content_id = queue.current_item.uri
-            media_duration = queue.current_item.duration
-            if media_item.media_type == MediaType.TRACK:
-                media_artist = ", ".join([x.name for x in media_item.artists])
-                if media_item.version:
-                    media_title += f" ({media_item.version})"
-                if media_item.album:
-                    media_album_name = media_item.album.name
-                    if album_artists := getattr(media_item.album, "artists", None):
-                        media_album_artist = ", ".join([x.name for x in album_artists])
-        # set the attributes
-        self._attr_media_artist = media_artist
-        self._attr_media_album_artist = media_album_artist
-        self._attr_media_album_name = media_album_name
-        self._attr_media_title = media_title
-        self._attr_media_content_id = media_content_id
-        self._attr_media_duration = media_duration
-
-    def _update_media_image_url(self, queue: PlayerQueue | None) -> None:
-        """Update image URL for the active queue item."""
-        if queue is None or queue.current_item is None:
-            self._attr_media_image_url = None
-            return
-        if image := queue.current_item.image:
-            self._attr_media_image_remotely_accessible = image.provider == "url"
-            self._attr_media_image_url = self.mass.get_image_url(image)
-            return
-        self._attr_media_image_url = None
+        self._update_media_attributes(player, queue)
+        self._update_media_image_url(player, queue)
 
     async def async_media_play(self) -> None:
         """Send play command to device."""
-        if queue := self.mass.players.get_player_queue(self.player.active_source):
-            await self.mass.players.queue_command_play(queue.queue_id)
+        if queue := self.mass.player_queues.get(self.player.active_source):
+            await self.mass.player_queues.queue_command_play(queue.queue_id)
         else:
-            await self.mass.players.queue_command_play(self.player_id)
+            await self.mass.players.player_command_play(self.player_id)
 
     async def async_media_pause(self) -> None:
         """Send pause command to device."""
-        if queue := self.mass.players.get_player_queue(self.player.active_source):
-            await self.mass.players.queue_command_pause(queue.queue_id)
+        if queue := self.mass.player_queues.get(self.player.active_source):
+            await self.mass.player_queues.queue_command_pause(queue.queue_id)
         else:
-            await self.mass.players.queue_command_pause(self.player_id)
+            await self.mass.players.player_command_pause(self.player_id)
 
     async def async_media_stop(self) -> None:
         """Send stop command to device."""
-        if queue := self.mass.players.get_player_queue(self.player.active_source):
-            await self.mass.players.queue_command_stop(queue.queue_id)
+        if queue := self.mass.player_queues.get(self.player.active_source):
+            await self.mass.player_queues.queue_command_stop(queue.queue_id)
         else:
-            await self.mass.players.queue_command_stop(self.player_id)
+            await self.mass.players.player_command_stop(self.player_id)
 
     async def async_media_next_track(self) -> None:
         """Send next track command to device."""
-        if queue := self.mass.players.get_player_queue(self.player.active_source):
-            await self.mass.players.queue_command_next(queue.queue_id)
-        else:
-            await self.mass.players.queue_command_next(self.player_id)
+        if queue := self.mass.player_queues.get(self.player.active_source):
+            await self.mass.player_queues.queue_command_next(queue.queue_id)
 
     async def async_media_previous_track(self) -> None:
         """Send previous track command to device."""
-        if queue := self.mass.players.get_player_queue(self.player.active_source):
-            await self.mass.players.queue_command_previous(queue.queue_id)
-        else:
-            await self.mass.players.queue_command_previous(self.player_id)
+        if queue := self.mass.player_queues.get(self.player.active_source):
+            await self.mass.player_queues.queue_command_previous(queue.queue_id)
 
     async def async_media_seek(self, position: float) -> None:
         """Send seek command."""
         position = int(position)
-        if queue := self.mass.players.get_player_queue(self.player.active_source):
-            await self.mass.players.queue_command_seek(queue.queue_id, position)
-        else:
-            await self.mass.players.queue_command_seek(self.player_id, position)
+        if queue := self.mass.player_queues.get(self.player.active_source):
+            await self.mass.player_queues.queue_command_seek(queue.queue_id, position)
 
     async def async_mute_volume(self, mute: bool) -> None:
         """Mute the volume."""
@@ -370,35 +340,31 @@ class MassPlayer(MassBaseEntity, MediaPlayerEntity):
 
     async def async_set_shuffle(self, shuffle: bool) -> None:
         """Set shuffle state."""
-        if queue := self.mass.players.get_player_queue(self.player.active_source):
-            await self.mass.players.queue_command_shuffle(queue.queue_id, shuffle)
-        else:
-            await self.mass.players.queue_command_shuffle(self.player_id, shuffle)
+        if queue := self.mass.player_queues.get(self.player.active_source):
+            await self.mass.player_queues.queue_command_shuffle(queue.queue_id, shuffle)
 
     async def async_set_repeat(self, repeat: str) -> None:
         """Set repeat state."""
-        if queue := self.mass.players.get_player_queue(self.player.active_source):
-            await self.mass.players.queue_command_repeat(queue.queue_id, RepeatMode(repeat))
-        else:
-            await self.mass.players.queue_command_repeat(self.player_id, RepeatMode(repeat))
+        if queue := self.mass.player_queues.get(self.player.active_source):
+            await self.mass.player_queues.queue_command_repeat(
+                queue.queue_id, RepeatMode(repeat)
+            )
 
     async def async_clear_playlist(self) -> None:
         """Clear players playlist."""
-        if queue := self.mass.players.get_player_queue(self.player.active_source):
-            await self.mass.players.queue_command_clear(queue.queue_id)
-        else:
-            await self.mass.players.queue_command_clear(self.player_id)
+        if queue := self.mass.player_queues.get(self.player.active_source):
+            await self.mass.player_queues.queue_command_clear(queue.queue_id)
 
     async def async_play_media(
         self,
         media_type: str,
-        media_id: str,
+        media_id: str | list[str],
         enqueue: MediaPlayerEnqueue | None = None,
         announce: bool | None = None,
         **kwargs: Any,
     ) -> None:
         """Send the play_media command to the media player."""
-        if media_source.is_media_source_id(media_id):
+        if isinstance(media_id, str) and media_source.is_media_source_id(media_id):
             # Handle media_source
             sourced_media = await media_source.async_resolve_media(
                 self.hass, media_id, self.entity_id
@@ -406,27 +372,33 @@ class MassPlayer(MassBaseEntity, MediaPlayerEntity):
             media_id = sourced_media.url
             media_id = async_process_play_media_url(self.hass, media_id)
 
+        if announce:
+            await self._async_play_announcement(
+                media_id,
+                use_pre_announce=kwargs[ATTR_MEDIA_EXTRA].get("use_pre_announce"),
+                announce_volume=kwargs[ATTR_MEDIA_EXTRA].get("announce_volume"),
+            )
+            return
+
         # forward to our advanced play_media handler
         await self._async_play_media_advanced(
-            media_id=[media_id],
+            media_id=media_id if isinstance(media_id, list) else [media_id],
             enqueue=enqueue,
-            announce=announce,
             media_type=media_type,
             radio_mode=kwargs[ATTR_MEDIA_EXTRA].get(ATTR_RADIO_MODE),
         )
 
     async def async_join_players(self, group_members: list[str]) -> None:
         """Join `group_members` as a player group with the current player."""
-        async with asyncio.TaskGroup() as tg:
-            for child_entity_id in group_members:
-                # resolve HA entity_id to MA player_id
-                if (hass_state := self.hass.states.get(child_entity_id)) is None:
-                    continue
-                if (mass_player_id := hass_state.attributes.get("mass_player_id")) is None:
-                    continue
-                tg.create_task(
-                    self.mass.players.player_command_sync(mass_player_id, self.player_id)
-                )
+        player_ids: list[str] = []
+        for child_entity_id in group_members:
+            # resolve HA entity_id to MA player_id
+            if (hass_state := self.hass.states.get(child_entity_id)) is None:
+                continue
+            if (mass_player_id := hass_state.attributes.get("mass_player_id")) is None:
+                continue
+            player_ids.append(mass_player_id)
+        await self.mass.players.cmd_sync_many(self.player_id, player_ids)
 
     async def async_unjoin_player(self) -> None:
         """Remove this player from any group."""
@@ -437,8 +409,7 @@ class MassPlayer(MassBaseEntity, MediaPlayerEntity):
         media_id: list[str],
         artist: str | None = None,
         album: str | None = None,
-        enqueue: MediaPlayerEnqueue | QueueOption | None = QueueOption.PLAY,
-        announce: bool | None = None,  # noqa: ARG002
+        enqueue: MediaPlayerEnqueue | QueueOption | None = None,
         radio_mode: bool | None = None,
         media_type: str | None = None,
     ) -> None:
@@ -447,46 +418,61 @@ class MassPlayer(MassBaseEntity, MediaPlayerEntity):
         media_uris: list[str] = []
         # work out (all) uri(s) to play
         for media_id_str in media_id:
-            # prefer URI format
+            # URL or URI string
             if "://" in media_id_str:
                 media_uris.append(media_id_str)
                 continue
             # try content id as library id
             if media_type and media_id_str.isnumeric():
                 with suppress(MediaNotFoundError):
-                    item = await self.mass.music.get_item(media_type, media_id_str, "library")
+                    item = await self.mass.music.get_item(
+                        media_type, media_id_str, "library"
+                    )
                     media_uris.append(item.uri)
                     continue
-            # lookup by name
-            if item := await self._get_item_by_name(media_id_str, artist, album, media_type):
+            # try local accessible filename
+            elif await asyncio.to_thread(os.path.isfile, media_id_str):
+                media_uris.append(media_id_str)
+                continue
+            # last resort: lookup by name/search
+            if item := await self._get_item_by_name(
+                media_id_str, artist, album, media_type
+            ):
                 media_uris.append(item.uri)
 
         if not media_uris:
-            raise MediaNotFoundError(f"Could not resolve {media_id} to playable media item")
+            raise MediaNotFoundError(
+                f"Could not resolve {media_id} to playable media item"
+            )
 
         # determine active queue to send the play request to
-        if queue := self.mass.players.get_player_queue(self.player.active_source):
+        if queue := self.mass.player_queues.get(self.player.active_source):
             queue_id = queue.queue_id
         else:
             queue_id = self.player_id
 
-        # announce/alert support (WIP)
-        if announce and radio_mode:
-            radio_mode = None
-        if announce is None and "/api/tts_proxy" in media_id:
-            announce = True
-        if announce:
-            raise NotImplementedError("Music Assistant does not yet support announcements")
-
-        await self.mass.players.play_media(
+        await self.mass.player_queues.play_media(
             queue_id, media=media_uris, option=enqueue, radio_mode=radio_mode
+        )
+
+    async def _async_play_announcement(
+        self,
+        url: str,
+        use_pre_announce: bool | None = None,
+        announce_volume: int | None = None,
+    ) -> None:
+        """Send the play_announcement command to the media player."""
+        await self.mass.players.play_announcement(
+            self.player_id, url, use_pre_announce, announce_volume
         )
 
     async def async_browse_media(
         self, media_content_type=None, media_content_id=None
     ) -> BrowseMedia:
         """Implement the websocket media browsing helper."""
-        return await async_browse_media(self.hass, self.mass, media_content_id, media_content_type)
+        return await async_browse_media(
+            self.hass, self.mass, media_content_id, media_content_type
+        )
 
     async def _get_item_by_name(
         self,
@@ -553,3 +539,112 @@ class MassPlayer(MassBaseEntity, MediaPlayerEntity):
                 # simply return the first item because search is already sorted by best match
                 return item
         return None
+
+    def _update_media_image_url(
+        self, player: Player, queue: PlayerQueue | None
+    ) -> None:
+        """Update image URL for the active queue item."""
+        if queue is None or queue.current_item is None:
+            self._attr_media_image_url = None
+            return
+        if image_url := self.mass.get_media_item_image_url(queue.current_item):
+            self._attr_media_image_remotely_accessible = (
+                self.mass.server_url not in image_url
+            )
+            self._attr_media_image_url = image_url
+            return
+        self._attr_media_image_url = None
+
+    def _update_media_attributes(
+        self, player: Player, queue: PlayerQueue | None
+    ) -> None:
+        """Update media attributes for the active queue item."""
+        # pylint: disable=too-many-statements
+        self._attr_media_artist = None
+        self._attr_media_album_artist = None
+        self._attr_media_album_name = None
+        self._attr_media_title = None
+        self._attr_media_content_id = None
+        self._attr_media_duration = None
+        self._attr_media_position = None
+        self._attr_media_position_updated_at = None
+
+        if queue is None and player.current_media:
+            # player has some external source active
+            self._attr_media_content_id = player.current_media.uri
+            self._attr_app_id = player.active_source
+            self._attr_media_title = player.current_media.title
+            self._attr_media_artist = player.current_media.artist
+            self._attr_media_album_name = player.current_media.album
+            self._attr_media_duration = player.current_media.duration
+            # TODO: grab these from the player directly if it supports other sources than MA?
+            self._attr_shuffle = None
+            self._attr_repeat = None
+            self._attr_media_position = player.elapsed_time
+            self._attr_media_position_updated_at = from_utc_timestamp(
+                player.elapsed_time_last_updated
+            )
+            self._prev_time = player.elapsed_time
+            return
+
+        if queue is None:
+            # player is completely idle without any source active
+            self._attr_source = player.active_source
+            self._attr_app_id = player.active_source
+            return
+
+        # player has MA as active source (either a group player or the players own queue)
+        self._attr_app_id = DOMAIN
+        self._attr_shuffle = queue.shuffle_enabled
+        self._attr_repeat = queue.repeat_mode.value
+        if not (cur_item := queue.current_item):
+            # queue is empty
+            return
+
+        self._attr_media_content_id = queue.current_item.uri
+        self._attr_media_duration = queue.current_item.duration
+        self._attr_media_position = queue.elapsed_time
+        self._attr_media_position_updated_at = from_utc_timestamp(
+            queue.elapsed_time_last_updated
+        )
+        self._prev_time = queue.elapsed_time
+
+        # handle stream title (radio station icy metadata)
+        if (stream_details := cur_item.streamdetails) and stream_details.stream_title:
+            self._attr_media_album_name = cur_item.name
+            if " - " in stream_details.stream_title:
+                stream_title_parts = stream_details.stream_title.split(" - ", 1)
+                self._attr_media_title = stream_title_parts[1]
+                self._attr_media_artist = stream_title_parts[0]
+            else:
+                self._attr_media_title = stream_details.stream_title
+            return
+
+        if not (media_item := cur_item.media_item):
+            # queue is not playing a regular media item (edge case?!)
+            self._attr_media_title = cur_item.name
+            return
+
+        # queue is playing regular media item
+        self._attr_media_title = media_item.name
+
+        if media_item.media_type == MediaType.TRACK:
+            self._attr_media_artist = getattr(media_item, "artist_str", None)
+            if media_item.version:
+                self._attr_media_title += f" ({media_item.version})"
+            if media_item.album:
+                self._attr_media_album_name = media_item.album.name
+                self._attr_media_album_artist = getattr(
+                    media_item.album, "artist_str", None
+                )
+
+    async def _expose_players_assist(self) -> None:
+        """Get the correct config entry."""
+        hass = self.hass
+        config_entries = hass.config_entries.async_entries(DOMAIN)
+        for config_entry in config_entries:
+            if (
+                config_entry.state == ConfigEntryState.SETUP_IN_PROGRESS
+                and config_entry.data.get("expose_players_assist")
+            ):
+                async_expose_entity(hass, "conversation", self.entity_id, True)

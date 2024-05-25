@@ -1,14 +1,16 @@
-"""Music Assistant (music-assistant.github.io) integration."""
+"""Music Assistant (music-assistant.io) integration."""
+
 from __future__ import annotations
 
 import asyncio
+from typing import TYPE_CHECKING
 
 import async_timeout
 from homeassistant.components.hassio import AddonError, AddonManager, AddonState
 from homeassistant.config_entries import ConfigEntry, ConfigEntryState
 from homeassistant.const import CONF_URL, EVENT_HOMEASSISTANT_STOP
 from homeassistant.core import Event, HomeAssistant, callback
-from homeassistant.exceptions import ConfigEntryError, ConfigEntryNotReady
+from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.issue_registry import (
@@ -18,12 +20,16 @@ from homeassistant.helpers.issue_registry import (
 )
 from music_assistant.client import MusicAssistantClient
 from music_assistant.client.exceptions import CannotConnect, InvalidServerVersion
+from music_assistant.common.models.enums import EventType
 from music_assistant.common.models.errors import MusicAssistantError
 
 from .addon import get_addon_manager
 from .const import CONF_INTEGRATION_CREATED_ADDON, CONF_USE_ADDON, DOMAIN, LOGGER
 from .helpers import MassEntryData
 from .services import register_services
+
+if TYPE_CHECKING:
+    from music_assistant.common.models.event import MassEvent
 
 PLATFORMS = ("media_player",)
 
@@ -38,20 +44,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         await _async_ensure_addon_running(hass, entry)
 
     http_session = async_get_clientsession(hass, verify_ssl=False)
-
-    # handle case where user had old V1 mass installed
-    if CONF_URL not in entry.data:
-        async_create_issue(
-            hass,
-            DOMAIN,
-            "prev_version",
-            is_fixable=False,
-            severity=IssueSeverity.ERROR,
-            learn_more_url="https://github.com/music-assistant/hass-music-assistant/issues/1143",
-            translation_key="prev_version",
-        )
-        raise ConfigEntryError("Invalid configuration (migrating from V1 is not possible)")
-
     mass_url = entry.data[CONF_URL]
     mass = MusicAssistantClient(mass_url, http_session)
 
@@ -84,11 +76,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     async_delete_issue(hass, DOMAIN, "invalid_server_version")
 
-    async def on_hass_stop(event: Event) -> None:  # noqa: ARG001
+    async def on_hass_stop(event: Event) -> None:
         """Handle incoming stop event from Home Assistant."""
         await mass.disconnect()
 
-    entry.async_on_unload(hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, on_hass_stop))
+    entry.async_on_unload(
+        hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, on_hass_stop)
+    )
 
     # launch the music assistant client listen task in the background
     # use the init_ready event to wait until initialization is done
@@ -120,14 +114,17 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         finally:
             raise ConfigEntryNotReady(listen_error) from listen_error
 
-    # cleanup orphan devices/entities
-    # TODO: uncomment once we can read player configs to determine if a player still exists
-    # dev_reg = dr.async_get(hass)
-    # stored_devices = dr.async_entries_for_config_entry(dev_reg, entry.entry_id)
-    # for device in stored_devices:
-    #     for _, player_id in device.identifiers:
-    #         if mass.players.get_player(player_id) is None:
-    #             dev_reg.async_remove_device(device.id)
+    # register listener for removed players
+    async def handle_player_removed(event: MassEvent) -> None:
+        """Handle Mass Player Removed event."""
+        dev_reg = dr.async_get(hass)
+        if hass_device := dev_reg.async_get_device({(DOMAIN, event.object_id)}):
+            dev_reg.async_remove_device(hass_device.id)
+
+    entry.async_on_unload(
+        mass.subscribe(handle_player_removed, EventType.PLAYER_REMOVED)
+    )
+
     return True
 
 
@@ -199,17 +196,15 @@ async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
 
 
 async def async_remove_config_entry_device(
-    hass: HomeAssistant,  # noqa: ARG001
-    config_entry: ConfigEntry,  # noqa: ARG001
-    device_entry: dr.DeviceEntry,  # noqa: ARG001
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+    device_entry: dr.DeviceEntry,
 ) -> bool:
     """Remove a config entry from a device."""
     return True
 
 
-async def _async_ensure_addon_running(
-    hass: HomeAssistant, entry: ConfigEntry  # noqa: ARG001
-) -> None:
+async def _async_ensure_addon_running(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Ensure that Music Assistant Server add-on is installed and running."""
     addon_manager = _get_addon_manager(hass)
     try:

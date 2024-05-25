@@ -24,6 +24,16 @@ play_media:
             - playlist
             - track
             - radio
+    artist:
+      required: false
+      example: "Queen"
+      selector:
+        text:
+    album:
+      required: false
+      example: "News of the world"
+      selector:
+        text:
     enqueue:
       filter:
         supported_features:
@@ -38,30 +48,39 @@ play_media:
             - "replace_next"
             - "add"
           translation_key: enqueue
-    announce:
-      filter:
-        supported_features:
-          - media_player.MediaPlayerEntityFeature.MEDIA_ANNOUNCE
-      required: false
-      example: "true"
-      selector:
-        boolean:
-    artist:
-      required: false
-      example: "Queen"
-      selector:
-        text:
-    album:
-      required: false
-      example: "News of the world"
-      selector:
-        text:
     radio_mode:
       required: false
       advanced: true
       selector:
         boolean:
 
+play_announcement:
+  target:
+    entity:
+      domain: media_player
+      integration: mass
+      supported_features:
+        - media_player.MediaPlayerEntityFeature.PLAY_MEDIA
+        - media_player.MediaPlayerEntityFeature.MEDIA_ANNOUNCE
+  fields:
+    url:
+      required: true
+      example: "http://someremotesite.com/doorbell.mp3"
+      selector:
+        text:
+    use_pre_announce:
+      required: false
+      example: "true"
+      selector:
+        boolean:
+    announce_volume:
+      required: false
+      example: 75
+      selector:
+        number:
+          min: 1
+          max: 100
+          step: 1
 
 search:
   fields:

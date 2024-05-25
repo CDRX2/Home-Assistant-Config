@@ -1,11 +1,12 @@
 """Constants for irrigation_unlimited."""
+
 # Base component constants
 NAME = "Irrigation Unlimited"
 DOMAIN = "irrigation_unlimited"
 DOMAIN_DATA = f"{DOMAIN}_data"
 COORDINATOR = "coordinator"
 COMPONENT = "component"
-VERSION = "2023.11.0"
+VERSION = "2024.5.0"
 ATTRIBUTION = "Data provided by http://jsonplaceholder.typicode.com/"
 ISSUE_URL = "https://github.com/rgc99/irrigation_unlimited/issues"
 
@@ -19,11 +20,13 @@ ICON_BLOCKED = "mdi:alert-octagon-outline"
 ICON_CONTROLLER_ON = "mdi:water"
 ICON_CONTROLLER_OFF = "mdi:water-off"
 ICON_CONTROLLER_PAUSED = "mdi:pause-circle-outline"
+ICON_CONTROLLER_DELAY = "mdi:timer-sand"
 ICON_SEQUENCE_ON = "mdi:play-circle-outline"
 ICON_SEQUENCE_OFF = "mdi:stop-circle-outline"
 ICON_SEQUENCE_PAUSED = "mdi:pause-circle-outline"
 ICON_SEQUENCE_ZONE_ON = "mdi:play-circle-outline"
 ICON_SEQUENCE_ZONE_OFF = "mdi:stop-circle-outline"
+ICON_SEQUENCE_DELAY = "mdi:timer-sand"
 
 # Platforms
 BINARY_SENSOR = "binary_sensor"
@@ -104,16 +107,21 @@ CONF_STATES = "states"
 CONF_RETRIES = "retries"
 CONF_RESYNC = "resync"
 CONF_EXPECTED = "expected"
+CONF_FOUND = "found"
 CONF_STATE_ON = "state_on"
 CONF_STATE_OFF = "state_off"
 CONF_SCHEDULE_ID = "schedule_id"
 CONF_FROM = "from"
 CONF_VOLUME = "volume"
-CONF_PRECISION = "precision"
+CONF_VOLUME_PRECISION = "volume_precision"
+CONF_VOLUME_SCALE = "volume_scale"
+CONF_FLOW_RATE_PRECISION = "flow_rate_precision"
+CONF_FLOW_RATE_SCALE = "flow_rate_scale"
 CONF_QUEUE = "queue"
 CONF_QUEUE_MANUAL = "queue_manual"
 CONF_USER = "user"
 CONF_TOGGLE = "toggle"
+CONF_EXTENDED_CONFIG = "extended_config"
 
 # Defaults
 DEFAULT_NAME = DOMAIN
@@ -130,6 +138,9 @@ SERVICE_TIME_ADJUST = "adjust_time"
 SERVICE_MANUAL_RUN = "manual_run"
 SERVICE_LOAD_SCHEDULE = "load_schedule"
 SERVICE_SUSPEND = "suspend"
+SERVICE_SKIP = "skip"
+SERVICE_PAUSE = "pause"
+SERVICE_RESUME = "resume"
 
 # Events
 EVENT_START = "start"
@@ -144,6 +155,7 @@ STATUS_SUSPENDED = "suspended"
 STATUS_BLOCKED = "blocked"
 STATUS_INITIALISING = "initialising"
 STATUS_PAUSED = "paused"
+STATUS_DELAY = "delay"
 
 # Timeline labels
 TIMELINE_STATUS = "status"
@@ -198,6 +210,7 @@ ATTR_SUSPENDED = "suspended"
 ATTR_VOLUME = "volume"
 ATTR_FLOW_RATE = "flow_rate"
 ATTR_SWITCH_ENTITIES = "switch_entity_id"
+ATTR_SEQUENCE_COUNT = "sequence_count"
 
 # Resources
 RES_MANUAL = "Manual"

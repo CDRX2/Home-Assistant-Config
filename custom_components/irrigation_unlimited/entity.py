@@ -1,5 +1,7 @@
 """HA entity classes"""
+
 import json
+from collections.abc import Iterator
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.core import ServiceCall
 from homeassistant.helpers.restore_state import RestoreEntity
@@ -147,7 +149,7 @@ class IURestore:
             svd[CONF_SEQUENCE_ID] = sequence.index + 1
             if sequence_zone is not None:
                 svd[CONF_ZONES] = [sequence_zone.index + 1]
-        self._coordinator.service_call(svc, controller, zone, svd)
+        self._coordinator.service_call(svc, controller, zone, None, svd)
 
     def _restore_suspend(
         self,
@@ -169,7 +171,7 @@ class IURestore:
             svd[CONF_SEQUENCE_ID] = sequence.index + 1
             if sequence_zone is not None:
                 svd[CONF_ZONES] = [sequence_zone.index + 1]
-        self._coordinator.service_call(SERVICE_SUSPEND, controller, zone, svd)
+        self._coordinator.service_call(SERVICE_SUSPEND, controller, zone, None, svd)
 
     def _restore_adjustment(
         self,
@@ -188,7 +190,7 @@ class IURestore:
             svd[CONF_SEQUENCE_ID] = sequence.index + 1
             if sequence_zone is not None:
                 svd[CONF_ZONES] = [sequence_zone.index + 1]
-        self._coordinator.service_call(SERVICE_TIME_ADJUST, controller, zone, svd)
+        self._coordinator.service_call(SERVICE_TIME_ADJUST, controller, zone, None, svd)
 
     def _restore_sequence_zone(
         self, data: dict, controller: IUController, sequence: IUSequence
@@ -229,7 +231,7 @@ class IURestore:
             self._restore_zone(z_data, controller)
         self._check_is_on(data, controller, None, None, None)
 
-    def report_is_on(self) -> str:
+    def report_is_on(self) -> Iterator[str]:
         """Generate a list of incomplete cycles"""
         for item in self._is_on:
             yield ",".join(
@@ -253,18 +255,24 @@ class IUEntity(BinarySensorEntity, RestoreEntity):
         coordinator: IUCoordinator,
         controller: IUController,
         zone: IUZone,
+        sequence: IUSequence,
     ):
         """Base entity class"""
         self._coordinator = coordinator
         self._controller = controller
         self._zone = zone  # This will be None if it belongs to a Master/Controller
-        if self._zone is None:
-            self.entity_id = self._controller.entity_id
-        else:
+        self._sequence = sequence
+        if self._sequence is not None:
+            self.entity_id = self._sequence.entity_id
+        elif self._zone is not None:
             self.entity_id = self._zone.entity_id
+        else:
+            self.entity_id = self._controller.entity_id
 
     async def async_added_to_hass(self):
-        self._coordinator.register_entity(self._controller, self._zone, self)
+        self._coordinator.register_entity(
+            self._controller, self._zone, self._sequence, self
+        )
 
         # This code should be removed in future update. Moved to coordinator JSON configuration.
         if not self._coordinator.restored_from_configuration:
@@ -276,16 +284,22 @@ class IUEntity(BinarySensorEntity, RestoreEntity):
                 if state.attributes.get(ATTR_ENABLED, True)
                 else SERVICE_DISABLE
             )
-            self._coordinator.service_call(service, self._controller, self._zone, {})
+            self._coordinator.service_call(
+                service, self._controller, self._zone, None, {}
+            )
         return
 
     async def async_will_remove_from_hass(self):
-        self._coordinator.deregister_entity(self._controller, self._zone, self)
+        self._coordinator.deregister_entity(
+            self._controller, self._zone, self._sequence, self
+        )
         return
 
     def dispatch(self, service: str, call: ServiceCall) -> None:
         """Dispatcher for service calls"""
-        self._coordinator.service_call(service, self._controller, self._zone, call.data)
+        self._coordinator.service_call(
+            service, self._controller, self._zone, self._sequence, call.data
+        )
 
 
 class IUComponent(RestoreEntity):
@@ -296,7 +310,7 @@ class IUComponent(RestoreEntity):
         self.entity_id = self._coordinator.entity_id
 
     async def async_added_to_hass(self):
-        self._coordinator.register_entity(None, None, self)
+        self._coordinator.register_entity(None, None, None, self)
         state = await self.async_get_last_state()
         if state is None or ATTR_CONFIGURATION not in state.attributes:
             return
@@ -321,12 +335,12 @@ class IUComponent(RestoreEntity):
         return
 
     async def async_will_remove_from_hass(self):
-        self._coordinator.deregister_entity(None, None, self)
+        self._coordinator.deregister_entity(None, None, None, self)
         return
 
     def dispatch(self, service: str, call: ServiceCall) -> None:
         """Service call dispatcher"""
-        self._coordinator.service_call(service, None, None, call.data)
+        self._coordinator.service_call(service, None, None, None, call.data)
 
     @property
     def should_poll(self):
