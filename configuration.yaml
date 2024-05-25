@@ -207,9 +207,9 @@ light:
     name: Spare switch 3
     entity_id: switch.spare_switch_3
 
-  - platform: switch
-    name: Spare switch 4
-    entity_id: switch.spare_switch_4
+  # - platform: switch
+  #   name: Spare switch 4
+  #   entity_id: switch.spare_switch_4
 
   - platform: switch
     name: Manger Lampe
