@@ -1,4 +1,4 @@
-/*! *****************************************************************************
+/******************************************************************************
 Copyright (c) Microsoft Corporation.
 
 Permission to use, copy, modify, and/or distribute this software for any
@@ -12,538 +12,1982 @@ LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 ***************************************************************************** */
-function e(e,t,i,s){var n,o=arguments.length,r=o<3?t:null===s?s=Object.getOwnPropertyDescriptor(t,i):s;if("object"==typeof Reflect&&"function"==typeof Reflect.decorate)r=Reflect.decorate(e,t,i,s);else for(var a=e.length-1;a>=0;a--)(n=e[a])&&(r=(o<3?n(r):o>3?n(t,i,r):n(t,i))||r);return o>3&&r&&Object.defineProperty(t,i,r),r
+/* global Reflect, Promise, SuppressedError, Symbol */
+
+
+function __decorate(decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+}
+
+typeof SuppressedError === "function" ? SuppressedError : function (error, suppressed, message) {
+    var e = new Error(message);
+    return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
+};
+
 /**
  * @license
  * Copyright 2019 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */}const t=window.ShadowRoot&&(void 0===window.ShadyCSS||window.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,i=Symbol(),s=new Map;class n{constructor(e,t){if(this._$cssResult$=!0,t!==i)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=e}get styleSheet(){let e=s.get(this.cssText);return t&&void 0===e&&(s.set(this.cssText,e=new CSSStyleSheet),e.replaceSync(this.cssText)),e}toString(){return this.cssText}}const o=(e,...t)=>{const s=1===e.length?e[0]:t.reduce(((t,i,s)=>t+(e=>{if(!0===e._$cssResult$)return e.cssText;if("number"==typeof e)return e;throw Error("Value passed to 'css' function must be a 'css' function result: "+e+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(i)+e[s+1]),e[0]);return new n(s,i)},r=t?e=>e:e=>e instanceof CSSStyleSheet?(e=>{let t="";for(const i of e.cssRules)t+=i.cssText;return(e=>new n("string"==typeof e?e:e+"",i))(t)})(e):e
+ */
+const t$2=window,e$4=t$2.ShadowRoot&&(void 0===t$2.ShadyCSS||t$2.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,s$3=Symbol(),n$5=new WeakMap;let o$3 = class o{constructor(t,e,n){if(this._$cssResult$=!0,n!==s$3)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e;}get styleSheet(){let t=this.o;const s=this.t;if(e$4&&void 0===t){const e=void 0!==s&&1===s.length;e&&(t=n$5.get(s)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),e&&n$5.set(s,t));}return t}toString(){return this.cssText}};const r$2=t=>new o$3("string"==typeof t?t:t+"",void 0,s$3),i$2=(t,...e)=>{const n=1===t.length?t[0]:e.reduce(((e,s,n)=>e+(t=>{if(!0===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(s)+t[n+1]),t[0]);return new o$3(n,t,s$3)},S$1=(s,n)=>{e$4?s.adoptedStyleSheets=n.map((t=>t instanceof CSSStyleSheet?t:t.styleSheet)):n.forEach((e=>{const n=document.createElement("style"),o=t$2.litNonce;void 0!==o&&n.setAttribute("nonce",o),n.textContent=e.cssText,s.appendChild(n);}));},c$1=e$4?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const s of t.cssRules)e+=s.cssText;return r$2(e)})(t):t;
+
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */;var a;const l=window.trustedTypes,d=l?l.emptyScript:"",u=window.reactiveElementPolyfillSupport,c={toAttribute(e,t){switch(t){case Boolean:e=e?d:null;break;case Object:case Array:e=null==e?e:JSON.stringify(e)}return e},fromAttribute(e,t){let i=e;switch(t){case Boolean:i=null!==e;break;case Number:i=null===e?null:Number(e);break;case Object:case Array:try{i=JSON.parse(e)}catch(e){i=null}}return i}},h=(e,t)=>t!==e&&(t==t||e==e),v={attribute:!0,type:String,converter:c,reflect:!1,hasChanged:h};class p extends HTMLElement{constructor(){super(),this._$Et=new Map,this.isUpdatePending=!1,this.hasUpdated=!1,this._$Ei=null,this.o()}static addInitializer(e){var t;null!==(t=this.l)&&void 0!==t||(this.l=[]),this.l.push(e)}static get observedAttributes(){this.finalize();const e=[];return this.elementProperties.forEach(((t,i)=>{const s=this._$Eh(i,t);void 0!==s&&(this._$Eu.set(s,i),e.push(s))})),e}static createProperty(e,t=v){if(t.state&&(t.attribute=!1),this.finalize(),this.elementProperties.set(e,t),!t.noAccessor&&!this.prototype.hasOwnProperty(e)){const i="symbol"==typeof e?Symbol():"__"+e,s=this.getPropertyDescriptor(e,i,t);void 0!==s&&Object.defineProperty(this.prototype,e,s)}}static getPropertyDescriptor(e,t,i){return{get(){return this[t]},set(s){const n=this[e];this[t]=s,this.requestUpdate(e,n,i)},configurable:!0,enumerable:!0}}static getPropertyOptions(e){return this.elementProperties.get(e)||v}static finalize(){if(this.hasOwnProperty("finalized"))return!1;this.finalized=!0;const e=Object.getPrototypeOf(this);if(e.finalize(),this.elementProperties=new Map(e.elementProperties),this._$Eu=new Map,this.hasOwnProperty("properties")){const e=this.properties,t=[...Object.getOwnPropertyNames(e),...Object.getOwnPropertySymbols(e)];for(const i of t)this.createProperty(i,e[i])}return this.elementStyles=this.finalizeStyles(this.styles),!0}static finalizeStyles(e){const t=[];if(Array.isArray(e)){const i=new Set(e.flat(1/0).reverse());for(const e of i)t.unshift(r(e))}else void 0!==e&&t.push(r(e));return t}static _$Eh(e,t){const i=t.attribute;return!1===i?void 0:"string"==typeof i?i:"string"==typeof e?e.toLowerCase():void 0}o(){var e;this._$Ep=new Promise((e=>this.enableUpdating=e)),this._$AL=new Map,this._$Em(),this.requestUpdate(),null===(e=this.constructor.l)||void 0===e||e.forEach((e=>e(this)))}addController(e){var t,i;(null!==(t=this._$Eg)&&void 0!==t?t:this._$Eg=[]).push(e),void 0!==this.renderRoot&&this.isConnected&&(null===(i=e.hostConnected)||void 0===i||i.call(e))}removeController(e){var t;null===(t=this._$Eg)||void 0===t||t.splice(this._$Eg.indexOf(e)>>>0,1)}_$Em(){this.constructor.elementProperties.forEach(((e,t)=>{this.hasOwnProperty(t)&&(this._$Et.set(t,this[t]),delete this[t])}))}createRenderRoot(){var e;const i=null!==(e=this.shadowRoot)&&void 0!==e?e:this.attachShadow(this.constructor.shadowRootOptions);return((e,i)=>{t?e.adoptedStyleSheets=i.map((e=>e instanceof CSSStyleSheet?e:e.styleSheet)):i.forEach((t=>{const i=document.createElement("style"),s=window.litNonce;void 0!==s&&i.setAttribute("nonce",s),i.textContent=t.cssText,e.appendChild(i)}))})(i,this.constructor.elementStyles),i}connectedCallback(){var e;void 0===this.renderRoot&&(this.renderRoot=this.createRenderRoot()),this.enableUpdating(!0),null===(e=this._$Eg)||void 0===e||e.forEach((e=>{var t;return null===(t=e.hostConnected)||void 0===t?void 0:t.call(e)}))}enableUpdating(e){}disconnectedCallback(){var e;null===(e=this._$Eg)||void 0===e||e.forEach((e=>{var t;return null===(t=e.hostDisconnected)||void 0===t?void 0:t.call(e)}))}attributeChangedCallback(e,t,i){this._$AK(e,i)}_$ES(e,t,i=v){var s,n;const o=this.constructor._$Eh(e,i);if(void 0!==o&&!0===i.reflect){const r=(null!==(n=null===(s=i.converter)||void 0===s?void 0:s.toAttribute)&&void 0!==n?n:c.toAttribute)(t,i.type);this._$Ei=e,null==r?this.removeAttribute(o):this.setAttribute(o,r),this._$Ei=null}}_$AK(e,t){var i,s,n;const o=this.constructor,r=o._$Eu.get(e);if(void 0!==r&&this._$Ei!==r){const e=o.getPropertyOptions(r),a=e.converter,l=null!==(n=null!==(s=null===(i=a)||void 0===i?void 0:i.fromAttribute)&&void 0!==s?s:"function"==typeof a?a:null)&&void 0!==n?n:c.fromAttribute;this._$Ei=r,this[r]=l(t,e.type),this._$Ei=null}}requestUpdate(e,t,i){let s=!0;void 0!==e&&(((i=i||this.constructor.getPropertyOptions(e)).hasChanged||h)(this[e],t)?(this._$AL.has(e)||this._$AL.set(e,t),!0===i.reflect&&this._$Ei!==e&&(void 0===this._$E_&&(this._$E_=new Map),this._$E_.set(e,i))):s=!1),!this.isUpdatePending&&s&&(this._$Ep=this._$EC())}async _$EC(){this.isUpdatePending=!0;try{await this._$Ep}catch(e){Promise.reject(e)}const e=this.scheduleUpdate();return null!=e&&await e,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){var e;if(!this.isUpdatePending)return;this.hasUpdated,this._$Et&&(this._$Et.forEach(((e,t)=>this[t]=e)),this._$Et=void 0);let t=!1;const i=this._$AL;try{t=this.shouldUpdate(i),t?(this.willUpdate(i),null===(e=this._$Eg)||void 0===e||e.forEach((e=>{var t;return null===(t=e.hostUpdate)||void 0===t?void 0:t.call(e)})),this.update(i)):this._$EU()}catch(e){throw t=!1,this._$EU(),e}t&&this._$AE(i)}willUpdate(e){}_$AE(e){var t;null===(t=this._$Eg)||void 0===t||t.forEach((e=>{var t;return null===(t=e.hostUpdated)||void 0===t?void 0:t.call(e)})),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(e)),this.updated(e)}_$EU(){this._$AL=new Map,this.isUpdatePending=!1}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$Ep}shouldUpdate(e){return!0}update(e){void 0!==this._$E_&&(this._$E_.forEach(((e,t)=>this._$ES(t,this[t],e))),this._$E_=void 0),this._$EU()}updated(e){}firstUpdated(e){}}
+ */var s$2;const e$3=window,r$1=e$3.trustedTypes,h$1=r$1?r$1.emptyScript:"",o$2=e$3.reactiveElementPolyfillSupport,n$4={toAttribute(t,i){switch(i){case Boolean:t=t?h$1:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t);}return t},fromAttribute(t,i){let s=t;switch(i){case Boolean:s=null!==t;break;case Number:s=null===t?null:Number(t);break;case Object:case Array:try{s=JSON.parse(t);}catch(t){s=null;}}return s}},a$1=(t,i)=>i!==t&&(i==i||t==t),l$2={attribute:!0,type:String,converter:n$4,reflect:!1,hasChanged:a$1},d$1="finalized";let u$1 = class u extends HTMLElement{constructor(){super(),this._$Ei=new Map,this.isUpdatePending=!1,this.hasUpdated=!1,this._$El=null,this._$Eu();}static addInitializer(t){var i;this.finalize(),(null!==(i=this.h)&&void 0!==i?i:this.h=[]).push(t);}static get observedAttributes(){this.finalize();const t=[];return this.elementProperties.forEach(((i,s)=>{const e=this._$Ep(s,i);void 0!==e&&(this._$Ev.set(e,s),t.push(e));})),t}static createProperty(t,i=l$2){if(i.state&&(i.attribute=!1),this.finalize(),this.elementProperties.set(t,i),!i.noAccessor&&!this.prototype.hasOwnProperty(t)){const s="symbol"==typeof t?Symbol():"__"+t,e=this.getPropertyDescriptor(t,s,i);void 0!==e&&Object.defineProperty(this.prototype,t,e);}}static getPropertyDescriptor(t,i,s){return {get(){return this[i]},set(e){const r=this[t];this[i]=e,this.requestUpdate(t,r,s);},configurable:!0,enumerable:!0}}static getPropertyOptions(t){return this.elementProperties.get(t)||l$2}static finalize(){if(this.hasOwnProperty(d$1))return !1;this[d$1]=!0;const t=Object.getPrototypeOf(this);if(t.finalize(),void 0!==t.h&&(this.h=[...t.h]),this.elementProperties=new Map(t.elementProperties),this._$Ev=new Map,this.hasOwnProperty("properties")){const t=this.properties,i=[...Object.getOwnPropertyNames(t),...Object.getOwnPropertySymbols(t)];for(const s of i)this.createProperty(s,t[s]);}return this.elementStyles=this.finalizeStyles(this.styles),!0}static finalizeStyles(i){const s=[];if(Array.isArray(i)){const e=new Set(i.flat(1/0).reverse());for(const i of e)s.unshift(c$1(i));}else void 0!==i&&s.push(c$1(i));return s}static _$Ep(t,i){const s=i.attribute;return !1===s?void 0:"string"==typeof s?s:"string"==typeof t?t.toLowerCase():void 0}_$Eu(){var t;this._$E_=new Promise((t=>this.enableUpdating=t)),this._$AL=new Map,this._$Eg(),this.requestUpdate(),null===(t=this.constructor.h)||void 0===t||t.forEach((t=>t(this)));}addController(t){var i,s;(null!==(i=this._$ES)&&void 0!==i?i:this._$ES=[]).push(t),void 0!==this.renderRoot&&this.isConnected&&(null===(s=t.hostConnected)||void 0===s||s.call(t));}removeController(t){var i;null===(i=this._$ES)||void 0===i||i.splice(this._$ES.indexOf(t)>>>0,1);}_$Eg(){this.constructor.elementProperties.forEach(((t,i)=>{this.hasOwnProperty(i)&&(this._$Ei.set(i,this[i]),delete this[i]);}));}createRenderRoot(){var t;const s=null!==(t=this.shadowRoot)&&void 0!==t?t:this.attachShadow(this.constructor.shadowRootOptions);return S$1(s,this.constructor.elementStyles),s}connectedCallback(){var t;void 0===this.renderRoot&&(this.renderRoot=this.createRenderRoot()),this.enableUpdating(!0),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostConnected)||void 0===i?void 0:i.call(t)}));}enableUpdating(t){}disconnectedCallback(){var t;null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostDisconnected)||void 0===i?void 0:i.call(t)}));}attributeChangedCallback(t,i,s){this._$AK(t,s);}_$EO(t,i,s=l$2){var e;const r=this.constructor._$Ep(t,s);if(void 0!==r&&!0===s.reflect){const h=(void 0!==(null===(e=s.converter)||void 0===e?void 0:e.toAttribute)?s.converter:n$4).toAttribute(i,s.type);this._$El=t,null==h?this.removeAttribute(r):this.setAttribute(r,h),this._$El=null;}}_$AK(t,i){var s;const e=this.constructor,r=e._$Ev.get(t);if(void 0!==r&&this._$El!==r){const t=e.getPropertyOptions(r),h="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==(null===(s=t.converter)||void 0===s?void 0:s.fromAttribute)?t.converter:n$4;this._$El=r,this[r]=h.fromAttribute(i,t.type),this._$El=null;}}requestUpdate(t,i,s){let e=!0;void 0!==t&&(((s=s||this.constructor.getPropertyOptions(t)).hasChanged||a$1)(this[t],i)?(this._$AL.has(t)||this._$AL.set(t,i),!0===s.reflect&&this._$El!==t&&(void 0===this._$EC&&(this._$EC=new Map),this._$EC.set(t,s))):e=!1),!this.isUpdatePending&&e&&(this._$E_=this._$Ej());}async _$Ej(){this.isUpdatePending=!0;try{await this._$E_;}catch(t){Promise.reject(t);}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){var t;if(!this.isUpdatePending)return;this.hasUpdated,this._$Ei&&(this._$Ei.forEach(((t,i)=>this[i]=t)),this._$Ei=void 0);let i=!1;const s=this._$AL;try{i=this.shouldUpdate(s),i?(this.willUpdate(s),null===(t=this._$ES)||void 0===t||t.forEach((t=>{var i;return null===(i=t.hostUpdate)||void 0===i?void 0:i.call(t)})),this.update(s)):this._$Ek();}catch(t){throw i=!1,this._$Ek(),t}i&&this._$AE(s);}willUpdate(t){}_$AE(t){var i;null===(i=this._$ES)||void 0===i||i.forEach((t=>{var i;return null===(i=t.hostUpdated)||void 0===i?void 0:i.call(t)})),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(t)),this.updated(t);}_$Ek(){this._$AL=new Map,this.isUpdatePending=!1;}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$E_}shouldUpdate(t){return !0}update(t){void 0!==this._$EC&&(this._$EC.forEach(((t,i)=>this._$EO(i,this[i],t))),this._$EC=void 0),this._$Ek();}updated(t){}firstUpdated(t){}};u$1[d$1]=!0,u$1.elementProperties=new Map,u$1.elementStyles=[],u$1.shadowRootOptions={mode:"open"},null==o$2||o$2({ReactiveElement:u$1}),(null!==(s$2=e$3.reactiveElementVersions)&&void 0!==s$2?s$2:e$3.reactiveElementVersions=[]).push("1.6.3");
+
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-var m;p.finalized=!0,p.elementProperties=new Map,p.elementStyles=[],p.shadowRootOptions={mode:"open"},null==u||u({ReactiveElement:p}),(null!==(a=globalThis.reactiveElementVersions)&&void 0!==a?a:globalThis.reactiveElementVersions=[]).push("1.2.1");const _=globalThis.trustedTypes,g=_?_.createPolicy("lit-html",{createHTML:e=>e}):void 0,$=`lit$${(Math.random()+"").slice(9)}$`,f="?"+$,y=`<${f}>`,b=document,w=(e="")=>b.createComment(e),A=e=>null===e||"object"!=typeof e&&"function"!=typeof e,S=Array.isArray,x=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,E=/-->/g,C=/>/g,k=/>|[ 	\n\r](?:([^\s"'>=/]+)([ 	\n\r]*=[ 	\n\r]*(?:[^ 	\n\r"'`<>=]|("|')|))|$)/g,z=/'/g,N=/"/g,T=/^(?:script|style|textarea)$/i,j=(e=>(t,...i)=>({_$litType$:e,strings:t,values:i}))(1),U=Symbol.for("lit-noChange"),P=Symbol.for("lit-nothing"),M=new WeakMap,D=b.createTreeWalker(b,129,null,!1),O=(e,t)=>{const i=e.length-1,s=[];let n,o=2===t?"<svg>":"",r=x;for(let t=0;t<i;t++){const i=e[t];let a,l,d=-1,u=0;for(;u<i.length&&(r.lastIndex=u,l=r.exec(i),null!==l);)u=r.lastIndex,r===x?"!--"===l[1]?r=E:void 0!==l[1]?r=C:void 0!==l[2]?(T.test(l[2])&&(n=RegExp("</"+l[2],"g")),r=k):void 0!==l[3]&&(r=k):r===k?">"===l[0]?(r=null!=n?n:x,d=-1):void 0===l[1]?d=-2:(d=r.lastIndex-l[2].length,a=l[1],r=void 0===l[3]?k:'"'===l[3]?N:z):r===N||r===z?r=k:r===E||r===C?r=x:(r=k,n=void 0);const c=r===k&&e[t+1].startsWith("/>")?" ":"";o+=r===x?i+y:d>=0?(s.push(a),i.slice(0,d)+"$lit$"+i.slice(d)+$+c):i+$+(-2===d?(s.push(void 0),t):c)}const a=o+(e[i]||"<?>")+(2===t?"</svg>":"");if(!Array.isArray(e)||!e.hasOwnProperty("raw"))throw Error("invalid template strings array");return[void 0!==g?g.createHTML(a):a,s]};class q{constructor({strings:e,_$litType$:t},i){let s;this.parts=[];let n=0,o=0;const r=e.length-1,a=this.parts,[l,d]=O(e,t);if(this.el=q.createElement(l,i),D.currentNode=this.el.content,2===t){const e=this.el.content,t=e.firstChild;t.remove(),e.append(...t.childNodes)}for(;null!==(s=D.nextNode())&&a.length<r;){if(1===s.nodeType){if(s.hasAttributes()){const e=[];for(const t of s.getAttributeNames())if(t.endsWith("$lit$")||t.startsWith($)){const i=d[o++];if(e.push(t),void 0!==i){const e=s.getAttribute(i.toLowerCase()+"$lit$").split($),t=/([.?@])?(.*)/.exec(i);a.push({type:1,index:n,name:t[2],strings:e,ctor:"."===t[1]?V:"?"===t[1]?Z:"@"===t[1]?F:I})}else a.push({type:6,index:n})}for(const t of e)s.removeAttribute(t)}if(T.test(s.tagName)){const e=s.textContent.split($),t=e.length-1;if(t>0){s.textContent=_?_.emptyScript:"";for(let i=0;i<t;i++)s.append(e[i],w()),D.nextNode(),a.push({type:2,index:++n});s.append(e[t],w())}}}else if(8===s.nodeType)if(s.data===f)a.push({type:2,index:n});else{let e=-1;for(;-1!==(e=s.data.indexOf($,e+1));)a.push({type:7,index:n}),e+=$.length-1}n++}}static createElement(e,t){const i=b.createElement("template");return i.innerHTML=e,i}}function R(e,t,i=e,s){var n,o,r,a;if(t===U)return t;let l=void 0!==s?null===(n=i._$Cl)||void 0===n?void 0:n[s]:i._$Cu;const d=A(t)?void 0:t._$litDirective$;return(null==l?void 0:l.constructor)!==d&&(null===(o=null==l?void 0:l._$AO)||void 0===o||o.call(l,!1),void 0===d?l=void 0:(l=new d(e),l._$AT(e,i,s)),void 0!==s?(null!==(r=(a=i)._$Cl)&&void 0!==r?r:a._$Cl=[])[s]=l:i._$Cu=l),void 0!==l&&(t=R(e,l._$AS(e,t.values),l,s)),t}class H{constructor(e,t){this.v=[],this._$AN=void 0,this._$AD=e,this._$AM=t}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}p(e){var t;const{el:{content:i},parts:s}=this._$AD,n=(null!==(t=null==e?void 0:e.creationScope)&&void 0!==t?t:b).importNode(i,!0);D.currentNode=n;let o=D.nextNode(),r=0,a=0,l=s[0];for(;void 0!==l;){if(r===l.index){let t;2===l.type?t=new L(o,o.nextSibling,this,e):1===l.type?t=new l.ctor(o,l.name,l.strings,this,e):6===l.type&&(t=new W(o,this,e)),this.v.push(t),l=s[++a]}r!==(null==l?void 0:l.index)&&(o=D.nextNode(),r++)}return n}m(e){let t=0;for(const i of this.v)void 0!==i&&(void 0!==i.strings?(i._$AI(e,i,t),t+=i.strings.length-2):i._$AI(e[t])),t++}}class L{constructor(e,t,i,s){var n;this.type=2,this._$AH=P,this._$AN=void 0,this._$AA=e,this._$AB=t,this._$AM=i,this.options=s,this._$Cg=null===(n=null==s?void 0:s.isConnected)||void 0===n||n}get _$AU(){var e,t;return null!==(t=null===(e=this._$AM)||void 0===e?void 0:e._$AU)&&void 0!==t?t:this._$Cg}get parentNode(){let e=this._$AA.parentNode;const t=this._$AM;return void 0!==t&&11===e.nodeType&&(e=t.parentNode),e}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(e,t=this){e=R(this,e,t),A(e)?e===P||null==e||""===e?(this._$AH!==P&&this._$AR(),this._$AH=P):e!==this._$AH&&e!==U&&this.$(e):void 0!==e._$litType$?this.T(e):void 0!==e.nodeType?this.S(e):(e=>{var t;return S(e)||"function"==typeof(null===(t=e)||void 0===t?void 0:t[Symbol.iterator])})(e)?this.A(e):this.$(e)}M(e,t=this._$AB){return this._$AA.parentNode.insertBefore(e,t)}S(e){this._$AH!==e&&(this._$AR(),this._$AH=this.M(e))}$(e){this._$AH!==P&&A(this._$AH)?this._$AA.nextSibling.data=e:this.S(b.createTextNode(e)),this._$AH=e}T(e){var t;const{values:i,_$litType$:s}=e,n="number"==typeof s?this._$AC(e):(void 0===s.el&&(s.el=q.createElement(s.h,this.options)),s);if((null===(t=this._$AH)||void 0===t?void 0:t._$AD)===n)this._$AH.m(i);else{const e=new H(n,this),t=e.p(this.options);e.m(i),this.S(t),this._$AH=e}}_$AC(e){let t=M.get(e.strings);return void 0===t&&M.set(e.strings,t=new q(e)),t}A(e){S(this._$AH)||(this._$AH=[],this._$AR());const t=this._$AH;let i,s=0;for(const n of e)s===t.length?t.push(i=new L(this.M(w()),this.M(w()),this,this.options)):i=t[s],i._$AI(n),s++;s<t.length&&(this._$AR(i&&i._$AB.nextSibling,s),t.length=s)}_$AR(e=this._$AA.nextSibling,t){var i;for(null===(i=this._$AP)||void 0===i||i.call(this,!1,!0,t);e&&e!==this._$AB;){const t=e.nextSibling;e.remove(),e=t}}setConnected(e){var t;void 0===this._$AM&&(this._$Cg=e,null===(t=this._$AP)||void 0===t||t.call(this,e))}}class I{constructor(e,t,i,s,n){this.type=1,this._$AH=P,this._$AN=void 0,this.element=e,this.name=t,this._$AM=s,this.options=n,i.length>2||""!==i[0]||""!==i[1]?(this._$AH=Array(i.length-1).fill(new String),this.strings=i):this._$AH=P}get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}_$AI(e,t=this,i,s){const n=this.strings;let o=!1;if(void 0===n)e=R(this,e,t,0),o=!A(e)||e!==this._$AH&&e!==U,o&&(this._$AH=e);else{const s=e;let r,a;for(e=n[0],r=0;r<n.length-1;r++)a=R(this,s[i+r],t,r),a===U&&(a=this._$AH[r]),o||(o=!A(a)||a!==this._$AH[r]),a===P?e=P:e!==P&&(e+=(null!=a?a:"")+n[r+1]),this._$AH[r]=a}o&&!s&&this.k(e)}k(e){e===P?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,null!=e?e:"")}}class V extends I{constructor(){super(...arguments),this.type=3}k(e){this.element[this.name]=e===P?void 0:e}}const B=_?_.emptyScript:"";class Z extends I{constructor(){super(...arguments),this.type=4}k(e){e&&e!==P?this.element.setAttribute(this.name,B):this.element.removeAttribute(this.name)}}class F extends I{constructor(e,t,i,s,n){super(e,t,i,s,n),this.type=5}_$AI(e,t=this){var i;if((e=null!==(i=R(this,e,t,0))&&void 0!==i?i:P)===U)return;const s=this._$AH,n=e===P&&s!==P||e.capture!==s.capture||e.once!==s.once||e.passive!==s.passive,o=e!==P&&(s===P||n);n&&this.element.removeEventListener(this.name,this,s),o&&this.element.addEventListener(this.name,this,e),this._$AH=e}handleEvent(e){var t,i;"function"==typeof this._$AH?this._$AH.call(null!==(i=null===(t=this.options)||void 0===t?void 0:t.host)&&void 0!==i?i:this.element,e):this._$AH.handleEvent(e)}}class W{constructor(e,t,i){this.element=e,this.type=6,this._$AN=void 0,this._$AM=t,this.options=i}get _$AU(){return this._$AM._$AU}_$AI(e){R(this,e)}}const J=window.litHtmlPolyfillSupport;
+var t$1;const i$1=window,s$1=i$1.trustedTypes,e$2=s$1?s$1.createPolicy("lit-html",{createHTML:t=>t}):void 0,o$1="$lit$",n$3=`lit$${(Math.random()+"").slice(9)}$`,l$1="?"+n$3,h=`<${l$1}>`,r=document,u=()=>r.createComment(""),d=t=>null===t||"object"!=typeof t&&"function"!=typeof t,c=Array.isArray,v=t=>c(t)||"function"==typeof(null==t?void 0:t[Symbol.iterator]),a="[ \t\n\f\r]",f=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,_=/-->/g,m=/>/g,p=RegExp(`>|${a}(?:([^\\s"'>=/]+)(${a}*=${a}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),g=/'/g,$=/"/g,y=/^(?:script|style|textarea|title)$/i,w=t=>(i,...s)=>({_$litType$:t,strings:i,values:s}),x=w(1),T=Symbol.for("lit-noChange"),A=Symbol.for("lit-nothing"),E=new WeakMap,C=r.createTreeWalker(r,129,null,!1);function P(t,i){if(!Array.isArray(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==e$2?e$2.createHTML(i):i}const V=(t,i)=>{const s=t.length-1,e=[];let l,r=2===i?"<svg>":"",u=f;for(let i=0;i<s;i++){const s=t[i];let d,c,v=-1,a=0;for(;a<s.length&&(u.lastIndex=a,c=u.exec(s),null!==c);)a=u.lastIndex,u===f?"!--"===c[1]?u=_:void 0!==c[1]?u=m:void 0!==c[2]?(y.test(c[2])&&(l=RegExp("</"+c[2],"g")),u=p):void 0!==c[3]&&(u=p):u===p?">"===c[0]?(u=null!=l?l:f,v=-1):void 0===c[1]?v=-2:(v=u.lastIndex-c[2].length,d=c[1],u=void 0===c[3]?p:'"'===c[3]?$:g):u===$||u===g?u=p:u===_||u===m?u=f:(u=p,l=void 0);const w=u===p&&t[i+1].startsWith("/>")?" ":"";r+=u===f?s+h:v>=0?(e.push(d),s.slice(0,v)+o$1+s.slice(v)+n$3+w):s+n$3+(-2===v?(e.push(void 0),i):w);}return [P(t,r+(t[s]||"<?>")+(2===i?"</svg>":"")),e]};class N{constructor({strings:t,_$litType$:i},e){let h;this.parts=[];let r=0,d=0;const c=t.length-1,v=this.parts,[a,f]=V(t,i);if(this.el=N.createElement(a,e),C.currentNode=this.el.content,2===i){const t=this.el.content,i=t.firstChild;i.remove(),t.append(...i.childNodes);}for(;null!==(h=C.nextNode())&&v.length<c;){if(1===h.nodeType){if(h.hasAttributes()){const t=[];for(const i of h.getAttributeNames())if(i.endsWith(o$1)||i.startsWith(n$3)){const s=f[d++];if(t.push(i),void 0!==s){const t=h.getAttribute(s.toLowerCase()+o$1).split(n$3),i=/([.?@])?(.*)/.exec(s);v.push({type:1,index:r,name:i[2],strings:t,ctor:"."===i[1]?H:"?"===i[1]?L:"@"===i[1]?z:k});}else v.push({type:6,index:r});}for(const i of t)h.removeAttribute(i);}if(y.test(h.tagName)){const t=h.textContent.split(n$3),i=t.length-1;if(i>0){h.textContent=s$1?s$1.emptyScript:"";for(let s=0;s<i;s++)h.append(t[s],u()),C.nextNode(),v.push({type:2,index:++r});h.append(t[i],u());}}}else if(8===h.nodeType)if(h.data===l$1)v.push({type:2,index:r});else {let t=-1;for(;-1!==(t=h.data.indexOf(n$3,t+1));)v.push({type:7,index:r}),t+=n$3.length-1;}r++;}}static createElement(t,i){const s=r.createElement("template");return s.innerHTML=t,s}}function S(t,i,s=t,e){var o,n,l,h;if(i===T)return i;let r=void 0!==e?null===(o=s._$Co)||void 0===o?void 0:o[e]:s._$Cl;const u=d(i)?void 0:i._$litDirective$;return (null==r?void 0:r.constructor)!==u&&(null===(n=null==r?void 0:r._$AO)||void 0===n||n.call(r,!1),void 0===u?r=void 0:(r=new u(t),r._$AT(t,s,e)),void 0!==e?(null!==(l=(h=s)._$Co)&&void 0!==l?l:h._$Co=[])[e]=r:s._$Cl=r),void 0!==r&&(i=S(t,r._$AS(t,i.values),r,e)),i}class M{constructor(t,i){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=i;}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){var i;const{el:{content:s},parts:e}=this._$AD,o=(null!==(i=null==t?void 0:t.creationScope)&&void 0!==i?i:r).importNode(s,!0);C.currentNode=o;let n=C.nextNode(),l=0,h=0,u=e[0];for(;void 0!==u;){if(l===u.index){let i;2===u.type?i=new R(n,n.nextSibling,this,t):1===u.type?i=new u.ctor(n,u.name,u.strings,this,t):6===u.type&&(i=new Z(n,this,t)),this._$AV.push(i),u=e[++h];}l!==(null==u?void 0:u.index)&&(n=C.nextNode(),l++);}return C.currentNode=r,o}v(t){let i=0;for(const s of this._$AV)void 0!==s&&(void 0!==s.strings?(s._$AI(t,s,i),i+=s.strings.length-2):s._$AI(t[i])),i++;}}class R{constructor(t,i,s,e){var o;this.type=2,this._$AH=A,this._$AN=void 0,this._$AA=t,this._$AB=i,this._$AM=s,this.options=e,this._$Cp=null===(o=null==e?void 0:e.isConnected)||void 0===o||o;}get _$AU(){var t,i;return null!==(i=null===(t=this._$AM)||void 0===t?void 0:t._$AU)&&void 0!==i?i:this._$Cp}get parentNode(){let t=this._$AA.parentNode;const i=this._$AM;return void 0!==i&&11===(null==t?void 0:t.nodeType)&&(t=i.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,i=this){t=S(this,t,i),d(t)?t===A||null==t||""===t?(this._$AH!==A&&this._$AR(),this._$AH=A):t!==this._$AH&&t!==T&&this._(t):void 0!==t._$litType$?this.g(t):void 0!==t.nodeType?this.$(t):v(t)?this.T(t):this._(t);}k(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}$(t){this._$AH!==t&&(this._$AR(),this._$AH=this.k(t));}_(t){this._$AH!==A&&d(this._$AH)?this._$AA.nextSibling.data=t:this.$(r.createTextNode(t)),this._$AH=t;}g(t){var i;const{values:s,_$litType$:e}=t,o="number"==typeof e?this._$AC(t):(void 0===e.el&&(e.el=N.createElement(P(e.h,e.h[0]),this.options)),e);if((null===(i=this._$AH)||void 0===i?void 0:i._$AD)===o)this._$AH.v(s);else {const t=new M(o,this),i=t.u(this.options);t.v(s),this.$(i),this._$AH=t;}}_$AC(t){let i=E.get(t.strings);return void 0===i&&E.set(t.strings,i=new N(t)),i}T(t){c(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,e=0;for(const o of t)e===i.length?i.push(s=new R(this.k(u()),this.k(u()),this,this.options)):s=i[e],s._$AI(o),e++;e<i.length&&(this._$AR(s&&s._$AB.nextSibling,e),i.length=e);}_$AR(t=this._$AA.nextSibling,i){var s;for(null===(s=this._$AP)||void 0===s||s.call(this,!1,!0,i);t&&t!==this._$AB;){const i=t.nextSibling;t.remove(),t=i;}}setConnected(t){var i;void 0===this._$AM&&(this._$Cp=t,null===(i=this._$AP)||void 0===i||i.call(this,t));}}class k{constructor(t,i,s,e,o){this.type=1,this._$AH=A,this._$AN=void 0,this.element=t,this.name=i,this._$AM=e,this.options=o,s.length>2||""!==s[0]||""!==s[1]?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=A;}get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}_$AI(t,i=this,s,e){const o=this.strings;let n=!1;if(void 0===o)t=S(this,t,i,0),n=!d(t)||t!==this._$AH&&t!==T,n&&(this._$AH=t);else {const e=t;let l,h;for(t=o[0],l=0;l<o.length-1;l++)h=S(this,e[s+l],i,l),h===T&&(h=this._$AH[l]),n||(n=!d(h)||h!==this._$AH[l]),h===A?t=A:t!==A&&(t+=(null!=h?h:"")+o[l+1]),this._$AH[l]=h;}n&&!e&&this.j(t);}j(t){t===A?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,null!=t?t:"");}}class H extends k{constructor(){super(...arguments),this.type=3;}j(t){this.element[this.name]=t===A?void 0:t;}}const I=s$1?s$1.emptyScript:"";class L extends k{constructor(){super(...arguments),this.type=4;}j(t){t&&t!==A?this.element.setAttribute(this.name,I):this.element.removeAttribute(this.name);}}class z extends k{constructor(t,i,s,e,o){super(t,i,s,e,o),this.type=5;}_$AI(t,i=this){var s;if((t=null!==(s=S(this,t,i,0))&&void 0!==s?s:A)===T)return;const e=this._$AH,o=t===A&&e!==A||t.capture!==e.capture||t.once!==e.once||t.passive!==e.passive,n=t!==A&&(e===A||o);o&&this.element.removeEventListener(this.name,this,e),n&&this.element.addEventListener(this.name,this,t),this._$AH=t;}handleEvent(t){var i,s;"function"==typeof this._$AH?this._$AH.call(null!==(s=null===(i=this.options)||void 0===i?void 0:i.host)&&void 0!==s?s:this.element,t):this._$AH.handleEvent(t);}}class Z{constructor(t,i,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=i,this.options=s;}get _$AU(){return this._$AM._$AU}_$AI(t){S(this,t);}}const B=i$1.litHtmlPolyfillSupport;null==B||B(N,R),(null!==(t$1=i$1.litHtmlVersions)&&void 0!==t$1?t$1:i$1.litHtmlVersions=[]).push("2.8.0");const D=(t,i,s)=>{var e,o;const n=null!==(e=null==s?void 0:s.renderBefore)&&void 0!==e?e:i;let l=n._$litPart$;if(void 0===l){const t=null!==(o=null==s?void 0:s.renderBefore)&&void 0!==o?o:null;n._$litPart$=l=new R(i.insertBefore(u(),t),t,void 0,null!=s?s:{});}return l._$AI(t),l};
+
+/**
+ * @license
+ * Copyright 2017 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */var l,o;class s extends u$1{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0;}createRenderRoot(){var t,e;const i=super.createRenderRoot();return null!==(t=(e=this.renderOptions).renderBefore)&&void 0!==t||(e.renderBefore=i.firstChild),i}update(t){const i=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=D(i,this.renderRoot,this.renderOptions);}connectedCallback(){var t;super.connectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!0);}disconnectedCallback(){var t;super.disconnectedCallback(),null===(t=this._$Do)||void 0===t||t.setConnected(!1);}render(){return T}}s.finalized=!0,s._$litElement$=!0,null===(l=globalThis.litElementHydrateSupport)||void 0===l||l.call(globalThis,{LitElement:s});const n$2=globalThis.litElementPolyfillSupport;null==n$2||n$2({LitElement:s});(null!==(o=globalThis.litElementVersions)&&void 0!==o?o:globalThis.litElementVersions=[]).push("3.3.3");
+
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-var K,G;null==J||J(q,L),(null!==(m=globalThis.litHtmlVersions)&&void 0!==m?m:globalThis.litHtmlVersions=[]).push("2.1.2");class Q extends p{constructor(){super(...arguments),this.renderOptions={host:this},this._$Dt=void 0}createRenderRoot(){var e,t;const i=super.createRenderRoot();return null!==(e=(t=this.renderOptions).renderBefore)&&void 0!==e||(t.renderBefore=i.firstChild),i}update(e){const t=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(e),this._$Dt=((e,t,i)=>{var s,n;const o=null!==(s=null==i?void 0:i.renderBefore)&&void 0!==s?s:t;let r=o._$litPart$;if(void 0===r){const e=null!==(n=null==i?void 0:i.renderBefore)&&void 0!==n?n:null;o._$litPart$=r=new L(t.insertBefore(w(),e),e,void 0,null!=i?i:{})}return r._$AI(e),r})(t,this.renderRoot,this.renderOptions)}connectedCallback(){var e;super.connectedCallback(),null===(e=this._$Dt)||void 0===e||e.setConnected(!0)}disconnectedCallback(){var e;super.disconnectedCallback(),null===(e=this._$Dt)||void 0===e||e.setConnected(!1)}render(){return U}}Q.finalized=!0,Q._$litElement$=!0,null===(K=globalThis.litElementHydrateSupport)||void 0===K||K.call(globalThis,{LitElement:Q});const X=globalThis.litElementPolyfillSupport;null==X||X({LitElement:Q}),(null!==(G=globalThis.litElementVersions)&&void 0!==G?G:globalThis.litElementVersions=[]).push("3.1.2");var Y="[^\\s]+";function ee(e,t){for(var i=[],s=0,n=e.length;s<n;s++)i.push(e[s].substr(0,t));return i}var te=function(e){return function(t,i){var s=i[e].map((function(e){return e.toLowerCase()})),n=s.indexOf(t.toLowerCase());return n>-1?n:null}};function ie(e){for(var t=[],i=1;i<arguments.length;i++)t[i-1]=arguments[i];for(var s=0,n=t;s<n.length;s++){var o=n[s];for(var r in o)e[r]=o[r]}return e}var se=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],ne=["January","February","March","April","May","June","July","August","September","October","November","December"],oe=ee(ne,3),re={dayNamesShort:ee(se,3),dayNames:se,monthNamesShort:oe,monthNames:ne,amPm:["am","pm"],DoFn:function(e){return e+["th","st","nd","rd"][e%10>3?0:(e-e%10!=10?1:0)*e%10]}},ae=(ie({},re),function(e){return+e-1}),le=[null,"[1-9]\\d?"],de=[null,Y],ue=["isPm",Y,function(e,t){var i=e.toLowerCase();return i===t.amPm[0]?0:i===t.amPm[1]?1:null}],ce=["timezoneOffset","[^\\s]*?[\\+\\-]\\d\\d:?\\d\\d|[^\\s]*?Z?",function(e){var t=(e+"").match(/([+-]|\d\d)/gi);if(t){var i=60*+t[1]+parseInt(t[2],10);return"+"===t[0]?i:-i}return 0}];te("monthNamesShort"),te("monthNames");var he,ve;!function(){try{(new Date).toLocaleDateString("i")}catch(e){return"RangeError"===e.name}}(),function(){try{(new Date).toLocaleString("i")}catch(e){return"RangeError"===e.name}}(),function(){try{(new Date).toLocaleTimeString("i")}catch(e){return"RangeError"===e.name}}(),function(e){e.language="language",e.system="system",e.comma_decimal="comma_decimal",e.decimal_comma="decimal_comma",e.space_comma="space_comma",e.none="none"}(he||(he={})),function(e){e.language="language",e.system="system",e.am_pm="12",e.twenty_four="24"}(ve||(ve={}));
+const e$1=e=>n=>"function"==typeof n?((e,n)=>(customElements.define(e,n),n))(e,n):((e,n)=>{const{kind:t,elements:s}=n;return {kind:t,elements:s,finisher(n){customElements.define(e,n);}}})(e,n);
+
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const pe=e=>t=>"function"==typeof t?((e,t)=>(window.customElements.define(e,t),t))(e,t):((e,t)=>{const{kind:i,elements:s}=t;return{kind:i,elements:s,finisher(t){window.customElements.define(e,t)}}})(e,t)
+const i=(i,e)=>"method"===e.kind&&e.descriptor&&!("value"in e.descriptor)?{...e,finisher(n){n.createProperty(e.key,i);}}:{kind:"field",key:Symbol(),placement:"own",descriptor:{},originalKey:e.key,initializer(){"function"==typeof e.initializer&&(this[e.key]=e.initializer.call(this));},finisher(n){n.createProperty(e.key,i);}},e=(i,e,n)=>{e.constructor.createProperty(n,i);};function n$1(n){return (t,o)=>void 0!==o?e(n,t,o):i(n,t)}
+
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */,me=(e,t)=>"method"===t.kind&&t.descriptor&&!("value"in t.descriptor)?{...t,finisher(i){i.createProperty(t.key,e)}}:{kind:"field",key:Symbol(),placement:"own",descriptor:{},originalKey:t.key,initializer(){"function"==typeof t.initializer&&(this[t.key]=t.initializer.call(this))},finisher(i){i.createProperty(t.key,e)}};function _e(e){return(t,i)=>void 0!==i?((e,t,i)=>{t.constructor.createProperty(i,e)})(e,t,i):me(e,t)
-/**
- * @license
- * Copyright 2017 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */}function ge(e){return _e({...e,state:!0})}
+ */function t(t){return n$1({...t,state:!0})}
+
 /**
  * @license
  * Copyright 2021 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */var $e;null===($e=window.HTMLSlotElement)||void 0===$e||$e.prototype.assignedElements;let fe=class extends Q{setConfig(e){this._config=e}get _name(){var e;return(null===(e=this._config)||void 0===e?void 0:e.name)||""}get _show_controllers(){var e;return(null===(e=this._config)||void 0===e?void 0:e.show_controllers)||""}get _always_show_zones(){var e;return(null===(e=this._config)||void 0===e?void 0:e.always_show_zones)||!1}get _always_show_sequences(){var e;return(null===(e=this._config)||void 0===e?void 0:e.always_show_sequences)||!1}render(){return this.hass?j`
-      <paper-input
-        label="Name (Optional)"
-        .value=${this._name}
-        .configValue=${"name"}
-        @value-changed=${this._valueChanged}
-      ></paper-input>
-      <paper-input
-        label="Show controllers (CSV list)"
-        .value=${this._show_controllers}
-        .configValue=${"show_controllers"}
-        @value-changed=${this._valueChanged}
-      ></paper-input>
-      <ha-formfield label="Always show zones">
+ */var n;null!=(null===(n=window.HTMLSlotElement)||void 0===n?void 0:n.prototype.assignedElements)?(o,n)=>o.assignedElements(n):(o,n)=>o.assignedNodes(n).filter((o=>o.nodeType===Node.ELEMENT_NODE));
+
+// Polymer legacy event helpers used courtesy of the Polymer project.
+//
+// Copyright (c) 2017 The Polymer Authors. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are
+// met:
+//
+//    * Redistributions of source code must retain the above copyright
+// notice, this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above
+// copyright notice, this list of conditions and the following disclaimer
+// in the documentation and/or other materials provided with the
+// distribution.
+//    * Neither the name of Google Inc. nor the names of its
+// contributors may be used to endorse or promote products derived from
+// this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+/**
+ * Dispatches a custom event with an optional detail value.
+ *
+ * @param {string} type Name of event type.
+ * @param {*=} detail Detail value containing event-specific
+ *   payload.
+ * @param {{ bubbles: (boolean|undefined),
+ *           cancelable: (boolean|undefined),
+ *           composed: (boolean|undefined) }=}
+ *  options Object specifying options.  These may include:
+ *  `bubbles` (boolean, defaults to `true`),
+ *  `cancelable` (boolean, defaults to false), and
+ *  `node` on which to fire the event (HTMLElement, defaults to `this`).
+ * @return {Event} The new event that was fired.
+ */
+const fireEvent = (node, type, detail, options) => {
+    options = options || {};
+    // @ts-ignore
+    detail = detail === null || detail === undefined ? {} : detail;
+    const event = new Event(type, {
+        bubbles: options.bubbles === undefined ? true : options.bubbles,
+        cancelable: Boolean(options.cancelable),
+        composed: options.composed === undefined ? true : options.composed,
+    });
+    event.detail = detail;
+    node.dispatchEvent(event);
+    return event;
+};
+
+var common$3 = {
+	version: "Weergawe",
+	invalidConfiguration: "Ongeldige konfigurasie"
+};
+var editor$2 = {
+	title: {
+		name: "Titel (opsioneel)"
+	},
+	showControllers: {
+		name: "Wys beheerders (CSV lys)"
+	},
+	alwaysShowZones: {
+		name: "Wys altyd sones"
+	},
+	alwaysShowSequences: {
+		name: "Wys altyd volgordes"
+	},
+	showTimelineScheduled: {
+		name: "Wys geskeduleerde tydslyn"
+	},
+	showTimelineHistory: {
+		name: "Wys tydslyn geskiedenis"
+	}
+};
+var controller$2 = {
+	zones: {
+		name: "Sones",
+		buttonHint: "Wys/verberg sones"
+	},
+	sequences: {
+		name: "Volgordes",
+		buttonHint: "Wys/versteek volgordes"
+	}
+};
+var menu$2 = {
+	enable: {
+		name: "Aktiveer"
+	},
+	suspend: {
+		name: "Opskort",
+		hint: "Duur\n===============\nh:mm:ss\n<blank> = herstel"
+	},
+	manual: {
+		name: "Handmatig",
+		hint: "Duur"
+	},
+	pause: {
+		name: "Wag"
+	},
+	resume: {
+		name: "Hervat"
+	},
+	cancel: {
+		name: "Kanselleer"
+	},
+	adjust: {
+		name: "Aanpas",
+		hint: "Aanpassingsopsies\n===============\nPersentasie: %n\nWerklike: =0:00:00\nToename: +0:00:00\nAfname: -0:00:00\nHerstel: <blank>"
+	}
+};
+var af = {
+	common: common$3,
+	editor: editor$2,
+	controller: controller$2,
+	menu: menu$2
+};
+
+var af$1 = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    common: common$3,
+    controller: controller$2,
+    default: af,
+    editor: editor$2,
+    menu: menu$2
+});
+
+var common$2 = {
+	version: "Version",
+	invalidConfiguration: "Ungültige Konfiguration"
+};
+var editor$1 = {
+	title: {
+		name: "Title (optional)"
+	},
+	showControllers: {
+		name: "Zeige Controller (CSV list)"
+	},
+	alwaysShowZones: {
+		name: "Zeige Zonen immer an"
+	},
+	alwaysShowSequences: {
+		name: "Zeige Sequenzen immer an"
+	},
+	showTimelineScheduled: {
+		name: "Zeige geplante Ablaufpläne"
+	},
+	showTimelineHistory: {
+		name: "Zeige vergangene Ablaufpläne"
+	}
+};
+var controller$1 = {
+	zones: {
+		name: "Zonen",
+		buttonHint: "Ein/Ausblenden der Zonen"
+	},
+	sequences: {
+		name: "Sequenzen",
+		buttonHint: "Ein/Ausblenden der Sequenzen"
+	}
+};
+var menu$1 = {
+	enable: {
+		name: "Aktivieren"
+	},
+	suspend: {
+		name: "Pausieren",
+		hint: "Dauer\n===============\nh:mm:ss\n<blank> = reset"
+	},
+	manual: {
+		name: "Manuell",
+		hint: "Dauer"
+	},
+	pause: {
+		name: "Pause"
+	},
+	resume: {
+		name: "Fortsetzen"
+	},
+	cancel: {
+		name: "Abbrechen"
+	},
+	adjust: {
+		name: "Anpassen",
+		hint: "Anpassungs Optionen\n===============\nProzent: %n\nAktuell: =0:00:00\nErhöhen: +0:00:00\nVerringern -0:00:00\nReset: <blank>"
+	}
+};
+var de = {
+	common: common$2,
+	editor: editor$1,
+	controller: controller$1,
+	menu: menu$1
+};
+
+var de$1 = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    common: common$2,
+    controller: controller$1,
+    default: de,
+    editor: editor$1,
+    menu: menu$1
+});
+
+var common$1 = {
+	version: "Version",
+	invalidConfiguration: "Invalid configuration"
+};
+var editor = {
+	title: {
+		name: "Title (optional)"
+	},
+	showControllers: {
+		name: "Show controllers (CSV list)"
+	},
+	alwaysShowZones: {
+		name: "Always show zones"
+	},
+	alwaysShowSequences: {
+		name: "Always show sequences"
+	},
+	showTimelineScheduled: {
+		name: "Show timeline scheduled"
+	},
+	showTimelineHistory: {
+		name: "Show timeline history"
+	}
+};
+var controller = {
+	zones: {
+		name: "Zones",
+		buttonHint: "Show/hide zones"
+	},
+	sequences: {
+		name: "Sequences",
+		buttonHint: "Show/hide sequences"
+	}
+};
+var menu = {
+	enable: {
+		name: "Enable"
+	},
+	suspend: {
+		name: "Suspend",
+		hint: "Duration\n===============\nh:mm:ss\n<blank> = reset"
+	},
+	manual: {
+		name: "Manual",
+		hint: "Duration"
+	},
+	pause: {
+		name: "Pause"
+	},
+	resume: {
+		name: "Resume"
+	},
+	cancel: {
+		name: "Cancel"
+	},
+	adjust: {
+		name: "Adjust",
+		hint: "Adjustment options\n===============\nPercentage: %n\nActual: =0:00:00\nIncrease: +0:00:00\nDecrease: -0:00:00\nReset: <blank>"
+	}
+};
+var en = {
+	common: common$1,
+	editor: editor,
+	controller: controller,
+	menu: menu
+};
+
+var en$1 = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    common: common$1,
+    controller: controller,
+    default: en,
+    editor: editor,
+    menu: menu
+});
+
+var common = {
+	version: "Versjon",
+	invalid_configuration: "Ikke gyldig konfiguration"
+};
+var nb = {
+	common: common
+};
+
+var nb$1 = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    common: common,
+    default: nb
+});
+
+const languages = {
+    af: af$1,
+    de: de$1,
+    en: en$1,
+    nb: nb$1,
+};
+class localise {
+    constructor(preferred) {
+        if (!(preferred in languages)) {
+            preferred = preferred.substring(0, 2);
+            if (!(preferred in languages)) {
+                preferred = "en";
+            }
+        }
+        this.lang = preferred;
+    }
+    find(language, keys) {
+        let d = languages[language];
+        for (const k of keys) {
+            d = d[k];
+            if (d === undefined)
+                throw new Error();
+        }
+        return d;
+    }
+    t(key) {
+        const keys = key.split(".");
+        try {
+            return this.find(this.lang, keys);
+        }
+        catch (e) {
+            try {
+                if (this.lang !== "en")
+                    return this.find("en", keys);
+                else
+                    return "";
+            }
+            catch (e) {
+                return "";
+            }
+        }
+    }
+}
+
+const loc$1 = new localise(window.navigator.language);
+let IrrigationUnlimitedCardEditor = class IrrigationUnlimitedCardEditor extends s {
+    setConfig(config) {
+        this._config = config;
+    }
+    get _name() {
+        var _a;
+        return ((_a = this._config) === null || _a === void 0 ? void 0 : _a.name) || "";
+    }
+    get _show_controllers() {
+        var _a;
+        return ((_a = this._config) === null || _a === void 0 ? void 0 : _a.show_controllers) || "";
+    }
+    get _always_show_zones() {
+        var _a;
+        return ((_a = this._config) === null || _a === void 0 ? void 0 : _a.always_show_zones) || false;
+    }
+    get _always_show_sequences() {
+        var _a;
+        return ((_a = this._config) === null || _a === void 0 ? void 0 : _a.always_show_sequences) || false;
+    }
+    get _show_timeline_scheduled() {
+        var _a;
+        return ((_a = this._config) === null || _a === void 0 ? void 0 : _a.show_timeline_scheduled) || false;
+    }
+    get _show_timeline_history() {
+        var _a;
+        return ((_a = this._config) === null || _a === void 0 ? void 0 : _a.show_timeline_history) || true;
+    }
+    render() {
+        if (!this.hass) {
+            return A;
+        }
+        return x `
+      <div class="iu-editor-row">
+        <ha-textfield
+          label=${loc$1.t("editor.title.name")}
+          .value=${this._name}
+          .configValue=${"name"}
+          @input="${this._valueChanged}"
+        ></ha-textfield>
+      </div>
+      <div class="iu-editor-row">
+        <ha-textfield
+          label=${loc$1.t("editor.showControllers.name")}
+          .value=${this._show_controllers}
+          .configValue=${"show_controllers"}
+          @input="${this._valueChanged}"
+        ></ha-textfield>
+      </div>
+      <div class="iu-editor-row">
         <ha-switch
+          id=${this._always_show_zones}
           .checked=${this._always_show_zones}
           .configValue=${"always_show_zones"}
           @change=${this._valueChanged}
-        </ha-switch>
-      </ha-formfield>
-      <ha-formfield label="Always show sequences">
+        ></ha-switch>
+        <label for=${this._always_show_zones}
+          >${loc$1.t("editor.alwaysShowZones.name")}</label
+        >
+      </div>
+      <div class="iu-editor-row">
         <ha-switch
+          id=${this._always_show_sequences}
           .checked=${this._always_show_sequences}
           .configValue=${"always_show_sequences"}
           @change=${this._valueChanged}
-        </ha-switch>
-      </ha-formfield>
-    `:P}_valueChanged(e){if(!this._config||!this.hass)return;const t=e.target;if(this[`_${t.configValue}`]!==t.value){if(t.configValue)if(""===t.value){const e=Object.assign({},this._config);delete e[t.configValue],this._config=e}else this._config=Object.assign(Object.assign({},this._config),{[t.configValue]:void 0!==t.checked?t.checked:t.value});!function(e,t,i,s){s=s||{},i=null==i?{}:i;var n=new Event(t,{bubbles:void 0===s.bubbles||s.bubbles,cancelable:Boolean(s.cancelable),composed:void 0===s.composed||s.composed});n.detail=i,e.dispatchEvent(n)}(this,"config-changed",{config:this._config})}}};fe.styles=o`
-  `,e([_e({attribute:!1})],fe.prototype,"hass",void 0),e([ge()],fe.prototype,"_config",void 0),fe=e([pe("irrigation-unlimited-card-editor")],fe);var ye={version:"Version",invalid_configuration:"Invalid configuration",show_warning:"Show Warning",show_error:"Show Error"},be={common:ye},we={version:"Versjon",invalid_configuration:"Ikke gyldig konfiguration",show_warning:"Vis advarsel"},Ae={common:we};const Se={en:Object.freeze({__proto__:null,common:ye,default:be}),nb:Object.freeze({__proto__:null,common:we,default:Ae})};function xe(e,t="",i=""){const s=(localStorage.getItem("selectedLanguage")||"en").replace(/['"]+/g,"").replace("-","_");let n;try{n=e.split(".").reduce(((e,t)=>e[t]),Se[s])}catch(t){n=e.split(".").reduce(((e,t)=>e[t]),Se.en)}return void 0===n&&(n=e.split(".").reduce(((e,t)=>e[t]),Se.en)),""!==t&&""!==i&&(n=n.replace(t,i)),n}console.info(`%c  IRRIGATION-UNLIMITED-CARD \n%c  ${xe("common.version")} 2024.1.0    `,"color: orange; font-weight: bold; background: black","color: white; font-weight: bold; background: dimgray"),window.customCards=window.customCards||[],window.customCards.push({type:"irrigation-unlimited-card",name:"Irrigation Unlimited Card",description:"A companion card for the Irrigation Unlimited integration"});let Ee=class extends Q{constructor(){super(...arguments),this._iu_entities=void 0}static async getConfigElement(){return document.createElement("irrigation-unlimited-card-editor")}setConfig(e){if(!e)throw new Error(xe("common.invalid_configuration"));this.config=e}static getStubConfig(){return{}}getCardSize(){return 1}shouldUpdate(e){var t;if(!this.hass)return!1;if(e.has("config"))return!0;if(null==this._iu_entities){this._iu_entities=[];for(const e in this.hass.states)if(e.startsWith("binary_sensor.irrigation_unlimited_")){const i=this.hass.states[e],s=new Date(i.last_updated);this._iu_entities.push({entity_id:e,last_updated:s,name:i.attributes.friendly_name,zone_id:null===(t=i.attributes)||void 0===t?void 0:t.zone_id})}return!0}{let e=!1;for(const t of this._iu_entities){const i=new Date(this.hass.states[t.entity_id].last_updated);i>t.last_updated&&(t.last_updated=i,e=!0)}return e}}render(){return this.hass?j`
+        ></ha-switch>
+        <label for=${this._always_show_sequences}
+          >${loc$1.t("editor.alwaysShowSequences.name")}</label
+        >
+      </div>
+      <div class="iu-editor-row">
+        <ha-switch
+          id=${this._show_timeline_scheduled}
+          .checked=${this._show_timeline_scheduled}
+          .configValue=${"show_timeline_scheduled"}
+          @change=${this._valueChanged}
+        ></ha-switch>
+        <label for=${this._show_timeline_scheduled}
+          >${loc$1.t("editor.showTimelineScheduled.name")}</label
+        >
+      </div>
+      <div class="iu-editor-row">
+        <ha-switch
+          id=${this._show_timeline_history}
+          .checked=${this._show_timeline_history}
+          .configValue=${"show_timeline_history"}
+          @change=${this._valueChanged}
+        ></ha-switch>
+        <label for=${this._show_timeline_history}
+          >${loc$1.t("editor.showTimelineHistory.name")}</label
+        >
+      </div>
+    `;
+    }
+    _valueChanged(ev) {
+        if (!this._config || !this.hass) {
+            return;
+        }
+        const target = ev.target;
+        if (target.configValue) {
+            if (target.value === "") {
+                const tmpConfig = Object.assign({}, this._config);
+                delete tmpConfig[target.configValue];
+                this._config = tmpConfig;
+            }
+            else {
+                this._config = Object.assign(Object.assign({}, this._config), { [target.configValue]: target.checked !== undefined ? target.checked : target.value });
+            }
+        }
+        fireEvent(this, "config-changed", { config: this._config }, { bubbles: true, composed: true });
+    }
+};
+IrrigationUnlimitedCardEditor.styles = i$2 `
+    ha-switch {
+      padding: 16px 6px;
+    }
+    ha-textfield {
+      width: 100%;
+    }
+  `;
+__decorate([
+    n$1({ attribute: false })
+], IrrigationUnlimitedCardEditor.prototype, "hass", void 0);
+__decorate([
+    t()
+], IrrigationUnlimitedCardEditor.prototype, "_config", void 0);
+IrrigationUnlimitedCardEditor = __decorate([
+    e$1("irrigation-unlimited-card-editor")
+], IrrigationUnlimitedCardEditor);
+
+function hms_to_secs(value) {
+    if (!value)
+        return undefined;
+    var hms = value.split(":");
+    return +hms[0] * 60 * 60 + +hms[1] * 60 + (+hms[2] || 0);
+}
+function secs_to_hms(value) {
+    if (!value)
+        return undefined;
+    const hours = Math.floor(value / 3600);
+    const minutes = Math.floor((value - hours * 3600) / 60);
+    const seconds = value % 60;
+    return (String(hours) +
+        ":" +
+        String(minutes).padStart(2, "0") +
+        ":" +
+        String(seconds).padStart(2, "0"));
+}
+function date_to_str(value) {
+    if (value !== null && !isNaN(value.getTime())) {
+        return value.toLocaleTimeString(undefined, {
+            weekday: "short",
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: false,
+        });
+    }
+    return "";
+}
+function elapsed_secs(d1, d2) {
+    return Math.round((d1.getTime() - d2.getTime()) / 1000);
+}
+function percent_completed(elapsed, total) {
+    return Math.round((elapsed / total) * 100);
+}
+
+class IUBase {
+    constructor() {
+        this.start = undefined;
+        this.status = undefined;
+        this._duration = undefined;
+        this._remaining = undefined;
+        this._percent_completed = undefined;
+    }
+    get duration() {
+        return secs_to_hms(this._duration);
+    }
+    set duration(value) {
+        this._duration = hms_to_secs(value);
+        return;
+    }
+    get remaining() {
+        return secs_to_hms(this._remaining);
+    }
+    set remaining(value) {
+        this._remaining = hms_to_secs(value);
+    }
+    get percent_completed() {
+        return this._percent_completed;
+    }
+    update_stats(now) {
+        if (this.start && this._duration) {
+            if (this.status === "on" || this.status === "delay") {
+                const elapsed = elapsed_secs(now, this.start);
+                this._remaining = this._duration - elapsed;
+                this._percent_completed = percent_completed(elapsed, this._duration);
+            }
+        }
+    }
+    clear_stats() {
+        this._remaining = this._percent_completed = undefined;
+    }
+}
+class IUEntity extends IUBase {
+    get id1() {
+        return this.index + 1;
+    }
+    constructor(data) {
+        super();
+        this.last_updated = undefined;
+        this.index = data.index;
+        this.name = data.name;
+        this.entity_id = data.entity_id;
+    }
+    update(hass) {
+        let result = 0 /* IUUpdateStatus.None */;
+        const entity = hass.states[this.entity_id];
+        const date = new Date(entity.last_updated);
+        if (this.last_updated === undefined || date > this.last_updated) {
+            this.last_updated = date;
+            result |= 1 /* IUUpdateStatus.EntityUpdated */;
+            this.status = entity.attributes.status;
+            if (this.status === "on" ||
+                this.status === "delay" ||
+                this.status === "paused") {
+                this.start = new Date(entity.attributes.current_start);
+                this.duration = entity.attributes.current_duration;
+                this.remaining = entity.attributes.time_remaining;
+            }
+            else {
+                this.start = undefined;
+                this.clear_stats();
+            }
+        }
+        if (this.status === "on" || this.status === "delay")
+            result |= 2 /* IUUpdateStatus.TimerRequired */;
+        return result;
+    }
+    timer(now) {
+        if (this.status === "on" || this.status === "delay")
+            this.update_stats(now);
+    }
+}
+class IUSequenceZone extends IUBase {
+    get id1() {
+        return this.index + 1;
+    }
+    constructor(data) {
+        super();
+        this.enabled = true;
+        this.suspended = null;
+        this.index = data.index;
+        this.zone_ids = data.zone_ids;
+    }
+    assign(szs) {
+        this.icon = szs.icon;
+        this.enabled = szs.enabled;
+        this.suspended = szs.suspended ? new Date(szs.suspended) : null;
+        this.adjustment = szs.adjustment;
+        if (szs.start) {
+            this.start = new Date(szs.start);
+            this.duration = szs.duration;
+        }
+        else {
+            this.start = undefined;
+            this.duration = "0:00:00";
+        }
+        if (this.status === "off" && szs.status === "on") {
+            this._remaining = this._duration;
+        }
+        else if (szs.status === "off")
+            this._remaining = undefined;
+        this.status = szs.status;
+    }
+}
+class IUSequence extends IUEntity {
+    constructor(data) {
+        super(data);
+        this.zones = [];
+        for (const z of data.zones)
+            this.zones.push(new IUSequenceZone(z));
+    }
+    update(hass) {
+        let result = super.update(hass);
+        if ((result & 1 /* IUUpdateStatus.EntityUpdated */) !== 0) {
+            const entity = hass.states[this.entity_id];
+            for (const szs of entity.attributes.zones)
+                this.zones[szs.index].assign(szs);
+        }
+        return result;
+    }
+    timer(now) {
+        super.timer(now);
+        if (this.status === "on")
+            for (const z of this.zones)
+                if (z.status === "on")
+                    z.update_stats(now);
+    }
+}
+class IUZone extends IUEntity {
+    constructor(data) {
+        super(data);
+        this.zone_id = data.zone_id;
+    }
+}
+class IUController extends IUEntity {
+    constructor(data) {
+        super(data);
+        this.zones = [];
+        this.sequences = [];
+        this.controller_id = data.controller_id;
+        for (const z of data.zones)
+            this.zones.push(new IUZone(z));
+        for (const s of data.sequences)
+            this.sequences.push(new IUSequence(s));
+    }
+    lookup_zone_name(zone_id) {
+        for (const z of this.zones)
+            if (z.zone_id === zone_id)
+                return z.name;
+        return undefined;
+    }
+    sequence_status(status) {
+        for (const s of this.sequences) {
+            if (s.status === status)
+                return true;
+        }
+        return false;
+    }
+    pause_resume_status() {
+        let result = 0;
+        if (this.sequence_status("on"))
+            result |= 1;
+        if (this.sequence_status("paused"))
+            result |= 2;
+        return result;
+    }
+    update(hass) {
+        let result = super.update(hass);
+        for (const z of this.zones)
+            result |= z.update(hass);
+        for (const s of this.sequences)
+            result |= s.update(hass);
+        return result;
+    }
+}
+class IUCoordinator {
+    constructor(parent) {
+        this.initialised = false;
+        this.version = "";
+        this.timer_id = undefined;
+        this.parent = parent;
+        this.controllers = [];
+    }
+    async _getInfo(hass) {
+        try {
+            const response = (await hass.callService("irrigation_unlimited", "get_info", {}, { entity_id: "irrigation_unlimited.coordinator" }, true, true)).response;
+            return response;
+        }
+        catch (e) {
+            console.log(e);
+            throw e;
+        }
+    }
+    init(hass) {
+        if (!hass || this.initialised)
+            return;
+        this._getInfo(hass).then((response) => {
+            this.version = response.version;
+            for (const c of response.controllers)
+                this.controllers.push(new IUController(c));
+            this.initialised = true;
+            this.parent.requestUpdate();
+        });
+    }
+    update(hass) {
+        if (!this.initialised)
+            return false;
+        let result = 0 /* IUUpdateStatus.None */;
+        for (const c of this.controllers)
+            result |= c.update(hass);
+        if (this.timer_id === undefined &&
+            (result & 2 /* IUUpdateStatus.TimerRequired */) !== 0) {
+            this.start_timer(hass);
+        }
+        else if (this.timer_id !== undefined &&
+            (result & 2 /* IUUpdateStatus.TimerRequired */) === 0) {
+            this.stop_timer();
+        }
+        return result !== 0;
+    }
+    start_timer(_hass) {
+        if (this.timer_id)
+            return;
+        this.timer_id = setInterval((function (scope) {
+            return function () {
+                const now = new Date();
+                for (const c of scope.controllers) {
+                    c.timer(now);
+                    for (const z of c.zones)
+                        z.timer(now);
+                    for (const s of c.sequences)
+                        s.timer(now);
+                }
+                scope.parent.requestUpdate();
+            };
+        })(this), 1000);
+    }
+    stop_timer() {
+        if (!this.timer_id)
+            return;
+        clearInterval(this.timer_id);
+        this.timer_id = undefined;
+    }
+}
+
+const styles = i$2 `
+  .iu-controller.iu-hidden {
+    display: none;
+  }
+
+  .iu-control-panel {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  .iu-control-panel-item {
+    padding: 0.5em 0 0.5em 1em;
+  }
+
+  .iu-zones.iu-hidden.iu-content {
+    display: none;
+  }
+
+  .iu-sequences.iu-hidden.iu-content {
+    display: none;
+  }
+
+  .iu-hidden .iu-content {
+    display: none;
+  }
+
+  .iu-hidden .iu-expander::before {
+    content: "\u25B6";
+    font-size: large;
+  }
+
+  .iu-expander::before {
+    content: "\u25BC";
+    font-size: large;
+  }
+
+  .iu-controller-row.iu-td {
+    display: flex;
+    align-items: center;
+    min-height: 3em;
+  }
+
+  .iu-zone-row.iu-td {
+    display: flex;
+    align-items: center;
+    min-height: 3em;
+  }
+
+  .iu-sequence-row.iu-td {
+    display: flex;
+    align-items: center;
+    min-height: 3em;
+  }
+
+  .iu-sequence-zone-row.iu-td {
+    display: flex;
+    align-items: center;
+    height: 2em;
+  }
+
+  .iu-td {
+    display: flex;
+    align-items: center;
+  }
+
+  .iu-td1 {
+    flex: 1.5em;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .iu-td2 {
+    flex: 30px;
+    text-align: center;
+  }
+
+  .iu-td3 {
+    flex: 40%;
+    text-align: left;
+  }
+
+  .iu-td4 {
+    flex: 20%;
+    text-align: center;
+  }
+
+  .iu-td5 {
+    flex: 15%;
+    text-align: center;
+  }
+
+  .iu-td6 {
+    flex: 15%;
+    text-align: center;
+  }
+
+  .iu-td7 {
+    flex: 10%;
+    text-align: center;
+  }
+
+  /* Timeline colouring */
+  .iu-timeline-scheduled,
+  .iu-timeline-scheduled .iu-schedule,
+  .iu-timeline-next,
+  .iu-timeline-next .iu-schedule {
+    color: var(--label-badge-blue, #039be5);
+  }
+
+  .iu-timeline-running,
+  .iu-timeline-running .iu-schedule {
+    color: var(--label-badge-green, #43a047);
+  }
+
+  .iu-timeline-history {
+    color: var(--secondary-text-color, #727272);
+  }
+
+  /* Duration colouring */
+  .iu-sequence.iu-on .iu-sequence-zone:not(.iu-on) .iu-duration,
+  .iu-sequence.iu-paused .iu-sequence-zone:not(.iu-on) .iu-duration,
+  .iu-sequence.iu-delay .iu-sequence-zone:not(.iu-on) .iu-duration {
+    color: var(--label-badge-blue);
+  }
+
+  .iu-controller.iu-on .iu-controller-row .iu-duration,
+  .iu-zone.iu-on .iu-zone-row .iu-duration,
+  .iu-sequence.iu-on .iu-sequence-row .iu-duration,
+  .iu-sequence.iu-delay .iu-sequence-row .iu-duration,
+  .iu-sequence.iu-on .iu-sequence-zone-row .iu-duration {
+    color: var(--state-on-color, #66a61e);
+  }
+
+  .iu-sequence.iu-paused .iu-sequence-row .iu-duration,
+  .iu-sequence.iu-paused .iu-sequence-zone.iu-on .iu-duration {
+    color: var(--state-on-color, #66a61e);
+    animation: 1s step-end infinite duration-paused;
+  }
+
+  @keyframes duration-paused {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  /* Schedule colouring */
+  .iu-schedule {
+    color: var(--secondary-text-color, #727272);
+    font-size: small;
+  }
+
+  .iu-controller.iu-manual .iu-schedule,
+  .iu-zone.iu-manual .iu-zone-row .iu-schedule,
+  .iu-sequence.iu-manual .iu-schedule {
+    color: var(--label-badge-red, #df4c1e);
+  }
+
+  .iu-controller.iu-suspended .iu-start,
+  .iu-zone.iu-suspended .iu-zone-row .iu-schedule,
+  .iu-sequence.iu-suspended .iu-schedule {
+    color: var(--label-badge-yellow, #ffff00);
+    font-style: italic;
+  }
+
+  /* Name colouring */
+  .iu-name {
+    color: var(--secondary-text-color, #727272);
+    font-weight: 500;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  /* Icon colouring */
+  ha-icon {
+    color: var(--state-icon-color, #44739e);
+  }
+
+  .iu-controller.iu-on .iu-controller-row .iu-td2 ha-icon,
+  .iu-controller.iu-delay .iu-controller-row .iu-td2 ha-icon,
+  .iu-zone.iu-on .iu-zone-row .iu-td2 ha-icon,
+  .iu-sequence.iu-on .iu-sequence-row .iu-td2 ha-icon,
+  .iu-sequence.iu-paused .iu-sequence-row .iu-td2 ha-icon,
+  .iu-sequence.iu-delay .iu-sequence-row .iu-td2 ha-icon,
+  .iu-sequence-zone.iu-on .iu-td2 ha-icon {
+    color: var(--state-icon-active-color, #fdd835);
+  }
+
+  .iu-menu {
+    position: relative;
+    display: inline-block;
+  }
+
+  .iu-menu-button {
+    background-color: transparent;
+    text-align: center;
+    display: block;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+  }
+
+  .iu-menu-content {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    width: 200px;
+    padding: 10px 0;
+    position: absolute;
+    background-color: var(--card-background-color, white);
+    right: 0;
+    box-shadow: 0px 0px 7px 0px rgba(50, 50, 50, 0.75);
+    border-radius: 5px;
+    z-index: 1;
+  }
+
+  .iu-menu-content.iu-hidden {
+    display: none;
+  }
+
+  .iu-menu-content .iu-menu-item {
+    display: flex;
+    padding: 0px 5px;
+    line-height: 48px;
+  }
+
+  .iu-menu .iu-menu-item:hover {
+    color: var(--primary-color, #b3e5fc);
+    background-color: var(--secondary-background-color, #e5e5e5);
+  }
+
+  .iu-menu-item.iu-hidden {
+    display: none;
+  }
+
+  .iu-mc1 {
+    flex: 30%;
+    text-align: left;
+  }
+
+  .iu-mc2 {
+    flex: 40%;
+    text-align: right;
+  }
+
+  .iu-mc3 {
+    flex: 30%;
+    text-align: center;
+  }
+
+  .iu-mc3 ha-icon {
+    display: flex;
+  }
+
+  .iu-adjust-input:invalid,
+  .iu-time-input:invalid {
+    color: var(--label-badge-red, #df4c1e);
+  }
+`;
+
+const CARD_VERSION = "2024.8.0";
+
+const loc = new localise(window.navigator.language);
+/* eslint no-console: 0 */
+console.info(`%c  IRRIGATION-UNLIMITED-CARD \n%c  ${loc.t("common.version")} ${CARD_VERSION}    `, "color: orange; font-weight: bold; background: black", "color: white; font-weight: bold; background: dimgray");
+window.customCards = window.customCards || [];
+window.customCards.push({
+    type: "irrigation-unlimited-card",
+    name: "Irrigation Unlimited Card",
+    description: "A companion card for the Irrigation Unlimited integration",
+});
+let IrrigationUnlimitedCard = class IrrigationUnlimitedCard extends s {
+    constructor() {
+        super(...arguments);
+        this.iu_coordinator = new IUCoordinator(this);
+    }
+    static async getConfigElement() {
+        return document.createElement("irrigation-unlimited-card-editor");
+    }
+    setConfig(config) {
+        if (!config) {
+            throw new Error(loc.t("common.invalidConfiguration"));
+        }
+        this.config = config;
+    }
+    static getStubConfig() {
+        return {};
+    }
+    getCardSize() {
+        return 1;
+    }
+    firstUpdated(_changedProperties) {
+        this.iu_coordinator.init(this.hass);
+    }
+    shouldUpdate(changedProps) {
+        if (!this.hass) {
+            return false;
+        }
+        if (changedProps.has("config"))
+            return true;
+        return this.iu_coordinator.update(this.hass);
+    }
+    render() {
+        if (!this.hass)
+            return A;
+        return x `
       <ha-card
         .header=${this.config.name}
         tabindex="0"
         id="iu-card"
         @click="${this._clickNet}"
       >
-        <div class="iu-header-row iu-td">
-          <div class="iu-td1"></div>
-          <div class="iu-td2"></div>
-          <div class="iu-td3"></div>
-          <div class="iu-td4"><ha-icon icon="mdi:clock-outline"></ha-icon></div>
-          <div class="iu-td5"><ha-icon icon="mdi:timer-sand"></ha-icon></div>
-          <div class="iu-td6"><ha-icon icon="mdi:delta"></ha-icon></div>
-          <div class="iu-td7"><ha-icon icon="mdi:toggle-switch-outline"></ha-icon></div>
+        <div class="iu-header">
+          <div class="iu-header-row iu-td">
+            <div class="iu-td1"></div>
+            <div class="iu-td2"></div>
+            <div class="iu-td3"></div>
+            <div class="iu-td4">
+              <ha-icon icon="mdi:clock-outline"></ha-icon>
+            </div>
+            <div class="iu-td5"><ha-icon icon="mdi:timer-sand"></ha-icon></div>
+            <div class="iu-td6"><ha-icon icon="mdi:delta"></ha-icon></div>
+            <div class="iu-td7"><ha-icon icon="mdi:menu"></ha-icon></div>
+          </div>
         </div>
         <div class="iu-controllers">
-          ${Array.from(Array(this.hass.states["irrigation_unlimited.coordinator"].attributes.controller_count).keys()).map((e=>this._renderController(e)))}
+          ${this.iu_coordinator.controllers.map((controller) => this._renderController(controller))}
         </div>
+        <div class="iu-footer"></div>
       </ha-card>
-    `:P}_renderController(e){var t;const i=this.hass.states["binary_sensor.irrigation_unlimited_c"+(e+1)+"_m"],s="on"===i.state,n=i.attributes.enabled,o=i.attributes.suspended,r=!(!this.config.show_controllers||this.config.show_controllers&&(null===(t=this.config.show_controllers)||void 0===t?void 0:t.replace(/\s/g,"").split(",").includes(e+1+""))),a=!this.config.always_show_zones,l=!this.config.always_show_sequences;let d,u,c,h="";s?(d=new Date(i.attributes.current_start),u=i.attributes.time_remaining,c=i.attributes.current_name):o?(d=new Date(o),u="",c=""):(d=new Date(i.attributes.next_start),u=i.attributes.next_duration,c=i.attributes.next_name),isNaN(d.getTime())||(h=d.toLocaleTimeString(void 0,{weekday:"short",hour:"numeric",minute:"2-digit",hour12:!1}));const v=["iu-controller iu-object"];r&&v.push("iu-hidden");const p=["iu-controller-row iu-td"];s&&p.push("iu-on"),n&&p.push("iu-enabled"),o&&p.push("iu-suspended");const m=["iu-zones iu-content"];a&&m.push("iu-hidden");const _=["iu-sequences iu-content"];return l&&_.push("iu-hidden"),j`
-      <div class=${v.join(" ")} iu-key="${e+1}.0.0.0">
-      <hr>
-        <div class=${p.join(" ")}>
+    `;
+    }
+    _renderController(controller) {
+        var _a;
+        const stateObj = this.hass.states[controller.entity_id];
+        const status = stateObj.attributes.status;
+        const isOn = stateObj.state === "on";
+        const isDelay = status === "delay";
+        const isEnabled = stateObj.attributes.enabled;
+        const suspended = stateObj.attributes.suspended;
+        const isHidden = !(!this.config.show_controllers ||
+            (this.config.show_controllers &&
+                ((_a = this.config.show_controllers) === null || _a === void 0 ? void 0 : _a.replace(/\s/g, "").split(",").includes(controller.id1 + ""))));
+        const zonesHidden = !this.config.always_show_zones;
+        const sequencesHidden = !this.config.always_show_sequences;
+        let start;
+        let duration;
+        let schedule_name;
+        if (isOn) {
+            start = new Date(stateObj.attributes.current_start);
+            duration = controller.remaining;
+            schedule_name = stateObj.attributes.current_name;
+        }
+        else if (suspended) {
+            start = new Date(suspended);
+            duration = "";
+            schedule_name = "";
+        }
+        else {
+            start = new Date(stateObj.attributes.next_start);
+            duration = stateObj.attributes.next_duration;
+            schedule_name = stateObj.attributes.next_name;
+        }
+        const startStr = date_to_str(start);
+        const classes = ["iu-controller", "iu-object"];
+        if (isHidden)
+            classes.push("iu-hidden");
+        if (isOn)
+            classes.push("iu-on");
+        if (isEnabled)
+            classes.push("iu-enabled");
+        if (suspended)
+            classes.push("iu-suspended");
+        if (isDelay)
+            classes.push("iu-delay");
+        const zonesClasses = ["iu-zones iu-content"];
+        if (zonesHidden)
+            zonesClasses.push("iu-hidden");
+        const sequencesClasses = ["iu-sequences iu-content"];
+        if (sequencesHidden)
+            sequencesClasses.push("iu-hidden");
+        return x `
+      <div class=${classes.join(" ")} iu-key="${controller.id1}.0.0.0">
+        <hr />
+        <div class="iu-controller-row iu-td">
           <div class="iu-td1"></div>
           <div class="iu-td2">
-            <ha-icon .icon=${i.attributes.icon}></ha-icon>
+            <ha-icon .icon=${stateObj.attributes.icon}></ha-icon>
           </div>
           <div class="iu-td3">
-            <span>${e+1}</span>
-            <span class="iu-name">${i.attributes.friendly_name}</span>
+            <span>${controller.id1}</span>
+            <span class="iu-name">${controller.name}</span>
           </div>
           <div class="iu-td4">
-            <div ?hidden=${!n}>
-              <span class="iu-schedule">${c}</span>
-              <br ?hidden=${s||o}>
-              <span class="iu-start" ?hidden=${s}>${h}</span>
+            <div ?hidden=${!isEnabled}>
+              <span class="iu-schedule">${schedule_name}</span>
+              <br ?hidden=${isOn || suspended} />
+              <span class="iu-start" ?hidden=${isOn}>${startStr}</span>
             </div>
           </div>
           <div class="iu-td5 iu-duration">
-            <div ?hidden=${!n}>
-              ${u}
-            </div>
+            <div ?hidden=${!isEnabled}>${duration}</div>
           </div>
           <div class="iu-td6"></div>
-          <div class="iu-td7">${this._renderMenu(n,!1,!0,!0,null,o)}</div>
+          <div class="iu-td7">
+            ${this._renderMenu(isEnabled, false, true, true, controller.pause_resume_status(), null, suspended)}
+          </div>
         </div>
         <div class="iu-control-panel">
-          <div class="iu-control-panel-item">
-            <label>Zones&nbsp;</label>
+          <div class="iu-control-panel-item iu-show-zones">
+            <label>${loc.t("controller.zones.name")}&nbsp;</label>
             <ha-switch
-              .checked="${!a}"
+              .checked="${!zonesHidden}"
               .disabled="${this.config.always_show_zones}"
-              @change="${this._toggleZones}">
+              title=${loc.t("controller.zones.buttonHint")}
+              @change="${this._toggleZones}"
+            >
             </ha-switch>
           </div>
-          <div class="iu-control-panel-item">
-            <label>Sequences&nbsp;</label>
+          <div class="iu-control-panel-item iu-show-sequences">
+            <label>${loc.t("controller.sequences.name")}&nbsp;</label>
             <ha-switch
-            .checked="${!l}"
-            .disabled="${this.config.always_show_sequences}"
-            @change="${this._toggleSequences}">
+              .checked="${!sequencesHidden}"
+              .disabled="${this.config.always_show_sequences}"
+              title=${loc.t("controller.sequences.buttonHint")}
+              @change="${this._toggleSequences}"
+            >
             </ha-switch>
           </div>
         </div>
-        <div class=${m.join(" ")}>
-          <hr>
-          ${Array.from(Array(i.attributes.zone_count).keys()).map((t=>this._renderZone(e,t)))}
+        <div class=${zonesClasses.join(" ")}>
+          <hr />
+          ${controller.zones.map((zone) => this._renderZone(controller, zone))}
         </div>
-        <div class=${_.join(" ")}>
-          <hr>
-          ${i.attributes.sequence_status.map((t=>this._renderSequence(e,t)))}
+        <div class=${sequencesClasses.join(" ")}>
+          <hr />
+          ${controller.sequences.map((sequence) => this._renderSequence(controller, sequence))}
         </div>
       </div>
-    `}_renderZone(e,t){const i=this.hass.states["binary_sensor.irrigation_unlimited_c"+(e+1)+"_z"+(t+1)],s="on"===i.state,n=i.attributes.enabled,o=i.attributes.suspended,r="blocked"===i.attributes.status;let a,l,d,u,c,h="";s?(a=new Date(i.attributes.current_start),l=i.attributes.time_remaining,d=i.attributes.current_schedule,u=i.attributes.current_name,c=i.attributes.current_adjustment):o?(a=new Date(o),l="",d=-1,u="",c=""):(a=new Date(i.attributes.next_start),l=i.attributes.next_duration,d=i.attributes.next_schedule,u=i.attributes.next_name,c=i.attributes.next_adjustment);const v=0===d;isNaN(a.getTime())||(h=a.toLocaleTimeString(void 0,{weekday:"short",hour:"numeric",minute:"2-digit",hour12:!1}));const p=["iu-zone-row iu-td"];s&&p.push("iu-on"),n&&p.push("iu-enabled"),o&&p.push("iu-suspended"),v&&p.push("iu-manual"),r&&p.push("iu-blocked");let m=i.attributes.timeline;return void 0===m&&(m=[]),j`
-      <div class="iu-zone iu-object" iu-key="${e+1}.${t+1}.0.0">
+    `;
+    }
+    _renderZone(controller, zone) {
+        const stateObj = this.hass.states[zone.entity_id];
+        const status = stateObj.attributes.status;
+        const isOn = stateObj.state === "on";
+        const isEnabled = stateObj.attributes.enabled;
+        const suspended = stateObj.attributes.suspended;
+        const isBlocked = status === "blocked";
+        let start;
+        let duration;
+        let schedule_index;
+        let schedule_name;
+        let adjustment;
+        if (isOn) {
+            start = new Date(stateObj.attributes.current_start);
+            duration = zone.remaining;
+            schedule_index = stateObj.attributes.current_schedule;
+            schedule_name = stateObj.attributes.current_name;
+            adjustment = stateObj.attributes.current_adjustment;
+        }
+        else if (suspended) {
+            start = new Date(suspended);
+            duration = "";
+            schedule_index = -1;
+            schedule_name = "";
+            adjustment = "";
+        }
+        else {
+            start = new Date(stateObj.attributes.next_start);
+            duration = stateObj.attributes.next_duration;
+            schedule_index = stateObj.attributes.next_schedule;
+            schedule_name = stateObj.attributes.next_name;
+            adjustment = stateObj.attributes.next_adjustment;
+        }
+        const isManual = schedule_index === 0;
+        if (isManual)
+            schedule_name = loc.t("menu.manual.name");
+        const startStr = date_to_str(start);
+        const classes = ["iu-zone", "iu-object"];
+        if (isOn)
+            classes.push("iu-on");
+        if (isEnabled)
+            classes.push("iu-enabled");
+        if (suspended)
+            classes.push("iu-suspended");
+        if (isManual)
+            classes.push("iu-manual");
+        if (isBlocked)
+            classes.push("iu-blocked");
+        let timeline = stateObj.attributes.timeline;
+        if (timeline !== undefined) {
+            // Filter items
+            timeline = timeline.filter((item) => {
+                return ((item.start !== item.end &&
+                    item.status === "history" &&
+                    (this.config.show_timeline_history === undefined ||
+                        this.config.show_timeline_history)) ||
+                    (item.status === "scheduled" &&
+                        this.config.show_timeline_scheduled) ||
+                    (item.status === "next" && this.config.show_timeline_scheduled) ||
+                    (item.status === "running" && this.config.show_timeline_scheduled));
+            });
+            // Sort items
+            timeline.sort((a, b) => {
+                const da = new Date(a.start).getTime();
+                const db = new Date(b.start).getTime();
+                if (a.status === "history" && a.status === "history")
+                    return db - da;
+                return da - db;
+            });
+            // Move first history item to head
+            const idx = timeline.findIndex((item) => item.status === "history");
+            if (idx >= 0)
+                timeline.unshift(timeline.splice(idx, 1)[0]);
+        }
+        else
+            timeline = [];
+        return x `
+      <div
+        class=${classes.join(" ")}
+        iu-key="${controller.id1}.${zone.id1}.0.0"
+      >
         <div class="iu-collapsible iu-hidden">
-          <div class=${p.join(" ")}>
-            <div class="iu-td1 iu-expander" @click="${this._toggleCollapse}"></div>
+          <div class="iu-zone-row iu-td">
+            <div
+              class="iu-td1 iu-expander"
+              @click="${this._toggleCollapse}"
+            ></div>
             <div class="iu-td2" @click="${this._toggleCollapse}">
-              <ha-icon .icon=${i.attributes.icon}></ha-icon>
+              <ha-icon .icon=${stateObj.attributes.icon}></ha-icon>
             </div>
-            <div class="iu-td3">
-              <span style="color: ${this._selectColour(t)}">${t+1}</span>
-              <span class="iu-name">${i.attributes.friendly_name}</span>
+            <div class="iu-td3" @click="${this._toggleCollapse}">
+              <span style="color: ${this._selectColour(zone.index)}"
+                >${zone.id1}</span
+              >
+              <span class="iu-name">${stateObj.attributes.friendly_name}</span>
             </div>
             <div class="iu-td4">
-              <div ?hidden=${!n||r}>
-                <span class="iu-schedule">${u}</span>
-                <br ?hidden=${s||v||o}>
-                <span class="iu-start" ?hidden=${s||v}>${h}</span>
+              <div ?hidden=${!isEnabled || isBlocked}>
+                <span class="iu-schedule">${schedule_name}</span>
+                <br ?hidden=${isOn || isManual || suspended} />
+                <span class="iu-start" ?hidden=${isOn || isManual}
+                  >${startStr}</span
+                >
               </div>
             </div>
             <div class="iu-td5 iu-duration">
-              <div ?hidden=${!n||o||r}>${l}</div>
+              <div ?hidden=${!isEnabled || suspended || isBlocked}>
+                ${duration}
+              </div>
             </div>
             <div class="iu-td6 iu-adjustment">
-              <div ?hidden=${!n||r||o||v}>${c}</div>
+              <div ?hidden=${!isEnabled || isBlocked || suspended || isManual}>
+                ${adjustment}
+              </div>
             </div>
-            <div class="iu-td7">${this._renderMenu(n,r,!0,!0,c,o)}</div>
+            <div class="iu-td7">
+              ${this._renderMenu(isEnabled, isBlocked, true, true, 0, adjustment, suspended)}
+            </div>
           </div>
-          <div class="iu-zone-history iu-content">
-            ${m.filter((function(e){return"history"===e.status&&e.start!==e.end})).map((e=>this._renderZoneHistory(e)))}
+          <div class="iu-zone-timelines iu-content">
+            ${timeline.map((item) => this._renderTimeline(item))}
           </div>
         </div>
       </div>
-    `}_renderZoneHistory(e){const t=new Date(e.start),i=new Date(new Date(e.end).getTime()-t.getTime()).toISOString().slice(12,19),s=t.toLocaleString(void 0,{weekday:"short",month:"numeric",day:"numeric",hour:"numeric",minute:"2-digit",hour12:!1});return j`
-      <div class="iu-zone-history iu-object">
-        <div class="iu-zone-history-row iu-td">
+    `;
+    }
+    _renderTimeline(timeline) {
+        const start = new Date(timeline.start);
+        const duration = new Date(new Date(timeline.end).getTime() - start.getTime())
+            .toISOString()
+            .slice(12, 19);
+        const startStr = start.toLocaleString(undefined, {
+            weekday: "short",
+            month: "numeric",
+            day: "numeric",
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: false,
+        });
+        const classes = ["iu-zone-timeline", "iu-object"];
+        let icon = "";
+        if (timeline.status === "history") {
+            classes.push("iu-timeline-history");
+            icon = "mdi:history";
+        }
+        else if (timeline.status === "scheduled") {
+            classes.push("iu-timeline-scheduled");
+            icon = "mdi:clock-outline";
+        }
+        else if (timeline.status === "next") {
+            classes.push("iu-timeline-next");
+            icon = "mdi:clock-star-four-points-outline";
+        }
+        else if (timeline.status === "running") {
+            classes.push("iu-timeline-running");
+            icon = "mdi:play";
+        }
+        let schedule_name;
+        if (timeline.schedule !== 0)
+            schedule_name = timeline.schedule_name;
+        else
+            schedule_name = loc.t("menu.manual.name");
+        return x `
+      <div class=${classes.join(" ")}>
+        <div class="iu-timeline-row iu-td">
           <div class="iu-td1"></div>
           <div class="iu-td2">
-            <ha-icon icon="mdi:history"></ha-icon>
+            <ha-icon icon=${icon}></ha-icon>
           </div>
-          <div class="iu-td3">${s}</div>
-          <div class="iu-td4 iu-schedule">${e.schedule_name}</div>
-          <div class="iu-td5 iu-duration">${i}</div>
-          <div class="iu-td6 iu-adjustment">${e.adjustment}</div>
+          <div class="iu-td3">${startStr}</div>
+          <div class="iu-td4 iu-schedule">${schedule_name}</div>
+          <div class="iu-td5 iu-duration">${duration}</div>
+          <div class="iu-td6 iu-adjustment">${timeline.adjustment}</div>
           <div class="iu-td7"></div>
         </div>
       </div>
-    `}_renderSequence(e,t){const i="on"===t.status||"paused"===t.status,s=t.enabled,n=t.suspended,o="blocked"===t.status,r=s&&!n&&null===t.schedule.index,a=0!==t.duration;let l,d,u,c="";n?(l=new Date(n),d="",u=""):(l=null!==t.start?new Date(t.start):null,d=new Date(1e3*t.duration).toISOString().substring(12,19),u=t.schedule.name),null===l||isNaN(l.getTime())||(c=l.toLocaleTimeString(void 0,{weekday:"short",hour:"numeric",minute:"2-digit",hour12:!1}));const h=["iu-sequence-row iu-td"];return i&&h.push("iu-on"),s&&h.push("iu-enabled"),n&&h.push("iu-suspended"),r&&h.push("iu-manual"),a&&h.push("iu-running"),o&&h.push("iu-blocked"),j`
-      <div class="iu-sequence iu-object" iu-key="${e+1}.0.${t.index+1}.0">
+    `;
+    }
+    _renderSequence(controller, sequence) {
+        const stateObj = this.hass.states[sequence.entity_id];
+        const status = stateObj.attributes.status;
+        const isOn = status === "on";
+        const isPaused = status === "paused";
+        const isDelay = status === "delay";
+        const isBlocked = status === "blocked";
+        const isEnabled = stateObj.attributes.enabled;
+        const suspended = stateObj.attributes.suspended;
+        let start;
+        let duration;
+        let schedule_index;
+        let schedule_name;
+        let adjustment;
+        if (isOn || isPaused || isDelay) {
+            start = new Date(stateObj.attributes.current_start);
+            duration = sequence.remaining;
+            schedule_index = stateObj.attributes.current_schedule;
+            schedule_name = stateObj.attributes.current_name;
+            adjustment = stateObj.attributes.adjustment;
+        }
+        else if (suspended) {
+            start = new Date(suspended);
+            duration = "";
+            schedule_index = -1;
+            schedule_name = "";
+            adjustment = "";
+        }
+        else {
+            start = new Date(stateObj.attributes.next_start);
+            duration = stateObj.attributes.next_duration;
+            schedule_index = stateObj.attributes.next_schedule;
+            schedule_name = stateObj.attributes.next_name;
+            adjustment = stateObj.attributes.adjustment;
+        }
+        const isManual = schedule_index === 0;
+        if (isManual)
+            schedule_name = loc.t("menu.manual.name");
+        const isRunning = sequence.remaining !== undefined;
+        const startStr = date_to_str(start);
+        const classes = ["iu-sequence", "iu-object"];
+        if (isOn)
+            classes.push("iu-on");
+        if (isPaused)
+            classes.push("iu-paused");
+        if (isDelay)
+            classes.push("iu-delay");
+        if (isEnabled)
+            classes.push("iu-enabled");
+        if (suspended)
+            classes.push("iu-suspended");
+        if (isManual)
+            classes.push("iu-manual");
+        if (isRunning)
+            classes.push("iu-running");
+        if (isBlocked)
+            classes.push("iu-blocked");
+        return x `
+      <div
+        class=${classes.join(" ")}
+        iu-key="${controller.id1}.0.${sequence.id1}.0"
+      >
         <div class="iu-collapsible iu-hidden">
-          <div class=${h.join(" ")}>
-            <div class="iu-td1 iu-expander" @click="${this._toggleCollapse}"></div>
+          <div class="iu-sequence-row iu-td">
+            <div
+              class="iu-td1 iu-expander"
+              @click="${this._toggleCollapse}"
+            ></div>
             <div class="iu-td2" @click="${this._toggleCollapse}">
-              <ha-icon .icon=${t.icon} ?is-on=${i}></ha-icon>
+              <ha-icon
+                .icon=${stateObj.attributes.icon}
+                ?is-on=${isOn || isPaused}
+              ></ha-icon>
             </div>
             <div class="iu-td3" @click="${this._toggleCollapse}">
-              <span>${t.index+1}</span>
-              <span class="iu-name">${t.name}</span>
+              <span>${sequence.id1}</span>
+              <span class="iu-name">${sequence.name}</span>
             </div>
             <div class="iu-td4">
-              <div ?hidden=${!s||o}>
-                <span class="iu-schedule">${u}</span>
-                <br ?hidden=${i||n}>
-                <span class="iu-start" ?hidden=${i}>${c}</span>
+              <div ?hidden=${!isEnabled || isBlocked}>
+                <span class="iu-schedule">${schedule_name}</span>
+                <br ?hidden=${isOn || isPaused || isDelay || suspended} />
+                <span class="iu-start" ?hidden=${isOn || isPaused || isDelay}
+                  >${startStr}</span
+                >
               </div>
             </div>
             <div class="iu-td5 iu-duration">
-              <div ?hidden=${!s||n||o||!a}>${d}</div>
+              <div ?hidden=${!isEnabled || suspended || isBlocked}>
+                ${duration}
+              </div>
             </div>
             <div class="iu-td6 iu-adjustment">
-            <div ?hidden=${r}>${t.adjustment}</div>
+              <div ?hidden=${isManual}>${adjustment}</div>
             </div>
-            <div class="iu-td7">${this._renderMenu(s,o,!0,!0,t.adjustment,n)}</div>
+            <div class="iu-td7">
+              ${this._renderMenu(isEnabled, isBlocked, true, true, status === "on" || status === "delay"
+            ? 1
+            : status === "paused"
+                ? 2
+                : 0, adjustment, suspended)}
+            </div>
           </div>
           <div class="iu-sequence-zones iu-content">
-            ${t.zones.map((i=>this._renderSequenceZone(e,t.index,i,r)))}
+            ${sequence.zones.map((zone) => this._renderSequenceZone(controller, sequence, zone, isManual))}
           </div>
         </div>
       </div>
-    `}_renderSequenceZone(e,t,i,s){const n="on"===i.status,o=i.enabled,r=i.suspended,a="blocked"===i.status,l=0!==i.duration,d=new Date(1e3*i.duration).toISOString().substring(12,19);let u="";if(null!==r){const e=new Date(r);isNaN(e.getTime())||(u=e.toLocaleTimeString(void 0,{weekday:"short",hour:"numeric",minute:"2-digit",hour12:!1}))}const c=["iu-sequence-zone-row iu-td"];return n&&c.push("iu-on"),o&&c.push("iu-enabled"),r&&c.push("iu-suspended"),s&&c.push("iu-manual"),l&&c.push("iu-running"),a&&c.push("iu-blocked"),j`
-      <div class="iu-sequence-zone iu-object" iu-key="${e+1}.0.${t+1}.${i.index+1}">
-        <div class=${c.join(" ")}>
+    `;
+    }
+    _renderSequenceZone(controller, sequence, sequenceZone, isManual) {
+        const status = sequenceZone.status;
+        const isOn = status === "on";
+        const isEnabled = sequenceZone.enabled;
+        const suspended = sequenceZone.suspended;
+        const isBlocked = status === "blocked";
+        const isRunning = sequenceZone.remaining !== undefined;
+        let duration;
+        let startStr = "";
+        if (isOn)
+            duration = sequenceZone.remaining;
+        else if (suspended)
+            duration = "";
+        else
+            duration = sequenceZone.duration;
+        if (suspended !== null) {
+            const start = new Date(suspended);
+            startStr = date_to_str(start);
+        }
+        const classes = ["iu-sequence-zone", "iu-object"];
+        if (isOn)
+            classes.push("iu-on");
+        if (isEnabled)
+            classes.push("iu-enabled");
+        if (suspended)
+            classes.push("iu-suspended");
+        if (isManual)
+            classes.push("iu-manual");
+        if (isRunning)
+            classes.push("iu-running");
+        if (isBlocked)
+            classes.push("iu-blocked");
+        return x `
+      <div
+        class=${classes.join(" ")}
+        iu-key="${controller.id1}.0.${sequence.id1}.${sequenceZone.id1}"
+      >
+        <div class="iu-sequence-zone-row iu-td">
           <div class="iu-td1"></div>
           <div class="iu-td2">
-            <ha-icon .icon=${i.icon} ?is-on=${n}></ha-icon>
+            <ha-icon .icon=${sequenceZone.icon} ?is-on=${isOn}></ha-icon>
           </div>
           <div class="iu-td3">
-            <span>${i.zone_ids.map(((t,i,s)=>this._renderSequenceZoneRef(e,t,i===s.length-1)))}</span>
+            <span
+              >${sequenceZone.zone_ids.map((zoneRef, index, array) => this._renderSequenceZoneRef(controller, zoneRef, index === array.length - 1))}</span
+            >
           </div>
           <div class="iu-td4">
-            <div ?hidden=${!o||a}>
-                <span class="iu-start">${u}</span>
+            <div ?hidden=${!isEnabled || isBlocked}>
+              <span class="iu-start">${startStr}</span>
             </div>
           </div>
           <div class="iu-td5 iu-duration">
-            <div ?hidden=${!o||r||a||!l}>${d}</div>
+            <div ?hidden=${!isEnabled || suspended !== null || isBlocked}>
+              ${duration}
+            </div>
           </div>
           <div class="iu-td6 iu-adjustment">
-            <div ?hidden=${s}>${i.adjustment}</div>
+            <div ?hidden=${isManual}>${sequenceZone.adjustment}</div>
           </div>
-          <div class="iu-td7">${this._renderMenu(o,a,!1,!1,i.adjustment,r)}</div>
+          <div class="iu-td7">
+            ${this._renderMenu(isEnabled, isBlocked, false, false, 0, sequenceZone.adjustment, suspended)}
+          </div>
         </div>
       </div>
-    `}_renderSequenceZoneRef(e,t,i){const s=`binary_sensor.irrigation_unlimited_c${e+1}_`;let n;if(void 0!==this._iu_entities)for(const e of this._iu_entities)if(e.entity_id.startsWith(s)&&e.zone_id===t){e.name&&(n=e.name);break}return n?j`<span class="iu-name">${n}${!1===i?", ":""}</span>`:j`
-      <span style="color: ${this._selectColour(parseInt(t)-1)}">${t}</span>
-    `}_renderMenu(e,t,i,s,n,o){return j`
+    `;
+    }
+    _renderSequenceZoneRef(controller, zoneRef, last) {
+        const name = controller.lookup_zone_name(zoneRef);
+        if (name)
+            return x `<span class="iu-name"
+        >${name}${last === false ? ", " : ""}</span
+      >`;
+        return x `
+      <span style="color: ${this._selectColour(parseInt(zoneRef) - 1)}"
+        >${zoneRef}</span
+      >
+    `;
+    }
+    _renderMenu(isEnabled, isBlocked, allowManual, allowCancel, pauseResume, adjustment, suspended) {
+        return x `
       <div class="iu-menu">
-        <ha-icon class="iu-menu-button" icon="mdi:dots-vertical" @click="${this._toggleMenu}"></ha-icon>
+        <ha-icon
+          class="iu-menu-button"
+          icon="mdi:dots-vertical"
+          @click="${this._toggleMenu}"
+        ></ha-icon>
         <div class="iu-menu-content iu-hidden">
-          <div class="iu-menu-item">
-            <div class="iu-mc1">Enable</div>
+          <div class="iu-menu-item iu-enable">
+            <div class="iu-mc1">${loc.t("menu.enable.name")}</div>
             <div class="iu-mc2"></div>
-            <div class="iu-mc3">${this._renderEnabled(e,t)}</div>
+            <div class="iu-mc3">
+              ${this._renderEnabled(isEnabled, isBlocked)}
+            </div>
           </div>
-          <div class="iu-menu-item ${void 0===o?"iu-hidden":""}">
-            <div class="iu-mc1">Suspend</div>
+          <div
+            class="iu-menu-item iu-suspend ${suspended === undefined
+            ? "iu-hidden"
+            : ""}"
+          >
+            <div class="iu-mc1">${loc.t("menu.suspend.name")}</div>
             <div class="iu-mc2">
-              <input type="text"
+              <input
+                type="text"
                 class="iu-time-input"
                 placeholder="h:mm:ss"
-                title="Duration\n===============\nh:mm:ss\n<blank> = reset"
+                title=${loc.t("menu.suspend.hint")}
                 size="8"
                 maxlength="8"
                 required
-                pattern="^[0-9]{1,2}:[0-9]{2}:[0-9]{2}$">
+                pattern="^[0-9]{1,2}:[0-9]{2}:[0-9]{2}$"
+              />
             </div>
             <div class="iu-mc3">
-              <ha-icon-button icon="mdi:timer-outline" @click="${this._serviceSuspend}">
+              <ha-icon-button
+                icon="mdi:timer-outline"
+                title=${loc.t("menu.suspend.buttonHint")}
+                @click="${this._serviceSuspend}"
+              >
                 <ha-icon icon="mdi:timer-outline"></ha-icon>
               </ha-icon-button>
             </div>
           </div>
-          <div class="iu-menu-item ${i?"":"iu-hidden"}">
-            <div class="iu-mc1">Manual</div>
+          <div
+            class="iu-menu-item iu-manual ${!allowManual ? "iu-hidden" : ""}"
+          >
+            <div class="iu-mc1">${loc.t("menu.manual.name")}</div>
             <div class="iu-mc2">
-              <input type="text"
+              <input
+                type="text"
                 class="iu-time-input"
                 placeholder="0:00:00"
-                title="Duration"
+                title=${loc.t("menu.manual.hint")}
                 size="8"
                 maxlength="8"
                 required
-                pattern="^[0-9]{1,2}:[0-9]{2}:[0-9]{2}$">
+                pattern="^[0-9]{1,2}:[0-9]{2}:[0-9]{2}$"
+              />
             </div>
             <div class="iu-mc3">
-              <ha-icon-button icon="mdi:play" @click="${this._serviceManualRun}">
+              <ha-icon-button
+                icon="mdi:play"
+                title=${loc.t("menu.manual.buttonHint")}
+                @click="${this._serviceManualRun}"
+              >
+                <ha-icon icon="mdi:run"></ha-icon>
+              </ha-icon-button>
+            </div>
+          </div>
+          <div
+            class="iu-menu-item iu-pause ${(~pauseResume & 1) > 0
+            ? "iu-hidden"
+            : ""}"
+          >
+            <div class="iu-mc1">${loc.t("menu.pause.name")}</div>
+            <div class="iu-mc2"></div>
+            <div class="iu-mc3">
+              <ha-icon-button
+                .disabled=${(~pauseResume & 1) > 0}
+                title=${loc.t("menu.pause.buttonHint")}
+                @click="${this._servicePause}"
+              >
+                <ha-icon icon="mdi:pause"></ha-icon>
+              </ha-icon-button>
+            </div>
+          </div>
+          <div
+            class="iu-menu-item iu-resume ${(~pauseResume & 2) > 0
+            ? "iu-hidden"
+            : ""}"
+          >
+            <div class="iu-mc1">${loc.t("menu.resume.name")}</div>
+            <div class="iu-mc2"></div>
+            <div class="iu-mc3">
+              <ha-icon-button
+                .disabled=${(~pauseResume & 2) > 0}
+                title=${loc.t("menu.resume.buttonHint")}
+                @click="${this._serviceResume}"
+              >
                 <ha-icon icon="mdi:play"></ha-icon>
               </ha-icon-button>
             </div>
           </div>
-          <div class="iu-menu-item ${s?"":"iu-hidden"}">
-            <div class="iu-mc1">Cancel</div>
+          <div
+            class="iu-menu-item iu-cancel ${!allowCancel ? "iu-hidden" : ""}"
+          >
+            <div class="iu-mc1">${loc.t("menu.cancel.name")}</div>
             <div class="iu-mc2"></div>
             <div class="iu-mc3">
-              <ha-icon-button .disabled=${!s} @click="${this._serviceCancel}">
+              <ha-icon-button
+                .disabled=${!allowCancel}
+                title=${loc.t("menu.cancel.buttonHint")}
+                @click="${this._serviceCancel}"
+              >
                 <ha-icon icon="mdi:cancel"></ha-icon>
               </ha-icon-button>
             </div>
           </div>
-          <div class="iu-menu-item ${void 0===n?"iu-hidden":""}">
-            <div class="iu-mc1">Adjust</div>
+          <div
+            class="iu-menu-item iu-adjust ${adjustment === undefined
+            ? "iu-hidden"
+            : ""}"
+          >
+            <div class="iu-mc1">${loc.t("menu.adjust.name")}</div>
             <div class="iu-mc2">
-              <input type="text"
+              <input
+                type="text"
                 class="iu-adjust-input"
-                value=${null!=n?n:""}
-                title="Adjustment options\n===============\nPercentage: %n\nActual: =0:00:00\nIncrease: +0:00:00\nDecrease: -0:00:00\nReset: <blank>"
+                value=${adjustment !== null && adjustment !== void 0 ? adjustment : ""}
+                title=${loc.t("menu.adjust.hint")}
                 size="9"
                 maxlength="9"
-                pattern="^$|^[=+-][0-9]{1,2}:[0-9]{2}:[0-9]{2}$|^%[0-9]*\.?[0-9]+$">
+                pattern="^$|^[=+-][0-9]{1,2}:[0-9]{2}:[0-9]{2}$|^%[0-9]*.?[0-9]+$"
+              />
             </div>
             <div class="iu-mc3">
-              <ha-icon-button icon="mdi:adjust" @click="${this._serviceAdjust}">
+              <ha-icon-button
+                title=${loc.t("menu.adjust.buttonHint")}
+                @click="${this._serviceAdjust}"
+              >
                 <ha-icon icon="mdi:adjust"></ha-icon>
               </ha-icon-button>
             </div>
           </div>
         </div>
       </div>
-    `}_renderEnabled(e,t){return j`
+    `;
+    }
+    _renderEnabled(isEnabled, isBlocked) {
+        return x `
       <ha-switch
-        .checked=${e}
-        .disabled=${t}
+        .checked=${isEnabled}
+        .disabled=${isBlocked}
+        title=${loc.t("menu.enable.buttonHint")}
         @change="${this._serviceEnable}"
       ></ha-switch>
-    `}_selectColour(e){const t=["#3498db","#e74c3c","#9b59b6","#f1c40f","#2ecc71","#1abc9c","#34495e","#e67e22","#7f8c8d","#27ae60","#2980b9","#8e44ad"];return t[e%t.length]}_clickNet(e){var t;const i=e.target;if(i.closest(".iu-menu"))return;const s=null===(t=i.closest("#iu-card"))||void 0===t?void 0:t.querySelectorAll(".iu-menu-content:not(.iu-hidden)");null==s||s.forEach((e=>e.classList.add("iu-hidden")))}_toggleCollapse(e){const t=e.target.closest(".iu-collapsible");null==t||t.classList.toggle("iu-hidden"),this.requestUpdate()}_toggleZones(e){var t,i;null===(i=null===(t=e.target.closest(".iu-controller"))||void 0===t?void 0:t.querySelector(".iu-zones"))||void 0===i||i.classList.toggle("iu-hidden")}_toggleSequences(e){var t,i;null===(i=null===(t=e.target.closest(".iu-controller"))||void 0===t?void 0:t.querySelector(".iu-sequences"))||void 0===i||i.classList.toggle("iu-hidden")}_toggleMenu(e){var t,i;null===(i=null===(t=e.target.closest(".iu-menu"))||void 0===t?void 0:t.querySelector(".iu-menu-content"))||void 0===i||i.classList.toggle("iu-hidden")}_get_iu_key(e){var t,i;return null===(i=null===(t=e.target.closest(".iu-object"))||void 0===t?void 0:t.getAttribute("iu-key"))||void 0===i?void 0:i.split(".",4)}_build_entity_id(e){let t="binary_sensor.irrigation_unlimited_c"+e[0]+"_";return t+="0"===e[1]?"m":"z"+e[1],t}_build_data(e){const t=this._get_iu_key(e);if(!t)return;const i={entity_id:this._build_entity_id(t)};return"0"!==t[2]&&(i.sequence_id=Number(t[2])),"0"!==t[3]&&(i.zones=Number(t[3])),i}_serviceEnable(e){const t=this._build_data(e);t&&this.hass.callService("irrigation_unlimited","toggle",t)}_serviceSuspend(e){var t;const i=this._build_data(e);if(!i)return;const s=null===(t=e.target.closest(".iu-menu-item"))||void 0===t?void 0:t.querySelector(".iu-time-input");s.value?i.for=s.value:i.reset=null,this.hass.callService("irrigation_unlimited","suspend",i)}_serviceManualRun(e){var t;const i=this._build_data(e);if(!i)return;const s=null===(t=e.target.closest(".iu-menu-item"))||void 0===t?void 0:t.querySelector(".iu-time-input");s.value&&(i.time=s.value),this.hass.callService("irrigation_unlimited","manual_run",i),this._toggleMenu(e)}_serviceCancel(e){const t=this._build_data(e);t&&(this.hass.callService("irrigation_unlimited","cancel",t),this._toggleMenu(e))}_serviceAdjust(e){var t;const i=this._build_data(e);if(!i)return;const s=(null===(t=e.target.closest(".iu-menu-item"))||void 0===t?void 0:t.querySelector(".iu-adjust-input")).value;switch(s.slice(0,1)){case"%":i.percentage=s.slice(1);break;case"=":i.actual=s.slice(1);break;case"+":i.increase=s.slice(1);break;case"-":i.decrease=s.slice(1);break;case"":i.reset=null;break;default:return}console.log(i),this.hass.callService("irrigation_unlimited","adjust_time",i),this._toggleMenu(e)}static get styles(){return o`
-      .iu-controller.iu-hidden {
-        display: none;
-      }
+    `;
+    }
+    _selectColour(index) {
+        const palette = [
+            "#3498db",
+            "#e74c3c",
+            "#9b59b6",
+            "#f1c40f",
+            "#2ecc71",
+            "#1abc9c",
+            "#34495e",
+            "#e67e22",
+            "#7f8c8d",
+            "#27ae60",
+            "#2980b9",
+            "#8e44ad",
+        ];
+        return palette[index % palette.length];
+    }
+    _clickNet(e) {
+        var _a;
+        const target = e.target;
+        if (target.closest(".iu-menu"))
+            return;
+        const menus = (_a = target
+            .closest("#iu-card")) === null || _a === void 0 ? void 0 : _a.querySelectorAll(".iu-menu-content:not(.iu-hidden)");
+        menus === null || menus === void 0 ? void 0 : menus.forEach((p) => p.classList.add("iu-hidden"));
+    }
+    _toggleCollapse(e) {
+        const target = e.target.closest(".iu-collapsible");
+        target === null || target === void 0 ? void 0 : target.classList.toggle("iu-hidden");
+        this.requestUpdate();
+    }
+    _toggleZones(e) {
+        var _a, _b;
+        (_b = (_a = e.target
+            .closest(".iu-controller")) === null || _a === void 0 ? void 0 : _a.querySelector(".iu-zones")) === null || _b === void 0 ? void 0 : _b.classList.toggle("iu-hidden");
+    }
+    _toggleSequences(e) {
+        var _a, _b;
+        (_b = (_a = e.target
+            .closest(".iu-controller")) === null || _a === void 0 ? void 0 : _a.querySelector(".iu-sequences")) === null || _b === void 0 ? void 0 : _b.classList.toggle("iu-hidden");
+    }
+    _toggleMenu(e) {
+        var _a, _b;
+        (_b = (_a = e.target
+            .closest(".iu-menu")) === null || _a === void 0 ? void 0 : _a.querySelector(".iu-menu-content")) === null || _b === void 0 ? void 0 : _b.classList.toggle("iu-hidden");
+    }
+    _get_iu_key(e) {
+        var _a, _b;
+        return (_b = (_a = e.target
+            .closest(".iu-object")) === null || _a === void 0 ? void 0 : _a.getAttribute("iu-key")) === null || _b === void 0 ? void 0 : _b.split(".", 4);
+    }
+    _build_entity_id(keys) {
+        const controller = this.iu_coordinator.controllers[+keys[0] - 1];
+        let entity_id;
+        if (keys[1] === "0" && keys[2] === "0") {
+            entity_id = controller.entity_id;
+        }
+        else if (keys[1] !== "0") {
+            entity_id = controller.zones[+keys[1] - 1].entity_id;
+        }
+        else {
+            entity_id = controller.sequences[+keys[2] - 1].entity_id;
+        }
+        return entity_id;
+    }
+    _build_data(e) {
+        const keys = this._get_iu_key(e);
+        if (!keys)
+            return;
+        const entity_id = this._build_entity_id(keys);
+        const data = {
+            entity_id: entity_id,
+        };
+        if (keys[3] !== "0") {
+            data["zones"] = Number(keys[3]);
+        }
+        return data;
+    }
+    _serviceEnable(e) {
+        const data = this._build_data(e);
+        if (!data)
+            return;
+        this.hass.callService("irrigation_unlimited", "toggle", data);
+        return;
+    }
+    _serviceSuspend(e) {
+        var _a;
+        const data = this._build_data(e);
+        if (!data)
+            return;
+        const timeElement = (_a = e.target
+            .closest(".iu-menu-item")) === null || _a === void 0 ? void 0 : _a.querySelector(".iu-time-input");
+        if (timeElement.value)
+            data["for"] = timeElement.value;
+        else
+            data["reset"] = null;
+        this.hass.callService("irrigation_unlimited", "suspend", data);
+    }
+    _serviceManualRun(e) {
+        var _a;
+        const data = this._build_data(e);
+        if (!data)
+            return;
+        const timeElement = (_a = e.target
+            .closest(".iu-menu-item")) === null || _a === void 0 ? void 0 : _a.querySelector(".iu-time-input");
+        if (timeElement.value)
+            data["time"] = timeElement.value;
+        this.hass.callService("irrigation_unlimited", "manual_run", data);
+        this._toggleMenu(e);
+        return;
+    }
+    _serviceCancel(e) {
+        const data = this._build_data(e);
+        if (!data)
+            return;
+        this.hass.callService("irrigation_unlimited", "cancel", data);
+        this._toggleMenu(e);
+    }
+    _servicePause(e) {
+        const data = this._build_data(e);
+        if (!data)
+            return;
+        data["sequence_id"] = "0";
+        this.hass.callService("irrigation_unlimited", "pause", data);
+        this._toggleMenu(e);
+    }
+    _serviceResume(e) {
+        const data = this._build_data(e);
+        if (!data)
+            return;
+        data["sequence_id"] = "0";
+        this.hass.callService("irrigation_unlimited", "resume", data);
+        this._toggleMenu(e);
+    }
+    _serviceAdjust(e) {
+        var _a;
+        const data = this._build_data(e);
+        if (!data)
+            return;
+        const adjustElement = (_a = e.target
+            .closest(".iu-menu-item")) === null || _a === void 0 ? void 0 : _a.querySelector(".iu-adjust-input");
+        const value = adjustElement.value;
+        switch (value.slice(0, 1)) {
+            case "%": {
+                data["percentage"] = value.slice(1);
+                break;
+            }
+            case "=": {
+                data["actual"] = value.slice(1);
+                break;
+            }
+            case "+": {
+                data["increase"] = value.slice(1);
+                break;
+            }
+            case "-": {
+                data["decrease"] = value.slice(1);
+                break;
+            }
+            case "": {
+                data["reset"] = null;
+                break;
+            }
+            default:
+                return;
+        }
+        this.hass.callService("irrigation_unlimited", "adjust_time", data);
+        this._toggleMenu(e);
+    }
+};
+IrrigationUnlimitedCard.styles = styles;
+__decorate([
+    n$1({ attribute: false })
+], IrrigationUnlimitedCard.prototype, "hass", void 0);
+__decorate([
+    t()
+], IrrigationUnlimitedCard.prototype, "config", void 0);
+IrrigationUnlimitedCard = __decorate([
+    e$1("irrigation-unlimited-card")
+], IrrigationUnlimitedCard);
 
-      .iu-control-panel {
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-      }
-
-      .iu-control-panel-item {
-        padding: .5em 0 .5em 1em;
-      }
-
-      .iu-zones.iu-hidden.iu-content {
-        display: none;
-      }
-
-      .iu-sequences.iu-hidden.iu-content {
-        display: none;
-      }
-
-      .iu-hidden .iu-content {
-        display: none;
-      }
-
-      .iu-hidden .iu-expander::before {
-        content: '\u25B6';
-        font-size: large;
-      }
-
-      .iu-expander::before {
-        content: '\u25BC';
-        font-size: large;
-      }
-
-      .iu-controller-row.iu-td {
-        display: flex;
-        align-items: center;
-        min-height: 3em;
-      }
-
-      .iu-zone-row.iu-td {
-        display: flex;
-        align-items: center;
-        min-height: 3em;
-      }
-
-      .iu-sequence-row.iu-td {
-        display: flex;
-        align-items: center;
-        min-height: 3em;
-      }
-
-      .iu-sequence-zone-row.iu-td {
-        display: flex;
-        align-items: center;
-        height: 2em;
-      }
-
-      .iu-td {
-        display: flex;
-        align-items: center;
-      }
-
-      .iu-td1 {
-        flex: 1.5em;
-        text-align: center;
-        cursor: pointer;
-      }
-
-      .iu-td2 {
-        flex: 30px;
-        text-align: center;
-      }
-
-      .iu-td3 {
-        flex: 40%;
-        text-align: left;
-      }
-
-      .iu-td4 {
-        flex: 20%;
-        text-align: center;
-      }
-
-      .iu-td5 {
-        flex: 15%;
-        text-align: center;
-      }
-
-      .iu-td6 {
-        flex: 15%;
-        text-align: center;
-      }
-
-      .iu-td7 {
-        flex: 10%;
-        text-align: center;
-      }
-
-      .iu-on .iu-duration {
-        color: var(--state-on-color, #66a61e);
-      }
-
-      .iu-schedule {
-        color: var(--secondary-text-color, #727272);
-        font-size: small;
-      }
-
-      .iu-manual .iu-schedule {
-        color: var(--label-badge-red, #DF4C1E);
-      }
-
-      .iu-suspended .iu-start {
-        color: var(--label-badge-yellow, #FFFF00);
-        font-style: italic;
-      }
-
-      .iu-name {
-        color: var(--secondary-text-color, #727272);
-        font-weight: 500;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-      }
-
-      ha-icon {
-        color: var(--state-icon-color, #44739e);
-      }
-
-      .iu-on .iu-td2 ha-icon {
-        color: var(--state-icon-active-color, #FDD835);
-      }
-
-      .iu-menu {
-        position: relative;
-        display: inline-block;
-      }
-
-      .iu-menu-button {
-        background-color: transparent;
-        text-align: center;
-        display: block;
-        font-size: 16px;
-        border: none;
-        cursor: pointer;
-      }
-
-      .iu-menu-content {
-        display: flex;
-        flex-direction: column;
-        flex-wrap: nowrap;
-        width: 200px;
-        padding: 10px 0;
-        position: absolute;
-        background-color: var(--card-background-color, white);
-        right: 0;
-        box-shadow: 0px 0px 7px 0px rgba(50, 50, 50, 0.75);
-        border-radius: 5px;
-        z-index: 1;
-      }
-
-      .iu-menu-content.iu-hidden {
-        display: none;
-      }
-
-      .iu-menu-content .iu-menu-item {
-        display: flex;
-        padding: 0px 5px;
-        line-height: 48px;
-      }
-
-      .iu-menu .iu-menu-item:hover {
-        color: var(--primary-color, #b3e5fc);
-        background-color: var(--secondary-background-color, #e5e5e5);
-      }
-
-      .iu-menu-item.iu-hidden {
-        display: none;
-      }
-
-      .iu-mc1 {
-        flex: 30%;
-        text-align: left;
-      }
-
-      .iu-mc2 {
-        flex: 40%;
-        text-align: right;
-      }
-
-      .iu-mc3 {
-        flex: 30%;
-        text-align: center;
-      }
-
-      .iu-mc3 ha-icon {
-        display: flex;
-      }
-
-      .iu-adjust-input:invalid,
-      .iu-time-input:invalid {
-        color: var(--label-badge-red, #DF4C1E);
-      }
-    `}};e([_e({attribute:!1})],Ee.prototype,"hass",void 0),e([ge()],Ee.prototype,"config",void 0),Ee=e([pe("irrigation-unlimited-card")],Ee);export{Ee as IrrigationUnlimitedCard};
+export { IrrigationUnlimitedCard };
