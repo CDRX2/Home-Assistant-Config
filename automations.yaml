@@ -2,9 +2,11 @@
   alias: Tableau TV ouverture
   description: ''
   trigger:
-  - entity_id: media_player.living_room_tv
+  - entity_id:
+    - media_player.living_room_tv
     platform: state
     to: 'on'
+    from: 'off'
   condition: []
   action:
   - service: cover.close_cover

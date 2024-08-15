@@ -10,14 +10,14 @@
     depuis_maison_2:
       friendly_name: "Bus suivant"
       icon_template: mdi:bus-clock
-      value_template: '{{ as_timestamp(states.sensor.dir_metro_departure.attributes.next_departure)| timestamp_custom("%H:%M", True) }}'
+      value_template: '{{ as_timestamp(states.sensor.lausanne_haute_combe_epalinges_croisettes_departure_1.state)| timestamp_custom("%H:%M", True) }}'
 
 - platform: template
   sensors:
     depuis_maison_3:
       friendly_name: "Bus d'après"
       icon_template: mdi:bus
-      value_template: '{{ as_timestamp(states.sensor.dir_metro_departure.attributes.next_on_departure)| timestamp_custom("%H:%M", True) }}'
+      value_template: '{{ as_timestamp(states.sensor.lausanne_haute_combe_epalinges_croisettes_departure_2.state)| timestamp_custom("%H:%M", True) }}'
 
 - platform: template
   sensors:
@@ -31,14 +31,14 @@
     dir_vclb_2:
       friendly_name: "Bus suivant"
       icon_template: mdi:bus-clock
-      value_template: '{{ as_timestamp(states.sensor.dir_vclb_departure.attributes.next_departure)| timestamp_custom("%H:%M", True) }}'        
+      value_template: '{{ as_timestamp(states.sensor.lausanne_haute_combe_lausanne_chalet_a_gobet_departure_1.state)| timestamp_custom("%H:%M", True) }}'        
 
 - platform: template
   sensors:
     dir_vclb_3:
       friendly_name: "Bus d'après"
       icon_template: mdi:bus
-      value_template: '{{ as_timestamp(states.sensor.dir_vclb_departure.attributes.next_on_departure)| timestamp_custom("%H:%M", True) }}'
+      value_template: '{{ as_timestamp(states.sensor.lausanne_haute_combe_lausanne_chalet_a_gobet_departure_2.state)| timestamp_custom("%H:%M", True) }}'
 
 # - platform: template
 #   sensors:
