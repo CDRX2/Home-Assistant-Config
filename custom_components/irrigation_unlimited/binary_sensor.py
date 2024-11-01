@@ -51,6 +51,7 @@ from .const import (
     ATTR_FLOW_RATE,
     ATTR_SEQUENCE_COUNT,
     ATTR_ZONES,
+    ATTR_REPEAT,
 )
 
 
@@ -115,11 +116,11 @@ async def async_reload_platform(
                 new_entities.append(
                     IUSequenceEntity(coordinator, controller, None, sequence)
                 )
+    for entity in old_entities:
+        await platform.async_remove_entity(entity)
     if len(new_entities) > 0:
         await platform.async_add_entities(new_entities)
         coordinator.initialise()
-    for entity in old_entities:
-        await platform.async_remove_entity(entity)
 
     return True
 
@@ -329,6 +330,9 @@ class IUSequenceEntity(IUEntity):
             attr[ATTR_CURRENT_DURATION] = str(current.total_time)
             attr[ATTR_TIME_REMAINING] = str(current.time_remaining)
             attr[ATTR_PERCENT_COMPLETE] = current.percent_complete
+            attr[ATTR_REPEAT] = (
+                f"{current.current_zone.sequence_repeat + 1}/{self._sequence.repeat}"
+            )
             if current.schedule is not None:
                 attr[ATTR_CURRENT_SCHEDULE] = current.schedule.id1
                 attr[ATTR_CURRENT_NAME] = current.schedule.name

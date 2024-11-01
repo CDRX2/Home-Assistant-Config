@@ -9,12 +9,12 @@ elements:
     ##########################################################################################
 
 
-  - type: conditional 
+  - type: conditional
     conditions:
       - entity: media_player.living_room_tv
         state: 'off'
       - entity: media_player.pioneer_avr
-        state: 'off'    
+        state: 'off'
     elements:
       - type: 'custom:mod-card'
         card:
@@ -406,7 +406,7 @@ elements:
                 grid-area: upcomingfilms
               title: Prochains films
         card_mod:
-          style: 
+          style:
             layout-card$:
               grid-layout$: |
                 #root {
@@ -447,7 +447,7 @@ elements:
               "remote upcomingfilms"
           cards:
             - !include remote.yaml
-  
+
         # Upcoming Media Card:
         # https://github.com/custom-cards/upcoming-media-card
 
@@ -822,7 +822,7 @@ elements:
                 grid-area: upcomingfilms
               title: Prochains films
         card_mod:
-          style: 
+          style:
             layout-card$:
               grid-layout$: |
                 #root {
@@ -833,7 +833,7 @@ elements:
                 height: 100%;
                 width: 100%;
               }
-          
+
     ###########################################################################
     #                                                                         #
     #                   IF YOUTUBE IS ON, SHOW LOGO & REMOTE                  #
@@ -872,7 +872,7 @@ elements:
               view_layout:
                 grid-area: image
         card_mod:
-          style: 
+          style:
             layout-card$:
               grid-layout$: |
                 #root {
@@ -883,7 +883,7 @@ elements:
                 height: 100%;
                 width: 100%;
               }
- 
+
     ###########################################################################
     #                                                                         #
     #                   IF YOUTUBE KIDS IS ON, SHOW LOGO & REMOTE             #
@@ -922,7 +922,7 @@ elements:
               view_layout:
                 grid-area: image
         card_mod:
-          style: 
+          style:
             layout-card$:
               grid-layout$: |
                 #root {
@@ -939,115 +939,37 @@ elements:
     #                   IF RADIO IS ON, SHOW REMOTE & PLAYER                  #
     #                                                                         #
     ###########################################################################
- 
-  - type: conditional
-    conditions:
-      - entity: sensor.remote_select
-        state: 'radio'
-    elements:
-      - type: 'custom:mod-card'
-        card:    
-          type: 'custom:layout-card'
-          layout_type: custom:grid-layout
-          layout:
-            height: 100%
-            grid-template-columns: 5% 30% 5% 55% 5%
-            grid-template-rows: auto
-            grid-template-areas: |
-              ". remote . radio ."
-          cards:
-            - !include remote.yaml
-            - !include radio_select.yaml
-        #     - type: 'custom:vertical-stack-in-card'
-        #       card_mod:
-        #         style: |
-        #           :host {
-        #             align-self: center;
-        #           }
-        #           ha-card {
-        #             width: 100%;
-        #             height: 100%;
-        #             background: rgba(0,0,0,0.0);
-        #             box-shadow: 0px 0px rgba(0,0,0,0);
-        #           }
-        #       view_layout:
-        #         grid-area: radio
-        #       cards:
-        #         - type: picture
-        #           image: /local/ui/media/disc.png
-        #           card_mod:
-        #             style: |
-        #               :host {
-        #                 top: 50%;
-        #                 left: 50%;
-        #                 z-index: 1;
-        #               }
-        #               ha-card {
-        #                 animation: rotation 2.5s infinite linear;
-        #                 background: none;
-        #               }
-        #               @keyframes rotation {
-        #                 0% { transform: rotate(0deg); }
-        #                 100% { transform: rotate(360deg); }
-        #               }
-        #           tap_action:
-        #             action: none
-        #           double_tap_action:
-        #             action: none
-        #           hold_action:
-        #             action: none
-        #         - type: picture
-        #           image: /local/ui/media/couleur3_disc.png
-        #           card_mod:
-        #             style: |
-        #               :host {
-        #                 position: absolute;
-        #                 top: 50%;
-        #                 left: 50%;
-        #                 width: 35%;
-        #                 transform: translate(-50%, -50%);
-        #                 z-index: 2;
-        #               }
-        #               ha-card {
-        #                 animation: rotation 2.5s infinite linear;
-        #                 background: none;
-        #               }
-        #               @keyframes rotation {
-        #                 0% { transform: rotate(0deg); }
-        #                 100% { transform: rotate(360deg); }
-        #               }  
-        #         - type: picture
-        #           image: /local/ui/media/spindle.png
-        #           card_mod:
-        #             style: |
-        #               :host {
-        #                 position: absolute;
-        #                 top: 50%;
-        #                 left: 50%;
-        #                 width: 2%;
-        #                 transform: translate(-50%, -50%);
-        #                 z-index: 3;
-        #               }
-        #               ha-card {
-        #                 animation: rotation 2.5s infinite linear;
-        #                 background: none;
-        #               }
-        #               @keyframes rotation {
-        #                 0% { transform: rotate(0deg); }
-        #                 100% { transform: rotate(360deg); }
-        #               }      
-        card_mod:
-          style: 
-            layout-card$:
-              grid-layout$: |
-                #root {
-                  height: 100%;
-                }
-            .: |
-              ha-card {
-                height: 100%;
-                width: 100%;
-              }
+
+#  - type: conditional
+#    conditions:
+#      - entity: sensor.remote_select
+#        state: 'radio'
+#    elements:
+#      - type: 'custom:mod-card'
+#        card:
+#          type: 'custom:layout-card'
+#          layout_type: custom:grid-layout
+#          layout:
+#            height: 100%
+#            grid-template-columns: 5% 30% 5% 55% 5%
+#            grid-template-rows: auto
+#            grid-template-areas: |
+#              ". remote . radio ."
+#          cards:
+#            - !include remote.yaml
+#            - !include radio_select.yaml
+#        card_mod:
+#          style:
+#            layout-card$:
+#              grid-layout$: |
+#                #root {
+#                  height: 100%;
+#                }
+#            .: |
+#              ha-card {
+#                height: 100%;
+#                width: 100%;
+#              }
 
     ######################################################################
     #                                                                    #
@@ -1055,121 +977,121 @@ elements:
     #                                                                    #
     ######################################################################
 
-  - type: conditional
-    conditions:
-      - entity: sensor.remote_select
-        state: 'music'
-    elements:
-      - type: 'custom:mod-card'
-        card:    
-          type: 'custom:layout-card'
-          layout_type: custom:grid-layout
-          layout:
-            height: 100%
-            grid-template-columns: 5% 30% 5% 55% 5%
-            grid-template-rows: auto
-            grid-template-areas: |
-              ". remote . player ."
-          cards:
-            - !include remote.yaml
-            - type: 'custom:vertical-stack-in-card'
-              mode: vertical
-              card_mod:
-                style: |
-                  :host {
-                    align-self: center;
-                  }
-                  ha-card {
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(0,0,0,0.0);
-                    box-shadow: 0px 0px rgba(0,0,0,0);
-                  }
-              view_layout:
-                grid-area: player
-              cards:
-                - type: picture
-                  image: /local/ui/media/disc.png
-                  card_mod:
-                    style: |
-                      :host {
-                        top: 50%;
-                        left: 50%;
-                        z-index: 1;
-                      }
-                      ha-card {
-                        {{ iif (is_state('media_player.bubble', 'playing'), 'animation: rotation 2.5s infinite linear', 'none') }};
-                        background: none;
-                      }
-                      @keyframes rotation {
-                        0% { transform: rotate(0deg); }
-                        100% { transform: rotate(360deg); }
-                      }
-                  tap_action:
-                    action: call-service
-                    service: media_player.media_play_pause
-                    service_data:
-                      entity_id: media_player.bubble
-                  double_tap_action:
-                    action: call-service
-                    service: media_player.media_next_track
-                    service_data:
-                      entity_id: media_player.bubble
-                  hold_action:
-                    action: none
-                - type: markdown
-                  content: >
-                    <img src="http://10.81.19.31:8123{{ state_attr('media_player.bubble', 'entity_picture') }}"></img>
-                  card_mod:
-                    style: |
-                      :host {
-                        position: absolute;
-                        top: 50%;
-                        left: 50%;
-                        width: 42%;
-                        transform: translate(-50%, -50%);
-                        z-index: 2;
-                      }
-                      ha-card {
-                        clip-path: circle(40% at 50% 50%);
-                        {{ iif (is_state('media_player.bubble', 'playing'), 'animation: rotation 2.5s infinite linear', 'none') }};
-                      }
-                      @keyframes rotation {
-                        0% { transform: rotate(0deg); }
-                        100% { transform: rotate(360deg); }
-                      }  
-                - type: picture
-                  image: /local/ui/media/spindle.png
-                  card_mod:
-                    style: |
-                      :host {
-                        position: absolute;
-                        top: 50%;
-                        left: 50%;
-                        width: 2%;
-                        transform: translate(-50%, -50%);
-                        z-index: 3;
-                      }
-                      ha-card {
-                        {{ iif (is_state('media_player.bubble', 'playing'), 'animation: rotation 2.5s infinite linear', 'none') }};
-                        background: none;
-                      }
-                      @keyframes rotation {
-                        0% { transform: rotate(0deg); }
-                        100% { transform: rotate(360deg); }
-                      }      
-        card_mod:
-          style: 
-            layout-card$:
-              grid-layout$: |
-                #root {
-                  height: 100%;
-                }
-            .: |
-              ha-card {
-                height: 100%;
-                width: 100%;
-              }
+#  - type: conditional
+#    conditions:
+#      - entity: sensor.remote_select
+#        state: 'music'
+#    elements:
+#      - type: 'custom:mod-card'
+#        card:
+#          type: 'custom:layout-card'
+#          layout_type: custom:grid-layout
+#          layout:
+#            height: 100%
+#            grid-template-columns: 5% 30% 5% 55% 5%
+#            grid-template-rows: auto
+#            grid-template-areas: |
+#              ". remote . player ."
+#          cards:
+#            - !include remote.yaml
+#            - type: 'custom:vertical-stack-in-card'
+#              mode: vertical
+#              card_mod:
+#                style: |
+#                  :host {
+#                    align-self: center;
+#                  }
+#                  ha-card {
+#                    width: 100%;
+#                    height: 100%;
+#                    background: rgba(0,0,0,0.0);
+#                    box-shadow: 0px 0px rgba(0,0,0,0);
+#                  }
+#              view_layout:
+#                grid-area: player
+#              cards:
+#                - type: picture
+#                  image: /local/ui/media/disc.png
+#                  card_mod:
+#                    style: |
+#                      :host {
+#                        top: 50%;
+#                        left: 50%;
+#                        z-index: 1;
+#                      }
+#                      ha-card {
+#                        {{ iif (is_state('media_player.bubble', 'playing'), 'animation: rotation 2.5s infinite linear', 'none') }};
+#                        background: none;
+#                      }
+#                      @keyframes rotation {
+#                        0% { transform: rotate(0deg); }
+#                        100% { transform: rotate(360deg); }
+#                      }
+#                  tap_action:
+#                    action: call-service
+#                    service: media_player.media_play_pause
+#                    service_data:
+#                      entity_id: media_player.bubble
+#                  double_tap_action:
+#                    action: call-service
+#                    service: media_player.media_next_track
+#                    service_data:
+#                      entity_id: media_player.bubble
+#                  hold_action:
+#                    action: none
+#                - type: markdown
+#                  content: >
+#                    <img src="http://10.81.19.31:8123{{ state_attr('media_player.bubble', 'entity_picture') }}"></img>
+#                  card_mod:
+#                    style: |
+#                      :host {
+#                        position: absolute;
+#                        top: 50%;
+#                        left: 50%;
+#                        width: 42%;
+#                        transform: translate(-50%, -50%);
+#                        z-index: 2;
+#                      }
+#                      ha-card {
+#                        clip-path: circle(40% at 50% 50%);
+#                        {{ iif (is_state('media_player.bubble', 'playing'), 'animation: rotation 2.5s infinite linear', 'none') }};
+#                      }
+#                      @keyframes rotation {
+#                        0% { transform: rotate(0deg); }
+#                        100% { transform: rotate(360deg); }
+#                      }
+#                - type: picture
+#                  image: /local/ui/media/spindle.png
+#                  card_mod:
+#                    style: |
+#                      :host {
+#                        position: absolute;
+#                        top: 50%;
+#                        left: 50%;
+#                        width: 2%;
+#                        transform: translate(-50%, -50%);
+#                        z-index: 3;
+#                      }
+#                      ha-card {
+#                        {{ iif (is_state('media_player.bubble', 'playing'), 'animation: rotation 2.5s infinite linear', 'none') }};
+#                        background: none;
+#                      }
+#                      @keyframes rotation {
+#                        0% { transform: rotate(0deg); }
+#                        100% { transform: rotate(360deg); }
+#                      }
+#        card_mod:
+#          style:
+#            layout-card$:
+#              grid-layout$: |
+#                #root {
+#                  height: 100%;
+#                }
+#            .: |
+#              ha-card {
+#                height: 100%;
+#                width: 100%;
+#              }
 
     ########################################################################
     #                                                                      #
@@ -1177,119 +1099,142 @@ elements:
     #                                                                      #
     ########################################################################
 
+#  - type: conditional
+#    conditions:
+#      - entity: sensor.pioneer_avr_source
+#        state: 'BT AUDIO'
+#    elements:
+#      - type: 'custom:mod-card'
+#        card:
+#          type: 'custom:layout-card'
+#          layout_type: custom:grid-layout
+#          layout:
+#            height: 100%
+#            grid-template-columns: 5% 30% 5% 55% 5%
+#            grid-template-rows: auto
+#            grid-template-areas: |
+#              ". remote . player ."
+#          cards:
+#            - !include remote.yaml
+#            - type: 'custom:vertical-stack-in-card'
+#              card_mod:
+#                style: |
+#                  :host {
+#                    align-self: center;
+#                  }
+#                  ha-card {
+#                    width: 100%;
+#                    height: 100%;
+#                    background: rgba(0,0,0,0.0);
+#                    box-shadow: 0px 0px rgba(0,0,0,0);
+#                  }
+#              view_layout:
+#                grid-area: player
+#              cards:
+#                - type: picture
+#                  image: /local/ui/media/disc.png
+#                  card_mod:
+#                    style: |
+#                      :host {
+#                        top: 50%;
+#                        left: 50%;
+#                        z-index: 1;
+#                      }
+#                      ha-card {
+#                        animation: rotation 2.5s infinite linear;
+#                        background: none;
+#                      }
+#                      @keyframes rotation {
+#                        0% { transform: rotate(0deg); }
+#                        100% { transform: rotate(360deg); }
+#                      }
+#                  tap_action:
+#                    action: call-service
+#                    service: media_player.media_play_pause
+#                    service_data:
+#                      entity_id: media_player.pioneer_avr
+#                  double_tap_action:
+#                    action: call-service
+#                    service: media_player.media_next_track
+#                    service_data:
+#                      entity_id: media_player.pioneer_avr
+#                  hold_action:
+#                    action: none
+#                - type: picture
+#                  image: /local/ui/media/bluetooth_disc.png
+#                  card_mod:
+#                    style: |
+#                      :host {
+#                        position: absolute;
+#                        top: 50%;
+#                        left: 50%;
+#                        width: 30%;
+#                        transform: translate(-50%, -50%);
+#                        z-index: 2;
+#                      }
+#                      ha-card {
+#                        animation: rotation 2.5s infinite linear;
+#                        background: none;
+#                      }
+#                      @keyframes rotation {
+#                        0% { transform: rotate(0deg); }
+#                        100% { transform: rotate(360deg); }
+#                      }
+#                - type: picture
+#                  image: /local/ui/media/spindle.png
+#                  card_mod:
+#                    style: |
+#                      :host {
+#                        position: absolute;
+#                        top: 50%;
+#                        left: 50%;
+#                        width: 2%;
+#                        transform: translate(-50%, -50%);
+#                        z-index: 3;
+#                      }
+#                      ha-card {
+#                        animation: rotation 2.5s infinite linear;
+#                        background: none;
+#                      }
+#                      @keyframes rotation {
+#                        0% { transform: rotate(0deg); }
+#                        100% { transform: rotate(360deg); }
+#                      }
+#        card_mod:
+#          style:
+#            layout-card$:
+#              grid-layout$: |
+#                #root {
+#                  height: 100%;
+#                }
+#            .: |
+#              ha-card {
+#                height: 100%;
+#                width: 100%;
+#              }#
+
+    ########################################################################
+    #                                                                      #
+    #          IF PLAYING MUSIC ASSISTANT, SHOW MUSIC ASSISTANT            #
+    #                                                                      #
+    ########################################################################
+
   - type: conditional
     conditions:
-      - entity: sensor.pioneer_avr_source
-        state: 'BT AUDIO'
+      - entity: media_player.pioneer_avr
+        state: "on"
+      - entity: media_player.sc_lx78
+        state_not: "off"
     elements:
-      - type: 'custom:mod-card'
-        card:    
-          type: 'custom:layout-card'
-          layout_type: custom:grid-layout
-          layout:
-            height: 100%
-            grid-template-columns: 5% 30% 5% 55% 5%
-            grid-template-rows: auto
-            grid-template-areas: |
-              ". remote . player ."
-          cards:
-            - !include remote.yaml
-            - type: 'custom:vertical-stack-in-card'
-              card_mod:
-                style: |
-                  :host {
-                    align-self: center;
-                  }
-                  ha-card {
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(0,0,0,0.0);
-                    box-shadow: 0px 0px rgba(0,0,0,0);
-                  }
-              view_layout:
-                grid-area: player
-              cards:
-                - type: picture
-                  image: /local/ui/media/disc.png
-                  card_mod:
-                    style: |
-                      :host {
-                        top: 50%;
-                        left: 50%;
-                        z-index: 1;
-                      }
-                      ha-card {
-                        animation: rotation 2.5s infinite linear;
-                        background: none;
-                      }
-                      @keyframes rotation {
-                        0% { transform: rotate(0deg); }
-                        100% { transform: rotate(360deg); }
-                      }
-                  tap_action:
-                    action: call-service
-                    service: media_player.media_play_pause
-                    service_data:
-                      entity_id: media_player.pioneer_avr
-                  double_tap_action:
-                    action: call-service
-                    service: media_player.media_next_track
-                    service_data:
-                      entity_id: media_player.pioneer_avr
-                  hold_action:
-                    action: none
-                - type: picture
-                  image: /local/ui/media/bluetooth_disc.png
-                  card_mod:
-                    style: |
-                      :host {
-                        position: absolute;
-                        top: 50%;
-                        left: 50%;
-                        width: 30%;
-                        transform: translate(-50%, -50%);
-                        z-index: 2;
-                      }
-                      ha-card {
-                        animation: rotation 2.5s infinite linear;
-                        background: none;
-                      }
-                      @keyframes rotation {
-                        0% { transform: rotate(0deg); }
-                        100% { transform: rotate(360deg); }
-                      }  
-                - type: picture
-                  image: /local/ui/media/spindle.png
-                  card_mod:
-                    style: |
-                      :host {
-                        position: absolute;
-                        top: 50%;
-                        left: 50%;
-                        width: 2%;
-                        transform: translate(-50%, -50%);
-                        z-index: 3;
-                      }
-                      ha-card {
-                        animation: rotation 2.5s infinite linear;
-                        background: none;
-                      }
-                      @keyframes rotation {
-                        0% { transform: rotate(0deg); }
-                        100% { transform: rotate(360deg); }
-                      }      
-        card_mod:
-          style: 
-            layout-card$:
-              grid-layout$: |
-                #root {
-                  height: 100%;
-                }
-            .: |
-              ha-card {
-                height: 100%;
-                width: 100%;
-              }
+    - type: 'custom:hui-element'
+      card_type: iframe
+      url: http://10.81.19.31:8095
+      aspect_ratio: 50%
+      style:
+        left: 50%
+        top: 50%
+        width: 100%
+        height: 100%
 
 image: /local/ui/floorplan/blurredFloorplanRez.png
 card_mod:

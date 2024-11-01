@@ -92,6 +92,7 @@ from .const import (
     CONF_USER,
     CONF_TOGGLE,
     CONF_EXTENDED_CONFIG,
+    CONF_READ_DELAY,
 )
 
 IU_ID = r"^[a-z0-9]+(_[a-z0-9]+)*$"
@@ -237,7 +238,7 @@ ZONE_SCHEMA = vol.Schema(
         vol.Optional(CONF_ALLOW_MANUAL): cv.boolean,
         vol.Optional(CONF_MINIMUM): cv.positive_time_period,
         vol.Optional(CONF_MAXIMUM): cv.positive_time_period,
-        vol.Optional(CONF_FUTURE_SPAN): cv.positive_int,
+        vol.Optional(CONF_FUTURE_SPAN): cv.positive_float,
         vol.Optional(CONF_SHOW): vol.All(SHOW_SCHEMA),
         vol.Optional(CONF_CHECK_BACK): vol.All(CHECK_BACK_SCHEMA),
         vol.Optional(CONF_VOLUME): vol.All(VOLUME_SCHEMA),
@@ -251,7 +252,7 @@ ALL_ZONES_SCHEMA = vol.Schema(
         vol.Optional(CONF_SHOW): vol.All(SHOW_SCHEMA),
         vol.Optional(CONF_MINIMUM): cv.positive_time_period,
         vol.Optional(CONF_MAXIMUM): cv.positive_time_period,
-        vol.Optional(CONF_FUTURE_SPAN): cv.positive_int,
+        vol.Optional(CONF_FUTURE_SPAN): cv.positive_float,
         vol.Optional(CONF_ALLOW_MANUAL): cv.boolean,
         vol.Optional(CONF_CHECK_BACK): vol.All(CHECK_BACK_SCHEMA),
         vol.Optional(CONF_VOLUME): vol.All(VOLUME_SCHEMA),
@@ -280,6 +281,7 @@ SEQUENCE_SCHEMA = vol.Schema(
             cv.ensure_list, [SEQUENCE_SCHEDULE_SCHEMA]
         ),
         vol.Optional(CONF_NAME): cv.string,
+        vol.Optional(CONF_SEQUENCE_ID): cv.matches_regex(IU_ID),
         vol.Optional(CONF_DELAY): cv.time_period,
         vol.Optional(CONF_DURATION): cv.positive_time_period,
         vol.Optional(CONF_REPEAT): cv.positive_int,
@@ -314,6 +316,7 @@ HISTORY_SCHEMA = vol.Schema(
         vol.Optional(CONF_ENABLED): cv.boolean,
         vol.Optional(CONF_REFRESH_INTERVAL): cv.positive_int,
         vol.Optional(CONF_SPAN): cv.positive_int,
+        vol.Optional(CONF_READ_DELAY): cv.positive_int,
     }
 )
 
@@ -382,11 +385,11 @@ ENTITY_SCHEMA = {vol.Required(CONF_ENTITY_ID): cv.entity_id}
 ENABLE_DISABLE_SCHEMA = {
     vol.Required(CONF_ENTITY_ID): cv.entity_ids,
     vol.Optional(CONF_ZONES): cv.ensure_list,
-    vol.Optional(CONF_SEQUENCE_ID): cv.positive_int,
+    vol.Optional(CONF_SEQUENCE_ID): cv.ensure_list,
 }
 
 TIME_ADJUST_SCHEMA = vol.All(
-    vol.Schema(
+    cv.make_entity_service_schema(
         {
             vol.Required(CONF_ENTITY_ID): cv.entity_ids,
             vol.Exclusive(
@@ -403,7 +406,7 @@ TIME_ADJUST_SCHEMA = vol.All(
             vol.Optional(CONF_MINIMUM): cv.positive_time_period_template,
             vol.Optional(CONF_MAXIMUM): cv.positive_time_period_template,
             vol.Optional(CONF_ZONES): cv.ensure_list,
-            vol.Optional(CONF_SEQUENCE_ID): cv.positive_int,
+            vol.Optional(CONF_SEQUENCE_ID): cv.ensure_list,
         }
     ),
     cv.has_at_least_one_key(
@@ -417,18 +420,18 @@ MANUAL_RUN_SCHEMA = {
     vol.Optional(CONF_DELAY): cv.time_period,
     vol.Optional(CONF_QUEUE): cv.boolean,
     vol.Optional(CONF_ZONES): cv.ensure_list,
-    vol.Optional(CONF_SEQUENCE_ID): cv.positive_int,
+    vol.Optional(CONF_SEQUENCE_ID): cv.ensure_list,
 }
 
 SUSPEND_SCHEMA = vol.All(
-    vol.Schema(
+    cv.make_entity_service_schema(
         {
             vol.Required(CONF_ENTITY_ID): cv.entity_ids,
             vol.Exclusive(CONF_FOR, "time_method"): cv.positive_time_period_template,
             vol.Exclusive(CONF_UNTIL, "time_method"): cv.datetime,
             vol.Exclusive(CONF_RESET, "time_method"): None,
             vol.Optional(CONF_ZONES): cv.ensure_list,
-            vol.Optional(CONF_SEQUENCE_ID): cv.positive_int,
+            vol.Optional(CONF_SEQUENCE_ID): cv.ensure_list,
         }
     ),
     cv.has_at_least_one_key(CONF_FOR, CONF_UNTIL, CONF_RESET),
@@ -437,12 +440,12 @@ SUSPEND_SCHEMA = vol.All(
 CANCEL_SCHEMA = {
     vol.Required(CONF_ENTITY_ID): cv.entity_ids,
     vol.Optional(CONF_ZONES): cv.ensure_list,
-    vol.Optional(CONF_SEQUENCE_ID): cv.positive_int,
+    vol.Optional(CONF_SEQUENCE_ID): cv.ensure_list,
 }
 
 PAUSE_RESUME_SCHEMA = {
     vol.Required(CONF_ENTITY_ID): cv.entity_ids,
-    vol.Optional(CONF_SEQUENCE_ID): cv.positive_int,
+    vol.Optional(CONF_SEQUENCE_ID): cv.ensure_list,
 }
 
 RELOAD_SERVICE_SCHEMA = vol.Schema({})

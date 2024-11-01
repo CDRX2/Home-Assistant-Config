@@ -364,3 +364,26 @@
       - sensor.dir_metro_departure
       - sensor.dir_vclb_departure
   mode: single
+- id: '1730469987335'
+  alias: turn_off_avr_music_assistant
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - media_player.sc_lx78
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 5
+  conditions:
+  - condition: state
+    state: 'off'
+    entity_id: media_player.living_room_tv
+  actions:
+  - action: media_player.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: media_player.pioneer_avr
+  mode: single

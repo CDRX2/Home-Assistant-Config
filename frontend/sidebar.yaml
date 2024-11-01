@@ -3,7 +3,7 @@ image: /local/ui/sidebar/sidebarBG.png
 view_layout:
   grid-area: sidebar
 card_mod:
-  style: | 
+  style: |
     ha-card {
       padding: 0 !important;
       overflow: hidden;
@@ -67,7 +67,7 @@ elements:
           left: 50%;
           width: 88%;
         }
-       
+
   # #Climate
   - type: 'custom:button-card'
     template: navigation
@@ -370,7 +370,7 @@ elements:
       - data: !secret TL_URL
 
     #########################    People at home    #########################
-  
+
   - type: 'custom:decluttering-card'
     template: image
     variables:
@@ -464,7 +464,7 @@ elements:
           content:
             type: 'custom:decluttering-card'
             template: cats_popup
-          title: Chatière   
+          title: Chatière
 
   # - type: image
   #   entity: person.ciboulette
@@ -559,7 +559,7 @@ elements:
   #                         style:
   #                           button:
   #                             background-color: >-
-  #                               {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '20'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}    
+  #                               {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '20'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}
   #                       - tap_action:
   #                           action: call-service
   #                           service: skodaconnect.set_pheater_duration
@@ -570,7 +570,7 @@ elements:
   #                         style:
   #                           button:
   #                             background-color: >-
-  #                               {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '30'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }} 
+  #                               {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '30'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}
   #                       - tap_action:
   #                           action: call-service
   #                           service: skodaconnect.set_pheater_duration
@@ -594,7 +594,7 @@ elements:
   #                       action: none
   #                     entities:
   #                       - entity: sensor.ciboulette_outside_temperature
-  #                         name: Temp extérieure 
+  #                         name: Temp extérieure
   #                         tap_action:
   #                           action: none
   #                         hold_action:
@@ -611,18 +611,18 @@ elements:
   #                           state-badge {
   #                             color: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %}#ff1a1a{% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} var(--accent-color) {% else %} var(--paper-item-icon-color){% endif %};
   #                             animation: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %} blink 1s linear infinite alternate {% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} spin 1s linear infinite {% else %} none {% endif %};
-  #                           }         
+  #                           }
   #                           @keyframes blink {
   #                             0% {opacity: 0.5;}
   #                             100% {opacity: 1;}
-  #                           }  
+  #                           }
   #                           @keyframes spin {
   #                             0% { transform: rotate(0deg); }
   #                             100% { transform: rotate(360deg); }
-  #                           }   
+  #                           }
   #               - type: 'custom:decluttering-card'
   #                 template: ciboulette_temp
-  #         title: Préchauffage/Ventilation 
+  #         title: Préchauffage/Ventilation
   #   hold_action:
   #     action: none
   # - type: conditional
@@ -667,7 +667,7 @@ elements:
   #       service: browser_mod.popup
   #       data:
   #         content: !include ciboulette.yaml
-  #         title: Ciboulette 
+  #         title: Ciboulette
   #         size: fullscreen
   #   hold_action:
   #     action: none
@@ -682,7 +682,7 @@ elements:
         value: 30
     entities:
       - sensor.temperature_salon
-      - sensor.openweathermap_temperature      
+      - sensor.openweathermap_temperature
     icon: 'mdi:home-thermometer-outline'
     show:
       icon: true
@@ -789,7 +789,7 @@ elements:
       left: 80%
       pointer-events: none
       top: 90%
-      width: 40%      
+      width: 40%
     type: image
   - action: none
     image: /local/ui/sidebar/sidebarInnerShadow.png
@@ -806,84 +806,84 @@ elements:
 
     # when the media player is playing, this overlaps the "Media" menu button
 
-  - type: conditional
-    conditions:
-      - entity: sensor.remote_select
-        state: radio
-    elements:
-      - type: image
-        image: /local/ui/sidebar/sidebarBG.png
-        style:
-          width: 88%
-          height: 10%
-          left: 50%
-          top: 35%
-      - type: 'custom:button-card'
-        template: media_sidebar_state
-        entity: media_player.pioneer_avr
-        state_display: >
-          [[[
-            if (entity) {
-              let elt = this.shadowRoot,
-                await = setTimeout(marquee, 0),
-                title = entity.attributes.media_title,
-                output = title !== undefined
-                  ? title
-                  : variables.translate_idle;
-              function marquee() {
-                let state = elt.getElementById("state"),
-                  container = elt.getElementById("container");
-                if (state && container) {
-                  state.innerHTML = output;
-                  let ro = new ResizeObserver(entries => {
-                    let spacer = "&nbsp;".repeat(3),
-                      s = entries[0],
-                      c = entries[1],
-                      r = s && s.contentRect &&
-                          c && c.contentRect &&
-                          s.contentRect.width !== 0 &&
-                          c.contentRect.width !== 0;
-                    if (r && s.contentRect.width < c.contentRect.width) {
-                      state.classList.remove("marquee");
-                    }
-                    else if (r && s.contentRect.width >= c.contentRect.width) {
-                      state.innerHTML = `${output} ${spacer} ${output} ${spacer}&nbsp;`;
-                      state.classList.add("marquee");
-                    }
-                  });
-                  ro.observe(state);
-                  ro.observe(container);
-                }
-              }
-              return output;
-            }
-            return variables.translate_unknown;
-          ]]]
-        extra_styles: |
-          .marquee {
-            animation: marquee 20s linear infinite;
-          }
-          @keyframes marquee {
-            from {
-              transform: translateX(0%);
-            }
-            to {
-              transform: translateX(-50%);
-            }
-          }
-      - type: 'custom:button-card'
-        template: media_sidebar_picture
-        entity_picture: /local/ui/media/radio.png
+#  - type: conditional
+#    conditions:
+#      - entity: sensor.remote_select
+#        state: radio
+#    elements:
+#      - type: image
+#        image: /local/ui/sidebar/sidebarBG.png
+#        style:
+#          width: 88%
+#          height: 10%
+#          left: 50%
+#          top: 35%
+#      - type: 'custom:button-card'
+#        template: media_sidebar_state
+#        entity: media_player.pioneer_avr
+#        state_display: >
+#          [[[
+#            if (entity) {
+#              let elt = this.shadowRoot,
+#                await = setTimeout(marquee, 0),
+#                title = entity.attributes.media_title,
+#                output = title !== undefined
+#                  ? title
+#                  : variables.translate_idle;
+#              function marquee() {
+#                let state = elt.getElementById("state"),
+#                  container = elt.getElementById("container");
+#                if (state && container) {
+#                  state.innerHTML = output;
+#                  let ro = new ResizeObserver(entries => {
+#                    let spacer = "&nbsp;".repeat(3),
+#                      s = entries[0],
+#                      c = entries[1],
+#                      r = s && s.contentRect &&
+#                          c && c.contentRect &&
+#                          s.contentRect.width !== 0 &&
+#                          c.contentRect.width !== 0;
+#                    if (r && s.contentRect.width < c.contentRect.width) {
+#                      state.classList.remove("marquee");
+#                    }
+#                    else if (r && s.contentRect.width >= c.contentRect.width) {
+#                      state.innerHTML = `${output} ${spacer} ${output} ${spacer}&nbsp;`;
+#                      state.classList.add("marquee");
+#                    }
+#                  });
+#                  ro.observe(state);
+#                  ro.observe(container);
+#                }
+#              }
+#              return output;
+#            }
+#            return variables.translate_unknown;
+#          ]]]
+#        extra_styles: |
+#          .marquee {
+#            animation: marquee 20s linear infinite;
+#          }
+#          @keyframes marquee {
+#            from {
+#              transform: translateX(0%);
+#            }
+#            to {
+#              transform: translateX(-50%);
+#            }
+#          }
+#      - type: 'custom:button-card'
+#        template: media_sidebar_picture
+#        entity_picture: /local/ui/media/radio.png
 
-  - type: conditional
-    conditions:
-      - entity: sensor.pioneer_avr_source
-        state: BT AUDIO
-    elements:
-      - type: 'custom:button-card'
-        template: media_sidebar
-        entity_picture: /local/ui/media/bluetooth-audio.png
-        label: Bluetooth
+#  - type: conditional
+#    conditions:
+#      - entity: sensor.pioneer_avr_source
+#        state: BT AUDIO
+#    elements:
+#      - type: 'custom:button-card'
+#        template: media_sidebar
+#        entity_picture: /local/ui/media/bluetooth-audio.png
+#        label: Bluetooth
 
   - type: conditional
     conditions:
@@ -899,7 +899,7 @@ elements:
           top: 35%
       - type: 'custom:button-card'
         template: media_sidebar_state
-        entity: media_player.bubble
+        entity: media_player.sc_lx78
         state_display: >
           [[[
             if (entity) {
@@ -957,7 +957,7 @@ elements:
           }
       - type: 'custom:button-card'
         template: media_sidebar_picture
-        entity_picture: '[[[ return states["media_player.bubble"].attributes["entity_picture"]; ]]]'
+        entity_picture: '[[[ return states["media_player.sc_lx78"].attributes["entity_picture"]; ]]]'
 
   - type: conditional
     conditions:
@@ -1074,18 +1074,20 @@ elements:
           entity_picture:
             - width: 100%
 
-  - type: conditional
-    conditions:
-      - entity: sensor.living_room_tv_source
-        state: Swisscom blue TV
-    elements:
-      - type: 'custom:button-card'
-        template: media_sidebar
-        entity_picture: /local/ui/media/swisscomTV_transparent.png
-        label: "Blue TV"
-        styles:
-          entity_picture:
-            - height: 100%
+#  - type: conditional
+#    conditions:
+#      - entity: sensor.living_room_tv_source
+#        state: Swisscom blue TV
+#    elements:
+#      - type: 'custom:button-card'
+#        template: media_sidebar
+#        entity_picture: /local/ui/media/swisscomTV_transparent.png
+#        label: "Blue TV"
+#        styles:
+#          entity_picture:
+#            - height: 100%
+
+    #########################   Floor selection    #########################
 
   - type: 'custom:button-card'
     template: floors
@@ -1142,7 +1144,7 @@ elements:
         :host {
           top: 43.25%;
           left: 68%;
-          width: 28%;     
+          width: 28%;
           transform: translate(0, -50%) !important;
           z-index: {% if is_state('input_select.floor', '2e') %} 1 {% else %} initial {%endif%};
         }

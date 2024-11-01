@@ -6,7 +6,7 @@
   max: 10
   section_types:
   - show
-   
+
 - platform: plex_recently_added
   name: Recently added movies
   token: !secret Plex_Token
@@ -40,7 +40,7 @@
           Plex
         {% else %}
           Other
-        {% endif %}    
+        {% endif %}
 
 - platform: template
   sensors:
@@ -48,11 +48,11 @@
       value_template: "{{ state_attr('media_player.living_room_tv', 'source') }}"
       friendly_name: 'Living Room TV Source'
 
-- platform: template
-  sensors:
-    pioneer_avr_source:
-      value_template: "{{ state_attr('media_player.pioneer_avr', 'source') }}"
-      friendly_name: 'Pioneer AVR Source'
+#- platform: template
+#  sensors:
+#    pioneer_avr_source:
+#      value_template: "{{ state_attr('media_player.pioneer_avr', 'source') }}"
+#      friendly_name: 'Pioneer AVR Source'
 
 - platform: template
   sensors:
@@ -84,18 +84,30 @@
           {{ states('sensor.pioneer_avr_volume')}}
         {% endif %}
 
-- platform: template 
+#- platform: template
+#  sensors:
+#    remote_select:
+#      value_template: >-
+#        {% if is_state('media_player.pioneer_avr', 'off') and is_state('media_player.living_room_tv', 'off') %}
+#          off
+#        {% elif is_state_attr('media_player.pioneer_avr', 'source', 'MEDIA SERVER') and states('media_player.sc_lx78_dlna') != 'idle' %}
+#          radio
+#        {% elif is_state_attr('media_player.pioneer_avr', 'source', 'MEDIA SERVER') and states('media_player.bubble') != 'idle' %}
+#          music
+#        {% elif is_state_attr('media_player.pioneer_avr', 'source', 'BT AUDIO') %}
+#          bluetooth
+#        {% else %}
+#          other
+#        {% endif %}
+
+- platform: template
   sensors:
     remote_select:
       value_template: >-
         {% if is_state('media_player.pioneer_avr', 'off') and is_state('media_player.living_room_tv', 'off') %}
           off
-        {% elif is_state_attr('media_player.pioneer_avr', 'source', 'MEDIA SERVER') and states('media_player.sc_lx78_dlna') != 'idle' %}
-          radio
-        {% elif is_state_attr('media_player.pioneer_avr', 'source', 'MEDIA SERVER') and states('media_player.bubble') != 'idle' %}
+        {% elif is_state_attr('media_player.pioneer_avr', 'source', 'MEDIA SERVER') and states('media_player.sc_lx78') = "on" %}
           music
-        {% elif is_state_attr('media_player.pioneer_avr', 'source', 'BT AUDIO') %}
-          bluetooth
         {% else %}
           other
         {% endif %}

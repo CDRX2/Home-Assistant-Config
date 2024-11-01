@@ -1,2 +1,6 @@
-
+music_assistant:
+  card:
+    type: iframe
+    url: http://10.81.19.31:8095
+    aspect_ratio: 50%
 
