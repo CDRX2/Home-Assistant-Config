@@ -82,7 +82,7 @@ views:
       variables:
         - sidebar: !include frontend/sidebar.yaml
         - card: !include frontend/media.yaml
-    
+
   #############################################################################################################################################
   #                                                                                                                                           #
   #                                                               Weather View                                                                #
@@ -100,7 +100,7 @@ views:
         - sidebar: !include frontend/sidebar.yaml
         - card: !include frontend/weather.yaml
 
-      
+
   #############################################################################################################################################
   #                                                                                                                                           #
   #                                                            Systems View                                                                   #

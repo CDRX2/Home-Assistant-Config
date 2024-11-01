@@ -248,3 +248,48 @@ radio:
       entity_id: media_player.sc_lx78_dlna
   mode: single
   icon: mdi:radio
+music_assistant:
+  alias: music_assistant
+  sequence:
+  - action: media_player.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: media_player.pioneer_avr
+  - action: media_player.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: media_player.sc_lx78
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 5
+      milliseconds: 0
+  - data:
+      source: MEDIA SERVER
+    entity_id: media_player.pioneer_avr
+    action: media_player.select_source
+  - action: media_player.volume_set
+    metadata: {}
+    data:
+      volume_level: 0.3837837837837838
+    target:
+      entity_id: media_player.pioneer_avr
+  description: ''
+  icon: mdi:speaker-play
+music_assistant_source:
+  alias: music_assistant_source
+  sequence:
+  - data:
+      source: MEDIA SERVER
+    entity_id: media_player.pioneer_avr
+    action: media_player.select_source
+  - action: media_player.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: media_player.sc_lx78
+  mode: single
+  icon: mdi:music
+  description: ''

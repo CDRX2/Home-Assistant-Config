@@ -185,7 +185,7 @@ light:
 
   - platform: switch
     name: Imprimante
-    entity_id: switch.imprimante   
+    entity_id: switch.imprimante
 
   - platform: switch
     name: Grand totem
@@ -218,7 +218,7 @@ light:
   - platform: switch
     name: Cuisine plafonnier
     entity_id: switch.cuisine_plafonnier
-  
+
   - platform: switch
     name: Jumeaux prises
     entity_id: switch.jumeaux_prises
@@ -242,11 +242,11 @@ light:
   - platform: switch
     name: Amis prises
     entity_id: switch.amis_prises
-  
+
   - platform: switch
     name: Amis plafonnier
     entity_id: switch.amis_plafonnier
-  
+
   - platform: switch
     name: Entrée
     entity_id: switch.entree
@@ -353,7 +353,7 @@ light:
     entities:
     - light.jumeaux_prises
     - light.jumeaux_armoires_blanc
-  
+
   - platform: group
     name: Chevet amis
     entities:
