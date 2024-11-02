@@ -256,11 +256,6 @@ music_assistant:
     data: {}
     target:
       entity_id: media_player.pioneer_avr
-  - action: media_player.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id: media_player.sc_lx78
   - delay:
       hours: 0
       minutes: 0
@@ -270,6 +265,16 @@ music_assistant:
       source: MEDIA SERVER
     entity_id: media_player.pioneer_avr
     action: media_player.select_source
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 5
+      milliseconds: 0
+  - action: media_player.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: media_player.sc_lx78
   - action: media_player.volume_set
     metadata: {}
     data:
@@ -281,6 +286,26 @@ music_assistant:
 music_assistant_source:
   alias: music_assistant_source
   sequence:
+  - data:
+      source: MEDIA SERVER
+    entity_id: media_player.pioneer_avr
+    action: media_player.select_source
+  - action: media_player.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: media_player.sc_lx78
+  mode: single
+  icon: mdi:music
+  description: ''
+music_assistant_from_tv:
+  alias: music_assistant_from_tv
+  sequence:
+  - action: media_player.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: media_player.living_room_tv
   - data:
       source: MEDIA SERVER
     entity_id: media_player.pioneer_avr
