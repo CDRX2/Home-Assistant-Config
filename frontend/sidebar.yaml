@@ -958,6 +958,15 @@ elements:
       - type: 'custom:button-card'
         template: media_sidebar_picture
         entity_picture: '[[[ return states["media_player.sc_lx78"].attributes["entity_picture"]; ]]]'
+        styles:
+          entity_picture:
+            - width: >
+                [[[ if (states['media_player.sc_lx78'].state != 'idle') return '100%';
+                else return '40%'; ]]]
+            - height: 100%
+            - clip-path: >
+                [[[ if (states['media_player.sc_lx78'].state != 'idle') return 'circle(42% at 37% 50%)';
+                else return 'none'; ]]]
 
   - type: conditional
     conditions:

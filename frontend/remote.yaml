@@ -215,13 +215,13 @@ card:
           template: media_service
           variables:
             name: ''
-            service: media_player.media_play_pause
-            picture: "[[[ return states['media_player.sc_lx78'].state == 'playing' ? '/local/ui/btns/pause.png' : '/local/ui/btns/play.png' ]]]"
+            service: "[[[ return states['media_player.sc_lx78_dlna'].state == 'playing' ? 'media_player.media_pause' : 'media_player.media_play' ]]]"
+            picture: "[[[ return states['media_player.sc_lx78_dlna'].state == 'playing' ? '/local/ui/btns/pause.png' : '/local/ui/btns/play.png' ]]]"
           view_layout:
             grid-area: play
           tap_action:
             service_data:
-              entity_id: media_player.sc_lx78
+              entity_id: "[[[ return states['media_player.sc_lx78_dlna'].state == 'playing' ? 'media_player.pioneer_avr' : 'media_player.sc_lx78' ]]]"
         - type: 'custom:button-card'
           template: media_service
           variables:
@@ -790,7 +790,7 @@ card:
         grid-template-columns: 25% 25% 25% 25%
         grid-template-rows: auto
         grid-template-areas: |
-          "plex youtube ytkids ."
+          "plex youtube ytkids music"
           "power . . mute"
           "menu stereo surround volup"
           "play up back volup"
@@ -838,6 +838,14 @@ card:
             service_data:
               entity_id: media_player.living_room_tv
               source: YouTube Kids
+        - type: 'custom:button-card'
+          template: media_service
+          variables:
+            name: Musique
+            service: script.music_assistant_source
+            picture: /local/ui/btns/music_on.png
+          view_layout:
+            grid-area: music
         - type: 'custom:button-card'
           template: media_service
           variables:
