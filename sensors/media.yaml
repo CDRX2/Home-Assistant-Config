@@ -54,19 +54,19 @@
 #      value_template: "{{ state_attr('media_player.pioneer_avr', 'source') }}"
 #      friendly_name: 'Pioneer AVR Source'
 
-- platform: template
-  sensors:
-    now_playing:
-      value_template: >-
-        {% if states('media_player.living_room_tv') != 'off' %}
-          {{ state_attr('media_player.living_room_tv', 'source') }}
-        {% elif states('media_player.sc_lx78_dlna') != 'idle' %}
-          radio
-        {% elif states('media_player.bubble') != 'idle' %}
-          bubble
-        {% elif states('media_player.pioneer_avr') != 'off' %}
-          {{ state_attr('media_player.pioneer_avr', 'source')}}
-        {% endif %}
+#- platform: template
+#  sensors:
+#    now_playing:
+#      value_template: >-
+#        {% if states('media_player.living_room_tv') != 'off' %}
+#          {{ state_attr('media_player.living_room_tv', 'source') }}
+#        {% elif states('media_player.sc_lx78_dlna') != 'idle' %}
+#          radio
+#        {% elif states('media_player.bubble') != 'idle' %}
+#          bubble
+#        {% elif states('media_player.pioneer_avr') != 'off' %}
+#          {{ state_attr('media_player.pioneer_avr', 'source')}}
+#        {% endif %}
 
 - platform: template
   sensors:
