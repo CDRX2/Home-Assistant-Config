@@ -800,14 +800,14 @@ elements:
       - left: 80%
       - top: 54%
 
-  # - type: 'custom:decluttering-card'
-  #   template: Light_icon_on_off
-  #   variables:
-  #     - light: light.noel
-  #     - title: Joyeux Noël!
-  #     - icon: mdi:pine-tree
-  #     - left: 65%
-  #     - top: 65%
+  - type: 'custom:decluttering-card'
+    template: Light_icon_on_off
+    variables:
+      - light: light.noel
+      - title: Joyeux Noël!
+      - icon: mdi:pine-tree
+      - left: 65%
+      - top: 65%
 
     #########################    NOW PLAYING ON TV IN FLOORPLAN    #########################
 

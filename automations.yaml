@@ -387,3 +387,61 @@
     target:
       entity_id: media_player.pioneer_avr
   mode: single
+- id: '1733045600218'
+  alias: X-Mas morning on
+  description: ''
+  triggers:
+  - trigger: time
+    at: 06:00:00
+  conditions: []
+  actions:
+  - action: light.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.noel
+  mode: single
+- id: '1733045702273'
+  alias: X-Mas morning off
+  description: ''
+  triggers:
+  - trigger: sun
+    event: sunrise
+    offset: 00:30
+  conditions: []
+  actions:
+  - action: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.noel
+  mode: single
+- id: '1733045735507'
+  alias: X-mas evening on
+  description: ''
+  triggers:
+  - trigger: sun
+    event: sunset
+    offset: 0
+  conditions: []
+  actions:
+  - action: light.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.noel
+  mode: single
+- id: '1733045794336'
+  alias: X-mas evening off
+  description: ''
+  triggers:
+  - trigger: time
+    at: '22:30:00'
+  conditions: []
+  actions:
+  - action: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.noel
+  mode: single
