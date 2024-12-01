@@ -12,7 +12,7 @@ LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 ***************************************************************************** */
-/* global Reflect, Promise, SuppressedError, Symbol */
+/* global Reflect, Promise, SuppressedError, Symbol, Iterator */
 
 
 function __decorate(decorators, target, key, desc) {
@@ -137,11 +137,11 @@ const fireEvent = (node, type, detail, options) => {
     return event;
 };
 
-var common$3 = {
+var common$4 = {
 	version: "Weergawe",
 	invalidConfiguration: "Ongeldige konfigurasie"
 };
-var editor$2 = {
+var editor$3 = {
 	title: {
 		name: "Titel (opsioneel)"
 	},
@@ -161,7 +161,7 @@ var editor$2 = {
 		name: "Wys tydslyn geskiedenis"
 	}
 };
-var controller$2 = {
+var controller$3 = {
 	zones: {
 		name: "Sones",
 		buttonHint: "Wys/verberg sones"
@@ -171,7 +171,7 @@ var controller$2 = {
 		buttonHint: "Wys/versteek volgordes"
 	}
 };
-var menu$2 = {
+var menu$3 = {
 	enable: {
 		name: "Aktiveer"
 	},
@@ -198,26 +198,26 @@ var menu$2 = {
 	}
 };
 var af = {
-	common: common$3,
-	editor: editor$2,
-	controller: controller$2,
-	menu: menu$2
+	common: common$4,
+	editor: editor$3,
+	controller: controller$3,
+	menu: menu$3
 };
 
 var af$1 = /*#__PURE__*/Object.freeze({
     __proto__: null,
-    common: common$3,
-    controller: controller$2,
+    common: common$4,
+    controller: controller$3,
     default: af,
-    editor: editor$2,
-    menu: menu$2
+    editor: editor$3,
+    menu: menu$3
 });
 
-var common$2 = {
+var common$3 = {
 	version: "Version",
 	invalidConfiguration: "Ungültige Konfiguration"
 };
-var editor$1 = {
+var editor$2 = {
 	title: {
 		name: "Title (optional)"
 	},
@@ -237,7 +237,7 @@ var editor$1 = {
 		name: "Zeige vergangene Ablaufpläne"
 	}
 };
-var controller$1 = {
+var controller$2 = {
 	zones: {
 		name: "Zonen",
 		buttonHint: "Ein/Ausblenden der Zonen"
@@ -247,7 +247,7 @@ var controller$1 = {
 		buttonHint: "Ein/Ausblenden der Sequenzen"
 	}
 };
-var menu$1 = {
+var menu$2 = {
 	enable: {
 		name: "Aktivieren"
 	},
@@ -274,26 +274,26 @@ var menu$1 = {
 	}
 };
 var de = {
-	common: common$2,
-	editor: editor$1,
-	controller: controller$1,
-	menu: menu$1
+	common: common$3,
+	editor: editor$2,
+	controller: controller$2,
+	menu: menu$2
 };
 
 var de$1 = /*#__PURE__*/Object.freeze({
     __proto__: null,
-    common: common$2,
-    controller: controller$1,
+    common: common$3,
+    controller: controller$2,
     default: de,
-    editor: editor$1,
-    menu: menu$1
+    editor: editor$2,
+    menu: menu$2
 });
 
-var common$1 = {
+var common$2 = {
 	version: "Version",
 	invalidConfiguration: "Invalid configuration"
 };
-var editor = {
+var editor$1 = {
 	title: {
 		name: "Title (optional)"
 	},
@@ -313,7 +313,7 @@ var editor = {
 		name: "Show timeline history"
 	}
 };
-var controller = {
+var controller$1 = {
 	zones: {
 		name: "Zones",
 		buttonHint: "Show/hide zones"
@@ -323,7 +323,7 @@ var controller = {
 		buttonHint: "Show/hide sequences"
 	}
 };
-var menu = {
+var menu$1 = {
 	enable: {
 		name: "Enable"
 	},
@@ -350,33 +350,109 @@ var menu = {
 	}
 };
 var en = {
-	common: common$1,
+	common: common$2,
+	editor: editor$1,
+	controller: controller$1,
+	menu: menu$1
+};
+
+var en$1 = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    common: common$2,
+    controller: controller$1,
+    default: en,
+    editor: editor$1,
+    menu: menu$1
+});
+
+var common$1 = {
+	version: "Versjon",
+	invalid_configuration: "Ikke gyldig konfiguration"
+};
+var nb = {
+	common: common$1
+};
+
+var nb$1 = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    common: common$1,
+    default: nb
+});
+
+var common = {
+	version: "Verzia",
+	invalidConfiguration: "Chybná konfigurácia"
+};
+var editor = {
+	title: {
+		name: "Názov (voliteľné)"
+	},
+	showControllers: {
+		name: "Ukázať ovládače (CSV zoznam)"
+	},
+	alwaysShowZones: {
+		name: "Vždy zobraziť zóny"
+	},
+	alwaysShowSequences: {
+		name: "Vždy zobrazovať sekvencie"
+	},
+	showTimelineScheduled: {
+		name: "Zobraziť naplánovanú časovú os"
+	},
+	showTimelineHistory: {
+		name: "Zobraziť históriu časovej osi"
+	}
+};
+var controller = {
+	zones: {
+		name: "Zóny",
+		buttonHint: "Zobraziť/skryť zóny"
+	},
+	sequences: {
+		name: "Sekvencie",
+		buttonHint: "Zobraziť/skryť sekvencie"
+	}
+};
+var menu = {
+	enable: {
+		name: "Povoliť"
+	},
+	suspend: {
+		name: "Pozastaviť",
+		hint: "Trvanie\n===============\nh:mm:ss\n<blank> = reset"
+	},
+	manual: {
+		name: "Manual",
+		hint: "Trvanie"
+	},
+	pause: {
+		name: "Pauza"
+	},
+	resume: {
+		name: "Obnoviť"
+	},
+	cancel: {
+		name: "Zrušiť"
+	},
+	adjust: {
+		name: "Upraviť",
+		hint: "Možnosti úprav\n===============\nPercento: %n\nAktuálne: =0:00:00\nZvýšiť: +0:00:00\nZnížiť: -0:00:00\nReset: <blank>"
+	}
+};
+var sk = {
+	common: common,
 	editor: editor,
 	controller: controller,
 	menu: menu
 };
 
-var en$1 = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    common: common$1,
-    controller: controller,
-    default: en,
-    editor: editor,
-    menu: menu
-});
-
-var common = {
-	version: "Versjon",
-	invalid_configuration: "Ikke gyldig konfiguration"
-};
-var nb = {
-	common: common
-};
-
-var nb$1 = /*#__PURE__*/Object.freeze({
+var sk$1 = /*#__PURE__*/Object.freeze({
     __proto__: null,
     common: common,
-    default: nb
+    controller: controller,
+    default: sk,
+    editor: editor,
+    menu: menu
 });
 
 const languages = {
@@ -384,6 +460,7 @@ const languages = {
     de: de$1,
     en: en$1,
     nb: nb$1,
+    sk: sk$1,
 };
 class localise {
     constructor(preferred) {
@@ -589,6 +666,11 @@ function elapsed_secs(d1, d2) {
 }
 function percent_completed(elapsed, total) {
     return Math.round((elapsed / total) * 100);
+}
+function humanise_adjustment(value) {
+    if (value && value.length > 0 && value[0] === "%")
+        return value.substring(1) + "%";
+    return value;
 }
 
 class IUBase {
@@ -910,7 +992,6 @@ const styles = i$2 `
   .iu-td1 {
     flex: 1.5em;
     text-align: center;
-    cursor: pointer;
   }
 
   .iu-td2 {
@@ -941,6 +1022,27 @@ const styles = i$2 `
   .iu-td7 {
     flex: 10%;
     text-align: center;
+  }
+
+  /* Cursors */
+  .iu-collapsible > .iu-td > .iu-td1,
+  .iu-collapsible > .iu-td > .iu-td2,
+  .iu-collapsible > .iu-td > .iu-td3 {
+    cursor: pointer;
+  }
+
+  .iu-controller-row .iu-td4,
+  .iu-zone-row .iu-td4,
+  .iu-sequence-row .iu-td4 {
+    cursor: pointer;
+  }
+
+  .iu-controller-row > .iu-td3,
+  .iu-timeline-row,
+  .iu-sequence-zone-row,
+  .iu-duration,
+  .iu-adjustment {
+    cursor: default;
   }
 
   /* Timeline colouring */
@@ -1102,7 +1204,7 @@ const styles = i$2 `
   }
 `;
 
-const CARD_VERSION = "2024.8.0";
+const CARD_VERSION = "2024.11.0";
 
 const loc = new localise(window.navigator.language);
 /* eslint no-console: 0 */
@@ -1184,7 +1286,7 @@ let IrrigationUnlimitedCard = class IrrigationUnlimitedCard extends s {
         const suspended = stateObj.attributes.suspended;
         const isHidden = !(!this.config.show_controllers ||
             (this.config.show_controllers &&
-                ((_a = this.config.show_controllers) === null || _a === void 0 ? void 0 : _a.replace(/\s/g, "").split(",").includes(controller.id1 + ""))));
+                ((_a = this.config.show_controllers) === null || _a === void 0 ? void 0 : _a.replace(/\s/g, "").split(",").includes(controller.controller_id))));
         const zonesHidden = !this.config.always_show_zones;
         const sequencesHidden = !this.config.always_show_sequences;
         let start;
@@ -1235,12 +1337,13 @@ let IrrigationUnlimitedCard = class IrrigationUnlimitedCard extends s {
             <span>${controller.id1}</span>
             <span class="iu-name">${controller.name}</span>
           </div>
-          <div class="iu-td4">
+          <div class="iu-td4" @click="${this._moreInfo}">
             <div ?hidden=${!isEnabled}>
               <span class="iu-schedule">${schedule_name}</span>
               <br ?hidden=${isOn || suspended} />
               <span class="iu-start" ?hidden=${isOn}>${startStr}</span>
             </div>
+            <div ?hidden=${isEnabled}>&nbsp;</div>
           </div>
           <div class="iu-td5 iu-duration">
             <div ?hidden=${!isEnabled}>${duration}</div>
@@ -1379,7 +1482,7 @@ let IrrigationUnlimitedCard = class IrrigationUnlimitedCard extends s {
               >
               <span class="iu-name">${stateObj.attributes.friendly_name}</span>
             </div>
-            <div class="iu-td4">
+            <div class="iu-td4" @click="${this._moreInfo}">
               <div ?hidden=${!isEnabled || isBlocked}>
                 <span class="iu-schedule">${schedule_name}</span>
                 <br ?hidden=${isOn || isManual || suspended} />
@@ -1387,6 +1490,7 @@ let IrrigationUnlimitedCard = class IrrigationUnlimitedCard extends s {
                   >${startStr}</span
                 >
               </div>
+              <div ?hidden=${!(!isEnabled || isBlocked)}>&nbsp;</div>
             </div>
             <div class="iu-td5 iu-duration">
               <div ?hidden=${!isEnabled || suspended || isBlocked}>
@@ -1395,7 +1499,7 @@ let IrrigationUnlimitedCard = class IrrigationUnlimitedCard extends s {
             </div>
             <div class="iu-td6 iu-adjustment">
               <div ?hidden=${!isEnabled || isBlocked || suspended || isManual}>
-                ${adjustment}
+                ${humanise_adjustment(adjustment)}
               </div>
             </div>
             <div class="iu-td7">
@@ -1455,7 +1559,9 @@ let IrrigationUnlimitedCard = class IrrigationUnlimitedCard extends s {
           <div class="iu-td3">${startStr}</div>
           <div class="iu-td4 iu-schedule">${schedule_name}</div>
           <div class="iu-td5 iu-duration">${duration}</div>
-          <div class="iu-td6 iu-adjustment">${timeline.adjustment}</div>
+          <div class="iu-td6 iu-adjustment">
+            ${humanise_adjustment(timeline.adjustment)}
+          </div>
           <div class="iu-td7"></div>
         </div>
       </div>
@@ -1539,7 +1645,7 @@ let IrrigationUnlimitedCard = class IrrigationUnlimitedCard extends s {
               <span>${sequence.id1}</span>
               <span class="iu-name">${sequence.name}</span>
             </div>
-            <div class="iu-td4">
+            <div class="iu-td4" @click="${this._moreInfo}">
               <div ?hidden=${!isEnabled || isBlocked}>
                 <span class="iu-schedule">${schedule_name}</span>
                 <br ?hidden=${isOn || isPaused || isDelay || suspended} />
@@ -1547,6 +1653,7 @@ let IrrigationUnlimitedCard = class IrrigationUnlimitedCard extends s {
                   >${startStr}</span
                 >
               </div>
+              <div ?hidden=${!(!isEnabled || isBlocked)}>&nbsp;</div>
             </div>
             <div class="iu-td5 iu-duration">
               <div ?hidden=${!isEnabled || suspended || isBlocked}>
@@ -1554,7 +1661,7 @@ let IrrigationUnlimitedCard = class IrrigationUnlimitedCard extends s {
               </div>
             </div>
             <div class="iu-td6 iu-adjustment">
-              <div ?hidden=${isManual}>${adjustment}</div>
+              <div ?hidden=${isManual}>${humanise_adjustment(adjustment)}</div>
             </div>
             <div class="iu-td7">
               ${this._renderMenu(isEnabled, isBlocked, true, true, status === "on" || status === "delay"
@@ -1572,6 +1679,7 @@ let IrrigationUnlimitedCard = class IrrigationUnlimitedCard extends s {
     `;
     }
     _renderSequenceZone(controller, sequence, sequenceZone, isManual) {
+        var _a;
         const status = sequenceZone.status;
         const isOn = status === "on";
         const isEnabled = sequenceZone.enabled;
@@ -1629,7 +1737,9 @@ let IrrigationUnlimitedCard = class IrrigationUnlimitedCard extends s {
             </div>
           </div>
           <div class="iu-td6 iu-adjustment">
-            <div ?hidden=${isManual}>${sequenceZone.adjustment}</div>
+            <div ?hidden=${isManual}>
+              ${humanise_adjustment((_a = sequenceZone.adjustment) !== null && _a !== void 0 ? _a : "")}
+            </div>
           </div>
           <div class="iu-td7">
             ${this._renderMenu(isEnabled, isBlocked, false, false, 0, sequenceZone.adjustment, suspended)}
@@ -1886,6 +1996,13 @@ let IrrigationUnlimitedCard = class IrrigationUnlimitedCard extends s {
             data["zones"] = Number(keys[3]);
         }
         return data;
+    }
+    _moreInfo(e) {
+        const keys = this._get_iu_key(e);
+        if (!keys)
+            return;
+        const entity_id = this._build_entity_id(keys);
+        fireEvent(this, "hass-more-info", { entityId: entity_id, view: "history" });
     }
     _serviceEnable(e) {
         const data = this._build_data(e);

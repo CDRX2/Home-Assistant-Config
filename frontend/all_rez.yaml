@@ -13,7 +13,7 @@ card_mod:
       height: 100%;
       width: 100%;
     }
-elements:  
+elements:
   - type: 'custom:mod-card'
     card:
       type: 'custom:layout-card'
@@ -32,7 +32,7 @@ elements:
           ". . . . . ."
       cards:
         - type: 'custom:button-card'
-          template: 
+          template:
             - dimmable_lights
             - consumption
           variables:
@@ -82,7 +82,7 @@ elements:
           view_layout:
             grid-area: q
         - type: 'custom:button-card'
-          template: 
+          template:
             - on_off_lights
             - consumption
           variables:
@@ -94,7 +94,7 @@ elements:
           view_layout:
             grid-area: b
         - type: 'custom:button-card'
-          template: 
+          template:
             - dimmable_lights
             - consumption
           variables:
@@ -106,7 +106,7 @@ elements:
           view_layout:
             grid-area: f
         - type: 'custom:button-card'
-          template: 
+          template:
             - on_off_lights
             - consumption
           variables:
@@ -118,7 +118,7 @@ elements:
           view_layout:
             grid-area: j
         - type: 'custom:button-card'
-          template: 
+          template:
             - on_off_lights
             - consumption
           variables:
@@ -141,12 +141,12 @@ elements:
           view_layout:
             grid-area: r
         - type: 'custom:button-card'
-          template: 
+          template:
             - on_off_lights
             - consumption
           variables:
             gridarea: '"i consumption ." "n n n" ". . ."'
-            consumption: sensor.consumption_manger_cuisine           
+            consumption: sensor.consumption_manger_cuisine
           entity: light.cuisine_plafonnier
           icon: 'hue:recessed-ceiling'
           name: Cuisine
@@ -162,7 +162,7 @@ elements:
           view_layout:
             grid-area: g
         - type: 'custom:button-card'
-          template: 
+          template:
             - on_off_lights
             - consumption
           variables:
@@ -174,7 +174,7 @@ elements:
           view_layout:
             grid-area: k
         - type: 'custom:button-card'
-          template: 
+          template:
             - dimmable_lights
             - consumption
           variables:
@@ -204,7 +204,7 @@ elements:
           view_layout:
             grid-area: l
         - type: 'custom:button-card'
-          template: 
+          template:
             - on_off_lights
             - consumption
           variables:
@@ -216,51 +216,51 @@ elements:
           view_layout:
             grid-area: p
         - type: 'custom:button-card'
-          template: 
+          template:
             - on_off_lights
             - consumption
           variables:
             gridarea: '"i consumption ." "n n n" ". . ."'
-            consumption: sensor.consumption_escalier_cave            
+            consumption: sensor.consumption_escalier_cave
           entity: light.escalier_cave
           icon: 'mdi:stairs'
           name: Cave
           view_layout:
             grid-area: t
-        # - type: 'custom:button-card'
-        #   template: on_off_lights
-        #   variables:
-        #     gridarea: '"i . ." "n n n" ". . ."'
-        #   entity: light.spare_switch_1
-        #   icon: 'mdi:pine-tree'
-        #   name: Sapin dedans
-        #   view_layout:
-        #     grid-area: o
-        # - type: 'custom:button-card'
-        #   template: on_off_lights
-        #   variables:
-        #     gridarea: '"i . ." "n n n" ". . ."'
-        #   entity: light.spare_switch_2
-        #   icon: 'mdi:pine-tree'
-        #   name: Sapin dehors
-        #   view_layout:
-        #     grid-area: s
-        # - type: 'custom:button-card'
-        #   template: on_off_lights
-        #   variables:
-        #     gridarea: '"i . ." "n n n" ". . ."'
-        #   entity: light.spare_switch_3
-        #   icon: 'mdi:hexagram-outline'
-        #   name: Étoile
-        #   view_layout:
-        #     grid-area: w
+        - type: 'custom:button-card'
+          template: on_off_lights
+          variables:
+            gridarea: '"i . ." "n n n" ". . ."'
+          entity: light.spare_switch_1
+          icon: 'mdi:pine-tree'
+          name: Sapin dedans
+          view_layout:
+            grid-area: o
+        - type: 'custom:button-card'
+          template: on_off_lights
+          variables:
+            gridarea: '"i . ." "n n n" ". . ."'
+          entity: light.spare_switch_3
+          icon: 'mdi:pine-tree'
+          name: Sapin dehors
+          view_layout:
+            grid-area: s
+        - type: 'custom:button-card'
+          template: on_off_lights
+          variables:
+            gridarea: '"i . ." "n n n" ". . ."'
+          entity: light.spare_switch_2
+          icon: 'mdi:hexagram-outline'
+          name: Étoile
+          view_layout:
+            grid-area: w
       style:
         left: 50%
         top: 50%
         width: 100%
         height: 100%
     card_mod:
-      style: 
+      style:
         layout-card$:
           grid-layout$: |
             #root {
