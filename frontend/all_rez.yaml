@@ -227,33 +227,33 @@ elements:
           name: Cave
           view_layout:
             grid-area: t
-        - type: 'custom:button-card'
-          template: on_off_lights
-          variables:
-            gridarea: '"i . ." "n n n" ". . ."'
-          entity: light.spare_switch_1
-          icon: 'mdi:pine-tree'
-          name: Sapin dedans
-          view_layout:
-            grid-area: o
-        - type: 'custom:button-card'
-          template: on_off_lights
-          variables:
-            gridarea: '"i . ." "n n n" ". . ."'
-          entity: light.spare_switch_3
-          icon: 'mdi:pine-tree'
-          name: Sapin dehors
-          view_layout:
-            grid-area: s
-        - type: 'custom:button-card'
-          template: on_off_lights
-          variables:
-            gridarea: '"i . ." "n n n" ". . ."'
-          entity: light.spare_switch_2
-          icon: 'mdi:hexagram-outline'
-          name: Étoile
-          view_layout:
-            grid-area: w
+#        - type: 'custom:button-card'
+#          template: on_off_lights
+#          variables:
+#            gridarea: '"i . ." "n n n" ". . ."'
+#          entity: light.spare_switch_1
+#          icon: 'mdi:pine-tree'
+#          name: Sapin dedans
+#          view_layout:
+#            grid-area: o
+#        - type: 'custom:button-card'
+#          template: on_off_lights
+#          variables:
+#            gridarea: '"i . ." "n n n" ". . ."'
+#          entity: light.spare_switch_3
+#          icon: 'mdi:pine-tree'
+#          name: Sapin dehors
+#          view_layout:
+#            grid-area: s
+#        - type: 'custom:button-card'
+#          template: on_off_lights
+#          variables:
+#            gridarea: '"i . ." "n n n" ". . ."'
+#          entity: light.spare_switch_2
+#          icon: 'mdi:hexagram-outline'
+#          name: Étoile
+#          view_layout:
+#            grid-area: w
       style:
         left: 50%
         top: 50%
