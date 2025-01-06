@@ -32,7 +32,7 @@ button_card_templates:
       grid:
         - grid-template-areas: '"i" "n"'
         - grid-template-columns: 1fr
-        - grid-template-rows: 1fr min-content 
+        - grid-template-rows: 1fr min-content
     view_layout:
       grid-area: '[[[ return variables.grid ]]]'
     card_mod:
@@ -40,7 +40,7 @@ button_card_templates:
         :host {
           --masonry-view-card-margin: 0px !important;
         }
-  
+
   media_service:
     variables:
       name: "var_name"
@@ -72,7 +72,7 @@ button_card_templates:
       grid:
         - grid-template-areas: '"i" "n"'
         - grid-template-columns: 1fr
-        - grid-template-rows: 1fr min-content 
+        - grid-template-rows: 1fr min-content
     view_layout:
       grid-area: '[[[ return variables.grid ]]]'
     card_mod:
@@ -80,9 +80,9 @@ button_card_templates:
         :host {
           --masonry-view-card-margin: 0px !important;
         }
-  
+
   media_blank:
-    variables: 
+    variables:
       grid: "var_grid"
     color_type: blank-card
     view_layout:
@@ -92,7 +92,7 @@ button_card_templates:
         :host {
           --masonry-view-card-margin: 0px !important;
         }
-  
+
   media_volume:
     variables:
       service: "var_service"
@@ -128,7 +128,7 @@ button_card_templates:
         :host {
           --masonry-view-card-margin: 0px !important;
         }
-  
+
   media_volume_vertical:
     variables:
       service: "var_service"
@@ -163,7 +163,7 @@ button_card_templates:
         :host {
           --masonry-view-card-margin: 0px !important;
         }
-  
+
   media_volume_state:
     tap_action:
       action: none
@@ -171,11 +171,11 @@ button_card_templates:
       action: none
     show_entity_picture: true
     entity_picture: /local/ui/btns/volume.png
-    aspect_ratio: 4/1     
+    aspect_ratio: 4/1
     custom_fields:
       volume: >
         [[[ var volume = (states['sensor.pioneer_volume'].state + ' dB');
-        return states['sensor.pioneer_volume'].state == 'MUTE' ? 'MUTE' : volume; ]]] 
+        return states['sensor.pioneer_volume'].state == 'MUTE' ? 'MUTE' : volume; ]]]
     styles:
       card:
         - background: none
@@ -320,7 +320,7 @@ views:
           - entity: light.plafond_enfant_interieur
             tap_action:
               action: toggle
-          - entity: switch.imprimante
+          - entity: switch.guirlandes_salon
             tap_action:
               action: toggle
           - entity: switch.spare_switch_1
@@ -474,7 +474,7 @@ views:
                     "2" "2" "2" "2"
                     "3" "3" "3" "3"
                     "4" "4" "4" "4"
-                  grid-gap: 0px    
+                  grid-gap: 0px
                   cards:
                     - type: 'custom:button-card'
                       template: media_source
@@ -527,7 +527,7 @@ views:
                       variables:
                         name: Bluetooth
                         service: media_player.select_source
-                        picture: /local/ui/btns/bluetooth_off.png 
+                        picture: /local/ui/btns/bluetooth_off.png
                         grid: 2
                       tap_action:
                         service_data:
@@ -545,7 +545,7 @@ views:
                       variables:
                         name: ''
                         service: media_player.turn_off
-                        picture: /local/ui/btns/power.png 
+                        picture: /local/ui/btns/power.png
                         grid: 3
                       tap_action:
                         service_data:
@@ -594,7 +594,7 @@ views:
                       variables:
                         name: ''
                         service: media_player.media_previous_track
-                        picture: /local/ui/btns/previous.png 
+                        picture: /local/ui/btns/previous.png
                         grid: 4
                       tap_action:
                         service_data:
@@ -604,7 +604,7 @@ views:
                       variables:
                         name: ''
                         service: media_player.media_next_track
-                        picture: /local/ui/btns/next.png 
+                        picture: /local/ui/btns/next.png
                         grid: 4
                       tap_action:
                         service_data:
@@ -657,7 +657,7 @@ views:
                     "2" "2" "2" "2"
                     "3" "3" "3" "3"
                     "4" "4" "4" "4"
-                  grid-gap: 0px    
+                  grid-gap: 0px
                   cards:
                     - type: 'custom:button-card'
                       template: media_source
@@ -728,7 +728,7 @@ views:
                       variables:
                         name: ''
                         service: media_player.turn_off
-                        picture: /local/ui/btns/power.png 
+                        picture: /local/ui/btns/power.png
                         grid: 3
                       tap_action:
                         service_data:
@@ -777,7 +777,7 @@ views:
                       variables:
                         name: ''
                         service: media_player.media_previous_track
-                        picture: /local/ui/btns/previous.png 
+                        picture: /local/ui/btns/previous.png
                         grid: 4
                       tap_action:
                         service_data:
@@ -787,7 +787,7 @@ views:
                       variables:
                         name: ''
                         service: media_player.media_next_track
-                        picture: /local/ui/btns/next.png 
+                        picture: /local/ui/btns/next.png
                         grid: 4
                       tap_action:
                         service_data:
@@ -840,7 +840,7 @@ views:
                     "2" "2" "2" "2"
                     "3" "3" "3" "3"
                     "4" "4" "4" "4"
-                  grid-gap: 0px    
+                  grid-gap: 0px
                   cards:
                     - type: 'custom:button-card'
                       template: media_source
@@ -893,7 +893,7 @@ views:
                       variables:
                         name: Bluetooth
                         service: media_player.select_source
-                        picture: /local/ui/btns/bluetooth_off.png 
+                        picture: /local/ui/btns/bluetooth_off.png
                         grid: 2
                       tap_action:
                         service_data:
@@ -911,7 +911,7 @@ views:
                       variables:
                         name: ''
                         service: media_player.turn_off
-                        picture: /local/ui/btns/power.png 
+                        picture: /local/ui/btns/power.png
                         grid: 3
                       tap_action:
                         service_data:
@@ -981,10 +981,10 @@ views:
                   grid-template-area: |
                     "1" "1" "1" "1"
                     "2" "2" "2" "2"
-                    "3" "3" "3" 
-                    "4" "4" "4" 
+                    "3" "3" "3"
+                    "4" "4" "4"
                     "5" "5" "5"
-                    "6" "6" "6" 
+                    "6" "6" "6"
                     "7" "7" "7" "7"
                   grid-gap: 0px
                   cards:
@@ -993,7 +993,7 @@ views:
                       variables:
                         name: Plex
                         service: media_player.select_source
-                        picture: /local/ui/btns/plex_off.png 
+                        picture: /local/ui/btns/plex_off.png
                         grid: 1
                       tap_action:
                         service_data:
@@ -1162,7 +1162,7 @@ views:
                     - type: 'custom:button-card'
                       template: media_blank
                       variables:
-                        grid: 5     
+                        grid: 5
                     - type: 'custom:button-card'
                       template: media_source
                       variables:
@@ -1239,7 +1239,7 @@ views:
                       tap_action:
                         service_data:
                           entity_id: remote.swisscom
-                          command: +30sec   
+                          command: +30sec
                     - type: 'custom:button-card'
                       template: media_volume_vertical
                       variables:
@@ -1276,8 +1276,8 @@ views:
                   grid-template-area: |
                     "1" "1" "1" "1"
                     "2" "2" "2" "2"
-                    "3" "3" "3" 
-                    "4" "4" "4" 
+                    "3" "3" "3"
+                    "4" "4" "4"
                     "5" "5" "5"
                     "6" "6" "6"
                   grid-gap: 0px
@@ -1339,7 +1339,7 @@ views:
                     - type: 'custom:button-card'
                       template: media_blank
                       variables:
-                        grid: 2    
+                        grid: 2
                     - type: 'custom:button-card'
                       template: media_service
                       variables:
@@ -1382,7 +1382,7 @@ views:
                         name: ''
                         service: media_player.select_sound_mode
                         picture: "[[[ return states['media_player.pioneer_avr'].attributes['current_sound_mode'] == 'AUTO SURROUND' ? '/local/ui/btns/surround_on.png' : '/local/ui/btns/surround_off.png'; ]]]"
-                        grid: 3        
+                        grid: 3
                       tap_action:
                         service_data:
                           entity_id: media_player.pioneer_avr
@@ -1501,7 +1501,7 @@ views:
               entity: sensor.now_playing
               transition: flip
               states:
-                Plex:  
+                Plex:
                   entity: media_player.plex_plex_for_lg_lg_oled77w7v_z
                   group: false
                   hide:
@@ -1534,7 +1534,7 @@ views:
                         box-shadow: none;
                       }
                   artwork: full-cover-fit
-                  type: 'custom:mini-media-player' 
+                  type: 'custom:mini-media-player'
                 INTERNET RADIO:
                   entity: media_player.pioneer_avr
                   group: false
@@ -1604,7 +1604,7 @@ views:
                       .entity__info__media span::before{
                         content: none !important
                       }
-                  type: 'custom:mini-media-player' 
+                  type: 'custom:mini-media-player'
           type: vertical-stack
         card_mod:
           style: |
@@ -1696,7 +1696,7 @@ views:
           - entity: switch.spare_switch_2
             name: Temporaire 2
         title: Temporaire
-        type: entities 
+        type: entities
   - icon: 'mdi:home-floor-1'
     path: bedroom
     title: Upstairs
@@ -1721,8 +1721,8 @@ views:
         title: Bedroom Charles
         type: entities
       - entities:
-          - entity: switch.imprimante
-        title: Bureau
+          - entity: switch.guirlandes_salon
+        title: Guirlandes salon
         type: entities
       - entities:
           - entity: switch.spare_switch_1
@@ -1730,4 +1730,4 @@ views:
           - entity: switch.spare_switch_2
             name: Temporaire 2
         title: Temporaire
-        type: entities 
+        type: entities

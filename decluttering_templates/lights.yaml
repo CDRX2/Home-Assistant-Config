@@ -71,7 +71,7 @@ lights_glance:
       - entity: light.plafond_enfant_interieur
         tap_action:
           action: toggle
-      - entity: switch.imprimante
+      - entity: switch.guirlandes_salon
         tap_action:
           action: toggle
       - entity: switch.spare_switch_1
@@ -97,7 +97,7 @@ Light_room:
     entity: '[[light]]'
     hold_action:
       action: none
-    image: /local/transparent.png    
+    image: /local/transparent.png
     style:
       height: '[[height]]'
       left: '[[left]]'
@@ -221,7 +221,7 @@ light_popup_full:
         template: light_color_wheel
         variables:
           - light: '[[light]]'
-      - type: 'custom:button-card'    
+      - type: 'custom:button-card'
         template: light_timer
         variables:
           entity: '[[light]]'
@@ -242,7 +242,7 @@ light_popup_mid:
         template: light_color_wheel
         variables:
           - light: '[[light]]'
-      - type: 'custom:button-card'    
+      - type: 'custom:button-card'
         template: light_timer
         variables:
           entity: '[[light]]'
@@ -259,7 +259,7 @@ light_popup_dim:
           - name: '[[name]]'
           - icon: '[[icon]]'
           - attribute: '[[attribute]]'
-      - type: 'custom:button-card'    
+      - type: 'custom:button-card'
         template: light_timer
         variables:
           entity: '[[light]]'
@@ -275,7 +275,7 @@ light_popup_on_off:
           - light: '[[light]]'
           - name: '[[name]]'
           - icon: '[[icon]]'
-      - type: 'custom:button-card'    
+      - type: 'custom:button-card'
         template: light_timer
         variables:
           entity: '[[light]]'

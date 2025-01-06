@@ -26,6 +26,7 @@ Salon_deco:
   - light.tv
   - light.vinyles
   - light.bar
+  - light.guirlandes_salon
 
 Terrasse:
   name: Terrasse
@@ -114,7 +115,7 @@ Lumieres_maison:
   - light.chevet_nanne
   - light.charles_bas_white
   - light.charles_haut_white
-  - light.imprimante
+  - light.guirlandes_salon
 
 temp_sensors_battery:
   name: Temp sensors battery
@@ -128,7 +129,7 @@ temp_sensors_battery:
     - sensor.twins_battery
     - sensor.temperature_charles_battery_level
     - sensor.bottom_stairs_battery
-    # - entity: sensor.temperature_chambre_parents_battery_level    
+    # - entity: sensor.temperature_chambre_parents_battery_level
 
 mobiles_tablets_battery:
   name: Mobiles and tablets battery

@@ -184,8 +184,8 @@ light:
     entity_id: switch.chevet_cdrx
 
   - platform: switch
-    name: Imprimante
-    entity_id: switch.imprimante
+    name: Guirlandes salon
+    entity_id: switch.guirlandes_salon
 
   - platform: switch
     name: Grand totem
@@ -288,6 +288,7 @@ light:
     - light.couleur_rez
     - light.vinyles
     - light.panneau_lumineux
+    - light.guirlandes_salon
     # - light.spare_switch_1
     # - light.spare_switch_2
     # - light.spare_switch_3
@@ -300,6 +301,7 @@ light:
     - light.petit_totem_deco
     - light.vinyles
     - light.bar
+    - light.guirlandes_salon
     # - light.spare_switch_1
     # - light.spare_switch_2
     # - light.spare_switch_3
