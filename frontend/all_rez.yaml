@@ -82,6 +82,15 @@ elements:
           view_layout:
             grid-area: q
         - type: 'custom:button-card'
+          template: on_off_lights
+          variables:
+            gridarea: '"i . ." "n n n" ". . ."'
+          entity: light.guirlandes_salon
+          icon: 'mdi:string-lights'
+          name: Guirlandes salon
+          view_layout:
+            grid-area: u
+        - type: 'custom:button-card'
           template:
             - on_off_lights
             - consumption

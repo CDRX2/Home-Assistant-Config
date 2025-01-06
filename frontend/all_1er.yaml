@@ -13,7 +13,7 @@ card_mod:
       height: 100%;
       width: 100%;
     }
-elements:  
+elements:
   - type: 'custom:mod-card'
     card:
       type: 'custom:layout-card'
@@ -104,18 +104,18 @@ elements:
           name: Jumeaux armoires
           view_layout:
             grid-area: j
-        # - type: 'custom:button-card'
-        #   template: 
-            # - on_off_lights
-            # - consumption
-        #   variables:
-        #     gridarea: '"i consumption ." "n n n" ". . ."'
-            # consumption: sensor.consumption_twins
-        #   entity: light.jumeaux_prises
-        #   icon: 'mdi:power-socket-ch'
-        #   name: Jumeaux prises
-        #   view_layout:
-        #     grid-area: j
+        - type: 'custom:button-card'
+          template:
+            - on_off_lights
+            - consumption
+          variables:
+            gridarea: '"i consumption ." "n n n" ". . ."'
+            consumption: sensor.consumption_twins
+          entity: light.jumeaux_prises
+          icon: 'mdi:power-socket-ch'
+          name: Jumeaux prises
+          view_layout:
+            grid-area: n
         - type: 'custom:button-card'
           template: color_lights
           variables:
@@ -126,16 +126,7 @@ elements:
           icon: 'cil:google-home'
           name: Jumeaux mobile
           view_layout:
-            grid-area: n
-        - type: 'custom:button-card'
-          template: on_off_lights
-          variables:
-            gridarea: '"i . ." "n n n" ". . ."'
-          entity: light.printer
-          icon: 'mdi:printer'
-          name: Imprimante
-          view_layout:
-            grid-area: c
+            grid-area: r
         - type: 'custom:button-card'
           template: dimmable_lights
           variables:
@@ -144,7 +135,7 @@ elements:
           icon: 'hue:bulb-filament-hung'
           name: Couloir 1
           view_layout:
-            grid-area: g
+            grid-area: c
         - type: 'custom:button-card'
           template: dimmable_lights
           variables:
@@ -153,9 +144,9 @@ elements:
           icon: 'hue:bulb-filament-hung'
           name: Couloir 2
           view_layout:
-            grid-area: k
+            grid-area: g
         - type: 'custom:button-card'
-          template: 
+          template:
             - on_off_lights
             - consumption
           variables:
@@ -165,9 +156,9 @@ elements:
           icon: 'hue:bulb-group-ceiling-flush-circular'
           name: Escalier 1er
           view_layout:
-            grid-area: o
+            grid-area: k
         - type: 'custom:button-card'
-          template: 
+          template:
             - on_off_lights
             - consumption
           variables:
@@ -179,7 +170,7 @@ elements:
           view_layout:
             grid-area: d
         - type: 'custom:button-card'
-          template: 
+          template:
             - on_off_lights
             - consumption
           variables:
@@ -205,7 +196,7 @@ elements:
         width: 100%
         height: 100%
     card_mod:
-      style: 
+      style:
         layout-card$:
           grid-layout$: |
             #root {
