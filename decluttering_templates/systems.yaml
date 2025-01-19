@@ -21,7 +21,7 @@ HDD_button:
                 - icon: disc
                 - text-align: left
                 - text: Min. life
-                - font_color: '#e0e1e1'            
+                - font_color: '#e0e1e1'
             'on':
               type: 'custom:decluttering-card'
               template: HDD_markdown
@@ -29,7 +29,7 @@ HDD_button:
                 - icon: disc-alert
                 - text-align: left
                 - text: Min. life
-                - font_color: '#ff1a1a'             
+                - font_color: '#ff1a1a'
       bad_sectors:
         card:
           type: 'custom:state-switch'
@@ -43,7 +43,7 @@ HDD_button:
                 - icon: file-outline
                 - text-align: right
                 - text: Bad sectors
-                - font_color: '#e0e1e1' 
+                - font_color: '#e0e1e1'
             'on':
               type: 'custom:decluttering-card'
               template: HDD_markdown
@@ -51,7 +51,7 @@ HDD_button:
                 - icon: file-alert-outline
                 - text-align: right
                 - text: Bad sectors
-                - font_color: '#ff1a1a'  
+                - font_color: '#ff1a1a'
       drive_status:
         card:
           type: 'custom:state-switch'
@@ -65,7 +65,7 @@ HDD_button:
                 - icon: harddisk
                 - text-align: left
                 - text: Status
-                - font_color: '#e0e1e1' 
+                - font_color: '#e0e1e1'
             'other':
               type: 'custom:decluttering-card'
               template: HDD_markdown
@@ -73,7 +73,7 @@ HDD_button:
                 - icon: harddisk-remove
                 - text-align: left
                 - text: Status
-                - font_color: '#ff1a1a'       
+                - font_color: '#ff1a1a'
       smart_status:
         card:
           type: 'custom:state-switch'
@@ -87,7 +87,7 @@ HDD_button:
                 - icon: content-save
                 - text-align: right
                 - text: Smart
-                - font_color: '#e0e1e1' 
+                - font_color: '#e0e1e1'
             'other':
               type: 'custom:decluttering-card'
               template: HDD_markdown
@@ -95,14 +95,14 @@ HDD_button:
                 - icon: content-save-alert
                 - text-align: right
                 - text: Smart
-                - font_color: '#ff1a1a'     
+                - font_color: '#ff1a1a'
       graph:
         card:
           type: 'custom:mini-graph-card'
           name: '[[name]]'
           tap_action:
             action: none
-          color_thresholds:      
+          color_thresholds:
             - color: '#03a8f4'
               value: 15
             - color: '#ffa31a'
@@ -120,8 +120,8 @@ HDD_button:
             legend: true
             icon: true
           hour24: true
-          font_size: 50   
-          card_mod:                
+          font_size: 50
+          card_mod:
             style: |
               :host {
                 color: #e0e1e1 !important;
@@ -145,7 +145,7 @@ HDD_button:
               .icon > ha-icon {
                 width:1.8vw !important;
                 height:1.8vw !important;
-              }   
+              }
     styles:
       card:
         - top: '[[top]]'
@@ -172,19 +172,19 @@ HDD_button:
       custom_fields:
         bad_sectors:
           - position: absolute
-          - right: 15%
+          - left: 25%
           - top: 30%
         below_life:
           - position: absolute
-          - left: 5%
+          - right: 25%
           - top: 30%
         drive_status:
           - position: absolute
-          - left: 5%
+          - right: 25%
           - top: 5%
         smart_status:
           - position: absolute
-          - right: 5%
+          - left: 25%
           - top: 5%
         graph:
           - overflow: unset
@@ -207,7 +207,10 @@ HDD_markdown:
             background: none;
           }
         layout-card$:
-          grid-layout$: |
+          vertical-layout$: |
+            #columns > div {
+              width: 50%;
+            }
             :host {
               padding: 0px !important;
             }
@@ -230,10 +233,10 @@ HDD_markdown:
                 box-shadow: none;
                 background: none;
                 text-align: [[text-align]] ;
-              } 
+              }
               ha-markdown {
                 padding: 0 !important;
-              }   
+              }
         - type: markdown
           content: |
             <font size=2 color=[[font_color]]>[[text]]</font>
@@ -243,11 +246,11 @@ HDD_markdown:
                 box-shadow: none;
                 background: none;
                 text-align: [[text-align]];
-              } 
+              }
               ha-markdown {
                 padding: 0 !important;
-              } 
-  
+              }
+
 
 #########################    STORAGE VOLUME BUTTON    #########################
 
@@ -273,10 +276,10 @@ Volume_button:
                     box-shadow: none;
                     background: none;
                     text-align: center ;
-                  } 
+                  }
                   ha-markdown {
                     padding: 0 !important;
-                  }  
+                  }
             'other':
               type: markdown
               content: |
@@ -287,10 +290,10 @@ Volume_button:
                     box-shadow: none;
                     background: none;
                     text-align: center ;
-                  } 
+                  }
                   ha-markdown {
                     padding: 0 !important;
-                  }                                 
+                  }
       percentage:
         card:
           type: 'custom:bar-card'
@@ -361,8 +364,8 @@ Volume_button:
               }
               bar-card-divider {
                 display: none;
-              } 
-      space:         
+              }
+      space:
         card:
           type: 'custom:config-template-card'
           entities:
@@ -375,6 +378,7 @@ Volume_button:
             min: 0
             max: "${states['[[volume_total]]'].state}"
             color: '#03a8f4'
+            decimal: 2
             positions:
               icon: 'off'
               indicator: 'off'
@@ -428,7 +432,7 @@ Volume_button:
                 }
                 bar-card-divider {
                   display: none;
-                }   
+                }
       graph:
         card:
           type: 'custom:mini-graph-card'
@@ -452,8 +456,8 @@ Volume_button:
             legend: true
             icon: true
           hour24: true
-          font_size: 50  
-          card_mod:                 
+          font_size: 50
+          card_mod:
             style: |
               :host {
                 color: #e0e1e1 !important;
@@ -477,7 +481,7 @@ Volume_button:
               .icon > ha-icon {
                 width:1.8vw !important;
                 height:1.8vw !important;
-              }  
+              }
     styles:
       card:
         - top: '[[top]]'
@@ -529,11 +533,11 @@ NAS_Volumes:
             data:
               content:
                 type: 'custom:swipe-card'
-                cards: 
+                cards:
                   - !include ../frontend/station3.yaml
                   - !include ../frontend/stationB.yaml
-              title: Synology NAS   
-              size: fullscreen     
+              title: Synology NAS
+              size: fullscreen
     apex_config:
       title:
         margin: 0

@@ -12,7 +12,7 @@ card_mod:
     }
 
 elements:
-  
+
   - type: 'custom:text-action-element'
     text: "CDRXStation 3"
     style:
@@ -104,7 +104,7 @@ elements:
       - temperature: sensor.cdrxstation3_drive_3_rx415_1_temperature
       - top: 22vw
       - left: 36.5vw
-  
+
   - type: 'custom:decluttering-card'
     template: HDD_button
     variables:
@@ -205,9 +205,9 @@ elements:
             style:
               top: 20%
               left: 2.5%
-              transform: translate(0%, 0%)     
+              transform: translate(0%, 0%)
               color: '#ff1a1a'
-              font-weight: bold   
+              font-weight: bold
       - type: conditional
         conditions:
           - entity: sensor.cdrxstation3_security_network
@@ -231,9 +231,9 @@ elements:
             style:
               top: 32.5%
               left: 2.5%
-              transform: translate(0%, 0%)     
+              transform: translate(0%, 0%)
               color: '#ff1a1a'
-              font-weight: bold   
+              font-weight: bold
       - type: conditional
         conditions:
           - entity: sensor.cdrxstation3_security_setting
@@ -257,7 +257,7 @@ elements:
             style:
               top: 45%
               left: 2.5%
-              transform: translate(0%, 0%)     
+              transform: translate(0%, 0%)
               color: '#ff1a1a'
               font-weight: bold
       - type: conditional
@@ -283,7 +283,7 @@ elements:
             style:
               top: 57.5%
               left: 2.5%
-              transform: translate(0%, 0%)     
+              transform: translate(0%, 0%)
               color: '#ff1a1a'
               font-weight: bold
       - type: conditional
@@ -309,7 +309,7 @@ elements:
             style:
               top: 70%
               left: 2.5%
-              transform: translate(0%, 0%)     
+              transform: translate(0%, 0%)
               color: '#ff1a1a'
               font-weight: bold
     style:
@@ -326,7 +326,7 @@ elements:
   - type: 'custom:mini-graph-card'
     tap_action:
       action: none
-    color_thresholds:      
+    color_thresholds:
       - color: '#03a8f4'
         value: 20
       - color: '#ffa31a'
@@ -343,8 +343,8 @@ elements:
       name: true
       legend: true
       icon: false
-    hour24: true 
-    card_mod:                   
+    hour24: true
+    card_mod:
       style: |
         :host {
           top: 32.5%;
@@ -362,7 +362,7 @@ elements:
           border-radius: 0.2vw !important;
           padding-top: 8px !important;
         }
-        .states {     
+        .states {
           padding: 0 !important;
           padding-left: 1vw !important;
         }
@@ -376,7 +376,7 @@ elements:
       - volume_status: sensor.cdrxstation3_volume_1_status
       - volume_percentage: sensor.cdrxstation3_volume_1_volume_used
       - volume_used: sensor.cdrxstation3_volume_1_used_space
-      - volume_total: sensor.cdrxstation3_volume_1_total_size
+      - volume_total: sensor.cdrxstation3_volume1_total_space
       - average_temp: sensor.cdrxstation3_volume_1_average_disk_temp
       - max_temp: sensor.cdrxstation3_volume_1_maximum_disk_temp
       - name: Volume 1
@@ -386,7 +386,7 @@ elements:
   - type: 'custom:mini-graph-card'
     tap_action:
       action: none
-    name: CPU load time  
+    name: CPU load time
     entities:
       - entity: sensor.cdrxstation3_cpu_load_1_min
         name: 1 min.
@@ -406,8 +406,8 @@ elements:
       name: true
       legend: true
       icon: false
-    hour24: true   
-    card_mod:                 
+    hour24: true
+    card_mod:
       style: |
         :host {
           bottom: 1%;
@@ -425,7 +425,7 @@ elements:
           border-radius: 0.2vw !important;
           padding-top: 8px !important;
         }
-        .states {     
+        .states {
           padding: 0 !important;
           padding-left: 1vw !important;
         }
@@ -436,7 +436,7 @@ elements:
   - type: 'custom:mini-graph-card'
     tap_action:
       action: none
-    name: CPU load type  
+    name: CPU load type
     entities:
       - entity: sensor.cdrxstation3_cpu_load_other
         name: Other
@@ -460,8 +460,8 @@ elements:
       name: true
       legend: true
       icon: false
-    hour24: true 
-    card_mod:                   
+    hour24: true
+    card_mod:
       style: |
         :host {
           bottom: 1%;
@@ -479,7 +479,7 @@ elements:
           border-radius: 0.2vw !important;
           padding-top: 8px !important;
         }
-        .states {     
+        .states {
           padding: 0 !important;
           padding-left: 1vw !important;
         }
@@ -506,8 +506,8 @@ elements:
       name: true
       legend: true
       icon: false
-    hour24: true    
-    card_mod:                
+    hour24: true
+    card_mod:
       style: |
         :host {
           bottom: 1%;
@@ -525,7 +525,7 @@ elements:
           border-radius: 0.2vw !important;
           padding-top: 8px !important;
         }
-        .states {     
+        .states {
           padding: 0 !important;
           padding-left: 1vw !important;
         }
@@ -537,18 +537,18 @@ elements:
     entities:
       - sensor.cdrxstation3_memory_available_real
       - sensor.cdrxstation3_memory_available_swap
-      - sensor.cdrxstation3_memory_total_real
-      - sensor.cdrxstation3_memory_total_swap
+      - sensor.cdrxstation3_total_memory_real
+      - sensor.cdrxstation3_total_memory_swap
       - sensor.cdrxstation3_memory_usage_real
       - sensor.cdrxstation3_memory_cached
-      - sensor.cdrxstation3_memory_size
+      - sensor.cdrxstation3_total_memory
     card:
       type: 'custom:bar-card'
       entities:
       - entity: sensor.cdrxstation3_memory_available_real
         name: 'Real available'
         min: 0
-        max: "${states['sensor.cdrxstation3_memory_total_real'].state}"
+        max: "${states['sensor.cdrxstation3_total_memory_real'].state}"
         color: '#03a8f4'
       - entity: sensor.cdrxstation3_memory_usage_real
         name: 'Real usage'
@@ -558,12 +558,12 @@ elements:
       - entity: sensor.cdrxstation3_memory_available_swap
         name: 'Swap available'
         min: 0
-        max: "${states['sensor.cdrxstation3_memory_total_swap'].state}"
+        max: "${states['sensor.cdrxstation3_total_memory_swap'].state}"
         color: '#03a8f4'
       - entity: sensor.cdrxstation3_memory_cached
         name: 'Cached'
         min: 0
-        max: "${states['sensor.cdrxstation3_memory_size'].state}"
+        max: "${states['sensor.cdrxstation3_total_memory'].state}"
         color: '#03a8f4'
       direction: up
       stack: horizontal
@@ -573,6 +573,7 @@ elements:
         indicator: 'off'
         value: inside
         minmax: inside
+      decimal: 1
       card_mod:
         style: |
           ha-card {

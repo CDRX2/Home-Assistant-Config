@@ -1,0 +1,152 @@
+type: panel
+style:
+  height: 100%
+  width: 100%
+title: Screensaver
+icon: 'mdi:monitor-screenshot'
+path: screensaver
+theme: CDRX
+background:
+  opacity: 100
+  alignment: center
+  size: cover
+  repeat: repeat
+  attachment: fixed
+  image: /local/ui/sidebarBG.png
+cards:
+  - type: custom:mod-card
+    card:
+      type: custom:layout-card
+      layout_type: custom:grid-layout
+      layout:
+        height: 100%
+        align-items: center
+        grid-template-rows: 50% 50%
+        grid-template-columns: 50% 50%
+        grid-template-areas: |
+          "clock weather"
+          "clock transport"
+      cards:
+        - type: custom:gcclock-words
+          show_highlight_glow: false
+          view_layout:
+            grid-area: clock
+            align-self: center
+          card_mod:
+            style: |
+              ha-card {
+                background: none !important;
+              }
+        - show_current: true
+          show_forecast: true
+          type: weather-forecast
+          entity: weather.dorighome
+          forecast_type: daily
+          name: " "
+          view_layout:
+            grid-area: weather
+            align-self: center
+          card_mod:
+            style: |
+              ha-card {
+                background: none !important;
+                width: 80%;
+              }
+              div.icon-image {
+                opacity: 0.3;
+                min-width: 20%;
+              }
+              div.forecast-image-icon {
+                opacity: 0.3;
+              }
+              div.state {
+                font-size: 3vw;
+                font-weight: 800;
+                opacity: 0.1;
+              }
+              div.attribute {
+                color: var(--primary-text-color) !important;
+                font-size: 2vw%;
+                font-weight: 600;
+                opacity: 0.1;
+              }
+              div.temp {
+                font-size: 3vw;
+                font-weight: 800;
+                opacity: 0.1;
+              }
+              .forecast .temp {
+                font-size: 2vw !important;
+              }
+              div.templow {
+                font-size: 2vw;
+                font-weight: 600;
+                opacity: 0.1;
+                color: var(--primary-text-color) !important;
+              }
+              div.forecast > div > div:nth-child(1) {
+                opacity: 0.1;
+                font-size: 3vw;
+                font-weight: 600;
+              }
+              .forecast-image-icon > * {
+                width: 80% !important;
+                height: 80% !important;
+                --mdc-icon-size: 80%;
+              }
+              .icon-image > * {
+                height: 60% !important;
+                flex: 0 0 120% !important;
+                margin-inline-end: 5%;
+              }
+        - type: entities
+          entities:
+            - entity: sensor.dir_vclb_3
+              name: Vers-chez-les-Blanc
+              type: custom:multiple-entity-row
+              entities:
+                - entity: sensor.dir_vclb_2
+                  name: false
+                - entity: sensor.dir_vclb_1
+                  name: false
+            - entity: sensor.depuis_maison_3
+              name: Croisettes
+              type: custom:multiple-entity-row
+              entities:
+                - entity: sensor.depuis_maison_2
+                  name: false
+                - entity: sensor.depuis_maison_1
+                  name: false
+          title: Prochains départs
+          view_layout:
+            grid-area: transport
+            align-self: center
+          card_mod:
+            style: |
+              ha-card {
+                background: none !important;
+                width: 80%;
+                opacity: 0.1
+              }
+              ha-card > h1 {
+                font-size: 3vw;
+                font-weight: 800;
+                height: 20%;
+              }
+              #states > div {
+                font-size: 2vw;
+                font-weight: 600;
+                height: 20%;
+              }
+    card_mod:
+      style:
+        layout-card$:
+          grid-layout$: |
+            #root {
+               height: 100%;
+            }
+        .: |
+          ha-card {
+            height: 100%;
+            width: 100%;
+          }

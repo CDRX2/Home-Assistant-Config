@@ -6,6 +6,18 @@ decluttering_templates: !include_dir_merge_named decluttering_templates/
 
 apexcharts_card_templates: !include_dir_merge_named apexcharts_templates/
 
+wallpanel:
+  enabled: true
+#  fullscreen: true
+  idle_time: 20
+  show_images: false
+  cards: []
+  badges: []
+  views:
+    - title: Screensaver
+  style:
+    height: 100%
+
 views:
 
   #############################################################################################################################################
@@ -117,3 +129,5 @@ views:
       variables:
         - sidebar: !include frontend/sidebar.yaml
         - card: !include frontend/systems.yaml
+
+- !include frontend/screensaver.yaml
