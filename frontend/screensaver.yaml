@@ -36,6 +36,8 @@ cards:
             style: |
               ha-card {
                 background: none !important;
+                padding-top: 10% !important;
+                --mdc-theme-primary: #03a8f4;
               }
         - show_current: true
           show_forecast: true
@@ -51,6 +53,7 @@ cards:
               ha-card {
                 background: none !important;
                 width: 80%;
+                padding-top: 15% !important;
               }
               div.icon-image {
                 opacity: 0.3;
@@ -122,22 +125,34 @@ cards:
             grid-area: transport
             align-self: center
           card_mod:
-            style: |
-              ha-card {
-                background: none !important;
-                width: 80%;
-                opacity: 0.1
-              }
-              ha-card > h1 {
-                font-size: 3vw;
-                font-weight: 800;
-                height: 20%;
-              }
-              #states > div {
-                font-size: 2vw;
-                font-weight: 600;
-                height: 20%;
-              }
+            style:
+              multiple-entity-row$:
+                hui-generic-entity-row$: |
+                  state-badge {
+                    display: none;
+                  }
+                  div {
+                    margin-left: 0px !important;
+                    margin-inline-start: 0px !important;
+                  }
+              .: |
+                ha-card {
+                  background: none !important;
+                  width: 80%;
+                  opacity: 0.1;
+                  padding-top: 10%;
+                  --paper-item-icon-color: var(--primary-text-color);
+                }
+                ha-card > h1 {
+                  font-size: 3vw;
+                  font-weight: 800;
+                  height: 20%;
+                }
+                #states > div {
+                  font-size: 2vw;
+                  font-weight: 600;
+                  height: 20%;
+                }
     card_mod:
       style:
         layout-card$:

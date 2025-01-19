@@ -8,7 +8,6 @@ apexcharts_card_templates: !include_dir_merge_named apexcharts_templates/
 
 wallpanel:
   enabled: true
-#  fullscreen: true
   idle_time: 20
   show_images: false
   cards: []
@@ -17,6 +16,14 @@ wallpanel:
     - title: Screensaver
   style:
     height: 100%
+    wallpanel-screensaver-info-box:
+      width: 100%
+    wallpanel-screensaver-info-container:
+      padding: 0px
+    wallpanel-screensaver-info-box-content:
+      width: 100%
+    wallpanel-screensaver-info-box-pos-x:
+      align-content: center
 
 views:
 
