@@ -229,7 +229,7 @@
 - platform: template
   sensors:
     cdrxstation_alert:
-      value_template: >- 
+      value_template: >-
         {{ iif (states('sensor.cdrxstation3_alert') != 'normal' or
           states('sensor.backupstation_alert') != 'normal', 'alert', 'normal') }}
 
@@ -239,3 +239,43 @@
       value_template: >-
         {{ iif (states('update.cdrxstation3_dsm_update') == 'on' or
           states('update.backupstation_dsm_update') == 'on', 'update', 'normal') }}
+
+- platform: template
+  sensors:
+    cdrxstation3_volume1_total_space:
+      value_template: "{{ states('sensor.cdrxstation3_volume_1_total_size', rounded=True) }}"
+
+- platform: template
+  sensors:
+    backupstation_volume1_total_space:
+      value_template: "{{ states('sensor.backupstation_volume_1_total_size', rounded=True) }}"
+
+- platform: template
+  sensors:
+    cdrxstation3_total_memory_real:
+      value_template: "{{ states('sensor.cdrxstation3_memory_total_real', rounded=True) }}"
+
+- platform: template
+  sensors:
+    cdrxstation3_total_memory_swap:
+      value_template: "{{ states('sensor.cdrxstation3_memory_total_swap', rounded=True) }}"
+
+- platform: template
+  sensors:
+    cdrxstation3_total_memory:
+      value_template: "{{ states('sensor.cdrxstation3_memory_size', rounded=True) }}"
+
+- platform: template
+  sensors:
+    backupstation_total_memory_real:
+      value_template: "{{ states('sensor.backupstation_memory_total_real', rounded=True) }}"
+
+- platform: template
+  sensors:
+    backupstation_total_memory_swap:
+      value_template: "{{ states('sensor.backupstation_memory_total_swap', rounded=True) }}"
+
+- platform: template
+  sensors:
+    backupstation_total_memory:
+      value_template: "{{ states('sensor.backupstation_memory_size', rounded=True) }}"

@@ -38,3 +38,6 @@ CDRX:
       ha-dialog {
         --vertical-align-dialog: center !important;
       }
+      ha-dialog > div > div {
+        padding: 0px !important;
+      }

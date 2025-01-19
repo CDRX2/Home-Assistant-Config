@@ -7,7 +7,7 @@ card_mod:
    ha-card {
      background: rgba(42, 46, 48, 1);
    }
-elements:  
+elements:
   - type: 'custom:layout-card'
     layout_type: vertical
     layout_options:
@@ -61,8 +61,8 @@ elements:
                         grid-template-columns: 25% 25% 50%
                         grid-template-areas: |
                           "a a b"
-                          "c d e"                     
-                      cards:    
+                          "c d e"
+                      cards:
                         - type: 'custom:apexcharts-card'
                           config_templates: default
                           graph_span: 2d
@@ -79,17 +79,15 @@ elements:
                             show:
                               in_header: raw
                           series:
-                            # - entity: sensor.swisscom_internet_box_kib_s_received
-                            #   color: "#ffa31a"
-                            #   transform: "return x / 1024;"
-                            #   name: Download ISP
-                            #   unit: MB/s
-                            # - entity: sensor.swisscom_internet_box_kib_s_sent
-                            #   color: "#424F96"
-                            #   transform: "return x / 1024;"
-                            #   name: Upload ISP
-                            #   unit: MB/s
-                            #   invert: true
+                            - entity: sensor.router_sfp_1_rx
+                              color: "#ffa31a"
+                              name: Download Init7
+                              unit: MB/s
+                            - entity: sensor.router_sfp_1_tx
+                              color: "#424F96"
+                              name: Upload Init7
+                              unit: MB/s
+                              invert: true
                             - entity: sensor.deluge_down_speed
                               color: "#FF5401"
                               transform: "return x / 1024;"
@@ -144,8 +142,8 @@ elements:
                               name: 'Total'
                               tap_action:
                                 action: url
-                                url_path: !secret SABNzbd_URL 
-                            - entity: sensor.sabnzbd_queue 
+                                url_path: !secret SABNzbd_URL
+                            - entity: sensor.sabnzbd_queue
                               icon: 'mdi:tray-full'
                               name: 'Queue'
                               tap_action:
@@ -216,17 +214,15 @@ elements:
                   title: Internet speed
                   size: wide
         series:
-          # - entity: sensor.swisscom_internet_box_kib_s_received
-          #   color: "#ffa31a"
-          #   transform: "return x / 1024;"
-          #   name: Download ISP
-          #   unit: MB/s
-          # - entity: sensor.swisscom_internet_box_kib_s_sent
-          #   color: "#424F96"
-          #   transform: "return x / 1024;"
-          #   name: Upload ISP
-          #   unit: MB/s
-          #   invert: true
+          - entity: sensor.router_sfp_1_rx
+            color: "#ffa31a"
+            name: Download Init7
+            unit: MB/s
+          - entity: sensor.router_sfp_1_tx
+            color: "#424F96"
+            name: Upload Init7
+            unit: MB/s
+            invert: true
           - entity: sensor.deluge_down_speed
             color: "#FF5401"
             transform: "return x / 1024;"
@@ -277,7 +273,7 @@ elements:
                   - sensor_1: sensor.cdrxstation3_volume_1_volume_used
                   - name_1: Volume 1
               card_mod:
-                style: 
+                style:
                   decluttering-card$: |
                     div#root {
                       height: 100%;
@@ -290,7 +286,7 @@ elements:
                     ha-card {
                       height: 100%;
                       box-shadow: none;
-                    }       
+                    }
               view_layout:
                 grid-area: st1
             - type: 'custom:mod-card'
@@ -302,7 +298,7 @@ elements:
                   - sensor_1: sensor.backupstation_volume_1_volume_used
                   - name_1: Volume 1
               card_mod:
-                style: 
+                style:
                   decluttering-card$: |
                     div#root {
                       height: 100%;
@@ -315,11 +311,11 @@ elements:
                     ha-card {
                       height: 100%;
                       box-shadow: none;
-                    } 
+                    }
               view_layout:
                 grid-area: stb
         card_mod:
-          style: 
+          style:
             layout-card$:
               grid-layout$: |
                 #root {
@@ -334,7 +330,7 @@ elements:
                 height: 60%;
               }
         view_layout:
-          column: 1       
+          column: 1
       - type: 'custom:battery-state-card'
         color_gradient:
           - '#ff1a1a'
