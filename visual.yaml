@@ -130,4 +130,4 @@ views:
         - sidebar: !include frontend/sidebar.yaml
         - card: !include frontend/systems.yaml
 
-- !include frontend/screensaver.yaml
+- !include frontend/screensaver.yaml
