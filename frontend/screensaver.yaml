@@ -108,17 +108,17 @@ cards:
               name: Vers-chez-les-Blanc
               type: custom:multiple-entity-row
               entities:
-                - entity: sensor.dir_vclb_2
-                  name: false
                 - entity: sensor.dir_vclb_1
+                  name: false
+                - entity: sensor.dir_vclb_2
                   name: false
             - entity: sensor.depuis_maison_3
               name: Croisettes
               type: custom:multiple-entity-row
               entities:
-                - entity: sensor.depuis_maison_2
-                  name: false
                 - entity: sensor.depuis_maison_1
+                  name: false
+                - entity: sensor.depuis_maison_2
                   name: false
           title: Prochains départs
           view_layout:
