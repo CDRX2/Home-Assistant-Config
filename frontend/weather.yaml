@@ -151,12 +151,12 @@ elements:
 #         yaxis_id: temp
 #         fill_raw: last
 #         show:
-#           legend_value: false     
+#           legend_value: false
 #         group_by:
 #           func: avg
 #           duration: 1h
 #           start_with_last: false
-#         extend_to: false 
+#         extend_to: false
 #       - entity: weather.openweathermap
 #         type: area
 #         # color: '#ffa31a'
@@ -194,7 +194,7 @@ elements:
 #         # fill_raw: last
 #         opacity: 0.65
 #         show:
-#           legend_value: false     
+#           legend_value: false
 #         group_by:
 #           func: sum
 #           duration: 1d
@@ -206,7 +206,7 @@ elements:
 #       #   color: '#0cffdb'
 #       #   fill_raw: last
 #       #   show:
-#       #     legend_value: false     
+#       #     legend_value: false
 #       #   group_by:
 #       #     func: sum
 #       #     duration: 1d

@@ -1,31 +1,3 @@
-watch_tv:
-  alias: Watch TV
-  sequence:
-  - service: media_player.turn_on
-    data: {}
-    entity_id: media_player.living_room_tv
-  - wait_for_trigger:
-    - platform: state
-      entity_id:
-      - media_player.living_room_tv
-      to: 'on'
-  - service: media_player.select_source
-    data:
-      source: Swisscom blue TV
-    target:
-      entity_id: media_player.living_room_tv
-  - wait_for_trigger:
-    - platform: state
-      entity_id: media_player.pioneer_avr
-      to: 'on'
-      for: '2'
-  - service: media_player.volume_set
-    data:
-      volume_level: 0.4918918918918919
-    target:
-      entity_id: media_player.pioneer_avr
-  mode: single
-  icon: mdi:television-box
 watch_plex:
   alias: Watch Plex
   sequence:
@@ -112,28 +84,6 @@ music:
   mode: single
   icon: mdi:music
   alias: music
-bluetooth:
-  alias: Bluetooth
-  sequence:
-  - service: media_player.turn_on
-    data: {}
-    entity_id: media_player.pioneer_avr
-  - wait_for_trigger:
-    - platform: state
-      entity_id: media_player.pioneer_avr
-      to: 'on'
-      for: '2'
-  - service: media_player.select_source
-    data:
-      source: BT AUDIO
-    entity_id: media_player.pioneer_avr
-  - delay: '1'
-  - service: media_player.volume_set
-    data:
-      volume_level: '0.3837837837837838'
-    entity_id: media_player.pioneer_avr
-  mode: single
-  icon: mdi:speaker-bluetooth
 watch_youtube:
   alias: Watch YouTube
   sequence:
@@ -154,49 +104,23 @@ watch_youtube:
     entity_id: media_player.pioneer_avr
   mode: single
   icon: mdi:youtube
-couleur_3:
-  alias: Couleur 3
-  sequence:
-  - service: media_player.turn_on
-    data: {}
-    entity_id: media_player.pioneer_avr
-  - wait_for_trigger:
-    - platform: state
-      entity_id: media_player.pioneer_avr
-      to: 'on'
-      for: '2'
-  - service: media_player.select_source
-    data:
-      source: INTERNET RADIO
-    target:
-      entity_id: media_player.pioneer_avr
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 1
-      milliseconds: 0
-  - service: media_player.volume_set
-    data:
-      volume_level: 0.3837837837837838
-    target:
-      entity_id: media_player.pioneer_avr
-  mode: single
-  icon: mdi:numeric-3
 music_source:
   alias: music_source
   sequence:
-  - service: media_player.select_source
-    data:
+  - data:
       source: MEDIA SERVER
     entity_id: media_player.pioneer_avr
+    action: media_player.select_source
   - delay:
       hours: 0
       minutes: 0
       seconds: 2
       milliseconds: 0
-  - service: media_player.media_play
-    data: {}
+    enabled: false
+  - data: {}
     entity_id: media_player.bubble
+    action: media_player.media_play
+    enabled: false
   mode: single
   icon: mdi:music
 avr_mute:
@@ -219,35 +143,6 @@ light_timer:
       entity_id: '{{ entity_id }}'
   mode: parallel
   icon: mdi:lightbulb-auto
-radio:
-  alias: Radio
-  sequence:
-  - service: media_player.turn_on
-    data: {}
-    entity_id: media_player.pioneer_avr
-  - wait_for_trigger:
-    - platform: state
-      entity_id: media_player.pioneer_avr
-      to: 'on'
-      for: '2'
-  - service: media_player.volume_set
-    data:
-      volume_level: 0.3837837837837838
-    target:
-      entity_id: media_player.pioneer_avr
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 1
-      milliseconds: 0
-  - service: media_player.play_media
-    data:
-      media_content_type: music
-      media_content_id: http://stream.srg-ssr.ch/m/rsc_de/mp3_128
-    target:
-      entity_id: media_player.sc_lx78_dlna
-  mode: single
-  icon: mdi:radio
 music_assistant:
   alias: music_assistant
   sequence:
@@ -270,11 +165,6 @@ music_assistant:
       minutes: 0
       seconds: 5
       milliseconds: 0
-  - action: media_player.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id: media_player.sc_lx78
   - action: media_player.volume_set
     metadata: {}
     data:
@@ -315,6 +205,7 @@ music_assistant_from_tv:
     data: {}
     target:
       entity_id: media_player.sc_lx78
+    enabled: false
   mode: single
   icon: mdi:music
   description: ''
