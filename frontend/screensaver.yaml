@@ -29,6 +29,7 @@ cards:
       cards:
         - type: custom:gcclock-words
           show_highlight_glow: false
+          language: en-GB
           view_layout:
             grid-area: clock
             align-self: center
@@ -42,7 +43,7 @@ cards:
         - show_current: true
           show_forecast: true
           type: weather-forecast
-          entity: weather.dorighome
+          entity: weather.openweathermap
           forecast_type: daily
           name: " "
           view_layout:
