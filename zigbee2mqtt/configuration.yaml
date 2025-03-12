@@ -1,0 +1,74 @@
+version: 4
+homeassistant:
+  enabled: true
+advanced:
+  network_key:
+    - 76
+    - 122
+    - 51
+    - 211
+    - 45
+    - 75
+    - 216
+    - 119
+    - 62
+    - 61
+    - 51
+    - 211
+    - 89
+    - 28
+    - 148
+    - 113
+  pan_id: 37398
+  ext_pan_id:
+    - 57
+    - 14
+    - 146
+    - 20
+    - 185
+    - 19
+    - 250
+    - 162
+  channel: 25
+mqtt:
+  server: mqtt://core-mosquitto:1883
+  user: mqtt
+  password: 4nqWAmHwQYY2dA_L*nf3
+serial:
+  port: tcp://10.81.19.36:6638
+  adapter: zstack
+  baudrate: 115200
+frontend:
+  enabled: true
+  port: 8099
+groups:
+  '1':
+    friendly_name: parents_bedroom
+  '2':
+    friendly_name: twins_bedroom
+  '3':
+    friendly_name: mezzanine_bedroom
+  '4':
+    friendly_name: friends_bedroom
+  '5':
+    friendly_name: upstairs_bathroom
+  '6':
+    friendly_name: downstairs_bathroom
+  '7':
+    friendly_name: upstairs_hall
+  '8':
+    friendly_name: entrance
+  '9':
+    friendly_name: terrace
+  '10':
+    friendly_name: kitchen
+  '11':
+    friendly_name: living_room
+  '12':
+    friendly_name: dining_room
+  '13':
+    friendly_name: downstairs_stairs
+  '14':
+    friendly_name: upstairs_stairs
+  '15':
+    friendly_name: carport
