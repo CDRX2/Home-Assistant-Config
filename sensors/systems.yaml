@@ -10,4 +10,6 @@
           states('update.home_assistant_core_update') != 'off' or
           states('update.home_assistant_operating_system_update') != 'off' or
           states('update.home_assistant_supervisor_update') != 'off' or
-          states('update.hacs_update') != 'off', 'alert', 'normal') }}
+          states('update.hacs_update') != 'off' or
+          states('update.slzb_06p7_core_firmware') != 'off' or
+          states('update.slzb_06p7_zigbee_firmware') != 'off', 'alert', 'normal') }}
