@@ -445,3 +445,26 @@
     target:
       entity_id: light.noel
   mode: single
+- id: '1743361176857'
+  alias: amis_lumieres
+  description: ''
+  use_blueprint:
+    path: vandalon/z2m EnOcean PTM 215Z (Friends of Hue) switch.yaml
+    input:
+      controller: amis_lit
+      button_1_pressed: []
+      button_2_pressed: []
+      button_3_pressed: []
+      hold_delay: 500
+      button_1_released:
+      - action: light.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.amis_plafonnier
+      button_3_released:
+      - action: light.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.amis_prises

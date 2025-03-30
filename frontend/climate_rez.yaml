@@ -302,50 +302,6 @@ elements:
     variables:
       - entity: light.manger_lampe
       - image: rez/Manger_lampe.png
-  - type: 'custom:config-template-card'
-    entities:
-      - light.chevet_amis_geneve
-    element:
-      action: none
-      entity: light.chevet_amis_geneve
-      hold_action:
-        action: none
-      image: /local/transparent.png
-      state_image:
-        'on': /local/ui/floorplan/lights/rez/Amis_chevet_geneve.png
-      tap_action:
-        action: none
-      type: image
-    style:
-      left: 50%
-      top: 50%
-      width: 100%
-      filter: >-
-        ${ "hue-rotate(" + (states['light.chevet_amis_geneve'].attributes.hs_color ? states['light.chevet_amis_geneve'].attributes.hs_color[0] : 0) + "deg) saturate(100%)"}
-      mix-blend-mode: lighten
-      opacity: "${states['light.chevet_amis_geneve'].state === 'on' ? (states['light.chevet_amis_geneve'].attributes.brightness / 255) : '0'}"
-  - type: 'custom:config-template-card'
-    entities:
-      - light.chevet_amis_valais
-    element:
-      action: none
-      entity: light.chevet_amis_valais
-      hold_action:
-        action: none
-      image: /local/transparent.png
-      state_image:
-        'on': /local/ui/floorplan/lights/rez/Amis_chevet_valais.png
-      tap_action:
-        action: none
-      type: image
-    style:
-      left: 50%
-      top: 50%
-      width: 100%
-      filter: >-
-        ${ "hue-rotate(" + (states['light.chevet_amis_valais'].attributes.hs_color ? states['light.chevet_amis_valais'].attributes.hs_color[0] : 0) + "deg) saturate(100%)"}
-      mix-blend-mode: lighten
-      opacity: "${states['light.chevet_amis_valais'].state === 'on' ? (states['light.chevet_amis_valais'].attributes.brightness / 255) : '0'}"
   - type: 'custom:decluttering-card'
     template: light_overlay
     variables:
@@ -371,7 +327,7 @@ elements:
     variables:
       - entity: light.entree
       - image: rez/Entree.png
-  
+
     #########################    TEMPERATURE CONTROL STATE LABELS    #########################
 
   - type: 'custom:decluttering-card'
@@ -407,7 +363,7 @@ elements:
   - type: 'custom:decluttering-card'
     template: climate_image_v2
     variables:
-      - pressure: sensor.pressure_bottom_stairs  
+      - pressure: sensor.pressure_bottom_stairs
       - temp: sensor.temperature_bottom_stairs
       - humidity: sensor.humidity_bottom_stairs
       - title: Escaliers cave
@@ -577,7 +533,7 @@ elements:
 
     #########################    INDIVIDUAL SHUTTER ICONS    #########################
 
-    #  These are the white state icons that appear over the floorplan to control shades, 
+    #  These are the white state icons that appear over the floorplan to control shades,
     #  shutters and window openings.
     #
     #  browser_mod.popup is used for a tap and hold for a custom popup card, custom styling
@@ -586,7 +542,7 @@ elements:
   #windows
 
   #shades
-  
+
   - type: 'custom:button-card'
     template: cover_invert_no_stop
     variables:
@@ -608,17 +564,17 @@ elements:
 
   - type: 'custom:decluttering-card'
     template: now_playing_image
-    style: 
+    style:
         left: 82%
         top: 57%
         transform: >-
           rotateZ(90deg) rotateX(305deg)
         width: 12%
         --ha-card-border-radius: 0vw 0vw 0vw 0vw
-        
+
   - type: 'custom:decluttering-card'
     template: now_playing_plex
-    style: 
+    style:
         left: 82%
         top: 57%
         transform: >-
@@ -628,7 +584,7 @@ elements:
 
   - type: 'custom:decluttering-card'
     template: now_playing_other
-    style: 
+    style:
         left: 82%
         top: 57%
         transform: >-
