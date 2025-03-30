@@ -117,17 +117,6 @@ elements:
           view_layout:
             grid-area: n
         - type: 'custom:button-card'
-          template: color_lights
-          variables:
-            entity: light.twins_mobile
-            title: Jumeaux mobile
-            gridarea: '"i . color" "n n n" "slider slider slider"'
-            color_temp: true
-          icon: 'cil:google-home'
-          name: Jumeaux mobile
-          view_layout:
-            grid-area: r
-        - type: 'custom:button-card'
           template: dimmable_lights
           variables:
             entity: light.couloir_1

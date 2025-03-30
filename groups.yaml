@@ -61,16 +61,8 @@ Salon_couleur:
 Amis:
   name: Amis
   entities:
-  - light.chevet_amis_geneve
-  - light.chevet_amis_valais
   - light.amis_plafonnier
   - light.amis_prises
-
-Chevet_amis:
-  name: Chevet amis
-  entities:
-  - light.chevet_amis_geneve
-  - light.chevet_amis_valais
 
 Jumeaux:
   name: Jumeaux
@@ -139,10 +131,3 @@ mobiles_tablets_battery:
     - sensor.lenovo_tab_1st_floor_battery
     - sensor.lenovo_rez_battery
     - sensor.lenovo_tab_remote_battery
-
-lights_battery:
-  name: Lights battery
-  entities:
-    - sensor.chevet_amis_valais_battery
-    - sensor.chevet_amis_geneve_battery
-    - sensor.twins_mobile_battery

@@ -280,50 +280,6 @@ elements:
     variables:
       - entity: light.manger_lampe
       - image: rez/Manger_lampe.png
-  - type: 'custom:config-template-card'
-    entities:
-      - light.chevet_amis_geneve
-    element:
-      action: none
-      entity: light.chevet_amis_geneve
-      hold_action:
-        action: none
-      image: /local/transparent.png
-      state_image:
-        'on': /local/ui/floorplan/lights/rez/Amis_chevet_geneve.png
-      tap_action:
-        action: none
-      type: image
-    style:
-      left: 50%
-      top: 50%
-      width: 100%
-      filter: >-
-        ${ "hue-rotate(" + (states['light.chevet_amis_geneve'].attributes.hs_color ? states['light.chevet_amis_geneve'].attributes.hs_color[0] : 0) + "deg) saturate(100%)"}
-      mix-blend-mode: lighten
-      opacity: "${states['light.chevet_amis_geneve'].state === 'on' ? (states['light.chevet_amis_geneve'].attributes.brightness / 255) : '0'}"
-  - type: 'custom:config-template-card'
-    entities:
-      - light.chevet_amis_valais
-    element:
-      action: none
-      entity: light.chevet_amis_valais
-      hold_action:
-        action: none
-      image: /local/transparent.png
-      state_image:
-        'on': /local/ui/floorplan/lights/rez/Amis_chevet_valais.png
-      tap_action:
-        action: none
-      type: image
-    style:
-      left: 50%
-      top: 50%
-      width: 100%
-      filter: >-
-        ${ "hue-rotate(" + (states['light.chevet_amis_valais'].attributes.hs_color ? states['light.chevet_amis_valais'].attributes.hs_color[0] : 0) + "deg) saturate(100%)"}
-      mix-blend-mode: lighten
-      opacity: "${states['light.chevet_amis_valais'].state === 'on' ? (states['light.chevet_amis_valais'].attributes.brightness / 255) : '0'}"
   - type: 'custom:decluttering-card'
     template: light_overlay
     variables:
@@ -708,27 +664,6 @@ elements:
   #     - icon: mdi:led-strip-variant
   #     - left: 53.8%
   #     - top: 38%
-
-  #amis
-  - type: 'custom:decluttering-card'
-    template: Light_icon_mid
-    variables:
-      - light: light.chevet_amis_geneve
-      - title: Chevet amis Genève
-      - icon: cil:google-home-alt
-      # - min: 153
-      # - max: 370
-      - left: 26%
-      - top: 15%
-
-  - type: 'custom:decluttering-card'
-    template: Light_icon_mid
-    variables:
-      - light: light.chevet_amis_valais
-      - title: Chevet amis Valais
-      - icon: cil:google-home
-      - left: 39%
-      - top: 15%
 
 #dimming lights
 #Cuisine

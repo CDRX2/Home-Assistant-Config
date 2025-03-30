@@ -30,6 +30,7 @@ advanced:
     - 250
     - 162
   channel: 25
+  elapsed: true
 mqtt:
   server: mqtt://core-mosquitto:1883
   user: mqtt
@@ -72,3 +73,12 @@ groups:
     friendly_name: upstairs_stairs
   '15':
     friendly_name: carport
+devices:
+  '0x001fee0000006e9e':
+    friendly_name: escalier_cave
+  '0x001fee000000727a':
+    friendly_name: amis
+  '0x000000000175ba48':
+    friendly_name: amis_lit
+  '0x001fee000000770b':
+    friendly_name: entree

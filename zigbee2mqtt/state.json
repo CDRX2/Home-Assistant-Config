@@ -1,1 +1,45 @@
-{}
+{
+    "0x001fee0000006e9e": {
+        "state": "ON",
+        "power_on_behavior": "previous",
+        "power": 135,
+        "update": {
+            "state": "idle",
+            "installed_version": 38798407,
+            "latest_version": 38798407
+        },
+        "energy": 0.06,
+        "linkquality": 156
+    },
+    "0x001fee000000727a": {
+        "power": 38,
+        "state_l1": "OFF",
+        "state_l2": "OFF",
+        "power_on_behavior_l1": "previous",
+        "power_on_behavior_l2": "previous",
+        "update": {
+            "state": "idle",
+            "installed_version": 38798407,
+            "latest_version": 38798407
+        },
+        "energy": 0.04,
+        "linkquality": 65
+    },
+    "0x000000000175ba48": {
+        "linkquality": 153
+    },
+    "0x001fee000000770b": {
+        "power": 10,
+        "update": {
+            "state": "idle",
+            "installed_version": 38798407,
+            "latest_version": 38798407
+        },
+        "power_on_behavior_l1": "previous",
+        "power_on_behavior_l2": "previous",
+        "state_l1": "OFF",
+        "state_l2": "OFF",
+        "energy": 0,
+        "linkquality": 76
+    }
+}

@@ -345,8 +345,6 @@ light:
   - platform: group
     name: Amis
     entities:
-    - light.chevet_amis_geneve
-    - light.chevet_amis_valais
     - light.amis_prises
     - light.amis_plafonnier
 
@@ -355,12 +353,6 @@ light:
     entities:
     - light.jumeaux_prises
     - light.jumeaux_armoires_blanc
-
-  - platform: group
-    name: Chevet amis
-    entities:
-    - light.chevet_amis_geneve
-    - light.chevet_amis_valais
 
   - platform: group
     name: Salle de bains

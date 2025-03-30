@@ -84,3 +84,16 @@
 [2025-03-12 22:33:30] info: 	z2m:mqtt: MQTT publish: topic 'zigbee2mqtt/bridge/response/touchlink/scan', payload '{"data":{"found":[]},"status":"ok","transaction":"3h4lr-20"}'
 [2025-03-12 22:34:09] info: 	z2m: Successfully changed options
 [2025-03-12 22:34:09] info: 	z2m:mqtt: MQTT publish: topic 'zigbee2mqtt/bridge/response/options', payload '{"data":{"restart_required":true},"status":"ok","transaction":"3h4lr-21"}'
+[2025-03-12 23:05:42] error: 	z2m: MQTT error: connect ECONNREFUSED 172.30.33.3:1883
+[2025-03-12 23:05:43] error: 	z2m: MQTT error: connect ECONNREFUSED 172.30.33.3:1883
+[2025-03-12 23:05:44] error: 	z2m: MQTT error: connect ECONNREFUSED 172.30.33.3:1883
+[2025-03-12 23:05:46] error: 	z2m: Not connected to MQTT server!
+[2025-03-12 23:05:49] error: 	z2m: MQTT error: getaddrinfo ENOTFOUND core-mosquitto
+[2025-03-12 23:05:50] error: 	z2m: Not connected to MQTT server!
+[2025-03-12 23:05:50] error: 	z2m: Cannot send message: topic: 'zigbee2mqtt/bridge/state', payload: '{"state":"offline"}
+[2025-03-12 23:05:50] info: 	z2m: Disconnecting from MQTT server
+[2025-03-12 23:05:50] info: 	z2m: Stopping zigbee-herdsman...
+[2025-03-12 23:06:06] info: 	zh:controller: Wrote coordinator backup to '/config/zigbee2mqtt/coordinator_backup.json'
+[2025-03-12 23:06:06] info: 	zh:zstack:znp: closing
+[2025-03-12 23:06:06] info: 	z2m: Stopped zigbee-herdsman
+[2025-03-12 23:06:06] info: 	z2m: Stopped Zigbee2MQTT

@@ -5,12 +5,13 @@
  * Date          : 01 Feb 2021 08:44:30+07:00
  * Based on      : github.com/DBuit/hass-smart-home-panel-card (Thanks to DBuit!)
  */
-console.info("%c [konnected.vn] Vertical Slider Cover Card  \n%c Version v0.1.5","color: red; font-weight: bold; background: black", "color: white; font-weight: bold; background: dimgray");
+console.info("%c [konnected.vn] Vertical Slider Cover Card  \n%c Version v0.1.6","color: red; font-weight: bold; background: black", "color: white; font-weight: bold; background: dimgray");
 import {
     LitElement,
     html,
     css
-} from "https://unpkg.com/lit-element@2.0.1/lit-element.js?module";
+} from "https://cdn.jsdelivr.net/gh/lit/dist@3/core/lit-core.min.js";
+//"https://unpkg.com/lit-element@2.0.1/lit-element.js?module"
 class VerticalSliderCoverCard extends LitElement {
   
   static get properties() {
