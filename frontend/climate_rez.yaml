@@ -420,7 +420,7 @@ elements:
   - type: 'custom:decluttering-card'
     template: climate_image_v2
     variables:
-      - temp: sensor.temperature_movement_driveway
+      - temp: sensor.carport_movement_temperature
       - humidity: sensor.openweathermap_humidity
       - pressure: sensor.openweathermap_pressure
       - title: Carport
@@ -429,8 +429,8 @@ elements:
   - type: 'custom:decluttering-card'
     template: climate_state_label_v2
     variables:
-      - sensor: sensor.temperature_movement_driveway
-      - temp: sensor.temperature_movement_driveway
+      - sensor: sensor.carport_movement_temperature
+      - temp: sensor.carport_movement_temperature
       - humidity: sensor.openweathermap_humidity
       - pressure: sensor.openweathermap_pressure
       - title: Carport
@@ -440,7 +440,7 @@ elements:
     template: climate_state_label_v2
     variables:
       - sensor: sensor.openweathermap_humidity_round
-      - temp: sensor.temperature_movement_driveway
+      - temp: sensor.carport_movement_temperature
       - humidity: sensor.openweathermap_humidity
       - pressure: sensor.openweathermap_pressure
       - title: Carport

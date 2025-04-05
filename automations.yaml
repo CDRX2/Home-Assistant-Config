@@ -468,3 +468,98 @@
         data: {}
         target:
           entity_id: light.amis_prises
+- id: '1743770687084'
+  alias: carport lights
+  description: ''
+  triggers:
+  - entity_id: binary_sensor.carport_movement_occupancy
+    to: 'on'
+    trigger: state
+  conditions:
+  - condition: state
+    entity_id: sun.sun
+    state: below_horizon
+  actions:
+  - action: light.turn_on
+    metadata: {}
+    data:
+      brightness_pct: 100
+    target:
+      entity_id: light.carport
+  - delay:
+      hours: 0
+      minutes: 2
+      seconds: 0
+      milliseconds: 0
+  - action: light.turn_on
+    metadata: {}
+    data:
+      brightness_pct: 50
+    target:
+      entity_id: light.carport
+  - delay:
+      hours: 0
+      minutes: 1
+      seconds: 0
+      milliseconds: 0
+  - action: light.turn_on
+    metadata: {}
+    data:
+      brightness_pct: 3
+    target:
+      entity_id: light.carport
+  - delay:
+      hours: 0
+      minutes: 2
+      seconds: 0
+      milliseconds: 0
+  - action: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.carport
+  mode: restart
+- id: '1743867531123'
+  alias: bathroom_movement
+  description: ''
+  triggers:
+  - entity_id:
+    - binary_sensor.movement_bathroom_occupancy
+    to: 'on'
+    trigger: state
+  conditions:
+  - condition: state
+    entity_id: sun.sun
+    state: below_horizon
+    enabled: true
+  actions:
+  - action: light.turn_on
+    metadata: {}
+    data:
+      brightness_pct: 50
+    target:
+      entity_id: light.bathroom_sink_white
+  - delay:
+      hours: 0
+      minutes: 10
+      seconds: 0
+      milliseconds: 0
+  - action: light.turn_on
+    metadata: {}
+    data:
+      brightness_pct: 15
+      transition: 10
+    target:
+      entity_id: light.bathroom_sink_white
+  - delay:
+      hours: 0
+      minutes: 5
+      seconds: 0
+      milliseconds: 0
+  - action: light.turn_off
+    metadata: {}
+    data:
+      transition: 10
+    target:
+      entity_id: light.bathroom_sink_white
+  mode: restart

@@ -380,8 +380,10 @@ elements:
             name: 'Temp and humidity Charles'
           - entity: sensor.bottom_stairs_battery
             name: 'Climate bottom stairs'
-          - entity: sensor.movement_driveway_battery_level
+          - entity: sensor.carport_movement_battery
             name: 'Movement driveway'
+          - entity: sensor.movement_bathroom_battery
+            name: 'Movement bathroom'
           - entity: sensor.entree_battery_level
             name: 'Chatière'
           - entity: sensor.lenovo_rez_battery
