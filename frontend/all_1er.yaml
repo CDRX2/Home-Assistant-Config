@@ -140,7 +140,7 @@ elements:
             - consumption
           variables:
             gridarea: '"i consumption ." "n n n" ". . ."'
-            consumption: sensor.consumption_entree
+            consumption: sensor.entree_energy
           entity: light.escalier_1er
           icon: 'hue:bulb-group-ceiling-flush-circular'
           name: Escalier 1er
@@ -152,7 +152,7 @@ elements:
             - consumption
           variables:
             gridarea: '"i consumption ." "n n n" ". . ."'
-            consumption: sensor.consumption_bathroom
+            consumption: sensor.bathroom_energy
           entity: light.bathroom_door
           icon: 'hue:ceiling-fugato-two'
           name: Salle de bains
@@ -164,7 +164,7 @@ elements:
             - consumption
           variables:
             gridarea: '"i consumption ." "n n n" ". . ."'
-            consumption: sensor.consumption_bathroom
+            consumption: sensor.bathroom_energy
           entity: light.bathroom_mirror
           icon: 'mdi:led-strip-variant'
           name: Mirroir

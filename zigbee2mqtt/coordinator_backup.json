@@ -2,9 +2,9 @@
   "metadata": {
     "format": "zigpy/open-coordinator-backup",
     "version": 1,
-    "source": "zigbee-herdsman@3.2.7",
+    "source": "zigbee-herdsman@3.4.11",
     "internal": {
-      "date": "2025-03-30T14:56:37.828Z",
+      "date": "2025-04-05T04:51:16.205Z",
       "znpVersion": 1
     }
   },
@@ -25,7 +25,88 @@
   "network_key": {
     "key": "4c7a33d32d4bd8773e3d33d3591c9471",
     "sequence_number": 0,
-    "frame_counter": 1
+    "frame_counter": 136890
   },
-  "devices": []
+  "devices": [
+    {
+      "nwk_address": "6b",
+      "ieee_address": "001fee0000006e9e",
+      "is_child": false,
+      "link_key": {
+        "key": "32ca3b405b5df1aa0713d9a34bb075a8",
+        "rx_counter": 0,
+        "tx_counter": 0
+      }
+    },
+    {
+      "nwk_address": "327b",
+      "ieee_address": "001fee000000727a",
+      "is_child": false,
+      "link_key": {
+        "key": "2418a8aca4d55f5bc99caa997d37bc4b",
+        "rx_counter": 0,
+        "tx_counter": 33
+      }
+    },
+    {
+      "nwk_address": "28f",
+      "ieee_address": "001fee000000770b",
+      "is_child": false,
+      "link_key": {
+        "key": "a1ee7dd9a3a5416aa3dba43b40b5acee",
+        "rx_counter": 4103,
+        "tx_counter": 40
+      }
+    },
+    {
+      "nwk_address": "9692",
+      "ieee_address": "001fee0000006fd3",
+      "is_child": false,
+      "link_key": {
+        "key": "7bc3a43b40b5acee79f67dd9a3a5416a",
+        "rx_counter": 0,
+        "tx_counter": 0
+      }
+    },
+    {
+      "nwk_address": "2ce7",
+      "ieee_address": "00178801085629ed",
+      "is_child": false,
+      "link_key": {
+        "key": "5ec7fc917c51b44bb343fea4a5b3575b",
+        "rx_counter": 180225,
+        "tx_counter": 10
+      }
+    },
+    {
+      "nwk_address": "d4e9",
+      "ieee_address": "0017880106492966",
+      "is_child": false,
+      "link_key": {
+        "key": "ce85ed3d41d3a4eeccb034dfa2c3496a",
+        "rx_counter": 0,
+        "tx_counter": 0
+      }
+    },
+    {
+      "nwk_address": "e605",
+      "ieee_address": "001fee00000073a1",
+      "is_child": false,
+      "link_key": {
+        "key": "129daa997d37bc4bff19a8aca4d55f5b",
+        "rx_counter": 0,
+        "tx_counter": 0
+      }
+    },
+    {
+      "nwk_address": "d6f6",
+      "ieee_address": "00212effff00a0a1",
+      "is_child": false,
+      "link_key": {
+        "key": "78034ba195868da49ae05b4c1184b87d",
+        "rx_counter": 0,
+        "tx_counter": 0
+      }
+    }
+  ]
 }

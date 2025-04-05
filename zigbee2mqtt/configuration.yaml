@@ -1,6 +1,8 @@
 version: 4
 homeassistant:
   enabled: true
+  experimental_event_entities: true
+  legacy_action_sensor: true
 advanced:
   network_key:
     - 76
@@ -31,10 +33,14 @@ advanced:
     - 162
   channel: 25
   elapsed: true
+  last_seen: ISO_8601
 mqtt:
   server: mqtt://core-mosquitto:1883
   user: mqtt
   password: 4nqWAmHwQYY2dA_L*nf3
+  keepalive: 60
+  reject_unauthorized: true
+  version: 5
 serial:
   port: tcp://10.81.19.36:6638
   adapter: zstack
@@ -72,13 +78,29 @@ groups:
   '14':
     friendly_name: upstairs_stairs
   '15':
-    friendly_name: carport
+    friendly_name: parking
 devices:
-  '0x001fee0000006e9e':
-    friendly_name: escalier_cave
   '0x001fee000000727a':
     friendly_name: amis
   '0x000000000175ba48':
     friendly_name: amis_lit
   '0x001fee000000770b':
     friendly_name: entree
+  '0x001fee0000006fd3':
+    friendly_name: guest_bathroom
+  '0x00178801085629ed':
+    friendly_name: carport
+  '0x0017880106492966':
+    friendly_name: carport_movement
+  '0x001fee0000006e9e':
+    friendly_name: escalier_cave
+  '0x001fee00000073a1':
+    friendly_name: bathroom
+  '0x00212effff00a0a1':
+    friendly_name: bathroom_sink
+  '0xa4c138e5a9195155':
+    friendly_name: movement_bathroom
+availability:
+  active:
+    timeout: 20
+  enabled: true

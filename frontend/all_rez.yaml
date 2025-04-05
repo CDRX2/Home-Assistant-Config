@@ -120,7 +120,7 @@ elements:
             - consumption
           variables:
             gridarea: '"i consumption ." "n n n" ". . ."'
-            consumption: sensor.consumption_amis
+            consumption: sensor.amis_energy
           entity: light.amis_plafonnier
           icon: 'hue:recessed-ceiling'
           name: Chambre d'amis
@@ -132,7 +132,7 @@ elements:
             - consumption
           variables:
             gridarea: '"i consumption ." "n n n" ". . ."'
-            consumption: sensor.consumption_amis
+            consumption: sensor.amis_energy
           entity: light.amis_prises
           icon: 'mdi:led-strip-variant'
           name: Dressing amis
@@ -165,7 +165,7 @@ elements:
             - consumption
           variables:
             gridarea: '"i consumption ." "n n n" ". . ."'
-            consumption: sensor.consumption_entree
+            consumption: sensor.entree_energy
           entity: light.entree
           icon: 'hue:recessed-ceiling'
           name: Entrée
@@ -207,7 +207,7 @@ elements:
             - consumption
           variables:
             gridarea: '"i consumption ." "n n n" ". . ."'
-            consumption: sensor.consumption_guest_bathroom
+            consumption: sensor.guest_bathroom_energy
           entity: light.guest_bathroom
           icon: 'mdi:spotlight-beam'
           name: Douche
@@ -219,7 +219,7 @@ elements:
             - consumption
           variables:
             gridarea: '"i consumption ." "n n n" ". . ."'
-            consumption: sensor.consumption_escalier_cave
+            consumption: sensor.escalier_cave_energy
           entity: light.escalier_cave
           icon: 'mdi:stairs'
           name: Cave
