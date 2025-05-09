@@ -52,9 +52,9 @@ icons_nas_popup:
       browser_mod:
         service: browser_mod.popup
         data:
-          content: 
+          content:
             type: 'custom:swipe-card'
-            cards: 
+            cards:
               - !include ../frontend/station3.yaml
               - !include ../frontend/stationB.yaml
           title: Synology NAS
@@ -128,7 +128,7 @@ stateicon:
       navigation_path: /lovelace-visual/systems
     style:
       '--mdc-icon-size': 1vw
-      '--paper-item-icon-color': lightgrey
+      '--state-icon-color': lightgrey
       align-items: center
       display: flex
       height: 2.1vw
@@ -201,7 +201,7 @@ cats_popup:
             style:
               button:
                 background-color: >-
-                  {{ iif (is_state('lock.entree_locked_out', 'locked'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}     
+                  {{ iif (is_state('lock.entree_locked_out', 'locked'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}
           - icon: 'mdi:lock'
             tap_action:
               action: call-service
@@ -251,7 +251,7 @@ cats_popup:
               button:
                 background-color: >-
                   {{ iif (is_state('person.charlie', 'not_home'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}
-          - icon: 'mdi:home-import-outline'      
+          - icon: 'mdi:home-import-outline'
             tap_action:
               action: call-service
               service: surepetcare.set_pet_location
@@ -263,7 +263,7 @@ cats_popup:
                 background-color: >-
                   {{ iif (is_state('person.charlie', 'home'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}
     card_mod:
-      style: 
+      style:
         hui-section-row$: |
           .label {
             font-size: 1.2vw;

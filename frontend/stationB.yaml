@@ -126,6 +126,7 @@ elements:
         style:
           top: 50%
           right: 2.5%
+          '--state-icon-color': 'lightgrey'
           '--rgb-state-update-color': '#ff1a1a'
       - type: conditional
         conditions:
@@ -182,6 +183,7 @@ elements:
           top: 12.5%
           right: 2.5%
           '--paper-item-icon-active-color': '#ff1a1a'
+          '--state-icon-color': 'lightgrey'
       - type: conditional
         conditions:
           - entity: sensor.backupstation_security_malware

@@ -445,7 +445,7 @@ elements:
     entity: sensor.cat_flap_status
     style:
       '--mdc-icon-size': 1vw
-      '--paper-item-icon-color': var(--color-cat-flap)
+      '--state-icon-color': var(--color-cat-flap)
       align-items: center
       display: flex
       height: 2.1vw
@@ -491,7 +491,7 @@ elements:
   #   entity: sensor.ciboulette_heating_cooling_status
   #   style:
   #     '--mdc-icon-size': 1vw
-  #     '--paper-item-icon-color': var(--color-ciboulette)
+  #     '--state-icon-color': var(--color-ciboulette)
   #     align-items: center
   #     display: flex
   #     height: 2.1vw
@@ -609,7 +609,7 @@ elements:
   #                       style:
   #                         hui-generic-entity-row$: |
   #                           state-badge {
-  #                             color: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %}#ff1a1a{% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} var(--accent-color) {% else %} var(--paper-item-icon-color){% endif %};
+  #                             color: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %}#ff1a1a{% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} var(--accent-color) {% else %} var(--state-icon-color){% endif %};
   #                             animation: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %} blink 1s linear infinite alternate {% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} spin 1s linear infinite {% else %} none {% endif %};
   #                           }
   #                           @keyframes blink {
@@ -650,7 +650,7 @@ elements:
   #   icon: 'mdi:car-side'
   #   style:
   #     '--mdc-icon-size': 1vw
-  #     '--paper-item-icon-color': lightgrey
+  #     '--state-icon-color': lightgrey
   #     align-items: center
   #     display: flex
   #     height: 2.1vw

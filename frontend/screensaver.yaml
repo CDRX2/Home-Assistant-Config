@@ -142,7 +142,7 @@ cards:
                   width: 80%;
                   opacity: 0.1;
                   padding-top: 10%;
-                  --paper-item-icon-color: var(--primary-text-color);
+                  --state-icon-color: var(--primary-text-color);
                 }
                 ha-card > h1 {
                   font-size: 3vw;

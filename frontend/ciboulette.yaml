@@ -44,7 +44,7 @@ card:
             left: 5%
             pointer-events: none
             padding: 0 0 0.45% 0
-            '--paper-item-icon-color': var(--color-ciboulette)
+            '--state-icon-color': var(--color-ciboulette)
             animation: var(--animation-ciboulette)
         - type: state-icon
           entity: binary_sensor.ciboulette_parking_light
@@ -52,28 +52,28 @@ card:
           style:
             top: 25%
             left: 5%
-            pointer-events: none    
+            pointer-events: none
         - type: state-icon
           entity: lock.ciboulette_door_locked
           icon: 'mdi:car-door-lock'
           style:
             bottom: 0%
             right: 0%
-            '--paper-item-icon-active-color': '#ff1a1a'
+            '--paper-item-icon-active-color': '#ff1a1a' #Token no longer exists
         - type: state-icon
           entity: lock.ciboulette_trunk_locked
           icon: 'mdi:car-back'
           style:
             bottom: 0%
             right: 7%
-            '--paper-item-icon-active-color': '#ff1a1a'
+            '--paper-item-icon-active-color': '#ff1a1a' #Token no longer exists
         - type: state-icon
           entity: binary_sensor.ciboulette_windows_closed
           icon: 'mdi:car-door'
           style:
             bottom: 0%
             right: 14%
-            '--paper-item-icon-active-color': '#ff1a1a'
+            '--paper-item-icon-active-color': '#ff1a1a' #Token no longer exists
             pointer-events: none
         - type: state-icon
           entity: binary_sensor.ciboulette_sunroof_closed
@@ -81,7 +81,7 @@ card:
           style:
             bottom: 0%
             right: 21%
-            '--paper-item-icon-active-color': '#ff1a1a'
+            '--paper-item-icon-active-color': '#ff1a1a' #Token no longer exists
             pointer-events: none
       view_layout:
         grid-area: a
@@ -89,7 +89,7 @@ card:
         style: |
           ha-card {
             --animation-ciboulette: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %} blink 1s linear infinite alternate {% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} spin 1s linear infinite {% else %} none {% endif %};
-            --color-ciboulette: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %} #ff1a1a {% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} var(--accent-color) {% else %} var(--paper-item-icon-color) {% endif %};        
+            --color-ciboulette: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %} #ff1a1a {% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} var(--accent-color) {% else %} var(--state-icon-color) {% endif %};
           }
           @keyframes spin {
             0% { transform: translate(-50%, -50%) scale(1.4) rotate(0deg); }
@@ -137,7 +137,7 @@ card:
               style:
                 button:
                   background-color: >-
-                    {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '20'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}    
+                    {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '20'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}
             - tap_action:
                 action: call-service
                 service: skodaconnect.set_pheater_duration
@@ -148,7 +148,7 @@ card:
               style:
                 button:
                   background-color: >-
-                    {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '30'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }} 
+                    {{ iif (is_state('sensor.ciboulette_parking_heater_heating_ventilation_duration', '30'), 'var(--accent-color)', 'rgba(255, 255, 255, 0.4)') }}
             - tap_action:
                 action: call-service
                 service: skodaconnect.set_pheater_duration
@@ -172,7 +172,7 @@ card:
             action: none
           entities:
             - entity: sensor.ciboulette_outside_temperature
-              name: Temp extérieure 
+              name: Temp extérieure
               tap_action:
                 action: none
               hold_action:
@@ -187,17 +187,17 @@ card:
             style:
               hui-generic-entity-row$: |
                 state-badge {
-                  color: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %}#ff1a1a{% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} var(--accent-color) {% else %} var(--paper-item-icon-color){% endif %};
+                  color: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %}#ff1a1a{% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} var(--accent-color) {% else %} var(--state-icon-color){% endif %};
                   animation: {% if is_state('sensor.ciboulette_heating_cooling_status', 'heating') %} blink 1s linear infinite alternate {% elif is_state('sensor.ciboulette_heating_cooling_status', 'ventilation') %} spin 1s linear infinite {% else %} none {% endif %};
-                }         
+                }
                 @keyframes blink {
                   0% {opacity: 0.5;}
                   100% {opacity: 1;}
-                }  
+                }
                 @keyframes spin {
                   0% { transform: rotate(0deg); }
                   100% { transform: rotate(360deg); }
-                } 
+                }
         - entity: binary_sensor.ciboulette_vehicle_moving
           type: 'custom:multiple-entity-row'
           name: Voiture parquée
@@ -255,7 +255,7 @@ card:
           tap_action:
             action: none
           hold_action:
-            action: none            
+            action: none
         - entity: sensor.ciboulette_odometer
           type: 'custom:multiple-entity-row'
           name: Kilométrage
@@ -338,7 +338,7 @@ card:
         style: |
           ha-card {
             box-shadow: none !important;
-          } 
+          }
     - dark_mode: true
       entities:
         - entity: person.ciboulette
@@ -346,7 +346,7 @@ card:
       type: map
       view_layout:
         grid-area: b
-      card_mod:                
+      card_mod:
         style: |
           ha-card {
             box-shadow: none !important;
