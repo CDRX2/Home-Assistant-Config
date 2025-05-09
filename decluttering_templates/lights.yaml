@@ -317,7 +317,7 @@ Light_icon_full:
     style:
       '--mdc-icon-size': 1.4vw
       '--state-light-active-color': '#000000'
-      '--paper-item-icon-color': lightgrey
+      '--state-icon-color': lightgrey
       align-items: center
       background-color: 'rgba(255, 255, 255, 0.3)'
       border-radius: 100%
@@ -369,7 +369,7 @@ Light_icon_mid:
     style:
       '--mdc-icon-size': 1.4vw
       '--state-light-active-color': '#000000'
-      '--paper-item-icon-color': lightgrey
+      '--state-icon-color': lightgrey
       align-items: center
       background-color: 'rgba(255, 255, 255, 0.3)'
       border-radius: 100%
@@ -421,7 +421,7 @@ Light_icon_dim:
     style:
       '--mdc-icon-size': 1.4vw
       '--state-light-active-color': '#000000'
-      '--paper-item-icon-color': lightgrey
+      '--state-icon-color': lightgrey
       align-items: center
       background-color: 'rgba(255, 255, 255, 0.3)'
       border-radius: 100%
@@ -473,7 +473,7 @@ Light_icon_on_off:
     style:
       '--mdc-icon-size': 1.4vw
       '--state-light-active-color': '#000000'
-      '--paper-item-icon-color': lightgrey
+      '--state-icon-color': lightgrey
       align-items: center
       background-color: 'rgba(255, 255, 255, 0.3)'
       border-radius: 100%
