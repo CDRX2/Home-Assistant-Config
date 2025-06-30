@@ -530,219 +530,241 @@ elements:
 
   #on-off lights
   #cuisine
-  - type: 'custom:decluttering-card'
-    template: Light_icon_on_off
+  - type: custom:button-card
+    template: light_icon_on_off
     variables:
-      - light: light.cuisine_plafonnier
-      - title: Cuisine plafonnier
-      - icon: hue:recessed-ceiling
-      - left: 36%
-      - top: 56%
+      entity: light.cuisine_plafonnier
+      icon: hue:recessed-ceiling
+      title: "Cuisine"
+    style:
+      left: 36%
+      top: 56%
 
   #manger
-  - type: 'custom:decluttering-card'
-    template: Light_icon_on_off
+  - type: custom:button-card
+    template: light_icon_on_off
     variables:
-      - light: light.manger_lampe
-      - title: Lampe manger
-      - icon: hue:bulb-filament-alt
-      - left: 51%
-      - top: 56%
+      entity: light.manger_lampe
+      icon: hue:bulb-filament-alt
+      title: "Lustre manger"
+    style:
+      left: 51%
+      top: 56%
 
   #salon
-  - type: 'custom:decluttering-card'
-    template: Light_icon_on_off
+  - type: custom:button-card
+    template: light_icon_on_off
     variables:
-      - light: light.grand_totem
-      - title: Grand totem
-      - icon: mdi:floor-lamp
-      - left: 88%
-      - top: 77%
+      entity: light.grand_totem
+      icon: mdi:floor-lamp
+      title: "Grand totem"
+    style:
+      left: 88%
+      top: 77%
 
-  - type: 'custom:decluttering-card'
-    template: Light_icon_on_off
+  - type: custom:button-card
+    template: light_icon_on_off
     variables:
-      - light: light.petit_totem
-      - title: Petit totem
-      - icon: mdi:floor-lamp
-      - left: 85%
-      - top: 47%
+      entity: light.petit_totem
+      icon: mdi:floor-lamp
+      title: "Petit totem"
+    style:
+      left: 85%
+      top: 47%
 
-  # - type: 'custom:decluttering-card'
-  #   template: Light_icon_on_off
-  #   variables:
-  #     - light: light.panneau_lumineux
-  #     - title: Panneau lumineux
-  #     - icon: mdi:television-ambient-light
-  #     - left: 75.5%
-  #     - top: 47%
+#  - type: custom:button-card
+#    template: light_icon_on_off
+#    variables:
+#      entity: light.panneau_lumineux
+#      icon: mdi:television-ambient-light
+#      title: "Panneau lumineux"
+#    style:
+#      left: 75.5%
+#      top: 47%
 
   #terrasse
-  - type: 'custom:decluttering-card'
-    template: Light_icon_on_off
+  - type: custom:button-card
+    template: light_icon_on_off
     variables:
-      - light: light.terrasse_sol
-      - title: Terrasse sol
-      - icon: hue:recessed-floor
-      - left: 41.5%
-      - top: 94.4%
+      entity: light.terrasse_sol
+      icon: hue:recessed-floor
+      title: "Terasse sol"
+    style:
+      left: 41.5%
+      top: 94.4%
 
   #douche
-  - type: 'custom:decluttering-card'
-    template: Light_icon_on_off
+  - type: custom:button-card
+    template: light_icon_on_off
     variables:
-      - light: light.guest_bathroom
-      - title: Salle de douche
-      - icon: hue:bulb-group-filament-alt-hung
-      - left: 84%
-      - top: 15%
+      entity: light.guest_bathroom
+      icon: hue:bulb-group-filament-alt-hung
+      title: "Salle de douche"
+    style:
+      left: 84%
+      top: 15%
 
   #escalier cave
-  - type: 'custom:decluttering-card'
-    template: Light_icon_on_off
+  - type: custom:button-card
+    template: light_icon_on_off
     variables:
-      - light: light.escalier_cave
-      - title: Escalier cave
-      - icon: mdi:lightbulb
-      - left: 79.3%
-      - top: 29.5%
+      entity: light.escalier_cave
+      icon: mdi:lightbulb
+      title: "Escalier cave"
+    style:
+      left: 79.3%
+      top: 29.5%
 
   #amis
-  - type: 'custom:decluttering-card'
-    template: Light_icon_on_off
+  - type: custom:button-card
+    template: light_icon_on_off
     variables:
-      - light: light.amis_prises
-      - title: Dressing
-      - icon: mdi:led-strip-variant
-      - left: 36%
-      - top: 31%
+      entity: light.amis_prises
+      icon: mdi:led-strip-variant
+      title: "Dressing"
+    style:
+      left: 36%
+      top: 31%
 
-  - type: 'custom:decluttering-card'
-    template: Light_icon_on_off
+  - type: custom:button-card
+    template: light_icon_on_off
     variables:
-      - light: light.amis_plafonnier
-      - title: Chambre d'amis
-      - icon: hue:recessed-ceiling
-      - left: 45%
-      - top: 23%
+      entity: light.amis_plafonnier
+      icon: hue:recessed-ceiling
+      title: "Chambre d'amis"
+    style:
+      left: 45%
+      top: 23%
 
   #entree
-  - type: 'custom:decluttering-card'
-    template: Light_icon_on_off
+  - type: custom:button-card
+    template: light_icon_on_off
     variables:
-      - light: light.entree
-      - title: Entrée
-      - icon: hue:recessed-ceiling
-      - left: 65%
-      - top: 23%
+      entity: light.entree
+      icon: hue:recessed-ceiling
+      title: "Entrée"
+    style:
+      left: 65%
+      top: 23%
 
   #color lights
   #salon
-  # - type: 'custom:decluttering-card'
-  #   template: Light_icon_mid
-  #   variables:
-  #     - light: light.grand_totem_deco
-  #     - title: Grand totem couleur
-  #     - icon: hue:bulb-spot
-  #     - left: 83%
-  #     - top: 75%
+#  - type: custom:button-card
+#    template: light_icon_mid
+#    variables:
+#      entity: light.grand_totem_deco
+#      icon: hue:bulb-spot
+#      title: "Grand totem couleur"
+#    style:
+#      left: 83%
+#      top: 75%
 
-  # - type: 'custom:decluttering-card'
-  #   template: Light_icon_mid
-  #   variables:
-  #     - light: light.petit_totem_deco
-  #     - title: Petit totem couleur
-  #     - icon: hue:bulb-spot
-  #     - left: 80.25%
-  #     - top: 47%
+#  - type: custom:button-card
+#    template: light_icon_mid
+#    variables:
+#      entity: light.petit_totem_deco
+#      icon: hue:bulb-spot
+#      title: "Petit totem couleur"
+#    style:
+#      left: 80.25%
+#      top: 47%
 
-  # - type: 'custom:decluttering-card'
-  #   template: Light_icon_mid
-  #   variables:
-  #     - light: light.bar
-  #     - title: Bar
-  #     - icon: mdi:led-strip-variant
-  #     - left: 53.8%
-  #     - top: 38%
+#  - type: custom:button-card
+#    template: light_icon_mid
+#    variables:
+#      entity: light.bar
+#      icon: mdi:led-strip-variant
+#      title: "Bar"
+#    style:
+#      left: 53.8%
+#      top: 38%
 
 #dimming lights
 #Cuisine
-  - type: 'custom:decluttering-card'
-    template: Light_icon_dim
+  - type: custom:button-card
+    template: light_icon_dim
     variables:
-      - light: light.cuisine_deco
-      - title: Cuisine déco
-      - icon: mdi:led-strip-variant
-      - left: 22%
-      - top: 52%
+      entity: light.cuisine_deco
+      icon: mdi:led-strip-variant
+      title: "Cuisine déco"
+    style:
+      left: 22%
+      top: 52%
 
     #salon
-  # - type: 'custom:decluttering-card'
-  #   template: Light_icon_dim
-  #   variables:
-  #     - light: light.vinyles
-  #     - title: Meuble vinyles
-  #     - icon: mdi:led-strip-variant
-  #     - left: 70.75%
-  #     - top: 47%
+#  - type: custom:button-card
+#    template: light_icon_dim
+#    variables:
+#      entity: light.vinyles
+#      icon: mdi:led-strip-variant
+#      title: "Meuble vinyles"
+#    style:
+#      left: 70.75%
+#      top: 47%
 
     #carport
-  - type: 'custom:decluttering-card'
-    template: Light_icon_dim
+  - type: custom:button-card
+    template: light_icon_dim
     variables:
-      - light: light.carport
-      - title: Carport
-      - icon: hue:wall-fuzo-h
-      - left: 57%
-      - top: 3%
+      entity: light.carport
+      icon: hue:wall-fuzo-h
+      title: "Carport"
+    style:
+      left: 57%
+      top: 3%
 
-  - type: 'custom:decluttering-card'
-    template: Light_icon_dim
+  - type: custom:button-card
+    template: light_icon_dim
     variables:
-      - light: light.salon_plafonnier
-      - title: Salon plafonnier
-      - icon: hue:recessed-ceiling
-      - left: 73.75%
-      - top: 61.75%
+      entity: light.salon_plafonnier
+      icon: hue:recessed-ceiling
+      title: "Salon plafonnier"
+    style:
+      left: 73.75%
+      top: 61.75%
 
-  - type: 'custom:decluttering-card'
-    template: Light_icon_dim
+  - type: custom:button-card
+    template: light_icon_dim
     variables:
-      - light: light.manger_plafonnier
-      - title: Salle à manger
-      - icon: hue:recessed-ceiling
-      - left: 51%
-      - top: 45%
+      entity: light.manger_plafonnier
+      icon: hue:recessed-ceiling
+      title: "Salle à manger"
+    style:
+      left: 51%
+      top: 45%
 
     #terrasse
-  - type: 'custom:decluttering-card'
-    template: Light_icon_dim
+  - type: custom:button-card
+    template: light_icon_dim
     variables:
-      - light: light.terrasse_3
-      - title: Terrasse
-      - icon: mdi:coach-lamp
-      - left: 38%
-      - top: 73.5%
+      entity: light.terrasse_3
+      icon: mdi:coach-lamp
+      title: "Terrasse"
+    style:
+      left: 38%
+      top: 73.5%
 
 #groups
 #salon
-  - type: 'custom:decluttering-card'
-    template: Light_icon_mid
+  - type: custom:button-card
+    template: light_icon_mid
     variables:
-      - light: light.salon_deco
-      - title: Salon déco
-      - icon: mdi:lightbulb-group
-      - left: 80%
-      - top: 54%
+      entity: light.salon_deco
+      icon: mdi:lightbulb-group
+      title: "Salon déco"
+    style:
+      left: 80%
+      top: 54%
 
-#  - type: 'custom:decluttering-card'
-#    template: Light_icon_on_off
+#  - type: custom:button-card
+#    template: light_icon_on_off
 #    variables:
-#      - light: light.noel
-#      - title: Joyeux Noël!
-#      - icon: mdi:pine-tree
-#      - left: 65%
-#      - top: 65%
+#      entity: light.noel
+#      icon: mdi:pine-tree
+#      title: "Joyeux Noël!"
+#    style:
+#      left: 65%
+#      top: 65%
 
     #########################    NOW PLAYING ON TV IN FLOORPLAN    #########################
 

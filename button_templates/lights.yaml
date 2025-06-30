@@ -1,5 +1,5 @@
 color_lights:
-  template: 
+  template:
     - dimmable_lights
     - on_off_lights
   variables:
@@ -89,7 +89,7 @@ on_off_lights:
     name:
       - font-size: 1.4vw
   card_mod:
-    style: 
+    style:
       .: |
         :host {
           --masonry-view-card-margin: 4px !important;
@@ -120,7 +120,7 @@ dimmable_lights:
               ha-card {
                 box-shadow: none;
               }
-            slider-entity-row$: 
+            slider-entity-row$:
               .: |
                 .state {
                   margin-left: 0 !important;
@@ -138,8 +138,8 @@ dimmable_lights:
                 #sliderContainer {
                   margin-left: 10%;
                   margin-right: 10%;
-                } 
-  styles: 
+                }
+  styles:
     custom_fields:
       slider:
         - width: 100%
@@ -161,10 +161,10 @@ consumption:
               box-shadow: none;
               pointer-events: none;
               overflow: visible !important;
-            }   
+            }
             .header {
               display: none !important;
-            } 
+            }
             .info {
               padding: 0 !important;
               line-height: 1.2vw !important;
@@ -172,7 +172,7 @@ consumption:
             .value {
               font-size: 1.2vw !important;
               margin: 0 !important;
-            }    
+            }
             .measurement {
               font-size: 0.8vw !important;
             }
@@ -204,7 +204,7 @@ light_timer:
         show_icon: false
         show_name: true
         aspect_ratio: 3.5/1
-        name: '[[[ return states["counter.light_time"].state + " min."; ]]]' 
+        name: '[[[ return states["counter.light_time"].state + " min."; ]]]'
         tap_action:
           action: none
         styles:
@@ -220,7 +220,7 @@ light_timer:
         show_icon: true
         show_name: false
         size: 100%
-        icon: "mdi:plus" 
+        icon: "mdi:plus"
         tap_action:
           action: call-service
           service: counter.increment
@@ -237,7 +237,7 @@ light_timer:
         show_icon: true
         show_name: false
         size: 100%
-        icon: "mdi:play" 
+        icon: "mdi:play"
         tap_action:
           action: call-service
           service: script.light_timer
@@ -262,3 +262,190 @@ light_timer:
       - box-shadow: none
     name:
       - font-size: 1vw
+
+light_icon_dim:
+  variables:
+    entity: "var_entity"
+    icon: "var_icon"
+    title: "var_title"
+    left: "var_left"
+    top: "var_top"
+  type: custom:button-card
+  entity: '[[[ return variables.entity ]]]'
+  icon: '[[[ return variables.icon ]]]'
+  show_name: false
+  hold_action:
+    action: fire-dom-event
+    browser_mod:
+      service: browser_mod.popup
+      data:
+        content:
+          type: custom:mod-card
+          card_mod:
+            style:
+              layout-card$:
+                grid-layout$: |
+                  :host {
+                    padding: 0px !important;
+                  }
+                  #root {
+                    margin: 0px !important;
+                  }
+                  #root > * {
+                    margin: 0px !important;
+                  }
+          card:
+            type: 'custom:decluttering-card'
+            template: light_popup_dim
+            variables:
+              - light: '[[[ return variables.entity ]]]'
+              - name: '[[[ return variables.title ]]]'
+              - icon: '[[[ return variables.icon ]]]'
+        title: '[[[ return variables.title ]]]'
+  tap_action:
+    action: toggle
+  styles:
+    card:
+      - width: 3vw
+      - height: 3vw
+      - border-radius: 100%
+      - background-color: rgba(255, 255, 255, 0.3)
+      - position: absolute
+      - margin-left: -1.5vw
+      - margin-top: -1.5vw
+      - transform: scale(1.2)
+    icon:
+      - width: 1.4vw
+      - color: |
+          [[[
+            if (entity && entity.state === 'on') {
+              return '#000000';
+            } else {
+              return 'lightgrey';
+            }
+          ]]]
+
+light_icon_mid:
+  variables:
+    entity: "var_entity"
+    icon: "var_icon"
+    title: "var_title"
+    left: "var_left"
+    top: "var_top"
+  type: custom:button-card
+  entity: '[[[ return variables.entity ]]]'
+  icon: '[[[ return variables.icon ]]]'
+  show_name: false
+  hold_action:
+    action: fire-dom-event
+    browser_mod:
+      service: browser_mod.popup
+      data:
+        content:
+          type: custom:mod-card
+          card_mod:
+            style:
+              layout-card$:
+                grid-layout$: |
+                  :host {
+                    padding: 0px !important;
+                  }
+                  #root {
+                    margin: 0px !important;
+                  }
+                  #root > * {
+                    margin: 0px !important;
+                  }
+          card:
+            type: 'custom:decluttering-card'
+            template: light_popup_mid
+            variables:
+              - light: '[[[ return variables.entity ]]]'
+              - name: '[[[ return variables.title ]]]'
+              - icon: '[[[ return variables.icon ]]]'
+        title: '[[[ return variables.title ]]]'
+  tap_action:
+    action: toggle
+  styles:
+    card:
+      - width: 3vw
+      - height: 3vw
+      - border-radius: 100%
+      - background-color: rgba(255, 255, 255, 0.3)
+      - position: absolute
+      - margin-left: -1.5vw
+      - margin-top: -1.5vw
+      - transform: scale(1.2)
+    icon:
+      - width: 1.4vw
+      - color: |
+          [[[
+            if (entity && entity.state === 'on' && entity.attributes.rgb_color) {
+              const [r, g, b] = entity.attributes.rgb_color;
+              return `rgb(${r}, ${g}, ${b})`;
+            } else {
+              return 'lightgrey';
+            }
+          ]]]
+
+light_icon_on_off:
+  variables:
+    entity: "var_entity"
+    icon: "var_icon"
+    title: "var_title"
+    left: "var_left"
+    top: "var_top"
+  type: custom:button-card
+  entity: '[[[ return variables.entity ]]]'
+  icon: '[[[ return variables.icon ]]]'
+  show_name: false
+  hold_action:
+    action: fire-dom-event
+    browser_mod:
+      service: browser_mod.popup
+      data:
+        content:
+          type: custom:mod-card
+          card_mod:
+            style:
+              layout-card$:
+                grid-layout$: |
+                  :host {
+                    padding: 0px !important;
+                  }
+                  #root {
+                    margin: 0px !important;
+                  }
+                  #root > * {
+                    margin: 0px !important;
+                  }
+          card:
+            type: 'custom:decluttering-card'
+            template: light_popup_on_off
+            variables:
+              - light: '[[[ return variables.entity ]]]'
+              - name: '[[[ return variables.title ]]]'
+              - icon: '[[[ return variables.icon ]]]'
+        title: '[[[ return variables.title ]]]'
+  tap_action:
+    action: toggle
+  styles:
+    card:
+      - width: 3vw
+      - height: 3vw
+      - border-radius: 100%
+      - background-color: rgba(255, 255, 255, 0.3)
+      - position: absolute
+      - margin-left: -1.5vw
+      - margin-top: -1.5vw
+      - transform: scale(1.2)
+    icon:
+      - width: 1.4vw
+      - color: |
+          [[[
+            if (entity && entity.state === 'on') {
+              return '#000000';
+            } else {
+              return 'lightgrey';
+            }
+          ]]]

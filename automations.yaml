@@ -351,18 +351,18 @@
 - id: '1705760430224'
   alias: Update bus departures every 3 minutes
   description: ''
-  trigger:
-  - platform: time_pattern
-    minutes: /3
-  condition: []
-  action:
-  - service: homeassistant.update_entity
-    metadata: {}
+  triggers:
+  - minutes: /4
+    trigger: time_pattern
+  conditions: []
+  actions:
+  - metadata: {}
     data: {}
     target:
       entity_id:
       - sensor.dir_metro_departure
       - sensor.dir_vclb_departure
+    action: homeassistant.update_entity
   mode: single
 - id: '1730469987335'
   alias: turn_off_avr_music_assistant
@@ -563,3 +563,225 @@
     target:
       entity_id: light.bathroom_sink_white
   mode: restart
+- id: '1751232584691'
+  alias: Interrupteur lit parents
+  description: ''
+  use_blueprint:
+    path: vandalon/z2m EnOcean PTM 215Z (Friends of Hue) switch.yaml
+    input:
+      controller: Lit parents interrupteur
+      button_1_pressed: []
+      button_1_released:
+      - action: light.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.chevet_cdrx
+      button_3_pressed: []
+      button_1_and_3_released:
+      - action: light.turn_on
+        metadata: {}
+        data: {}
+        target:
+          device_id: 5de5b3fbe2e6710f1fc8dd059d0bc07c
+      button_3_released:
+      - action: light.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.chevet_nanne
+      button_1_and_3_held:
+      - repeat:
+          count: 25
+          sequence:
+          - action: light.turn_on
+            metadata: {}
+            data:
+              brightness_step: 15
+              transition: 1
+            target:
+              device_id: 5de5b3fbe2e6710f1fc8dd059d0bc07c
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 0
+              milliseconds: 502
+      button_2_and_4_held:
+      - repeat:
+          count: 25
+          sequence:
+          - action: light.turn_on
+            metadata: {}
+            data:
+              brightness_step: -15
+              transition: 1
+            target:
+              device_id: 5de5b3fbe2e6710f1fc8dd059d0bc07c
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 0
+              milliseconds: 500
+      button_2_and_4_released:
+      - action: light.turn_off
+        metadata: {}
+        data: {}
+        target:
+          device_id: 5de5b3fbe2e6710f1fc8dd059d0bc07c
+      button_2_released:
+      - action: light.turn_on
+        metadata: {}
+        data: {}
+        target:
+          device_id: 7ed8687e69afcf2a3490fed7d28d1b37
+      button_4_released:
+      - action: light.turn_off
+        metadata: {}
+        data: {}
+        target:
+          device_id: 7ed8687e69afcf2a3490fed7d28d1b37
+      button_4_held:
+      - repeat:
+          count: 25
+          sequence:
+          - action: light.turn_on
+            metadata: {}
+            data:
+              transition: 1
+              brightness_step: -15
+            target:
+              device_id: 7ed8687e69afcf2a3490fed7d28d1b37
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 0
+              milliseconds: 500
+      button_2_held:
+      - repeat:
+          count: 25
+          sequence:
+          - action: light.turn_on
+            metadata: {}
+            data:
+              transition: 0
+              brightness_step: 15
+            target:
+              device_id: 7ed8687e69afcf2a3490fed7d28d1b37
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 0
+              milliseconds: 500
+      hold_delay: 250
+- id: '1751275109320'
+  alias: Interrupteur Charles
+  description: ''
+  use_blueprint:
+    path: vandalon/z2m EnOcean PTM 215Z (Friends of Hue) switch.yaml
+    input:
+      controller: Chambre Charles
+      button_1_pressed: []
+      button_1_released:
+      - action: light.turn_on
+        metadata: {}
+        data: {}
+        target:
+          device_id: 10c772755507623ee95481c572194f8e
+      - action: light.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.charles_bas_white
+      button_3_pressed: []
+      button_1_and_3_released: []
+      button_3_released:
+      - action: light.turn_on
+        metadata: {}
+        data: {}
+        target:
+          device_id: 235f340cfe942150c71f33cd1ce826a8
+      button_1_and_3_held: []
+      button_2_and_4_held: []
+      button_2_and_4_released: []
+      button_2_released:
+      - action: light.turn_off
+        metadata: {}
+        data: {}
+        target:
+          device_id: 10c772755507623ee95481c572194f8e
+      - action: light.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.charles_bas_white
+      button_4_released:
+      - action: light.turn_off
+        metadata: {}
+        data: {}
+        target:
+          device_id: 235f340cfe942150c71f33cd1ce826a8
+      button_4_held:
+      - repeat:
+          count: 25
+          sequence:
+          - action: light.turn_on
+            metadata: {}
+            data:
+              transition: 1
+              brightness_step: -15
+            target:
+              device_id: 235f340cfe942150c71f33cd1ce826a8
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 0
+              milliseconds: 500
+      button_2_held:
+      - repeat:
+          count: 25
+          sequence:
+          - action: light.turn_on
+            metadata: {}
+            data:
+              transition: 1
+              brightness_step: -15
+            target:
+              device_id: 10c772755507623ee95481c572194f8e
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 0
+              milliseconds: 500
+      button_3_held:
+      - repeat:
+          count: 25
+          sequence:
+          - action: light.turn_on
+            metadata: {}
+            data:
+              brightness_step: 15
+              transition: 1
+            target:
+              device_id: 235f340cfe942150c71f33cd1ce826a8
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 0
+              milliseconds: 500
+      button_1_held:
+      - repeat:
+          count: 25
+          sequence:
+          - action: light.turn_on
+            metadata: {}
+            data:
+              brightness_step: 15
+              transition: 1
+            target:
+              device_id: 10c772755507623ee95481c572194f8e
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 0
+              milliseconds: 500
+      hold_delay: 250

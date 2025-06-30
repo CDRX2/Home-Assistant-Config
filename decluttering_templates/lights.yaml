@@ -280,212 +280,56 @@ light_popup_on_off:
         variables:
           entity: '[[light]]'
 
-Light_icon_full:
-  element:
-    entity: '[[light]]'
-    hold_action:
-      action: fire-dom-event
-      browser_mod:
-        service: browser_mod.popup
-        data:
-          content:
-            type: custom:mod-card
-            card_mod:
-              style:
-                layout-card$:
-                  grid-layout$: |
-                    :host {
-                      padding: 0px !important;
-                    }
-                    #root {
-                      margin: 0px !important;
-                    }
-                    #root > * {
-                      margin: 0px !important;
-                    }
-            card:
-              type: 'custom:decluttering-card'
-              template: light_popup_full
-              variables:
-                - light: '[[light]]'
-                - name: '[[title]]'
-                - icon: '[[icon]]'
-                - min: '[[min]]'
-                - max: '[[max]]'
-          title: '[[title]]'
-    icon: '[[icon]]'
-    style:
-      '--mdc-icon-size': 1.4vw
-      '--state-light-active-color': '#000000'
-      '--state-icon-color': lightgrey
-      align-items: center
-      background-color: 'rgba(255, 255, 255, 0.3)'
-      border-radius: 100%
-      display: flex
-      height: 3vw
-      justify-content: center
-      left: '[[left]]'
-      margin-left: '-1.5vw'
-      margin-top: '-1.5vw'
-      top: '[[top]]'
-      transform: 'scale(-1.2, 1.2)'
-      width: 3vw
-    tap_action:
-      action: toggle
-    type: state-icon
-
-Light_icon_mid:
-  element:
-    entity: '[[light]]'
-    hold_action:
-      action: fire-dom-event
-      browser_mod:
-        service: browser_mod.popup
-        data:
-          content:
-            type: custom:mod-card
-            card_mod:
-              style:
-                layout-card$:
-                  grid-layout$: |
-                    :host {
-                      padding: 0px !important;
-                    }
-                    #root {
-                      margin: 0px !important;
-                    }
-                    #root > * {
-                      margin: 0px !important;
-                    }
-            card:
-              type: 'custom:decluttering-card'
-              template: light_popup_mid
-              variables:
-                - light: '[[light]]'
-                - name: '[[title]]'
-                - icon: '[[icon]]'
-          title: '[[title]]'
-    icon: '[[icon]]'
-    style:
-      '--mdc-icon-size': 1.4vw
-      '--state-light-active-color': '#000000'
-      '--state-icon-color': lightgrey
-      align-items: center
-      background-color: 'rgba(255, 255, 255, 0.3)'
-      border-radius: 100%
-      display: flex
-      height: 3vw
-      justify-content: center
-      left: '[[left]]'
-      margin-left: '-1.5vw'
-      margin-top: '-1.5vw'
-      top: '[[top]]'
-      transform: 'scale(-1.2, 1.2)'
-      width: 3vw
-    tap_action:
-      action: toggle
-    type: state-icon
-
-Light_icon_dim:
-  element:
-    entity: '[[light]]'
-    hold_action:
-      action: fire-dom-event
-      browser_mod:
-        service: browser_mod.popup
-        data:
-          content:
-            type: custom:mod-card
-            card_mod:
-              style:
-                layout-card$:
-                  grid-layout$: |
-                    :host {
-                      padding: 0px !important;
-                    }
-                    #root {
-                      margin: 0px !important;
-                    }
-                    #root > * {
-                      margin: 0px !important;
-                    }
-            card:
-              type: 'custom:decluttering-card'
-              template: light_popup_dim
-              variables:
-                - light: '[[light]]'
-                - name: '[[title]]'
-                - icon: '[[icon]]'
-          title: '[[title]]'
-    icon: '[[icon]]'
-    style:
-      '--mdc-icon-size': 1.4vw
-      '--state-light-active-color': '#000000'
-      '--state-icon-color': lightgrey
-      align-items: center
-      background-color: 'rgba(255, 255, 255, 0.3)'
-      border-radius: 100%
-      display: flex
-      height: 3vw
-      justify-content: center
-      left: '[[left]]'
-      margin-left: '-1.5vw'
-      margin-top: '-1.5vw'
-      top: '[[top]]'
-      transform: 'scale(-1.2, 1.2)'
-      width: 3vw
-    tap_action:
-      action: toggle
-    type: state-icon
-
-Light_icon_on_off:
-  element:
-    entity: '[[light]]'
-    hold_action:
-      action: fire-dom-event
-      browser_mod:
-        service: browser_mod.popup
-        data:
-          content:
-            type: custom:mod-card
-            card_mod:
-              style:
-                layout-card$:
-                  grid-layout$: |
-                    :host {
-                      padding: 0px !important;
-                    }
-                    #root {
-                      margin: 0px !important;
-                    }
-                    #root > * {
-                      margin: 0px !important;
-                    }
-            card:
-              type: 'custom:decluttering-card'
-              template: light_popup_on_off
-              variables:
-                - light: '[[light]]'
-                - name: '[[title]]'
-                - icon: '[[icon]]'
-          title: '[[title]]'
-    icon: '[[icon]]'
-    style:
-      '--mdc-icon-size': 1.4vw
-      '--state-light-active-color': '#000000'
-      '--state-icon-color': lightgrey
-      align-items: center
-      background-color: 'rgba(255, 255, 255, 0.3)'
-      border-radius: 100%
-      display: flex
-      height: 3vw
-      justify-content: center
-      left: '[[left]]'
-      margin-left: '-1.5vw'
-      margin-top: '-1.5vw'
-      top: '[[top]]'
-      transform: scale(1.2)
-      width: 3vw
-    tap_action:
-      action: toggle
-    type: state-icon
+#Light_icon_full:
+#  element:
+#    entity: '[[light]]'
+#    hold_action:
+#      action: fire-dom-event
+#      browser_mod:
+#        service: browser_mod.popup
+#        data:
+#          content:
+#            type: custom:mod-card
+#            card_mod:
+#              style:
+#                layout-card$:
+#                  grid-layout$: |
+#                    :host {
+#                      padding: 0px !important;
+#                    }
+#                    #root {
+#                      margin: 0px !important;
+#                    }
+#                    #root > * {
+#                      margin: 0px !important;
+#                    }
+#            card:
+#              type: 'custom:decluttering-card'
+#              template: light_popup_full
+#              variables:
+#                - light: '[[light]]'
+#                - name: '[[title]]'
+#                - icon: '[[icon]]'
+#                - min: '[[min]]'
+#                - max: '[[max]]'
+#          title: '[[title]]'
+#    icon: '[[icon]]'
+#    style:
+#      '--mdc-icon-size': 1.4vw
+#      '--state-light-active-color': '#000000'
+#      '--state-icon-color': lightgrey
+#      align-items: center
+#      background-color: 'rgba(255, 255, 255, 0.3)'
+#      border-radius: 100%
+#      display: flex
+#      height: 3vw
+#      justify-content: center
+#      left: '[[left]]'
+#      margin-left: '-1.5vw'
+#      margin-top: '-1.5vw'
+#      top: '[[top]]'
+#      transform: 'scale(-1.2, 1.2)'
+#      width: 3vw
+#    tap_action:
+#      action: toggle
+#    type: state-icon

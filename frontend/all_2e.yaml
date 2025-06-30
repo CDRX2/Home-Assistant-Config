@@ -13,7 +13,7 @@ card_mod:
       height: 100%;
       width: 100%;
     }
-elements:  
+elements:
   - type: 'custom:mod-card'
     card:
       type: 'custom:layout-card'
@@ -34,6 +34,7 @@ elements:
           template: dimmable_lights
           variables:
             entity: light.charles_bas_white
+            gridarea: '"i . ." "n n n" "slider slider slider"'
           icon: 'mdi:led-strip-variant'
           name: Charles bas
           view_layout:
@@ -42,6 +43,7 @@ elements:
           template: dimmable_lights
           variables:
             entity: light.charles_haut_white
+            gridarea: '"i . ." "n n n" "slider slider slider"'
           icon: 'mdi:led-strip-variant'
           name: Charles haut
           view_layout:
@@ -52,7 +54,7 @@ elements:
         width: 100%
         height: 100%
     card_mod:
-      style: 
+      style:
         layout-card$:
           grid-layout$: |
             #root {
