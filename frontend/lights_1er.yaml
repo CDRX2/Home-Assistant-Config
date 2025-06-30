@@ -474,130 +474,143 @@ elements:
     #########################    INDIVIDUAL LIGHT ICONS    #########################
 
   #parents bedroom
-  - type: 'custom:decluttering-card'
-    template: Light_icon_on_off
+  - type: custom:button-card
+    template: light_icon_on_off
     variables:
-      - light: light.chevet_cdrx
-      - title: Chevet CDRX
-      - icon: mdi:desk-lamp
-      - left: 82%
-      - top: 79.5%
+      entity: light.chevet_cdrx
+      icon: mdi:desk-lamp
+      title: "Chevet CDRX"
+    style:
+      left: 82%
+      top: 79.5%
 
-  - type: 'custom:decluttering-card'
-    template: Light_icon_on_off
+  - type: custom:button-card
+    template: light_icon_on_off
     variables:
-      - light: light.chevet_nanne
-      - title: Chevet Nanne
-      - icon: mdi:desk-lamp
-      - left: 82%
-      - top: 59.5%
+      entity: light.chevet_nanne
+      icon: mdi:desk-lamp
+      title: "Chevet Nanne"
+    style:
+      left: 82%
+      top: 59.5%
 
   #bathroom
-  - type: 'custom:decluttering-card'
-    template: Light_icon_on_off
+  - type: custom:button-card
+    template: light_icon_on_off
     variables:
-      - light: light.bathroom_door
-      - title: Salle de bain
-      - icon: hue:ceiling-fugato-two
-      - left: 70%
-      - top: 23%
+      entity: light.bathroom_door
+      icon: hue:ceiling-fugato-two
+      title: "Salle de bain"
+    style:
+      left: 70%
+      top: 23%
 
-  - type: 'custom:decluttering-card'
-    template: Light_icon_on_off
+  - type: custom:button-card
+    template: light_icon_on_off
     variables:
-      - light: light.bathroom_mirror
-      - title: Mirroir
-      - icon: mdi:led-strip-variant
-      - left: 78%
-      - top: 14%
+      entity: light.bahtroom_mirror
+      icon: mdi:led-strip-variant
+      title: "Mirroir"
+    style:
+      left: 78%
+      top: 14%
 
   # twins
-  # - type: 'custom:decluttering-card'
-  #   template: Light_icon_on_off
-  #   variables:
-  #     - light: light.jumeaux_prises
-  #     - title: Jumeaux prises
-  #     - icon: mdi:power-socket-ch
-  #     - left: 18%
-  #     - top: 28%
+  - type: custom:button-card
+    template: light_icon_on_off
+    variables:
+      entity: light.jumeaux_prises
+      icon: mdi:power-socket-ch
+      title: "Jumeaux prises"
+    style:
+      left: 18%
+      top: 28%
 
   #stairs
-  - type: 'custom:decluttering-card'
-    template: Light_icon_on_off
+  - type: custom:button-card
+    template: light_icon_on_off
     variables:
-      - light: light.escalier_1er
-      - title: Escalier 1er
-      - icon: hue:bulb-group-ceiling-flush-circular
-      - left: 87%
-      - top: 43%
+      entity: light.escalier_1er
+      icon: hue:bulb-group-ceiling-flush-circular
+      title: "Escalier 1er"
+    style:
+      left: 87%
+      top: 43%
 
   #dimming lights
   #chambre Charles
-  - type: 'custom:decluttering-card'
-    template: Light_icon_dim
+  - type: custom:button-card
+    template: light_icon_dim
     variables:
-      - light: light.charles_bas_white
-      - title: Charles bas
-      - icon: mdi:led-strip-variant
-      - left: 31%
-      - top: 56%
+      entity: light.charles_bas_white
+      icon: mdi:led-strip-variant
+      title: "Charles bas"
+    style:
+      left: 31%
+      top: 56%
 
   #chambre parents
-  - type: 'custom:decluttering-card'
-    template: Light_icon_dim
+  - type: custom:button-card
+    template: light_icon_dim
     variables:
-      - light: light.lit_parents_blanc
-      - title: Lit parents blanc
-      - icon: mdi:led-strip-variant
-      - left: 68%
-      - top: 69.5%
+      entity: light.lit_parents_blanc
+      icon: mdi:led-strip-variant
+      title: "Lit parents blanc"
+    style:
+      left: 68%
+      top: 69.5%
 
-  - type: 'custom:decluttering-card'
-    template: Light_icon_dim
+  - type: custom:button-card
+    template: light_icon_dim
     variables:
-      - light: light.plafond_parents_blanc
-      - title: Plafond parents
-      - icon: mdi:led-strip-variant
-      - left: 68%
-      - top: 85%
+      entity: light.plafond_parents_blanc
+      icon: mdi:led-strip-variant
+      title: "Plafond parents"
+    style:
+      left: 68%
+      top: 85%
 
   #chambre twins
-  - type: 'custom:decluttering-card'
-    template: Light_icon_dim
+  - type: custom:button-card
+    template: light_icon_dim
     variables:
-      - light: light.jumeaux_armoires_blanc
-      - title: Chambre jumeaux
-      - icon: mdi:led-strip-variant
-      - left: 43%
-      - top: 18%
+      entity: light.jumeaux_armoires_blanc
+      icon: mdi:led-strip-variant
+      title: "Chambre jumeaux"
+    style:
+      left: 43%
+      top: 18%
 
   #couloir 1
-  - type: 'custom:decluttering-card'
-    template: Light_icon_dim
+  - type: custom:button-card
+    template: light_icon_dim
     variables:
-      - light: light.couloir_1
-      - title: Couloir 1
-      - icon: hue:bulb-filament-hung
-      - left: 62%
-      - top: 30%
+      entity: light.couloir_1
+      icon: hue:bulb-filament-hung
+      title: "Couloir 1"
+    style:
+      left: 62%
+      top: 30%
 
   #couloir 2
-  - type: 'custom:decluttering-card'
-    template: Light_icon_dim
+  - type: custom:button-card
+    template: light_icon_dim
     variables:
-      - light: light.couloir_2
-      - title: Couloir 2
-      - icon: hue:bulb-filament-hung
-      - left: 48.6%
-      - top: 26%
+      entity: light.couloir_2
+      icon: hue:bulb-filament-hung
+      title: "Couloir 2"
+    style:
+      left: 48.6%
+      top: 26%
 
   #color lights
   #chambre parents
-  - type: 'custom:decluttering-card'
-    template: Light_icon_mid
+  - type: custom:button-card
+    template: light_icon_mid
     variables:
-      - light: light.lit_parents_couleur
-      - title: Lit parents couleur
-      - icon: mdi:led-strip-variant
-      - left: 82%
-      - top: 69.5%
+      entity: light.lit_parents_couleur
+      icon: mdi:led-strip-variant
+      title: "Lit parents couleur"
+    style:
+      left: 82%
+      top: 69.5%

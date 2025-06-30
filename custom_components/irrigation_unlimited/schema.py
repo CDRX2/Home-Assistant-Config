@@ -92,7 +92,10 @@ from .const import (
     CONF_USER,
     CONF_TOGGLE,
     CONF_EXTENDED_CONFIG,
+    CONF_RESTORE_FROM_ENTITY,
     CONF_READ_DELAY,
+    CONF_SHOW_CONFIG,
+    CONF_SHOW_SEQUENCE_STATUS,
 )
 
 IU_ID = r"^[a-z0-9]+(_[a-z0-9]+)*$"
@@ -108,7 +111,7 @@ def _parse_dd_mmm(value: str) -> date | None:
     """Convert a date string in dd mmm format to a date object."""
     if isinstance(value, date):
         return value
-    return datetime.strptime(value, "%d %b").date()
+    return datetime.strptime(f"{value} {datetime.today().year}", "%d %b %Y").date()
 
 
 USER_SCHEMA = vol.Schema(
@@ -308,6 +311,7 @@ CONTROLLER_SCHEMA = vol.Schema(
         vol.Optional(CONF_CHECK_BACK): vol.All(CHECK_BACK_SCHEMA),
         vol.Optional(CONF_VOLUME): vol.All(VOLUME_SCHEMA),
         vol.Optional(CONF_USER): vol.All(USER_SCHEMA),
+        vol.Optional(CONF_SHOW_SEQUENCE_STATUS): cv.boolean,
     }
 )
 
@@ -374,6 +378,8 @@ IRRIGATION_SCHEMA = vol.Schema(
         vol.Optional(CONF_HISTORY): HISTORY_SCHEMA,
         vol.Optional(CONF_CLOCK): CLOCK_SCHEMA,
         vol.Optional(CONF_EXTENDED_CONFIG): cv.boolean,
+        vol.Optional(CONF_RESTORE_FROM_ENTITY): cv.boolean,
+        vol.Optional(CONF_SHOW_CONFIG): cv.boolean,
     }
 )
 

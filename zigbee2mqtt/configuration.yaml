@@ -34,6 +34,7 @@ advanced:
   channel: 25
   elapsed: true
   last_seen: ISO_8601
+  log_level: info
 mqtt:
   server: mqtt://core-mosquitto:1883
   user: mqtt
@@ -102,6 +103,40 @@ devices:
     optimistic: true
   '0xa4c138e5a9195155':
     friendly_name: movement_bathroom
+  '0x001fee00000074ab':
+    friendly_name: Jumeaux prises
+  '0x00212effff0300f4':
+    friendly_name: Jumeaux armoires
+  '0x001788010b86ddae':
+    friendly_name: Couloir 1
+  '0x001788010cc5a455':
+    friendly_name: Couloir 2
+  '0x001fee0000008c0c':
+    friendly_name: Couloir
+  '0x680ae2fffe88a7c5':
+    friendly_name: Extender parents
+  '0x001fee0000002afb':
+    friendly_name: Chambre parents
+  '0x00212effff0cbf36':
+    friendly_name: Plafond parents
+  '0x00212effff015520':
+    friendly_name: Lit parents
+  '0x804b50fffe41d1be':
+    friendly_name: Chevet CDRX
+  '0x804b50fffe433987':
+    friendly_name: Chevet Nanne
+  '0x000000000170713a':
+    friendly_name: Lit parents interrupteur
+  '0x000d6ffffe7c1eee':
+    friendly_name: Extender Charles
+  '0x00212effff007650':
+    friendly_name: Charles bas
+  '0x00212effff017bfc':
+    friendly_name: Charles haut
+  '0x0000000001708a2a':
+    friendly_name: Chambre Charles
+  '0x00158d0008ce4ab0':
+    friendly_name: Office
 availability:
   active:
     timeout: 20

@@ -6,7 +6,7 @@ DOMAIN = "irrigation_unlimited"
 DOMAIN_DATA = f"{DOMAIN}_data"
 COORDINATOR = "coordinator"
 COMPONENT = "component"
-VERSION = "2024.10.0"
+VERSION = "2025.6.0"
 ATTRIBUTION = "Data provided by http://jsonplaceholder.typicode.com/"
 ISSUE_URL = "https://github.com/rgc99/irrigation_unlimited/issues"
 
@@ -121,8 +121,11 @@ CONF_QUEUE = "queue"
 CONF_QUEUE_MANUAL = "queue_manual"
 CONF_USER = "user"
 CONF_TOGGLE = "toggle"
+CONF_SHOW_CONFIG = "show_config"
 CONF_EXTENDED_CONFIG = "extended_config"
+CONF_RESTORE_FROM_ENTITY = "restore_from_entity"
 CONF_READ_DELAY = "read_delay"
+CONF_SHOW_SEQUENCE_STATUS = "show_sequence_status"
 
 # Defaults
 DEFAULT_NAME = DOMAIN

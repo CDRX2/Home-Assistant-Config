@@ -218,7 +218,10 @@ from .const import (
     CONF_QUEUE_MANUAL,
     CONF_USER,
     CONF_TOGGLE,
+    CONF_SHOW_CONFIG,
     CONF_EXTENDED_CONFIG,
+    CONF_RESTORE_FROM_ENTITY,
+    CONF_SHOW_SEQUENCE_STATUS,
 )
 
 _LOGGER: Logger = getLogger(__package__)
@@ -607,7 +610,7 @@ class IUSchedule(IUBase):
         self._coordinator = coordinator
         # Config parameters
         self._schedule_id: str = None
-        self._time = None
+        self._time: time | dict = None
         self._duration: timedelta = None
         self._name: str = None
         self._weekdays: list[int] = None
@@ -2549,6 +2552,11 @@ class IUSequenceZone(IUBase):
         """Returns the number of repeats for this sequence zone"""
         return self._repeat
 
+    @repeat.setter
+    def repeat(self, value: int) -> None:
+        """Set the number of repeats for this sequence zone"""
+        self._repeat = value
+
     @property
     def volume(self) -> float:
         """Return the volume limit for this sequence zone"""
@@ -2983,7 +2991,6 @@ class IUSequenceRun(IUBase):
         self, sequence_zone_run: IUSequenceZoneRun
     ) -> IUSequenceZoneRun:
         """Return the next sequence zone run in the run queue"""
-        result: IUSequenceZoneRun = None
         found = False
         for szr in self.runs.values():
             if szr is None:
@@ -2991,9 +2998,23 @@ class IUSequenceRun(IUBase):
             if not found and szr == sequence_zone_run:
                 found = True
             if found and szr.sequence_zone != sequence_zone_run.sequence_zone:
-                result = szr
-                break
-        return result
+                return szr
+        return None
+
+    def next_sequence_run(
+        self, sequence_zone_run: IUSequenceZoneRun
+    ) -> IUSequenceZoneRun:
+        """Return the next sequence run in the queue"""
+        found = False
+        for szr in self.runs.values():
+            if szr is None:
+                continue
+            if not found and szr == sequence_zone_run:
+                found = True
+                continue
+            if found:
+                return szr
+        return None
 
     def sequence_zone_runs(self, sequence_zone_run: IUSequenceZoneRun) -> list[IURun]:
         """Return all the run associated with the sequence zone"""
@@ -3311,7 +3332,7 @@ class IUSequenceRun(IUBase):
                         self,
                     )
                 else:
-                    self._current_zone = self.next_sequence_zone(szr)
+                    self._current_zone = self.next_sequence_run(szr)
                 result |= True
 
         return result
@@ -4241,6 +4262,23 @@ class IUSequence(IUBase):
                 changed = True
         return changed
 
+    def service_load_sequence(self, data: MappingProxyType, stime: datetime) -> bool:
+        """Service handler for load_sequence"""
+        # pylint: disable=unused-argument
+        changed = False
+        zone_list: list[int] = data.get(CONF_ZONES)
+        if zone_list is None:
+            self._repeat = data.get(CONF_REPEAT, self._repeat)
+            changed = True
+        else:
+            for sqz in self.zones:
+                if check_item(sqz.index, zone_list):
+                    sqz.repeat = data.get(CONF_REPEAT, sqz.repeat)
+                    changed = True
+        if changed:
+            self._run_queue.clear_runs()
+        return changed
+
 
 class IUController(IUBase):
     """Irrigation Unlimited Controller (Master) class"""
@@ -4261,6 +4299,7 @@ class IUController(IUBase):
         self._preamble: timedelta = None
         self._postamble: timedelta = None
         self._queue_manual: bool = False
+        self._show_sequence_status: bool = True
         # Private variables
         self._initialised: bool = False
         self._finalised: bool = False
@@ -4385,6 +4424,11 @@ class IUController(IUBase):
         return self._queue_manual
 
     @property
+    def show_sequence_status(self) -> bool:
+        """Return is sequence_status attribute should be shown"""
+        return self._show_sequence_status
+
+    @property
     def status(self) -> str:
         """Return the state of the controller"""
         return self._status()
@@ -4487,6 +4531,13 @@ class IUController(IUBase):
                 return zone
         return None
 
+    def find_sequence_by_id(self, sequence_id: str) -> IUSequence:
+        """Find the sequence from the sequence_id"""
+        for sequence in self._sequences:
+            if sequence.sequence_id == sequence_id:
+                return sequence
+        return None
+
     def clear(self) -> None:
         """Clear out the controller"""
         # Don't clear zones
@@ -4528,6 +4579,7 @@ class IUController(IUBase):
         self._preamble = wash_td(config.get(CONF_PREAMBLE))
         self._postamble = wash_td(config.get(CONF_POSTAMBLE))
         self._queue_manual = config.get(CONF_QUEUE_MANUAL, self._queue_manual)
+        self._show_sequence_status = config.get(CONF_SHOW_SEQUENCE_STATUS, self._show_sequence_status)
         all_zones = config.get(CONF_ALL_ZONES_CONFIG)
         zidx: int = 0
         for zidx, zone_config in enumerate(config[CONF_ZONES]):
@@ -4715,12 +4767,9 @@ class IUController(IUBase):
                 for schedule in sequence.schedules:
                     if not schedule.enabled:
                         continue
-                    next_time = stime
-                    while True:
-                        if self.muster_sequence(
-                            stime, next_time, sequence, schedule, None
-                        ).is_empty():
-                            break
+                    while not self.muster_sequence(
+                        stime, stime, sequence, schedule, None
+                    ).is_empty():
                         zone_status |= IURQStatus.EXTENDED
 
         # Process zone schedules
@@ -4835,6 +4884,7 @@ class IUController(IUBase):
                             self, sequence, sequence_zone, zone_id
                         )
                         result = False
+
         return result
 
     def request_update(self, deep: bool) -> None:
@@ -4919,8 +4969,9 @@ class IUController(IUBase):
             sequence_list.extend(sequence.index for sequence in self._sequences)
         else:
             for sequence_id in sequences:
-                if self.get_sequence(sequence_id - 1) is not None:
-                    sequence_list.append(sequence_id - 1)
+                id = int(sequence_id) - 1
+                if self.get_sequence(id) is not None:
+                    sequence_list.append(id)
                 else:
                     self._coordinator.logger.log_invalid_sequence(
                         stime, self, sequence_id
@@ -5935,6 +5986,7 @@ class IUClock:
         self._fixed_clock = False
         self._show_log = False
         self._finalised = False
+        self.schedule_immediately = False
 
     @property
     def is_fixed(self) -> bool:
@@ -5983,6 +6035,10 @@ class IUClock:
             return atime + timedelta(seconds=5)
         if self._fixed_clock:
             return atime + self.track_interval()
+
+        if self.schedule_immediately:
+            self.schedule_immediately = False
+            return atime
 
         # Handle testing
         if self._coordinator.tester.is_testing:
@@ -6114,6 +6170,8 @@ class IUCoordinator:
         self._sync_switches: bool = True
         self._rename_entities = False
         self._extended_config = False
+        self._restore_from_entity: bool = True
+        self._show_config = True
         # Private variables
         self._controllers: list[IUController] = []
         self._is_on: bool = False
@@ -6130,8 +6188,8 @@ class IUCoordinator:
         self._tester = IUTester(self)
         self._clock = IUClock(self._hass, self, self._async_timer)
         self._history = IUHistory(self._hass, self.service_history)
-        self._restored_from_configuration: bool = False
         self._finalised = False
+        self._muster_status: IURQStatus = IURQStatus.NONE
 
     @property
     def hass(self) -> HomeAssistant:
@@ -6199,19 +6257,24 @@ class IUCoordinator:
         return json.dumps(self.as_dict(self._extended_config), cls=IUJSONEncoder)
 
     @property
-    def restored_from_configuration(self) -> bool:
-        """Return if the system has been restored from coordinator date"""
-        return self._restored_from_configuration
+    def show_config(self) -> bool:
+        """Return if we should show the system configuration"""
+        return self._show_config
 
-    @restored_from_configuration.setter
-    def restored_from_configuration(self, value: bool) -> None:
-        """Flag the system has been restored from coordinator data"""
-        self._restored_from_configuration = value
+    @property
+    def restore_from_entity(self) -> bool:
+        """Return if the system has should be restored from coordinator data"""
+        return self._restore_from_entity
 
     @property
     def rename_entities(self) -> bool:
         """Indicate if entity renaming is allowed"""
         return self._rename_entities
+
+    @property
+    def muster_required(self) -> bool:
+        """Return status that muster is pending"""
+        return self._muster_required
 
     def _is_setup(self) -> bool:
         """Wait for sensors to be setup"""
@@ -6262,7 +6325,10 @@ class IUCoordinator:
         self._sync_switches = config.get(CONF_SYNC_SWITCHES, True)
         self._rename_entities = config.get(CONF_RENAME_ENTITIES, self._rename_entities)
         self._extended_config = config.get(CONF_EXTENDED_CONFIG, self._extended_config)
-
+        self._restore_from_entity = config.get(
+            CONF_RESTORE_FROM_ENTITY, self._restore_from_entity
+        )
+        self._show_config = config.get(CONF_SHOW_CONFIG, self._show_config)
         cidx: int = 0
         for cidx, controller_config in enumerate(config[CONF_CONTROLLERS]):
             self.find_add(self, cidx).load(controller_config)
@@ -6377,9 +6443,11 @@ class IUCoordinator:
         it is the actual time"""
         wtime: datetime = wash_dt(vtime)
         if (wtime != self._last_muster) or self._muster_required or force:
-            if not self.muster(wtime, force).is_empty():
-                self.check_run(wtime)
             self._muster_required = False
+            self._muster_status |= self.muster(wtime, force)
+            if not self._muster_status.is_empty() and not self._muster_required:
+                self.check_run(wtime)
+                self._muster_status = IURQStatus.NONE
             self._last_muster = wtime
         self.update_sensor(vtime)
 
@@ -6446,6 +6514,13 @@ class IUCoordinator:
             return
         self.timer(tick)
         self._clock.rearm(atime)
+
+    def remuster(self) -> None:
+        """Schedule a muster immediately. This is used during a muster to flag
+        another pass is required. This occurs when schedules or other parameters
+        are modified within a muster"""
+        self._muster_required = True
+        self._clock.schedule_immediately = True
 
     def next_awakening(self) -> datetime:
         """Return the next event time"""
