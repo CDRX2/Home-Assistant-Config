@@ -372,7 +372,7 @@ elements:
             name: 'Temp and humidity guest bedroom'
           - entity: sensor.office_battery
             name: 'Climate office'
-          - entity: sensor.temperature_bathroom_battery_level
+          - entity: sensor.bathroom_battery
             name: 'Temp and humidity bathroom'
           - entity: sensor.twins_battery
             name: 'Climate twins'

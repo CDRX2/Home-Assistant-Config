@@ -117,7 +117,7 @@ temp_sensors_battery:
     - sensor.temperature_entrance_battery_level
     - sensor.temperature_guest_battery_level
     - sensor.office_battery
-    - sensor.temperature_bathroom_battery_level
+    - sensor.bathroom_battery
     - sensor.twins_battery
     - sensor.temperature_charles_battery_level
     - sensor.bottom_stairs_battery

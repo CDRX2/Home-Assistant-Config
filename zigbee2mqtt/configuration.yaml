@@ -137,6 +137,10 @@ devices:
     friendly_name: Chambre Charles
   '0x00158d0008ce4ab0':
     friendly_name: Office
+  '0x00158d0006f91a68':
+    friendly_name: Twins
+  '0xbc33acfffe5d30c9':
+    friendly_name: Bathroom
 availability:
   active:
     timeout: 20
