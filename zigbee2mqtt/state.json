@@ -62,7 +62,7 @@
         "occupancy_timeout": 0,
         "occupancy": false,
         "temperature": 21.05,
-        "illuminance": 14,
+        "illuminance": 7,
         "motion_sensitivity": "medium",
         "last_seen": "2025-06-30T12:41:47.752Z",
         "linkquality": 61,
