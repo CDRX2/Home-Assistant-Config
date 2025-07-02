@@ -53,7 +53,7 @@
           states('sensor.temperature_entrance_battery_level')|float(default=0) < 10 or
           states('sensor.temperature_guest_battery_level')|float(default=0) < 10 or
           states('sensor.office_battery')|float(default=0) < 10 or
-          states('sensor.temperature_bathroom_battery_level')|float(default=0) < 10 or
+          states('sensor.bathroom_battery')|float(default=0) < 10 or
           states('sensor.temperature_charles_battery_level')|float(default=0) < 10 or
           states('sensor.twins_battery')|float(default=0) < 10 or
           states('sensor.bottom_stairs_battery')|float(default=0) < 10 or
