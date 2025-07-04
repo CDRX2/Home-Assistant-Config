@@ -141,6 +141,52 @@ devices:
     friendly_name: Twins
   '0xbc33acfffe5d30c9':
     friendly_name: Bathroom
+  '0xbc33acfffe47a6f8':
+    friendly_name: Guest bathroom
+  '0xbc33acfffe5d310e':
+    friendly_name: Entrance
+  '0xbc33acfffe5d2fa7':
+    friendly_name: Guest
+  '0x00158d0007e3b8f0':
+    friendly_name: Bottom stairs
+  '0x0017880100d21a74':
+    friendly_name: Hue spare 1
+  '0x0017880100e0b9bf':
+    friendly_name: Hue spare 2
+  '0x680ae2fffe3fed68':
+    friendly_name: Spare switch 2
+  '0x385b44fffee76661':
+    friendly_name: Spare switch 3
+  '0x842e14fffe65c5e3':
+    friendly_name: Spare switch 1
+  '0x00212effff007572':
+    friendly_name: Cuisine deco
+  '0x001fee000000584a':
+    friendly_name: Cuisine lustre manger
+  '0x001fee0000004547':
+    friendly_name: Manger plafonnier
+  '0x7cb03eaa00ab300c':
+    friendly_name: Terrasse sol
+  '0x001fee00000026fd':
+    friendly_name: Salon plafonnier
+  '0x001fee00000052e0':
+    friendly_name: Tableau TV
+  '0x001fee0000004282':
+    friendly_name: Terrasse
+  '0xb40ecfd0822e0000':
+    friendly_name: Petit totem deco
+  '0x00212effff00f294':
+    friendly_name: Vinyles
+  '0x84b4dbfffe96e892':
+    friendly_name: Guirlandes salon
+  '0x680ae2fffe41f474':
+    friendly_name: Grand totem
+  '0xb40ecfd112990000':
+    friendly_name: Grand totem deco
+  '0x00212effff007534':
+    friendly_name: Bar
+  '0x000000000170c480':
+    friendly_name: Salon interrupteur
 availability:
   active:
     timeout: 20

@@ -113,9 +113,9 @@ temp_sensors_battery:
   name: Temp sensors battery
   entities:
     - sensor.salon_battery
-    - sensor.temperature_guest_bathroom_battery_level
-    - sensor.temperature_entrance_battery_level
-    - sensor.temperature_guest_battery_level
+    - sensor.guest_bathroom_battery
+    - sensor.entrance_battery
+    - sensor.guest_battery
     - sensor.office_battery
     - sensor.bathroom_battery
     - sensor.twins_battery

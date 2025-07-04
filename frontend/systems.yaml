@@ -364,11 +364,11 @@ elements:
               state: 'on'
           - entity: sensor.salon_battery
             name: 'Climate living room'
-          - entity: sensor.temperature_guest_bathroom_battery_level
+          - entity: sensor.guest_bathroom_battery
             name: 'Temp and humidity guest bathroom'
-          - entity: sensor.temperature_entrance_battery_level
+          - entity: sensor.entrance_battery
             name: 'Temp and humidity entrance'
-          - entity: sensor.temperature_guest_battery_level
+          - entity: sensor.guest_battery
             name: 'Temp and humidity guest bedroom'
           - entity: sensor.office_battery
             name: 'Climate office'

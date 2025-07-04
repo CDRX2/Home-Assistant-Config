@@ -49,9 +49,9 @@
     battery_alert:
       value_template: >-
         {{ iif (states('sensor.salon_battery')|float(default=0) < 10 or
-          states('sensor.temperature_guest_bathroom_battery_level')|float(default=0) < 10 or
-          states('sensor.temperature_entrance_battery_level')|float(default=0) < 10 or
-          states('sensor.temperature_guest_battery_level')|float(default=0) < 10 or
+          states('sensor.guest_bathroom_battery')|float(default=0) < 10 or
+          states('sensor.entrance_battery')|float(default=0) < 10 or
+          states('sensor.guest_battery')|float(default=0) < 10 or
           states('sensor.office_battery')|float(default=0) < 10 or
           states('sensor.bathroom_battery')|float(default=0) < 10 or
           states('sensor.temperature_charles_battery_level')|float(default=0) < 10 or
