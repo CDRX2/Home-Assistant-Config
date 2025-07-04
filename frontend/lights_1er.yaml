@@ -508,7 +508,7 @@ elements:
   - type: custom:button-card
     template: light_icon_on_off
     variables:
-      entity: light.bahtroom_mirror
+      entity: light.bathroom_mirror
       icon: mdi:led-strip-variant
       title: "Mirroir"
     style:

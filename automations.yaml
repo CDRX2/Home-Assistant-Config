@@ -785,3 +785,36 @@
               seconds: 0
               milliseconds: 500
       hold_delay: 250
+- id: '1751659760950'
+  alias: Salon interrupteur
+  description: ''
+  use_blueprint:
+    path: vandalon/z2m EnOcean PTM 215Z (Friends of Hue) switch.yaml
+    input:
+      controller: Salon interrupteur
+      hold_delay: 250
+      button_1_released:
+      - action: light.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.salon_deco
+      button_2_released: []
+      button_1_and_3_released:
+      - action: cover.open_cover
+        metadata: {}
+        data: {}
+        target:
+          entity_id: cover.store_terrasse
+      button_2_and_4_released:
+      - action: cover.close_cover
+        metadata: {}
+        data: {}
+        target:
+          entity_id: cover.store_terrasse
+      button_3_released:
+      - action: light.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.totems_blanc
