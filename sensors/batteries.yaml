@@ -57,6 +57,7 @@
           states('sensor.temperature_charles_battery_level')|float(default=0) < 10 or
           states('sensor.twins_battery')|float(default=0) < 10 or
           states('sensor.bottom_stairs_battery')|float(default=0) < 10 or
-          states('sensor.movement_driveway_battery_level')|float(default=0) < 10 or
+          states('sensor.carport_movement_battery')|float(default=0) < 10 or
           states('sensor.cat_flap_entree_battery_level')|float(default=0) < 10 or
-          states('sensor.lenovo_tab_1st_floor_battery')|float(default=0) < 10, 'alert', 'normal') }}
+          states('sensor.lenovo_tab_1st_floor_battery')|float(default=0) < 10 or
+          states('sensor.movement_bathroom_battery')|float(default=0) < 10, 'alert', 'normal') }}

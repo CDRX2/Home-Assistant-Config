@@ -187,6 +187,12 @@ devices:
     friendly_name: Bar
   '0x000000000170c480':
     friendly_name: Salon interrupteur
+  '0x385b44fffee33cd2':
+    friendly_name: Panneau lumineux
+  '0xbc33acfffe6a0672':
+    friendly_name: Petit totem
+  '0x00158d0006ed66e0':
+    friendly_name: Salon
 availability:
   active:
     timeout: 20
