@@ -203,38 +203,6 @@
         == 'off' %}\n  not_home\n{% else %}\n   unknown\n{% endif %}\n"
   mode: queued
   max: 10
-- id: '1637858673653'
-  alias: Store terrasse close button
-  description: Close store terrasse on button press
-  trigger:
-  - device_id: 8615c110ea20420a9ac3e10345415a26
-    domain: deconz
-    platform: device
-    type: remote_button_short_press
-    subtype: top_buttons
-  condition: []
-  action:
-  - service: cover.close_cover
-    data: {}
-    target:
-      entity_id: cover.store_terrasse_reversed
-  mode: single
-- id: '1637858821506'
-  alias: Store terrasse open button
-  description: Open store terrasse on button press
-  trigger:
-  - device_id: 8615c110ea20420a9ac3e10345415a26
-    domain: deconz
-    platform: device
-    type: remote_button_short_press
-    subtype: bottom_buttons
-  condition: []
-  action:
-  - service: cover.open_cover
-    data: {}
-    target:
-      entity_id: cover.store_terrasse_reversed
-  mode: single
 - id: '1644784304855'
   alias: Lovelace update ignore
   description: ''

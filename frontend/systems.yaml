@@ -348,8 +348,9 @@ elements:
           - name: Autres
             icon: 'mdi:battery'
             entities:
-              - sensor.movement_driveway_battery_level
+              - sensor.carport_movement_battery
               - sensor.entree_battery_level
+              - sensor.movement_bathroom_battery
             min: 20
         entities:
           - entity: sensor.pixel_8_pro_nanne_battery_level
