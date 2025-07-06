@@ -397,10 +397,10 @@ elements:
             charging_state:
               entity_id: binary_sensor.lenovo_tab_1st_floor_plugged_in
               state: 'on'
-          - entity: sensor.lenovo_tab_remote_battery
-            name: 'Tablette télécommande'
+          - entity: sensor.lenovo_tab_m8_battery
+            name: 'Tablette bureau'
             charging_state:
-              entity: binary_sensor.lenovo_tab_remote_plugged_in
+              entity_id: binary_sensor.lenovo_tab_m8_plugged_in
               state: 'on'
         title: Batteries
         view_layout:
