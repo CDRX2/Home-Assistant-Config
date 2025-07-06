@@ -193,6 +193,8 @@ devices:
     friendly_name: Petit totem
   '0x00158d0006ed66e0':
     friendly_name: Salon
+  '0x847127fffeca7e72':
+    friendly_name: Charles
 availability:
   active:
     timeout: 20
