@@ -61,8 +61,8 @@
         "battery": 78,
         "occupancy_timeout": 0,
         "occupancy": false,
-        "temperature": 21.47,
-        "illuminance": 4366,
+        "temperature": 22.6,
+        "illuminance": 3943,
         "motion_sensitivity": "medium",
         "last_seen": "2025-07-16T09:13:03.827Z",
         "linkquality": 0,
@@ -120,7 +120,7 @@
     "0xa4c138e5a9195155": {
         "battery": 100,
         "voltage": 2900,
-        "occupancy": false,
+        "occupancy": true,
         "battery_low": false,
         "last_seen": "2025-07-15T20:56:14.980Z",
         "linkquality": 69
@@ -268,7 +268,7 @@
         }
     },
     "0x680ae2fffe88a7c5": {
-        "linkquality": 94,
+        "linkquality": 69,
         "update": {
             "state": "idle",
             "installed_version": 587753009,
@@ -382,7 +382,7 @@
     },
     "0x00212effff015520": {
         "state_rgb": "OFF",
-        "state_white": "ON",
+        "state_white": "OFF",
         "brightness_white": 56,
         "color_mode_white": "xy",
         "color_white": {
@@ -425,7 +425,7 @@
         "linkquality": 123
     },
     "0x000d6ffffe7c1eee": {
-        "linkquality": 40,
+        "linkquality": 61,
         "update": {
             "state": "idle",
             "installed_version": 587753009,
@@ -479,12 +479,12 @@
         "linkquality": 29
     },
     "0x00158d0006f91a68": {
-        "temperature": 24.26,
-        "humidity": 47.45,
-        "pressure": 931.7,
+        "temperature": 24.28,
+        "humidity": 47.17,
+        "pressure": 931.9,
         "last_seen": "2025-07-15T22:18:38.042Z",
         "linkquality": 47,
-        "voltage": 3015,
+        "voltage": 3025,
         "battery": 100,
         "power_outage_count": 24
     },
@@ -523,9 +523,9 @@
     "0x00158d0007e3b8f0": {
         "last_seen": "2025-07-15T22:06:54.619Z",
         "linkquality": 145,
-        "temperature": 25.98,
-        "humidity": 43.59,
-        "pressure": 929.7,
+        "temperature": 25.95,
+        "humidity": 43.76,
+        "pressure": 929.4,
         "voltage": 2995,
         "battery": 97,
         "power_outage_count": 23
@@ -835,9 +835,9 @@
         "linkquality": 91
     },
     "0x00158d0006ed66e0": {
-        "temperature": 25.33,
-        "humidity": 44.91,
-        "pressure": 930.2,
+        "temperature": 25.34,
+        "humidity": 44.39,
+        "pressure": 929.9,
         "last_seen": "2025-07-15T22:35:01.784Z",
         "linkquality": 87,
         "voltage": 3095,

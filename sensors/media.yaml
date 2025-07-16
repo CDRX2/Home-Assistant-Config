@@ -111,3 +111,15 @@
         {% else %}
           other
         {% endif %}
+
+- platform: template
+  sensors:
+    pioneer_avr_volume:
+      value_template: >-
+        {% set volume = state_attr('media_player.pioneer_avr', 'volume_level') | float(0) %}
+        {% if volume > 0 %}
+          {{ ((volume * 92.5) - 80.5) | round(1) }}
+        {% else %}
+          -∞
+        {% endif %}
+      unit_of_measurement: "dB"
