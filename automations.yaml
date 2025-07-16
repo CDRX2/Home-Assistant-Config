@@ -317,7 +317,7 @@
       - light.bathroom_sink
   mode: single
 - id: '1705760430224'
-  alias: Update bus departures every 3 minutes
+  alias: Update bus departures every 4 minutes
   description: ''
   triggers:
   - minutes: /4
@@ -413,29 +413,6 @@
     target:
       entity_id: light.noel
   mode: single
-- id: '1743361176857'
-  alias: amis_lumieres
-  description: ''
-  use_blueprint:
-    path: vandalon/z2m EnOcean PTM 215Z (Friends of Hue) switch.yaml
-    input:
-      controller: amis_lit
-      button_1_pressed: []
-      button_2_pressed: []
-      button_3_pressed: []
-      hold_delay: 500
-      button_1_released:
-      - action: light.toggle
-        metadata: {}
-        data: {}
-        target:
-          entity_id: light.amis_plafonnier
-      button_3_released:
-      - action: light.toggle
-        metadata: {}
-        data: {}
-        target:
-          entity_id: light.amis_prises
 - id: '1743770687084'
   alias: carport lights
   description: ''
@@ -531,258 +508,348 @@
     target:
       entity_id: light.bathroom_sink_white
   mode: restart
-- id: '1751232584691'
+- id: '1752155941167'
+  alias: Interrupteur Charles
+  description: ''
+  use_blueprint:
+    path: chris-1243/PTM_21xZ_ZE.yaml
+    input:
+      controller:
+      - Chambre Charles
+      button_1_pressed:
+      - action: light.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - light.charles_bas_white
+      button_1_held:
+      - action: mqtt.publish
+        metadata: {}
+        data:
+          evaluate_payload: false
+          qos: '0'
+          topic: zigbee2mqtt/Charles bas/set
+          payload: '{ "brightness_move_white": 50}'
+          retain: false
+      button_2_pressed:
+      - action: light.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - light.charles_bas_color
+          - light.charles_bas_white
+      button_2_held:
+      - action: mqtt.publish
+        metadata: {}
+        data:
+          evaluate_payload: false
+          qos: '0'
+          topic: zigbee2mqtt/Charles bas/set
+          payload: '{"brightness_move_white": -50}'
+          retain: false
+      button_1_released:
+      - action: mqtt.publish
+        metadata: {}
+        data:
+          evaluate_payload: false
+          qos: '0'
+          topic: zigbee2mqtt/Charles bas/set
+          payload: '{"brightness_move_white": 0}'
+          retain: false
+      button_2_released:
+      - action: mqtt.publish
+        metadata: {}
+        data:
+          evaluate_payload: false
+          qos: '0'
+          topic: zigbee2mqtt/Charles bas/set
+          payload: '{"brightness_move_white": 0}'
+          retain: false
+      button_3_pressed:
+      - action: light.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.charles_haut_white
+      button_4_pressed:
+      - action: light.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - light.charles_haut_color
+          - light.charles_haut_white
+      button_3_held:
+      - action: mqtt.publish
+        metadata: {}
+        data:
+          evaluate_payload: false
+          qos: '0'
+          topic: zigbee2mqtt/Charles haut/set
+          payload: '{ "brightness_move_white": 50}'
+          retain: false
+      button_3_released:
+      - action: mqtt.publish
+        metadata: {}
+        data:
+          evaluate_payload: false
+          qos: '0'
+          topic: zigbee2mqtt/Charles haut/set
+          payload: '{"brightness_move_white": 0}'
+          retain: false
+      button_4_held:
+      - action: mqtt.publish
+        metadata: {}
+        data:
+          evaluate_payload: false
+          qos: '0'
+          topic: zigbee2mqtt/Charles haut/set
+          payload: '{"brightness_move_white": -50}'
+          retain: false
+      button_4_released:
+      - action: mqtt.publish
+        metadata: {}
+        data:
+          evaluate_payload: false
+          qos: '0'
+          topic: zigbee2mqtt/Charles haut/set
+          payload: '{"brightness_move_white": 0}'
+          retain: false
+- id: '1752158271828'
+  alias: Interrupteur amis
+  description: ''
+  use_blueprint:
+    path: chris-1243/PTM_21xZ_ZE.yaml
+    input:
+      controller:
+      - amis_lit
+      button_1_pressed: []
+      button_1_held: []
+      button_2_pressed: []
+      button_2_held: []
+      button_1_released:
+      - action: light.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.amis_plafonnier
+      button_2_released: []
+      button_3_pressed: []
+      button_4_pressed: []
+      button_3_held: []
+      button_3_released:
+      - action: light.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.amis_prises
+      button_4_held: []
+      button_4_released: []
+- id: '1752159086658'
   alias: Interrupteur lit parents
   description: ''
   use_blueprint:
-    path: vandalon/z2m EnOcean PTM 215Z (Friends of Hue) switch.yaml
+    path: chris-1243/PTM_21xZ_ZE.yaml
     input:
-      controller: Lit parents interrupteur
-      button_1_pressed: []
-      button_1_released:
+      controller:
+      - Lit parents interrupteur
+      button_1_pressed:
       - action: light.toggle
         metadata: {}
         data: {}
         target:
           entity_id: light.chevet_cdrx
-      button_3_pressed: []
-      button_1_and_3_released:
+      button_1_held: []
+      button_2_pressed:
       - action: light.turn_on
         metadata: {}
         data: {}
         target:
-          device_id: 5de5b3fbe2e6710f1fc8dd059d0bc07c
-      button_3_released:
+          entity_id: light.plafond_parents_blanc
+      button_2_held:
+      - action: mqtt.publish
+        metadata: {}
+        data:
+          evaluate_payload: false
+          qos: '0'
+          topic: zigbee2mqtt/Plafond parents/set
+          payload: '{"brightness_move_white": 50}'
+          retain: false
+      button_1_released: []
+      button_2_released:
+      - action: mqtt.publish
+        metadata: {}
+        data:
+          evaluate_payload: false
+          qos: '0'
+          topic: zigbee2mqtt/Plafond parents/set
+          payload: '{"brightness_move_white": 0}'
+          retain: false
+      button_3_pressed:
       - action: light.toggle
         metadata: {}
         data: {}
         target:
           entity_id: light.chevet_nanne
+      button_4_pressed:
+      - action: light.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - light.plafond_parents_blanc
+          - light.plafond_parents_couleur
+      button_3_held: []
+      button_3_released: []
+      button_4_held:
+      - action: mqtt.publish
+        metadata: {}
+        data:
+          evaluate_payload: false
+          qos: '0'
+          topic: zigbee2mqtt/Plafond parents/set
+          payload: '{"brightness_move_white": -50}'
+          retain: false
+      button_4_released:
+      - action: mqtt.publish
+        metadata: {}
+        data:
+          evaluate_payload: false
+          qos: '0'
+          topic: zigbee2mqtt/Plafond parents/set
+          payload: '{"brightness_move_white": 0}'
+          retain: false
       button_1_and_3_held:
-      - repeat:
-          count: 25
-          sequence:
-          - action: light.turn_on
-            metadata: {}
-            data:
-              brightness_step: 15
-              transition: 1
-            target:
-              device_id: 5de5b3fbe2e6710f1fc8dd059d0bc07c
-          - delay:
-              hours: 0
-              minutes: 0
-              seconds: 0
-              milliseconds: 502
+      - action: mqtt.publish
+        metadata: {}
+        data:
+          evaluate_payload: false
+          qos: '0'
+          topic: zigbee2mqtt/Lit parents/set
+          payload: "{\n  \"brightness_move_white\": 50,\n  \"brightness_move_rgb\":
+            50  \n}"
+          retain: false
+      button_1_and_3_released:
+      - action: mqtt.publish
+        metadata: {}
+        data:
+          evaluate_payload: false
+          qos: '0'
+          topic: zigbee2mqtt/Lit parents/set
+          payload: "{\n  \"brightness_move_white\": 0,\n  \"brightness_move_rgb\":
+            0  \n}"
+          retain: false
       button_2_and_4_held:
-      - repeat:
-          count: 25
-          sequence:
-          - action: light.turn_on
-            metadata: {}
-            data:
-              brightness_step: -15
-              transition: 1
-            target:
-              device_id: 5de5b3fbe2e6710f1fc8dd059d0bc07c
-          - delay:
-              hours: 0
-              minutes: 0
-              seconds: 0
-              milliseconds: 500
+      - action: mqtt.publish
+        metadata: {}
+        data:
+          evaluate_payload: false
+          qos: '0'
+          topic: zigbee2mqtt/Lit parents/set
+          payload: "{\n  \"brightness_move_white\": -50,\n  \"brightness_move_rgb\":
+            -50  \n}"
+          retain: false
       button_2_and_4_released:
-      - action: light.turn_off
+      - action: mqtt.publish
         metadata: {}
-        data: {}
-        target:
-          device_id: 5de5b3fbe2e6710f1fc8dd059d0bc07c
-      button_2_released:
+        data:
+          evaluate_payload: false
+          qos: '0'
+          topic: zigbee2mqtt/Lit parents/set
+          payload: "{\n  \"brightness_move_white\": 0,\n  \"brightness_move_rgb\":
+            0  \n}"
+          retain: false
+      button_1_and_3_pressed:
       - action: light.turn_on
         metadata: {}
         data: {}
         target:
-          device_id: 7ed8687e69afcf2a3490fed7d28d1b37
-      button_4_released:
+          entity_id:
+          - light.lit_parents_blanc
+          - light.lit_parents_couleur
+      button_2_and_4_pressed:
       - action: light.turn_off
         metadata: {}
         data: {}
         target:
-          device_id: 7ed8687e69afcf2a3490fed7d28d1b37
-      button_4_held:
-      - repeat:
-          count: 25
-          sequence:
-          - action: light.turn_on
-            metadata: {}
-            data:
-              transition: 1
-              brightness_step: -15
-            target:
-              device_id: 7ed8687e69afcf2a3490fed7d28d1b37
-          - delay:
-              hours: 0
-              minutes: 0
-              seconds: 0
-              milliseconds: 500
-      button_2_held:
-      - repeat:
-          count: 25
-          sequence:
-          - action: light.turn_on
-            metadata: {}
-            data:
-              transition: 0
-              brightness_step: 15
-            target:
-              device_id: 7ed8687e69afcf2a3490fed7d28d1b37
-          - delay:
-              hours: 0
-              minutes: 0
-              seconds: 0
-              milliseconds: 500
-      hold_delay: 250
-- id: '1751275109320'
-  alias: Interrupteur Charles
+          entity_id:
+          - light.lit_parents_blanc
+          - light.lit_parents_couleur
+- id: '1752160051745'
+  alias: Interrupteur salon
   description: ''
   use_blueprint:
-    path: vandalon/z2m EnOcean PTM 215Z (Friends of Hue) switch.yaml
+    path: chris-1243/PTM_21xZ_ZE.yaml
     input:
-      controller: Chambre Charles
-      button_1_pressed: []
-      button_1_released:
-      - action: light.turn_on
-        metadata: {}
-        data: {}
-        target:
-          device_id: 10c772755507623ee95481c572194f8e
-      - action: light.turn_on
-        metadata: {}
-        data: {}
-        target:
-          entity_id: light.charles_bas_white
-      button_3_pressed: []
-      button_1_and_3_released: []
-      button_3_released:
-      - action: light.turn_on
-        metadata: {}
-        data: {}
-        target:
-          device_id: 235f340cfe942150c71f33cd1ce826a8
-      button_1_and_3_held: []
-      button_2_and_4_held: []
-      button_2_and_4_released: []
-      button_2_released:
-      - action: light.turn_off
-        metadata: {}
-        data: {}
-        target:
-          device_id: 10c772755507623ee95481c572194f8e
-      - action: light.turn_off
-        metadata: {}
-        data: {}
-        target:
-          entity_id: light.charles_bas_white
-      button_4_released:
-      - action: light.turn_off
-        metadata: {}
-        data: {}
-        target:
-          device_id: 235f340cfe942150c71f33cd1ce826a8
-      button_4_held:
-      - repeat:
-          count: 25
-          sequence:
-          - action: light.turn_on
-            metadata: {}
-            data:
-              transition: 1
-              brightness_step: -15
-            target:
-              device_id: 235f340cfe942150c71f33cd1ce826a8
-          - delay:
-              hours: 0
-              minutes: 0
-              seconds: 0
-              milliseconds: 500
-      button_2_held:
-      - repeat:
-          count: 25
-          sequence:
-          - action: light.turn_on
-            metadata: {}
-            data:
-              transition: 1
-              brightness_step: -15
-            target:
-              device_id: 10c772755507623ee95481c572194f8e
-          - delay:
-              hours: 0
-              minutes: 0
-              seconds: 0
-              milliseconds: 500
-      button_3_held:
-      - repeat:
-          count: 25
-          sequence:
-          - action: light.turn_on
-            metadata: {}
-            data:
-              brightness_step: 15
-              transition: 1
-            target:
-              device_id: 235f340cfe942150c71f33cd1ce826a8
-          - delay:
-              hours: 0
-              minutes: 0
-              seconds: 0
-              milliseconds: 500
-      button_1_held:
-      - repeat:
-          count: 25
-          sequence:
-          - action: light.turn_on
-            metadata: {}
-            data:
-              brightness_step: 15
-              transition: 1
-            target:
-              device_id: 10c772755507623ee95481c572194f8e
-          - delay:
-              hours: 0
-              minutes: 0
-              seconds: 0
-              milliseconds: 500
-      hold_delay: 250
-- id: '1751659760950'
-  alias: Salon interrupteur
-  description: ''
-  use_blueprint:
-    path: vandalon/z2m EnOcean PTM 215Z (Friends of Hue) switch.yaml
-    input:
-      controller: Salon interrupteur
-      hold_delay: 250
-      button_1_released:
+      controller:
+      - Salon interrupteur
+      button_1_pressed:
       - action: light.toggle
         metadata: {}
         data: {}
         target:
           entity_id: light.salon_deco
-      button_2_released: []
-      button_1_and_3_released:
+      button_1_held: []
+      button_2_pressed:
       - action: cover.open_cover
         metadata: {}
         data: {}
         target:
-          entity_id: cover.store_terrasse
-      button_2_and_4_released:
-      - action: cover.close_cover
+          entity_id: cover.velux_store
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 5
+          milliseconds: 0
+      - action: cover.open_cover
         metadata: {}
         data: {}
         target:
-          entity_id: cover.store_terrasse
-      button_3_released:
+          entity_id: cover.velux
+      button_2_held: []
+      button_1_released: []
+      button_2_released: []
+      button_3_pressed:
       - action: light.toggle
         metadata: {}
         data: {}
         target:
           entity_id: light.totems_blanc
+      button_4_pressed:
+      - action: cover.close_cover
+        metadata: {}
+        data: {}
+        target:
+          entity_id: cover.velux
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 5
+          milliseconds: 0
+      - action: cover.close_cover
+        metadata: {}
+        data: {}
+        target:
+          entity_id: cover.velux_store
+      button_3_held: []
+      button_3_released: []
+      button_4_held: []
+      button_4_released: []
+      button_1_and_3_held: []
+      button_1_and_3_released: []
+      button_2_and_4_held: []
+      button_2_and_4_released: []
+      button_1_and_3_pressed:
+      - action: cover.open_cover
+        metadata: {}
+        data: {}
+        target:
+          entity_id: cover.store_terrasse
+      button_2_and_4_pressed:
+      - action: cover.close_cover
+        metadata: {}
+        data: {}
+        target:
+          entity_id: cover.store_terrasse

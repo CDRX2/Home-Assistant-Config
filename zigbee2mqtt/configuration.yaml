@@ -35,6 +35,7 @@ advanced:
   elapsed: true
   last_seen: ISO_8601
   log_level: info
+  transmit_power: 20
 mqtt:
   server: mqtt://core-mosquitto:1883
   user: mqtt
