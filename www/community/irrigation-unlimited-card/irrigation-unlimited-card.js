@@ -137,11 +137,11 @@ const fireEvent = (node, type, detail, options) => {
     return event;
 };
 
-var common$7 = {
+var common$8 = {
 	version: "Weergawe",
 	invalidConfiguration: "Ongeldige konfigurasie"
 };
-var editor$6 = {
+var editor$7 = {
 	title: {
 		name: "Titel (opsioneel)"
 	},
@@ -161,7 +161,7 @@ var editor$6 = {
 		name: "Wys tydslyn geskiedenis"
 	}
 };
-var controller$6 = {
+var controller$7 = {
 	zones: {
 		name: "Sones",
 		buttonHint: "Wys/verberg sones"
@@ -171,7 +171,7 @@ var controller$6 = {
 		buttonHint: "Wys/versteek volgordes"
 	}
 };
-var menu$6 = {
+var menu$7 = {
 	enable: {
 		name: "Aktiveer"
 	},
@@ -198,26 +198,26 @@ var menu$6 = {
 	}
 };
 var af = {
-	common: common$7,
-	editor: editor$6,
-	controller: controller$6,
-	menu: menu$6
+	common: common$8,
+	editor: editor$7,
+	controller: controller$7,
+	menu: menu$7
 };
 
 var af$1 = /*#__PURE__*/Object.freeze({
     __proto__: null,
-    common: common$7,
-    controller: controller$6,
+    common: common$8,
+    controller: controller$7,
     default: af,
-    editor: editor$6,
-    menu: menu$6
+    editor: editor$7,
+    menu: menu$7
 });
 
-var common$6 = {
+var common$7 = {
 	version: "Version",
 	invalidConfiguration: "Ungültige Konfiguration"
 };
-var editor$5 = {
+var editor$6 = {
 	title: {
 		name: "Title (optional)"
 	},
@@ -237,7 +237,7 @@ var editor$5 = {
 		name: "Zeige vergangene Ablaufpläne"
 	}
 };
-var controller$5 = {
+var controller$6 = {
 	zones: {
 		name: "Zonen",
 		buttonHint: "Ein/Ausblenden der Zonen"
@@ -247,7 +247,7 @@ var controller$5 = {
 		buttonHint: "Ein/Ausblenden der Sequenzen"
 	}
 };
-var menu$5 = {
+var menu$6 = {
 	enable: {
 		name: "Aktivieren"
 	},
@@ -274,26 +274,26 @@ var menu$5 = {
 	}
 };
 var de = {
-	common: common$6,
-	editor: editor$5,
-	controller: controller$5,
-	menu: menu$5
+	common: common$7,
+	editor: editor$6,
+	controller: controller$6,
+	menu: menu$6
 };
 
 var de$1 = /*#__PURE__*/Object.freeze({
     __proto__: null,
-    common: common$6,
-    controller: controller$5,
+    common: common$7,
+    controller: controller$6,
     default: de,
-    editor: editor$5,
-    menu: menu$5
+    editor: editor$6,
+    menu: menu$6
 });
 
-var common$5 = {
+var common$6 = {
 	version: "Version",
 	invalidConfiguration: "Invalid configuration"
 };
-var editor$4 = {
+var editor$5 = {
 	title: {
 		name: "Title (optional)"
 	},
@@ -313,7 +313,7 @@ var editor$4 = {
 		name: "Show timeline history"
 	}
 };
-var controller$4 = {
+var controller$5 = {
 	zones: {
 		name: "Zones",
 		buttonHint: "Show/hide zones"
@@ -323,7 +323,7 @@ var controller$4 = {
 		buttonHint: "Show/hide sequences"
 	}
 };
-var menu$4 = {
+var menu$5 = {
 	enable: {
 		name: "Enable"
 	},
@@ -350,40 +350,40 @@ var menu$4 = {
 	}
 };
 var en = {
-	common: common$5,
-	editor: editor$4,
-	controller: controller$4,
-	menu: menu$4
+	common: common$6,
+	editor: editor$5,
+	controller: controller$5,
+	menu: menu$5
 };
 
 var en$1 = /*#__PURE__*/Object.freeze({
     __proto__: null,
-    common: common$5,
-    controller: controller$4,
+    common: common$6,
+    controller: controller$5,
     default: en,
-    editor: editor$4,
-    menu: menu$4
+    editor: editor$5,
+    menu: menu$5
 });
 
-var common$4 = {
+var common$5 = {
 	version: "Versjon",
 	invalid_configuration: "Ikke gyldig konfiguration"
 };
 var nb = {
-	common: common$4
+	common: common$5
 };
 
 var nb$1 = /*#__PURE__*/Object.freeze({
     __proto__: null,
-    common: common$4,
+    common: common$5,
     default: nb
 });
 
-var common$3 = {
+var common$4 = {
 	version: "Verzia",
 	invalidConfiguration: "Chybná konfigurácia"
 };
-var editor$3 = {
+var editor$4 = {
 	title: {
 		name: "Názov (voliteľné)"
 	},
@@ -403,7 +403,7 @@ var editor$3 = {
 		name: "Zobraziť históriu časovej osi"
 	}
 };
-var controller$3 = {
+var controller$4 = {
 	zones: {
 		name: "Zóny",
 		buttonHint: "Zobraziť/skryť zóny"
@@ -413,7 +413,7 @@ var controller$3 = {
 		buttonHint: "Zobraziť/skryť sekvencie"
 	}
 };
-var menu$3 = {
+var menu$4 = {
 	enable: {
 		name: "Povoliť"
 	},
@@ -440,26 +440,26 @@ var menu$3 = {
 	}
 };
 var sk = {
-	common: common$3,
-	editor: editor$3,
-	controller: controller$3,
-	menu: menu$3
+	common: common$4,
+	editor: editor$4,
+	controller: controller$4,
+	menu: menu$4
 };
 
 var sk$1 = /*#__PURE__*/Object.freeze({
     __proto__: null,
-    common: common$3,
-    controller: controller$3,
+    common: common$4,
+    controller: controller$4,
     default: sk,
-    editor: editor$3,
-    menu: menu$3
+    editor: editor$4,
+    menu: menu$4
 });
 
-var common$2 = {
+var common$3 = {
 	version: "Verzió",
 	invalidConfiguration: "Hibás konfiguráció"
 };
-var editor$2 = {
+var editor$3 = {
 	title: {
 		name: "Név (opcionális)"
 	},
@@ -479,7 +479,7 @@ var editor$2 = {
 		name: "Múltbeli idővonal megjelenítése"
 	}
 };
-var controller$2 = {
+var controller$3 = {
 	zones: {
 		name: "Zónák",
 		buttonHint: "Zónák mutatása/elrejtése"
@@ -489,7 +489,7 @@ var controller$2 = {
 		buttonHint: "Szekvenciák mutatása/elrejtése"
 	}
 };
-var menu$2 = {
+var menu$3 = {
 	enable: {
 		name: "Engedélyez"
 	},
@@ -516,26 +516,26 @@ var menu$2 = {
 	}
 };
 var hu = {
-	common: common$2,
-	editor: editor$2,
-	controller: controller$2,
-	menu: menu$2
+	common: common$3,
+	editor: editor$3,
+	controller: controller$3,
+	menu: menu$3
 };
 
 var hu$1 = /*#__PURE__*/Object.freeze({
     __proto__: null,
-    common: common$2,
-    controller: controller$2,
+    common: common$3,
+    controller: controller$3,
     default: hu,
-    editor: editor$2,
-    menu: menu$2
+    editor: editor$3,
+    menu: menu$3
 });
 
-var common$1 = {
+var common$2 = {
 	version: "Versiune",
 	invalidConfiguration: "Configuraţie invalidă"
 };
-var editor$1 = {
+var editor$2 = {
 	title: {
 		name: "Titlu (optional)"
 	},
@@ -555,7 +555,7 @@ var editor$1 = {
 		name: "Afișează istoricul cronologiei"
 	}
 };
-var controller$1 = {
+var controller$2 = {
 	zones: {
 		name: "Zone",
 		buttonHint: "Afișează/ascunde zonele"
@@ -565,7 +565,7 @@ var controller$1 = {
 		buttonHint: "Afișează/ascunde secvenţele"
 	}
 };
-var menu$1 = {
+var menu$2 = {
 	enable: {
 		name: "Activează"
 	},
@@ -592,26 +592,26 @@ var menu$1 = {
 	}
 };
 var ro = {
-	common: common$1,
-	editor: editor$1,
-	controller: controller$1,
-	menu: menu$1
+	common: common$2,
+	editor: editor$2,
+	controller: controller$2,
+	menu: menu$2
 };
 
 var ro$1 = /*#__PURE__*/Object.freeze({
     __proto__: null,
-    common: common$1,
-    controller: controller$1,
+    common: common$2,
+    controller: controller$2,
     default: ro,
-    editor: editor$1,
-    menu: menu$1
+    editor: editor$2,
+    menu: menu$2
 });
 
-var common = {
+var common$1 = {
 	version: "Versione",
 	invalidConfiguration: "Configurazione non valida"
 };
-var editor = {
+var editor$1 = {
 	title: {
 		name: "Titolo (Opzionale)"
 	},
@@ -631,7 +631,7 @@ var editor = {
 		name: "Mostra cronologia"
 	}
 };
-var controller = {
+var controller$1 = {
 	zones: {
 		name: "Zone",
 		buttonHint: "Mostra/nascondi zone"
@@ -641,7 +641,7 @@ var controller = {
 		buttonHint: "Mostra/nascondi zone"
 	}
 };
-var menu = {
+var menu$1 = {
 	enable: {
 		name: "Attiva"
 	},
@@ -668,17 +668,93 @@ var menu = {
 	}
 };
 var it = {
+	common: common$1,
+	editor: editor$1,
+	controller: controller$1,
+	menu: menu$1
+};
+
+var it$1 = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    common: common$1,
+    controller: controller$1,
+    default: it,
+    editor: editor$1,
+    menu: menu$1
+});
+
+var common = {
+	version: "Versión",
+	invalidConfiguration: "Configuración invalida"
+};
+var editor = {
+	title: {
+		name: "Título (opcional)"
+	},
+	showControllers: {
+		name: "Mostrar controladores (lista CSV)"
+	},
+	alwaysShowZones: {
+		name: "Siempre mostrar zonas"
+	},
+	alwaysShowSequences: {
+		name: "Siempre mostrar secuencias"
+	},
+	showTimelineScheduled: {
+		name: "Mostrar cronología programada"
+	},
+	showTimelineHistory: {
+		name: "Mostrar el historial"
+	}
+};
+var controller = {
+	zones: {
+		name: "Zonas",
+		buttonHint: "Mostrar/ocultar zonas"
+	},
+	sequences: {
+		name: "Secuencias",
+		buttonHint: "Mostrar/ocultar secuencias"
+	}
+};
+var menu = {
+	enable: {
+		name: "Activar"
+	},
+	suspend: {
+		name: "Pausar",
+		hint: "Duración\n===============\nh:mm:ss\n<blank> = reset"
+	},
+	manual: {
+		name: "Manual",
+		hint: "Duración"
+	},
+	pause: {
+		name: "Pausar"
+	},
+	resume: {
+		name: "Reanudar"
+	},
+	cancel: {
+		name: "Cancelar"
+	},
+	adjust: {
+		name: "Ajustar",
+		hint: "Opciones de ajuste\n===============\nPorcentual: %n\nActual: =0:00:00\nAumentar: +0:00:00\nReducir: -0:00:00\nReset: <blank>"
+	}
+};
+var es = {
 	common: common,
 	editor: editor,
 	controller: controller,
 	menu: menu
 };
 
-var it$1 = /*#__PURE__*/Object.freeze({
+var es$1 = /*#__PURE__*/Object.freeze({
     __proto__: null,
     common: common,
     controller: controller,
-    default: it,
+    default: es,
     editor: editor,
     menu: menu
 });
@@ -687,6 +763,7 @@ const languages = {
     af: af$1,
     de: de$1,
     en: en$1,
+    es: es$1,
     hu: hu$1,
     it: it$1,
     nb: nb$1,
@@ -1435,7 +1512,7 @@ const styles = i$2 `
   }
 `;
 
-const CARD_VERSION = "2025.7.0";
+const CARD_VERSION = "2025.8.0";
 
 const loc = new localise(window.navigator.language);
 /* eslint no-console: 0 */
