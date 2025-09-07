@@ -1,34 +1,34 @@
-- platform: plex_recently_added
-  name: Recently added TV
-  token: !secret Plex_Token
-  host: !secret Plex_Host
-  port: !secret Plex_Port
-  max: 10
-  section_types:
-  - show
+#- platform: plex_recently_added
+#  name: Recently added TV
+#  token: !secret Plex_Token
+#  host: !secret Plex_Host
+#  port: !secret Plex_Port
+#  max: 10
+#  section_types:
+#  - show
 
-- platform: plex_recently_added
-  name: Recently added movies
-  token: !secret Plex_Token
-  host: !secret Plex_Host
-  port: !secret Plex_Port
-  max: 10
-  section_types:
-  - movie
+#- platform: plex_recently_added
+#  name: Recently added movies
+#  token: !secret Plex_Token
+#  host: !secret Plex_Host
+#  port: !secret Plex_Port
+#  max: 10
+#  section_types:
+#  - movie
 
-- platform: sonarr_upcoming_media
-  api_key: !secret Sonarr_API
-  host: !secret Plex_Host
-  port: !secret Sonarr_Port
-  days: 60
-  max: 10
+#- platform: sonarr_upcoming_media
+#  api_key: !secret Sonarr_API
+#  host: !secret Plex_Host
+#  port: !secret Sonarr_Port
+#  days: 60
+#  max: 10
 
-- platform: radarr_upcoming_media
-  api_key: !secret Radarr_API
-  host: !secret Plex_Host
-  port: !secret Radarr_Port
-  days: 360
-  max: 10
+#- platform: radarr_upcoming_media
+#  api_key: !secret Radarr_API
+#  host: !secret Plex_Host
+#  port: !secret Radarr_Port
+#  days: 360
+#  max: 10
 
 - platform: template
   sensors:

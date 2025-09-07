@@ -18,7 +18,7 @@ card:
           template: media_service
           variables:
             name: Plex
-            service: script.watch_plex
+            service: script.watch_jellyfin
             picture: /local/ui/btns/plex_off.png
           view_layout:
             grid-area: plex
@@ -107,7 +107,7 @@ card:
           template: media_service
           variables:
             name: Plex
-            service: script.watch_plex
+            service: script.watch_jellyfin
             picture: /local/ui/btns/plex_off.png
           view_layout:
             grid-area: plex
@@ -381,7 +381,7 @@ card:
 #          template: media_service
 #          variables:
 #            name: Plex
-#            service: script.watch_plex
+#            service: script.watch_jellyfin
 #            picture: /local/ui/btns/plex_off.png
 #          view_layout:
 #            grid-area: plex
@@ -586,7 +586,7 @@ card:
 #          template: media_service
 #          variables:
 #            name: Plex
-#            service: script.watch_plex
+#            service: script.watch_jellyfin
 #            picture: /local/ui/btns/plex_off.png
 #          view_layout:
 #            grid-area: plex
