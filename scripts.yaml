@@ -1,23 +1,25 @@
 watch_plex:
-  alias: Watch Plex
+  alias: Watch Jellyfin
   sequence:
-  - service: media_player.turn_on
-    data: {}
+  - data: {}
     entity_id: media_player.living_room_tv
+    action: media_player.turn_on
   - wait_for_trigger:
-    - platform: state
-      entity_id: media_player.living_room_tv
+    - entity_id: media_player.living_room_tv
       to: 'on'
-  - service: media_player.select_source
-    data:
-      source: Plex
-    entity_id: media_player.living_room_tv
-  - service: media_player.volume_set
-    data:
+      trigger: state
+  - data:
+      source: Jellyfin
+    action: media_player.select_source
+    target:
+      entity_id: media_player.living_room_tv
+  - data:
       volume_level: '0.4702702702702703'
     entity_id: media_player.pioneer_avr
+    action: media_player.volume_set
   mode: single
   icon: mdi:plex
+  description: ''
 watch_youtube_kids:
   alias: Watch YouTube Kids
   sequence:

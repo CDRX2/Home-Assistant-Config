@@ -39,7 +39,7 @@ elements:
         # https://github.com/NemesisRE/sensor.plex_recently_added
 
             - type: 'custom:upcoming-media-card'
-              entity: sensor.recently_added_tv
+              entity: sensor.plex_recently_added_show
               max: 7
               flag: false
               date: ddmm
@@ -67,35 +67,35 @@ elements:
                   ha-card > div {
                     padding: 0px !important;
                   }
-                  .rece_poster {
+                  .plex_poster {
                     width: 6vw !important;
                     margin-right: 1vw !important;
                     margin-left: 0vw !important;
                     position: absolute !important;
                     margin-top: 0.7vw !important;
                   }
-                  .rece_poster:nth-child(1) {
+                  .plex_poster:nth-child(1) {
                     left: 0vw;
                   }
-                  .rece_poster:nth-child(2) {
+                  .plex_poster:nth-child(2) {
                     left: 7vw;
                   }
-                  .rece_poster:nth-child(3) {
+                  .plex_poster:nth-child(3) {
                     left: 14vw;
                   }
-                  .rece_poster:nth-child(4) {
+                  .plex_poster:nth-child(4) {
                     left: 21vw;
                   }
-                  .rece_poster:nth-child(5) {
+                  .plex_poster:nth-child(5) {
                     left: 28vw;
                   }
-                  .rece_poster:nth-child(6) {
+                  .plex_poster:nth-child(6) {
                     left: 35vw;
                   }
-                  .rece_poster:nth-child(7) {
+                  .plex_poster:nth-child(7) {
                     left: 42vw;
                   }
-                  .rece_poster .rece_svg_poster {
+                  .plex_poster .plex_svg_poster {
                     position: absolute !important;
                     bottom: 5%;
                     left: 0;
@@ -108,25 +108,25 @@ elements:
                     transition-duration: 150ms;
                     overflow: hidden !important;
                   }
-                  .rece_container_poster{
+                  .plex_container_poster{
                     width: 100% !important;
                     outline: none !important;
                     margin: 0px !important;
                   }
-                  .rece_svg_poster > rect {
+                  .plex_svg_poster > rect {
                    fill: none !important;
                   }
-                  .rece_poster .rece_svg_poster:hover {
+                  .plex_poster .plex_svg_poster:hover {
                     opacity: 0%;
                     transition-duration: 200ms;
                   }
-                  .rece_line0_poster {
+                  .plex_line0_poster {
                     font-size: 0.4vw !important;
                   }
-                  .rece_line1_poster {
+                  .plex_line1_poster {
                     font-size: 1.6vw !important;
                   }
-                  .rece_line2_poster {
+                  .plex_line2_poster {
                     font-size: 1.5vw !important;
                   }
               view_layout:
@@ -134,7 +134,7 @@ elements:
               title: Séries récentes
 
             - type: 'custom:upcoming-media-card'
-              entity: sensor.recently_added_movies
+              entity: sensor.plex_recently_added_movie
               max: 7
               flag: false
               date: ddmm
@@ -162,68 +162,6 @@ elements:
                   ha-card > div {
                     padding: 0px !important;
                   }
-                  /*.sona_poster {
-                    width: 6vw !important;
-                    margin-right: 1vw !important;
-                    margin-left: 0vw !important;
-                    position: absolute !important;
-                    margin-top: 0.7vw !important;
-                  }
-                  .sona_poster:nth-child(1) {
-                    left: 0vw;
-                  }
-                  .sona_poster:nth-child(2) {
-                    left: 7vw;
-                  }
-                  .sona_poster:nth-child(3) {
-                    left: 14vw;
-                  }
-                  .sona_poster:nth-child(4) {
-                    left: 21vw;
-                  }
-                  .sona_poster:nth-child(5) {
-                    left: 28vw;
-                  }
-                  .sona_poster:nth-child(6) {
-                    left: 35vw;
-                  }
-                  .sona_poster:nth-child(7) {
-                    left: 42vw;
-                  }
-                  .sona_poster .sona_svg_poster {
-                    position: absolute !important;
-                    bottom: 5%;
-                    left: 0;
-                    width: 90% !important;
-                    backdrop-filter: blur(10px);
-                    -webkit-backdrop-filter: blur(10px);
-                    background-color: rgba(44, 45, 67, 0.3);
-                    border-radius: 0% 1% 1% 0%;
-                    margin: 0px !important;
-                    transition-duration: 150ms;
-                    overflow: hidden !important;
-                  }
-                  .sona_container_poster{
-                    width: 100% !important;
-                    outline: none !important;
-                    margin: 0px !important;
-                  }
-                  .sona_svg_poster > rect {
-                   fill: none !important;
-                  }
-                  .sona_poster .sona_svg_poster:hover {
-                    opacity: 0%;
-                    transition-duration: 200ms;
-                  }
-                  .sona_line0_poster {
-                    font-size: 0.4vw !important;
-                  }
-                  .sona_line1_poster {
-                    font-size: 1.6vw !important;
-                  }
-                  .sona_line2_poster {
-                    font-size: 1.5vw !important;
-                  }*/
               view_layout:
                 grid-area: recentfilms
               title: Films récents
@@ -455,7 +393,7 @@ elements:
         # https://github.com/NemesisRE/sensor.plex_recently_added
 
             - type: 'custom:upcoming-media-card'
-              entity: sensor.recently_added_tv
+              entity: sensor.plex_recently_added_show
               max: 7
               flag: false
               date: ddmm
@@ -483,35 +421,35 @@ elements:
                   ha-card > div {
                     padding: 0px !important;
                   }
-                  .rece_poster {
+                  .plex_poster {
                     width: 6vw !important;
                     margin-right: 1vw !important;
                     margin-left: 0vw !important;
                     position: absolute !important;
                     margin-top: 0.7vw !important;
                   }
-                  .rece_poster:nth-child(1) {
+                  .plex_poster:nth-child(1) {
                     left: 0vw;
                   }
-                  .rece_poster:nth-child(2) {
+                  .plex_poster:nth-child(2) {
                     left: 7vw;
                   }
-                  .rece_poster:nth-child(3) {
+                  .plex_poster:nth-child(3) {
                     left: 14vw;
                   }
-                  .rece_poster:nth-child(4) {
+                  .plex_poster:nth-child(4) {
                     left: 21vw;
                   }
-                  .rece_poster:nth-child(5) {
+                  .plex_poster:nth-child(5) {
                     left: 28vw;
                   }
-                  .rece_poster:nth-child(6) {
+                  .plex_poster:nth-child(6) {
                     left: 35vw;
                   }
-                  .rece_poster:nth-child(7) {
+                  .plex_poster:nth-child(7) {
                     left: 42vw;
                   }
-                  .rece_poster .rece_svg_poster {
+                  .plex_poster .plex_svg_poster {
                     position: absolute !important;
                     bottom: 5%;
                     left: 0;
@@ -524,25 +462,25 @@ elements:
                     transition-duration: 150ms;
                     overflow: hidden !important;
                   }
-                  .rece_container_poster{
+                  .plex_container_poster{
                     width: 100% !important;
                     outline: none !important;
                     margin: 0px !important;
                   }
-                  .rece_svg_poster > rect {
+                  .plex_svg_poster > rect {
                    fill: none !important;
                   }
-                  .rece_poster .rece_svg_poster:hover {
+                  .plex_poster .plex_svg_poster:hover {
                     opacity: 0%;
                     transition-duration: 200ms;
                   }
-                  .rece_line0_poster {
+                  .plex_line0_poster {
                     font-size: 0.4vw !important;
                   }
-                  .rece_line1_poster {
+                  .plex_line1_poster {
                     font-size: 1.6vw !important;
                   }
-                  .rece_line2_poster {
+                  .plex_line2_poster {
                     font-size: 1.5vw !important;
                   }
               view_layout:
@@ -550,7 +488,7 @@ elements:
               title: Séries récentes
 
             - type: 'custom:upcoming-media-card'
-              entity: sensor.recently_added_movies
+              entity: sensor.plex_recently_added_movie
               max: 7
               flag: false
               date: ddmm
@@ -578,68 +516,6 @@ elements:
                   ha-card > div {
                     padding: 0px !important;
                   }
-                  /*.sona_poster {
-                    width: 6vw !important;
-                    margin-right: 1vw !important;
-                    margin-left: 0vw !important;
-                    position: absolute !important;
-                    margin-top: 0.7vw !important;
-                  }
-                  .sona_poster:nth-child(1) {
-                    left: 0vw;
-                  }
-                  .sona_poster:nth-child(2) {
-                    left: 7vw;
-                  }
-                  .sona_poster:nth-child(3) {
-                    left: 14vw;
-                  }
-                  .sona_poster:nth-child(4) {
-                    left: 21vw;
-                  }
-                  .sona_poster:nth-child(5) {
-                    left: 28vw;
-                  }
-                  .sona_poster:nth-child(6) {
-                    left: 35vw;
-                  }
-                  .sona_poster:nth-child(7) {
-                    left: 42vw;
-                  }
-                  .sona_poster .sona_svg_poster {
-                    position: absolute !important;
-                    bottom: 5%;
-                    left: 0;
-                    width: 90% !important;
-                    backdrop-filter: blur(10px);
-                    -webkit-backdrop-filter: blur(10px);
-                    background-color: rgba(44, 45, 67, 0.3);
-                    border-radius: 0% 1% 1% 0%;
-                    margin: 0px !important;
-                    transition-duration: 150ms;
-                    overflow: hidden !important;
-                  }
-                  .sona_container_poster{
-                    width: 100% !important;
-                    outline: none !important;
-                    margin: 0px !important;
-                  }
-                  .sona_svg_poster > rect {
-                   fill: none !important;
-                  }
-                  .sona_poster .sona_svg_poster:hover {
-                    opacity: 0%;
-                    transition-duration: 200ms;
-                  }
-                  .sona_line0_poster {
-                    font-size: 0.4vw !important;
-                  }
-                  .sona_line1_poster {
-                    font-size: 1.6vw !important;
-                  }
-                  .sona_line2_poster {
-                    font-size: 1.5vw !important;
-                  }*/
               view_layout:
                 grid-area: recentfilms
               title: Films récents
