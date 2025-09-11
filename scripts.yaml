@@ -1,4 +1,4 @@
-watch_plex:
+watch_jellyfin:
   alias: Watch Jellyfin
   sequence:
   - data: {}

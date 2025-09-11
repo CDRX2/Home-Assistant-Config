@@ -139,6 +139,7 @@ from .const import (
     CONF_ZONES,
     CONF_MINIMUM,
     CONF_MAXIMUM,
+    CONF_THRESHOLD,
     CONF_MONTH,
     EVENT_START,
     EVENT_FINISH,
@@ -222,6 +223,7 @@ from .const import (
     CONF_EXTENDED_CONFIG,
     CONF_RESTORE_FROM_ENTITY,
     CONF_SHOW_SEQUENCE_STATUS,
+    CONF_ZONE_IDS,
 )
 
 _LOGGER: Logger = getLogger(__package__)
@@ -1697,14 +1699,14 @@ class IURunQueue(list[IURun]):
         while i >= 0:
             run = self[i]
             if not run.is_sequence:
-                if run.expired and stime > run.end_time + postamble:
+                if run.expired and stime >= run.end_time + postamble:
                     self.pop_run(i)
                     modified = True
             else:
                 if (
                     run.sequence_run.expired
                     and run.expired
-                    and stime > run.end_time + postamble
+                    and stime >= run.end_time + postamble
                 ):
                     self.pop_run(i)
                     modified = True
@@ -1827,6 +1829,7 @@ class IUScheduleQueue(IURunQueue):
         # Config variables
         self._minimum: timedelta = None
         self._maximum: timedelta = None
+        self._threshold: timedelta = None
 
     def constrain(self, duration: timedelta) -> timedelta:
         """Impose constraints on the duration"""
@@ -1834,6 +1837,8 @@ class IUScheduleQueue(IURunQueue):
             duration = max(duration, self._minimum)
         if self._maximum is not None:
             duration = min(duration, self._maximum)
+        if self._threshold is not None and duration < self._threshold:
+            duration = timedelta(0)
         return duration
 
     def clear_runs(self) -> bool:
@@ -1945,8 +1950,10 @@ class IUScheduleQueue(IURunQueue):
         if all_zones is not None:
             self._minimum = wash_td(all_zones.get(CONF_MINIMUM, self._minimum))
             self._maximum = wash_td(all_zones.get(CONF_MAXIMUM, self._maximum))
+            self._threshold = wash_td(all_zones.get(CONF_THRESHOLD, self._threshold))
         self._minimum = wash_td(config.get(CONF_MINIMUM, self._minimum))
         self._maximum = wash_td(config.get(CONF_MAXIMUM, self._maximum))
+        self._threshold = wash_td(config.get(CONF_THRESHOLD, self._threshold))
         return self
 
 
@@ -2915,6 +2922,8 @@ class IUSequenceRun(IUBase):
                             duration_adjusted = zone.runs.constrain(duration_adjusted)
                         else:
                             duration_adjusted = duration
+                        if duration_adjusted == timedelta(0):
+                            continue
 
                         zone_run_time = next_run
                         for zone_repeat in range(sequence_zone.repeat):
@@ -3492,12 +3501,11 @@ class IUSequenceQueue(list[IUSequenceRun]):
         super().clear()
 
     def clear_runs(self) -> bool:
-        """Clear out the queue except for manual and running schedules."""
+        """Clear out future schedules."""
         modified = False
         i = len(self) - 1
         while i >= 0:
-            sqr = self[i]
-            if not (sqr.is_manual() or sqr.running):
+            if (sqr := self[i]).future:
                 for run in sqr.runs:
                     run.zone.runs.remove_run(run)
                     run.zone.request_update()
@@ -3534,9 +3542,7 @@ class IUSequenceQueue(list[IUSequenceRun]):
         i = len(self) - 1
         while i >= 0:
             sqr = self[i]
-            if sqr.expired and stime > sqr.end_time + postamble:
-                self._current_run = None
-                self._next_run = None
+            if sqr.expired and stime >= sqr.end_time + postamble:
                 self.pop(i)
                 modified = True
             i -= 1
@@ -3545,6 +3551,13 @@ class IUSequenceQueue(list[IUSequenceRun]):
     def update_queue(self, stime: datetime) -> IURQStatus:
         """Update the run queue"""
         # pylint: disable=too-many-branches
+
+        def valid_current(run: IUSequenceRun) -> bool:
+            return (run.running or run.paused) and run.on_time() != timedelta(0)
+
+        def valid_next(run: IUSequenceRun) -> bool:
+            return run.future and run.on_time() != timedelta(0)
+
         status = IURQStatus(0)
 
         if self.sort():
@@ -3552,21 +3565,25 @@ class IUSequenceQueue(list[IUSequenceRun]):
 
         for run in self:
             if run.update(stime):
-                self._current_run = None
-                self._next_run = None
                 status |= IURQStatus.CHANGED
 
+        if self._current_run is not None and not valid_current(self._current_run):
+            self._current_run = None
+            status |= IURQStatus.UPDATED
         if self._current_run is None:
             for run in self:
-                if (run.running or run.paused) and run.on_time() != timedelta(0):
+                if valid_current(run):
                     self._current_run = run
                     self._next_run = None
                     status |= IURQStatus.UPDATED
                     break
 
+        if self._next_run is not None and not valid_next(self._next_run):
+            self._next_run = None
+            status |= IURQStatus.UPDATED
         if self._next_run is None:
             for run in self:
-                if not (run.running or run.paused) and run.on_time() != timedelta(0):
+                if valid_next(run):
                     self._next_run = run
                     status |= IURQStatus.UPDATED
                     break
@@ -3985,7 +4002,7 @@ class IUSequence(IUBase):
             result = self.add_zone(IUSequenceZone(self._controller, self, index))
         return result
 
-    def zone_list(self) -> Iterator[list[IUZone]]:
+    def zone_list(self) -> Iterator[IUZone]:
         """Generator to return all referenced zones"""
         result: set[IUZone] = set()
         for sequence_zone in self._zones:
@@ -4579,7 +4596,9 @@ class IUController(IUBase):
         self._preamble = wash_td(config.get(CONF_PREAMBLE))
         self._postamble = wash_td(config.get(CONF_POSTAMBLE))
         self._queue_manual = config.get(CONF_QUEUE_MANUAL, self._queue_manual)
-        self._show_sequence_status = config.get(CONF_SHOW_SEQUENCE_STATUS, self._show_sequence_status)
+        self._show_sequence_status = config.get(
+            CONF_SHOW_SEQUENCE_STATUS, self._show_sequence_status
+        )
         all_zones = config.get(CONF_ALL_ZONES_CONFIG)
         zidx: int = 0
         for zidx, zone_config in enumerate(config[CONF_ZONES]):
@@ -4964,19 +4983,40 @@ class IUController(IUBase):
         indexes and validate"""
         if sequences is None:
             return None
-        sequence_list: list[int] = []
+        result: list[int] = []
         if sequences == [0]:
-            sequence_list.extend(sequence.index for sequence in self._sequences)
+            result.extend(s.index for s in self._sequences)
         else:
-            for sequence_id in sequences:
-                id = int(sequence_id) - 1
-                if self.get_sequence(id) is not None:
-                    sequence_list.append(id)
+            for id in sequences:
+                if isinstance(id, int):
+                    sequence = self.get_sequence(id - 1)
                 else:
-                    self._coordinator.logger.log_invalid_sequence(
-                        stime, self, sequence_id
-                    )
-        return sequence_list
+                    sequence = self.find_sequence_by_id(id)
+                if sequence is not None:
+                    result.append(sequence.index)
+                else:
+                    self._coordinator.logger.log_invalid_sequence(stime, self, id)
+        return result
+
+    def decode_zone_id(self, stime: datetime, zones: list | None) -> list[int] | None:
+        """Covert supplied 1's based id or zone_id into a list of indexes
+        and validate"""
+        if zones is None:
+            return None
+        result: list[int] = []
+        if zones == [0]:
+            result.extend(z.index for z in self._zones)
+        else:
+            for id in zones:
+                if isinstance(id, int):
+                    zone = self.get_zone(id - 1)
+                else:
+                    zone = self.find_zone_by_zone_id(id)
+                if zone is not None:
+                    result.append(zone.index)
+                else:
+                    self._coordinator.logger.log_invalid_zone(stime, self, id)
+        return result
 
     def manual_run_start(
         self, stime: datetime, delay: timedelta, queue: bool
@@ -5039,11 +5079,11 @@ class IUController(IUBase):
         """Handler for the adjust_time service call"""
         # pylint: disable=too-many-nested-blocks
         changed = False
-        zone_list: list[int] = data.get(CONF_ZONES)
         sequence_list = self.decode_sequence_id(stime, data.get(CONF_SEQUENCE_ID))
         if sequence_list is None:
+            zone_list = self.decode_zone_id(stime, data.get(CONF_ZONES))
             for zone in self._zones:
-                if check_item(zone.index, zone_list):
+                if zone_list is None or zone.index in zone_list:
                     if zone.service_adjust_time(data, stime):
                         self.clear_zone_runs(zone)
                         changed = True
@@ -5058,9 +5098,9 @@ class IUController(IUBase):
         """Handler for the manual_run service call"""
         sequence_list = self.decode_sequence_id(stime, data.get(CONF_SEQUENCE_ID))
         if sequence_list is None:
-            zone_list: list[int] = data.get(CONF_ZONES, None)
+            zone_list = self.decode_zone_id(stime, data.get(CONF_ZONES, None))
             for zone in self._zones:
-                if zone_list is None or zone.index + 1 in zone_list:
+                if zone_list is None or zone.index in zone_list:
                     zone.service_manual_run(data, stime)
         else:
             for sequence in (self.get_sequence(sqid) for sqid in sequence_list):
@@ -5765,8 +5805,29 @@ class IULogger:
         at the controller"""
         self._format(level, "ENTITY", vtime, "Sequence specified but entity_id is zone")
 
+    def log_invalid_zone(
+        self,
+        vtime: datetime,
+        controller: IUController,
+        zone_id: int | str,
+        level=WARNING,
+    ) -> None:
+        """Warn that a service call with a zone is invalid"""
+        self._format(
+            level,
+            "ZONE_ID",
+            vtime,
+            f"Invalid zone id: "
+            f"controller: {IUBase.ids(controller, '0', 1)}, "
+            f"zone: {zone_id}",
+        )
+
     def log_invalid_sequence(
-        self, vtime: datetime, controller: IUController, sequence_id: int, level=WARNING
+        self,
+        vtime: datetime,
+        controller: IUController | None,
+        sequence_id: int | str,
+        level=WARNING,
     ) -> None:
         """Warn that a service call with a sequence_id is invalid"""
         self._format(
@@ -6545,6 +6606,14 @@ class IUCoordinator:
     ) -> None:
         """Send out a notification for start/finish to a sequence"""
         # pylint: disable=too-many-arguments
+
+        def zone_ids(sqr: IUSequenceRun) -> list[str]:
+            result: set[str] = set()
+            for run in sqr.runs:
+                if run.duration > timedelta(0):
+                    result.add(run.zone.zone_id)
+            return sorted(result)
+
         data = {
             CONF_ENTITY_ID: sequence.entity_id,
             CONF_CONTROLLER: {
@@ -6558,6 +6627,7 @@ class IUCoordinator:
                 CONF_NAME: sequence.name,
             },
             CONF_RUN: {CONF_DURATION: round(sequence_run.total_time.total_seconds())},
+            CONF_ZONE_IDS: zone_ids(sequence_run),
         }
         if schedule is not None:
             data[CONF_SCHEDULE] = {
