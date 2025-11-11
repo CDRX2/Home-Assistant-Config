@@ -6,7 +6,7 @@ from datetime import datetime, time, timedelta, timezone, date
 from collections import deque
 from collections.abc import Iterator
 from types import MappingProxyType
-from typing import OrderedDict, NamedTuple, Callable, Awaitable
+from typing import OrderedDict, NamedTuple, Callable, Awaitable, Iterable
 from logging import WARNING, Logger, getLogger, INFO, DEBUG, ERROR
 import uuid
 import time as tm
@@ -33,31 +33,31 @@ from homeassistant.util import dt
 from homeassistant.helpers import config_validation as cv
 
 from homeassistant.const import (
+    ATTR_ENTITY_ID,
     ATTR_ICON,
     CONF_AFTER,
     CONF_BEFORE,
     CONF_DELAY,
     CONF_ENTITY_ID,
+    CONF_FOR,
     CONF_ICON,
     CONF_NAME,
     CONF_REPEAT,
     CONF_STATE,
+    CONF_UNTIL,
     CONF_WEEKDAY,
     EVENT_HOMEASSISTANT_STOP,
+    SERVICE_CLOSE_COVER,
+    SERVICE_CLOSE_VALVE,
+    SERVICE_OPEN_COVER,
+    SERVICE_OPEN_VALVE,
     SERVICE_TURN_OFF,
     SERVICE_TURN_ON,
-    SERVICE_CLOSE_VALVE,
-    SERVICE_OPEN_VALVE,
-    SERVICE_CLOSE_COVER,
-    SERVICE_OPEN_COVER,
+    STATE_CLOSED,
     STATE_OFF,
     STATE_ON,
-    STATE_CLOSED,
     STATE_OPEN,
     WEEKDAYS,
-    ATTR_ENTITY_ID,
-    CONF_FOR,
-    CONF_UNTIL,
     Platform,
 )
 
@@ -67,6 +67,8 @@ from .const import (
     ATTR_ADJUSTED_DURATION,
     ATTR_ADJUSTMENT,
     ATTR_BASE_DURATION,
+    ATTR_CONTROLLER,
+    ATTR_CONTROLLER_ID,
     ATTR_CURRENT_DURATION,
     ATTR_DEFAULT_DELAY,
     ATTR_DEFAULT_DURATION,
@@ -74,156 +76,166 @@ from .const import (
     ATTR_DURATION_FACTOR,
     ATTR_ENABLED,
     ATTR_FINAL_DURATION,
+    ATTR_FLOW_RATE,
+    ATTR_ID,
     ATTR_INDEX,
+    ATTR_IU_ID,
     ATTR_NAME,
     ATTR_SCHEDULE,
     ATTR_START,
     ATTR_STATUS,
+    ATTR_SUSPENDED,
     ATTR_SWITCH_ENTITIES,
     ATTR_TOTAL_DELAY,
     ATTR_TOTAL_DURATION,
-    ATTR_ZONE_IDS,
+    ATTR_TYPE,
+    ATTR_VOLUME,
+    ATTR_ZONE,
     ATTR_ZONES,
-    ATTR_SUSPENDED,
+    ATTR_ZONE_ID,
+    ATTR_ZONE_IDS,
     BINARY_SENSOR,
     CONF_ACTUAL,
-    CONF_ALL_ZONES_CONFIG,
     CONF_ALLOW_MANUAL,
+    CONF_ALL_ZONES_CONFIG,
+    CONF_ANCHOR,
+    CONF_AUTOPLAY,
+    CONF_CHECK_BACK,
     CONF_CLOCK,
+    CONF_CONFIG,
     CONF_CONTROLLER,
-    CONF_ZONE,
-    CONF_MODE,
-    CONF_RENAME_ENTITIES,
-    CONF_ENTITY_BASE,
-    CONF_RUN,
-    CONF_SYNC_SWITCHES,
-    DOMAIN,
+    CONF_CONTROLLERS,
+    CONF_CONTROLLER_ID,
+    CONF_CRON,
     CONF_DAY,
     CONF_DECREASE,
+    CONF_DURATION,
+    CONF_ENABLED,
+    CONF_END,
+    CONF_ENTITY_BASE,
+    CONF_ENTITY_STATES,
+    CONF_EVEN,
+    CONF_EVERY_N_DAYS,
+    CONF_EXPECTED,
+    CONF_EXTENDED_CONFIG,
     CONF_FINISH,
+    CONF_FIXED,
+    CONF_FLOW_RATE_PRECISION,
+    CONF_FLOW_RATE_SCALE,
+    CONF_FOUND,
+    CONF_FROM,
+    CONF_FUTURE_SPAN,
+    CONF_GRANULARITY,
     CONF_INCREASE,
     CONF_INDEX,
     CONF_LOGGING,
+    CONF_MAXIMUM,
+    CONF_MAX_LOG_ENTRIES,
+    CONF_MINIMUM,
+    CONF_MODE,
+    CONF_MONTH,
+    CONF_ODD,
     CONF_OUTPUT_EVENTS,
     CONF_PERCENTAGE,
+    CONF_POSTAMBLE,
+    CONF_PREAMBLE,
+    CONF_QUEUE,
+    CONF_QUEUE_MANUAL,
     CONF_REFRESH_INTERVAL,
+    CONF_RENAME_ENTITIES,
     CONF_RESET,
+    CONF_RESTORE_FROM_ENTITY,
     CONF_RESULTS,
+    CONF_RESYNC,
+    CONF_RETRIES,
+    CONF_RUN,
     CONF_SCHEDULE,
+    CONF_SCHEDULES,
+    CONF_SCHEDULE_ID,
     CONF_SEQUENCE,
-    CONF_SEQUENCE_ZONES,
     CONF_SEQUENCES,
     CONF_SEQUENCE_ID,
+    CONF_SEQUENCE_ZONES,
+    CONF_SHOW,
+    CONF_SHOW_CONFIG,
     CONF_SHOW_LOG,
-    CONF_AUTOPLAY,
-    CONF_ANCHOR,
+    CONF_SHOW_SEQUENCE_STATUS,
+    CONF_SPEED,
+    CONF_START,
+    CONF_START_N_DAYS,
+    CONF_STATES,
+    CONF_SUN,
+    CONF_SYNC_SWITCHES,
+    CONF_TESTING,
+    CONF_THRESHOLD,
+    CONF_TIME,
+    CONF_TIMELINE,
+    CONF_TIMES,
+    CONF_TOGGLE,
+    CONF_USER,
     CONF_VERSION,
+    CONF_VOLUME,
+    CONF_VOLUME_PRECISION,
+    CONF_VOLUME_SCALE,
+    CONF_ZONE,
+    CONF_ZONES,
+    CONF_ZONE_ID,
+    CONF_ZONE_IDS,
     COORDINATOR,
     DEFAULT_GRANULARITY,
+    DEFAULT_MAX_LOG_ENTRIES,
     DEFAULT_REFRESH_INTERVAL,
     DEFAULT_TEST_SPEED,
-    CONF_DURATION,
-    CONF_ENABLED,
-    CONF_GRANULARITY,
-    CONF_TIME,
-    CONF_SUN,
-    CONF_PREAMBLE,
-    CONF_POSTAMBLE,
-    CONF_TESTING,
-    CONF_SPEED,
-    CONF_TIMES,
-    CONF_START,
-    CONF_END,
-    CONF_CONTROLLERS,
-    CONF_SCHEDULES,
-    CONF_ZONES,
-    CONF_MINIMUM,
-    CONF_MAXIMUM,
-    CONF_THRESHOLD,
-    CONF_MONTH,
-    EVENT_START,
+    DOMAIN,
     EVENT_FINISH,
+    EVENT_START,
+    EVENT_SWITCH_ERROR,
+    EVENT_SYNC_ERROR,
+    EVENT_VALVE_OFF,
+    EVENT_VALVE_ON,
     ICON_BLOCKED,
+    ICON_CONTROLLER_DELAY,
     ICON_CONTROLLER_OFF,
     ICON_CONTROLLER_ON,
-    ICON_CONTROLLER_DELAY,
     ICON_DISABLED,
-    ICON_SUSPENDED,
     ICON_SEQUENCE_DELAY,
+    ICON_SEQUENCE_OFF,
+    ICON_SEQUENCE_ON,
     ICON_SEQUENCE_PAUSED,
     ICON_SEQUENCE_ZONE_OFF,
     ICON_SEQUENCE_ZONE_ON,
+    ICON_SUSPENDED,
     ICON_ZONE_OFF,
     ICON_ZONE_ON,
-    ICON_SEQUENCE_OFF,
-    ICON_SEQUENCE_ON,
+    MONTHS,
     RES_MANUAL,
     RES_TIMELINE_HISTORY,
     RES_TIMELINE_NEXT,
     RES_TIMELINE_RUNNING,
     RES_TIMELINE_SCHEDULED,
+    SERVICE_CANCEL,
+    SERVICE_DISABLE,
+    SERVICE_ENABLE,
+    SERVICE_LOAD_SCHEDULE,
+    SERVICE_MANUAL_RUN,
+    SERVICE_PAUSE,
+    SERVICE_RESUME,
+    SERVICE_SKIP,
+    SERVICE_SUSPEND,
+    SERVICE_TIME_ADJUST,
+    SERVICE_TOGGLE,
+    STATUS_BLOCKED,
+    STATUS_DELAY,
+    STATUS_DISABLED,
+    STATUS_INITIALISING,
+    STATUS_PAUSED,
+    STATUS_SUSPENDED,
     TIMELINE_ADJUSTMENT,
     TIMELINE_END,
     TIMELINE_SCHEDULE,
     TIMELINE_SCHEDULE_NAME,
     TIMELINE_START,
-    MONTHS,
-    CONF_ODD,
-    CONF_EVEN,
-    CONF_SHOW,
-    CONF_CONFIG,
-    CONF_TIMELINE,
-    CONF_CONTROLLER_ID,
-    CONF_ZONE_ID,
-    CONF_FUTURE_SPAN,
-    SERVICE_CANCEL,
-    SERVICE_DISABLE,
-    SERVICE_ENABLE,
-    SERVICE_TOGGLE,
-    SERVICE_MANUAL_RUN,
-    SERVICE_TIME_ADJUST,
-    SERVICE_LOAD_SCHEDULE,
-    SERVICE_SUSPEND,
-    SERVICE_SKIP,
-    SERVICE_PAUSE,
-    SERVICE_RESUME,
-    STATUS_BLOCKED,
-    STATUS_DELAY,
-    STATUS_PAUSED,
-    STATUS_DISABLED,
-    STATUS_SUSPENDED,
-    STATUS_INITIALISING,
     TIMELINE_STATUS,
-    CONF_FIXED,
-    CONF_MAX_LOG_ENTRIES,
-    DEFAULT_MAX_LOG_ENTRIES,
-    CONF_CRON,
-    CONF_EVERY_N_DAYS,
-    CONF_START_N_DAYS,
-    CONF_CHECK_BACK,
-    CONF_STATES,
-    CONF_RETRIES,
-    CONF_RESYNC,
-    EVENT_SYNC_ERROR,
-    EVENT_SWITCH_ERROR,
-    CONF_FOUND,
-    CONF_EXPECTED,
-    CONF_SCHEDULE_ID,
-    CONF_FROM,
-    CONF_VOLUME,
-    CONF_VOLUME_PRECISION,
-    CONF_VOLUME_SCALE,
-    CONF_FLOW_RATE_PRECISION,
-    CONF_FLOW_RATE_SCALE,
-    CONF_QUEUE,
-    CONF_QUEUE_MANUAL,
-    CONF_USER,
-    CONF_TOGGLE,
-    CONF_SHOW_CONFIG,
-    CONF_EXTENDED_CONFIG,
-    CONF_RESTORE_FROM_ENTITY,
-    CONF_SHOW_SEQUENCE_STATUS,
-    CONF_ZONE_IDS,
 )
 
 _LOGGER: Logger = getLogger(__package__)
@@ -324,11 +336,6 @@ def str_to_td(atime: str) -> timedelta:
     return timedelta(hours=dur.hour, minutes=dur.minute, seconds=dur.second)
 
 
-def utc_eot() -> datetime:
-    """Return the end of time in UTC format"""
-    return datetime.max.replace(tzinfo=timezone.utc)
-
-
 def render_positive_time_period(data: dict, key: str) -> None:
     """Resolve a template that specifies a timedelta"""
     if key in data:
@@ -369,6 +376,35 @@ def suspend_until_date(
     else:
         suspend_time = None
     return wash_dt(suspend_time)
+
+
+class IUDTMin:
+    """Class to record a minimum datetime value. The default value is
+    the end of time"""
+
+    eot = datetime.max.replace(tzinfo=timezone.utc)
+
+    def __init__(self, *args: datetime | Iterable[datetime]):
+        self.min = self.eot
+        for arg in args:
+            self.record(arg)
+
+    def record(self, dates: datetime | Iterable[datetime] | None) -> "IUDTMin":
+        """Take note of the value(s) passed and record the new minimum. None
+        values are ignored"""
+
+        def check_item(d: datetime):
+            if d < self.min:
+                self.min = d
+            return
+
+        if isinstance(dates, datetime):
+            check_item(dates)
+        elif isinstance(dates, Iterable):
+            for item in dates:
+                if item is not None:
+                    check_item(item)
+        return self
 
 
 class IUJSONEncoder(json.JSONEncoder):
@@ -848,6 +884,7 @@ class IUSwitch:
         self._zone = zone
         # Config parameters
         self._switch_entity_id: list[str]
+        self._switch_entity_states = "all"
         self._check_back_states = "all"
         self._check_back_delay = timedelta(seconds=30)
         self._check_back_retries: int = 3
@@ -871,6 +908,13 @@ class IUSwitch:
                 return STATE_OPEN if state else STATE_CLOSED
             case _:
                 return STATE_ON if state else STATE_OFF
+
+    def _allow_set(self, state: bool) -> bool:
+        return (
+            self._switch_entity_states == "all"
+            or (self._switch_entity_states == "on" and state)
+            or (self._switch_entity_states == "off" and not state)
+        )
 
     def _set_switch(self, entity_id: str | list[str], state: bool) -> None:
         """Make the HA call to physically turn the switch on/off"""
@@ -898,6 +942,15 @@ class IUSwitch:
                 make_call(ent)
         else:
             make_call(entity_id)
+
+    def _notify_valve(
+        self, reason: int, stime: datetime, entity_id: str | list[str]
+    ) -> None:
+        """Send out a valve notification"""
+
+        self._coordinator.notify_valve(
+            reason, stime, self._state, entity_id, self._controller, self._zone
+        )
 
     def _check_back(self, atime: datetime) -> None:
         """Recheck the switch in HA to see if state concurs"""
@@ -931,9 +984,7 @@ class IUSwitch:
 
     def next_event(self) -> datetime:
         """Return the next time of interest"""
-        if self._check_back_time is not None:
-            return self._check_back_time
-        return utc_eot()
+        return IUDTMin(self._check_back_time).min
 
     def clear(self) -> None:
         """Reset this object"""
@@ -943,6 +994,11 @@ class IUSwitch:
         """Load switch data from the configuration"""
 
         def load_params(config: OrderedDict) -> None:
+            self._switch_entity_states = config.get(
+                CONF_ENTITY_STATES, self._switch_entity_states
+            )
+
+        def load_check_back_params(config: OrderedDict) -> None:
             if config is None:
                 return
             self._check_back_states = config.get(CONF_STATES, self._check_back_states)
@@ -958,10 +1014,12 @@ class IUSwitch:
             self._check_back_toggle = config.get(CONF_TOGGLE, self._check_back_toggle)
 
         self.clear()
-        self._switch_entity_id = config.get(CONF_ENTITY_ID)
         if all_zones is not None:
-            load_params(all_zones.get(CONF_CHECK_BACK))
-        load_params(config.get(CONF_CHECK_BACK))
+            load_params(all_zones)
+            load_check_back_params(all_zones.get(CONF_CHECK_BACK))
+        self._switch_entity_id = config.get(CONF_ENTITY_ID)
+        load_params(config)
+        load_check_back_params(config.get(CONF_CHECK_BACK))
         return self
 
     def muster(self, stime: datetime) -> int:
@@ -996,10 +1054,12 @@ class IUSwitch:
 
             return is_valid
 
-        def do_resync(entity_id: str) -> None:
-            if self._check_back_toggle:
-                self._set_switch(entity_id, not self._state)
-            self._set_switch(entity_id, self._state)
+        def do_resync(stime: datetime, entity_id: str) -> None:
+            if self._allow_set(self._state):
+                if self._check_back_toggle:
+                    self._set_switch(entity_id, not self._state)
+                self._set_switch(entity_id, self._state)
+            self._notify_valve(2, stime, entity_id)
 
         if self._switch_entity_id is not None:
             if self._check_back_entity_id is None:
@@ -1007,12 +1067,12 @@ class IUSwitch:
                     expected = self._state_name(entity_id, self._state)
                     if not _check_entity(entity_id, expected):
                         if resync:
-                            do_resync(entity_id)
+                            do_resync(stime, entity_id)
             else:
                 expected = self._state_name(self._check_back_entity_id, self._state)
                 if not _check_entity(self._check_back_entity_id, expected):
                     if resync and len(self._switch_entity_id) == 1:
-                        do_resync(self._switch_entity_id)
+                        do_resync(stime, self._switch_entity_id)
         return result
 
     def call_switch(self, state: bool, stime: datetime = None) -> None:
@@ -1024,7 +1084,8 @@ class IUSwitch:
                 self.check_switch(stime, False, True)
                 self._check_back_time = None
             self._state = state
-            self._set_switch(self._switch_entity_id, state)
+            if self._allow_set(state):
+                self._set_switch(self._switch_entity_id, state)
             if stime is not None and (
                 self._check_back_states == "all"
                 or (self._check_back_states == "on" and state)
@@ -1032,6 +1093,9 @@ class IUSwitch:
             ):
                 self._check_back_resync_count = 0
                 self._check_back_time = stime + self._check_back_delay
+        else:
+            self._state = state
+        self._notify_valve(1, stime, self._switch_entity_id)
 
 
 class IUVolumeSensorError(Exception):
@@ -1576,6 +1640,7 @@ class IURunQueue(list[IURun]):
         self._sorted: bool = False
         self._cancel_request: datetime = None
         self._next_event: datetime = None
+        self._last_check_run: IURun = None
 
     @property
     def current_run(self) -> IURun:
@@ -1681,14 +1746,11 @@ class IURunQueue(list[IURun]):
                 start = run.start_time
             return start.replace(tzinfo=None).isoformat(timespec="seconds")
 
-        modified: bool = False
-        if not self._sorted:
-            super().sort(key=sorter)
-            self._current_run = None
-            self._next_run = None
-            self._sorted = True
-            modified = True
-        return modified
+        if self._sorted:
+            return False
+        super().sort(key=sorter)
+        self._sorted = True
+        return True
 
     def remove_expired(self, stime: datetime, postamble: timedelta) -> bool:
         """Remove any expired runs from the queue"""
@@ -1721,8 +1783,6 @@ class IURunQueue(list[IURun]):
         ):
             if len(self) > 0:
                 self.pop_run(0)
-            self._current_run = None
-            self._next_run = None
             modified = True
         return modified
 
@@ -1748,6 +1808,16 @@ class IURunQueue(list[IURun]):
         for run in self:
             run.update_status(stime)
 
+    def check_last_run(self) -> bool:
+        """When on see if the run has changed"""
+        result = (
+            self._current_run is not None
+            and self._last_check_run is not None
+            and self._current_run != self._last_check_run
+        )
+        self._last_check_run = self._current_run
+        return result
+
     def update_queue(self) -> IURQStatus:
         """Update the run queue. Sort the queue, remove expired runs
         and set current and next runs. This is the final operation after
@@ -1759,6 +1829,8 @@ class IURunQueue(list[IURun]):
         status = IURQStatus(0)
 
         if self.sort():
+            self._current_run = None
+            self._next_run = None
             status |= IURQStatus.SORTED
 
         if self._cancel_request is not None:
@@ -1790,14 +1862,11 @@ class IURunQueue(list[IURun]):
                     break
 
         # Figure out the next state change
-        dates: list[datetime] = [utc_eot()]
+        dmin = IUDTMin()
         for run in self:
             if not (run.expired or run.paused):
-                if run.running:
-                    dates.append(run.end_time)
-                else:
-                    dates.append(run.start_time)
-        self._next_event = min(dates)
+                dmin.record(run.end_time if run.running else run.start_time)
+        self._next_event = dmin.min
 
         return status
 
@@ -1809,9 +1878,7 @@ class IURunQueue(list[IURun]):
 
     def next_event(self) -> datetime:
         """Return the time of the next state change"""
-        dates: list[datetime] = [self._next_event]
-        dates.append(self._cancel_request)
-        return min(d for d in dates if d is not None)
+        return IUDTMin(self._next_event, self._cancel_request).min
 
     def as_list(self) -> list:
         """Return a list of runs"""
@@ -1889,8 +1956,6 @@ class IUScheduleQueue(IURunQueue):
         elif self._current_run is not None and not self._current_run.is_manual():
             self.pop_run(0)
 
-        self._current_run = None
-        self._next_run = None
         duration = max(duration, granularity_time())
         return self.add(stime, start_time, duration, zone, None, None)
 
@@ -2150,6 +2215,11 @@ class IUZone(IUBase):
     def user(self) -> dict:
         """Return the arbitrary user information"""
         return self._user
+
+    @property
+    def switch(self) -> IUSwitch:
+        """Return the switch"""
+        return self._switch
 
     def _is_setup(self) -> bool:
         """Check if this object is setup"""
@@ -2439,14 +2509,12 @@ class IUZone(IUBase):
 
     def next_awakening(self) -> datetime:
         """Return the next event time"""
-        dates: list[datetime] = [
-            self._run_queue.next_event(),
-            self._switch.next_event(),
-        ]
+        dmin = IUDTMin(
+            self._suspend_until, self._run_queue.next_event(), self._switch.next_event()
+        )
         if self._is_on and self._sensor_last_update is not None:
-            dates.append(self._sensor_last_update + self._coordinator.refresh_interval)
-        dates.append(self._suspend_until)
-        return min(d for d in dates if d is not None)
+            dmin.record(self._sensor_last_update + self._coordinator.refresh_interval)
+        return dmin.min
 
     def check_switch(self, resync: bool, stime: datetime) -> list[str]:
         """Check the linked entity is in sync"""
@@ -2729,10 +2797,7 @@ class IUSequenceZone(IUBase):
 
     def next_awakening(self) -> datetime:
         """Return the next event time"""
-        result = utc_eot()
-        if self._suspend_until is not None:
-            result = min(self._suspend_until, result)
-        return result
+        return IUDTMin(self._suspend_until).min
 
 
 class IUSequenceZoneRun(NamedTuple):
@@ -3588,13 +3653,10 @@ class IUSequenceQueue(list[IUSequenceRun]):
                     status |= IURQStatus.UPDATED
                     break
 
-        dates: list[datetime] = [utc_eot()]
+        dmin = IUDTMin()
         for run in self:
-            if run.running:
-                dates.append(run.end_time)
-            else:
-                dates.append(run.start_time)
-        self._next_event = min(dates)
+            dmin.record(run.end_time if run.running else run.start_time)
+        self._next_event = dmin.min
 
         return status
 
@@ -4147,10 +4209,9 @@ class IUSequence(IUBase):
 
     def next_awakening(self) -> datetime:
         """Return the next event time"""
-        dates: list[datetime] = [utc_eot()]
-        dates.append(self._suspend_until)
-        dates.extend(sqz.next_awakening() for sqz in self._zones)
-        return min(d for d in dates if d is not None)
+        return IUDTMin(
+            self._suspend_until, (sqz.next_awakening() for sqz in self._zones)
+        ).min
 
     def finalise(self) -> None:
         """Shutdown the sequence"""
@@ -4869,12 +4930,20 @@ class IUController(IUBase):
                 self._volume.start_record(stime)
             else:
                 self._volume.end_record(stime)
+        if self._run_queue.check_last_run():
+            self._coordinator.notify_valve(
+                3, stime, True, self._switch.switch_entity_id, self, None
+            )
 
         # Handle on zones after master
         for zone in (self._zones[i] for i in zones_changed):
             if zone.is_on:
                 zone.call_switch(zone.is_on, stime)
                 zone.volume.start_record(stime)
+            if zone.runs.check_last_run():
+                self._coordinator.notify_valve(
+                    3, stime, True, zone.switch.switch_entity_id, self, zone
+                )
 
         return state_changed
 
@@ -4952,16 +5021,16 @@ class IUController(IUBase):
 
     def next_awakening(self) -> datetime:
         """Return the next event time"""
-        dates: list[datetime] = [
+        dmin = IUDTMin(
+            self._suspend_until,
             self._run_queue.next_event(),
             self._switch.next_event(),
-            self._suspend_until,
-        ]
-        dates.extend(zone.next_awakening() for zone in self._zones)
-        dates.extend(seq.next_awakening() for seq in self._sequences)
+            (zone.next_awakening() for zone in self._zones),
+            (seq.next_awakening() for seq in self._sequences),
+        )
         if self._is_on and self._sensor_last_update is not None:
-            dates.append(self._sensor_last_update + self._coordinator.refresh_interval)
-        return min(d for d in dates if d is not None)
+            dmin.record(self._sensor_last_update + self._coordinator.refresh_interval)
+        return dmin.min
 
     def check_switch(self, resync: bool, stime: datetime) -> list[str]:
         """Check the linked entity is in sync"""
@@ -6091,7 +6160,7 @@ class IUClock:
     def next_awakening(self, atime: datetime) -> datetime:
         """Return the time for the next event"""
         if self._finalised:
-            return utc_eot()
+            return IUDTMin.eot
         if not self._coordinator.initialised:
             return atime + timedelta(seconds=5)
         if self._fixed_clock:
@@ -6110,7 +6179,7 @@ class IUClock:
             result = self._coordinator.next_awakening()
 
         # Midnight rollover
-        if result == utc_eot() or (
+        if result == IUDTMin.eot or (
             dt.as_local(self._coordinator.tester.virtual_time(atime)).toordinal()
             != dt.as_local(self._coordinator.tester.virtual_time(result)).toordinal()
         ):
@@ -6585,9 +6654,7 @@ class IUCoordinator:
 
     def next_awakening(self) -> datetime:
         """Return the next event time"""
-        dates: list[datetime] = [utc_eot()]
-        dates.extend(ctr.next_awakening() for ctr in self._controllers)
-        return min(d for d in dates if d is not None)
+        return IUDTMin(ctr.next_awakening() for ctr in self._controllers).min
 
     def check_switches(self, resync: bool, stime: datetime) -> list[str]:
         """Check if entities match current status"""
@@ -6642,6 +6709,70 @@ class IUCoordinator:
                 CONF_NAME: RES_MANUAL,
             }
         self._hass.bus.fire(f"{DOMAIN}_{event_type}", data)
+
+    def notify_valve(
+        self,
+        reason: int,
+        stime: datetime,
+        state: bool,
+        entity_id: str | list[str],
+        controller: IUController,
+        zone: IUZone,
+    ) -> None:
+        """Send out notification about valve event. Reason 1=on/off, 2=sync
+        3=run change"""
+
+        def notify(event_type: str, entity: str, data: dict) -> None:
+            data[ATTR_ENTITY_ID] = entity
+            self._hass.bus.fire(f"{DOMAIN}_{event_type}", data)
+
+        event_type = EVENT_VALVE_ON if state else EVENT_VALVE_OFF
+
+        duration = timedelta(0)
+        volume: float
+        flow_rate: float
+        iu_id: str
+        uid = controller.controller_id
+        if zone is None:
+            if stime is not None and controller.runs.current_run is not None:
+                duration = controller.runs.current_run.end_time - stime
+            volume = controller.volume.total
+            flow_rate = controller.volume.flow_rate
+            iu_id = controller.unique_id
+        else:
+            if stime is not None and zone.runs.current_run is not None:
+                duration = zone.runs.current_run.end_time - stime
+            volume = zone.volume.total
+            flow_rate = zone.volume.flow_rate
+            iu_id = zone.unique_id
+            uid += "_" + zone.zone_id
+        data = {
+            ATTR_IU_ID: iu_id,
+            ATTR_ID: uid,
+            ATTR_TYPE: reason,
+            ATTR_DURATION: round(duration.total_seconds()),
+            ATTR_VOLUME: volume,
+            ATTR_FLOW_RATE: flow_rate,
+            ATTR_CONTROLLER: {
+                ATTR_INDEX: controller.index,
+                ATTR_CONTROLLER_ID: controller.controller_id,
+                ATTR_NAME: controller.name,
+            },
+        }
+        if zone is not None:
+            data[ATTR_ZONE] = {
+                ATTR_INDEX: zone.index,
+                ATTR_ZONE_ID: zone.zone_id,
+                ATTR_NAME: zone.name,
+            }
+        else:
+            data[ATTR_ZONE] = {ATTR_INDEX: None, ATTR_ZONE_ID: None, ATTR_NAME: None}
+
+        if isinstance(entity_id, list):
+            for ent in entity_id:
+                notify(event_type, ent, data)
+        else:
+            notify(event_type, entity_id, data)
 
     def notify_switch(
         self,

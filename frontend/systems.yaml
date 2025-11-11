@@ -88,12 +88,12 @@ elements:
                               name: Upload Init7
                               unit: MB/s
                               invert: true
-                            - entity: sensor.deluge_down_speed
+                            - entity: sensor.deluge_download_speed
                               color: "#FF5401"
                               transform: "return x / 1024;"
                               name: Download Deluge
                               unit: MB/s
-                            - entity: sensor.deluge_up_speed
+                            - entity: sensor.deluge_upload_speed
                               color: "#03a8f4"
                               transform: "return x*-1 / 1024;"
                               name: Upload Deluge
@@ -223,12 +223,12 @@ elements:
             name: Upload Init7
             unit: MB/s
             invert: true
-          - entity: sensor.deluge_down_speed
+          - entity: sensor.deluge_download_speed
             color: "#FF5401"
             transform: "return x / 1024;"
             name: Download Deluge
             unit: MB/s
-          - entity: sensor.deluge_up_speed
+          - entity: sensor.deluge_upload_speed
             color: "#03a8f4"
             transform: "return x*-1 / 1024;"
             name: Upload Deluge

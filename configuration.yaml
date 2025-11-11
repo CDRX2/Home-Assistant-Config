@@ -15,6 +15,9 @@ tts:
 #   logs:
 #     custom_components.asyncpioneer: debug
 
+additional_ca:
+  my_private_ca: !secret SSL_Certificate
+
 lovelace:
   mode: storage
   dashboards:
@@ -56,8 +59,13 @@ homeassistant:
         10.81.19.94: ae55fdfcf7714f1485058190846c3c8a
       allow_bypass_login: true
 
+#media_player:
+#  - platform: asyncpioneer
+#    host: !secret AVR_Host
+#    port: !secret AVR_Port
+
 media_player:
-  - platform: asyncpioneer
+  - platform: pioneer
     host: !secret AVR_Host
     port: !secret AVR_Port
 

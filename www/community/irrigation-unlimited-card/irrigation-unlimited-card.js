@@ -1512,7 +1512,7 @@ const styles = i$2 `
   }
 `;
 
-const CARD_VERSION = "2025.8.0";
+const CARD_VERSION = "2025.10.1";
 
 const loc = new localise(window.navigator.language);
 /* eslint no-console: 0 */
@@ -2100,6 +2100,7 @@ let IrrigationUnlimitedCard = class IrrigationUnlimitedCard extends s {
                 maxlength="8"
                 required
                 pattern="^[0-9]{1,2}:[0-9]{2}:[0-9]{2}$"
+                @keydown="${this._serviceSuspend}"
               />
             </div>
             <div class="iu-mc3">
@@ -2126,6 +2127,7 @@ let IrrigationUnlimitedCard = class IrrigationUnlimitedCard extends s {
                 maxlength="8"
                 required
                 pattern="^[0-9]{1,2}:[0-9]{2}:[0-9]{2}$"
+                @keydown="${this._serviceManualRun}"
               />
             </div>
             <div class="iu-mc3">
@@ -2202,6 +2204,7 @@ let IrrigationUnlimitedCard = class IrrigationUnlimitedCard extends s {
                 size="9"
                 maxlength="9"
                 pattern="^$|^[=+-][0-9]{1,2}:[0-9]{2}:[0-9]{2}$|^%[0-9]*.?[0-9]+$"
+                @keydown="${this._serviceAdjust}"
               />
             </div>
             <div class="iu-mc3">
@@ -2245,13 +2248,9 @@ let IrrigationUnlimitedCard = class IrrigationUnlimitedCard extends s {
         return palette[index % palette.length];
     }
     _clickNet(e) {
-        var _a;
-        const target = e.target;
-        if (target.closest(".iu-menu"))
+        if (e.target.closest(".iu-menu"))
             return;
-        const menus = (_a = target
-            .closest("#iu-card")) === null || _a === void 0 ? void 0 : _a.querySelectorAll(".iu-menu-content:not(.iu-hidden)");
-        menus === null || menus === void 0 ? void 0 : menus.forEach((p) => p.classList.add("iu-hidden"));
+        this._closeAllMenus(e);
     }
     _toggleCollapse(e) {
         const target = e.target.closest(".iu-collapsible");
@@ -2268,10 +2267,22 @@ let IrrigationUnlimitedCard = class IrrigationUnlimitedCard extends s {
         (_b = (_a = e.target
             .closest(".iu-controller")) === null || _a === void 0 ? void 0 : _a.querySelector(".iu-sequences")) === null || _b === void 0 ? void 0 : _b.classList.toggle("iu-hidden");
     }
+    _closeAllMenus(e) {
+        var _a;
+        const menus = (_a = e.target
+            .closest("#iu-card")) === null || _a === void 0 ? void 0 : _a.querySelectorAll(".iu-menu-content:not(.iu-hidden)");
+        menus === null || menus === void 0 ? void 0 : menus.forEach((p) => p.classList.add("iu-hidden"));
+    }
     _toggleMenu(e) {
-        var _a, _b;
-        (_b = (_a = e.target
-            .closest(".iu-menu")) === null || _a === void 0 ? void 0 : _a.querySelector(".iu-menu-content")) === null || _b === void 0 ? void 0 : _b.classList.toggle("iu-hidden");
+        var _a;
+        const menu = (_a = e.target
+            .closest(".iu-menu")) === null || _a === void 0 ? void 0 : _a.querySelector(".iu-menu-content");
+        if (menu === null || menu === void 0 ? void 0 : menu.classList.contains("iu-hidden"))
+            this._closeAllMenus(e);
+        menu === null || menu === void 0 ? void 0 : menu.classList.toggle("iu-hidden");
+    }
+    _isNotEnterKey(e) {
+        return e instanceof KeyboardEvent && e.key !== "Enter";
     }
     _get_iu_key(e) {
         var _a, _b;
@@ -2321,6 +2332,8 @@ let IrrigationUnlimitedCard = class IrrigationUnlimitedCard extends s {
     }
     _serviceSuspend(e) {
         var _a;
+        if (this._isNotEnterKey(e))
+            return;
         const data = this._build_data(e);
         if (!data)
             return;
@@ -2334,6 +2347,8 @@ let IrrigationUnlimitedCard = class IrrigationUnlimitedCard extends s {
     }
     _serviceManualRun(e) {
         var _a;
+        if (this._isNotEnterKey(e))
+            return;
         const data = this._build_data(e);
         if (!data)
             return;
@@ -2370,6 +2385,8 @@ let IrrigationUnlimitedCard = class IrrigationUnlimitedCard extends s {
     }
     _serviceAdjust(e) {
         var _a;
+        if (this._isNotEnterKey(e))
+            return;
         const data = this._build_data(e);
         if (!data)
             return;
@@ -2400,7 +2417,16 @@ let IrrigationUnlimitedCard = class IrrigationUnlimitedCard extends s {
             default:
                 return;
         }
-        this.hass.callService("irrigation_unlimited", "adjust_time", data);
+        const keys = this._get_iu_key(e);
+        if ("reset" in data && keys && keys[1] === "0" && keys[2] === "0") {
+            this.hass.callService("irrigation_unlimited", "adjust_time", data);
+            data["sequence_id"] = 0;
+            this.hass.callService("irrigation_unlimited", "adjust_time", data);
+            data["zones"] = 0;
+            this.hass.callService("irrigation_unlimited", "adjust_time", data);
+        }
+        else
+            this.hass.callService("irrigation_unlimited", "adjust_time", data);
         this._toggleMenu(e);
     }
 };
