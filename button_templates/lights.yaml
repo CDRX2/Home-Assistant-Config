@@ -129,15 +129,15 @@ dimmable_lights:
                 }
                 ha-slider {
                   min-width: 0 !important;
-                  height: 3vw;
+                  height: 0.5vw;
                 }
                 .wrapper {
-                  height: 3vw !important;
+                  height: 0.5vw !important;
                 }
               ha-slider.full$: |
                 #sliderContainer {
-                  margin-left: 10%;
-                  margin-right: 10%;
+                  padding-left: 10%;
+                  padding-right: 10%;
                 }
   styles:
     custom_fields:
@@ -146,6 +146,8 @@ dimmable_lights:
         - font-size: 0.8vw
         - '--paper-slider-active-color': '#f5d442'
         - '--paper-slider-container-color': lightgrey
+        - align-self: end
+        - margin-top: auto
 
 consumption:
   variables:
