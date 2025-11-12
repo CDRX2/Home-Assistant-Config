@@ -61,7 +61,7 @@
         "battery": 66.5,
         "occupancy_timeout": 0,
         "occupancy": false,
-        "temperature": 8.9,
+        "temperature": 8.48,
         "illuminance": 1,
         "motion_sensitivity": "medium",
         "last_seen": "2025-11-12T17:32:38.779Z",
@@ -268,7 +268,7 @@
         }
     },
     "0x680ae2fffe88a7c5": {
-        "linkquality": 72,
+        "linkquality": 69,
         "update": {
             "state": "idle",
             "installed_version": 587753009,
