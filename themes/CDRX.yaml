@@ -1,4 +1,3 @@
-
 CDRX:
   modes:
     dark:
@@ -29,6 +28,17 @@ CDRX:
       input-dropdown-icon-color: "var(--primary-text-color)"
   # Card-mod
   card-mod-theme: CDRX
+  card-mod-root: |
+    body > div[style*="position: absolute"] {
+      font-size: 1.2vw !important;
+      max-width: 30vw !important;
+      min-width: 200px !important;
+      padding: 12px !important;
+      line-height: 1.5 !important;
+      background-color: var(--card-background-color) !important;
+      border-radius: 8px !important;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3) !important;
+    }
   card-mod-more-info-yaml: |
     mwc-icon-button$: |
       .mdc-icon-button {
