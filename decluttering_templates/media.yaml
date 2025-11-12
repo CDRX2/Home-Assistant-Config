@@ -15,15 +15,15 @@ now_playing_image:
         action: navigate
         navigation_path: /lovelace-remote/remote
 
-now_playing_plex:
+now_playing_jellyfin:
   card:
     type: conditional
     conditions:
       - entity: sensor.living_room_tv_now_playing
-        state: 'Plex'
+        state: 'Jellyfin'
     card:
       type: 'custom:mini-media-player'
-      entity: media_player.plex_plex_for_lg_lg_oled77w7v_z
+      entity: 'media_player.jellyfin_lg_smart_tv'
       artwork: full-cover
       hide:
         name: true
@@ -80,7 +80,7 @@ now_playing_other:
         artwork_border: true
         power_state: true
         icon_state: true
-        shuffle: true 
+        shuffle: true
       tap_action:
         action: navigate
-        navigation_path: /lovelace-remote/remote   
+        navigation_path: /lovelace-remote/remote

@@ -806,89 +806,12 @@ elements:
 
     # when the media player is playing, this overlaps the "Media" menu button
 
-#  - type: conditional
-#    conditions:
-#      - entity: sensor.remote_select
-#        state: radio
-#    elements:
-#      - type: image
-#        image: /local/ui/sidebar/sidebarBG.png
-#        style:
-#          width: 88%
-#          height: 10%
-#          left: 50%
-#          top: 35%
-#      - type: 'custom:button-card'
-#        template: media_sidebar_state
-#        entity: media_player.pioneer_avr
-#        state_display: >
-#          [[[
-#            if (entity) {
-#              let elt = this.shadowRoot,
-#                await = setTimeout(marquee, 0),
-#                title = entity.attributes.media_title,
-#                output = title !== undefined
-#                  ? title
-#                  : variables.translate_idle;
-#              function marquee() {
-#                let state = elt.getElementById("state"),
-#                  container = elt.getElementById("container");
-#                if (state && container) {
-#                  state.innerHTML = output;
-#                  let ro = new ResizeObserver(entries => {
-#                    let spacer = "&nbsp;".repeat(3),
-#                      s = entries[0],
-#                      c = entries[1],
-#                      r = s && s.contentRect &&
-#                          c && c.contentRect &&
-#                          s.contentRect.width !== 0 &&
-#                          c.contentRect.width !== 0;
-#                    if (r && s.contentRect.width < c.contentRect.width) {
-#                      state.classList.remove("marquee");
-#                    }
-#                    else if (r && s.contentRect.width >= c.contentRect.width) {
-#                      state.innerHTML = `${output} ${spacer} ${output} ${spacer}&nbsp;`;
-#                      state.classList.add("marquee");
-#                    }
-#                  });
-#                  ro.observe(state);
-#                  ro.observe(container);
-#                }
-#              }
-#              return output;
-#            }
-#            return variables.translate_unknown;
-#          ]]]
-#        extra_styles: |
-#          .marquee {
-#            animation: marquee 20s linear infinite;
-#          }
-#          @keyframes marquee {
-#            from {
-#              transform: translateX(0%);
-#            }
-#            to {
-#              transform: translateX(-50%);
-#            }
-#          }
-#      - type: 'custom:button-card'
-#        template: media_sidebar_picture
-#        entity_picture: /local/ui/media/radio.png
-
-#  - type: conditional
-#    conditions:
-#      - entity: sensor.pioneer_avr_source
-#        state: BT AUDIO
-#    elements:
-#      - type: 'custom:button-card'
-#        template: media_sidebar
-#        entity_picture: /local/ui/media/bluetooth-audio.png
-#        label: Bluetooth
-
   - type: conditional
     conditions:
       - entity: sensor.remote_select
         state: music
+      - entity: media_player.sc_lx78
+        state_not: idle
     elements:
       - type: image
         image: /local/ui/sidebar/sidebarBG.png
@@ -971,7 +894,7 @@ elements:
   - type: conditional
     conditions:
       - entity: sensor.living_room_tv_source
-        state: Plex
+        state: Jellyfin
     elements:
       - type: image
         image: /local/ui/sidebar/sidebarBG.png
@@ -982,7 +905,7 @@ elements:
           top: 35%
       - type: 'custom:button-card'
         template: media_sidebar_state
-        entity: media_player.plex_living_room_tv
+        entity: 'media_player.jellyfin_lg_smart_tv'
         state_display: >
           [[[
             if (entity) {
@@ -994,12 +917,12 @@ elements:
                 episode_title = ` - ` + entity.attributes.media_title,
                 tvshow = series_title + series_season + series_episode + episode_title,
                 movie = entity.attributes.media_title,
-                output = states['sensor.living_room_tv_source'].state == 'Plex' && entity.attributes.media_content_type == 'tvshow'
+                output = states['sensor.living_room_tv_source'].state == 'Jellyfin' && entity.attributes.media_content_type == 'tvshow'
                   ? `${tvshow}`
-                  : states['sensor.living_room_tv_source'].state == 'Plex' && entity.attributes.media_content_type == 'movie'
+                  : states['sensor.living_room_tv_source'].state == 'Jellyfin' && entity.attributes.media_content_type == 'movie'
                     ? `${movie}`
-                    : states['sensor.living_room_tv_source'].state == 'Plex' && entity.attributes.media_content_type != 'movie' && entity.attributes.media_content_type != 'tvshow'
-                      ? `Plex`
+                    : states['sensor.living_room_tv_source'].state == 'Jellyfin' && entity.attributes.media_content_type != 'movie' && entity.attributes.media_content_type != 'tvshow'
+                      ? `Jellyfin`
                       : variables.translate_idle;
               function marquee() {
                 let state = elt.getElementById("state"),
@@ -1045,16 +968,16 @@ elements:
       - type: 'custom:button-card'
         template: media_sidebar_picture
         entity_picture: >
-          [[[ if (states['media_player.plex_living_room_tv'].state != 'idle') return states['media_player.plex_living_room_tv'].attributes['entity_picture'];
-          else return '/local/ui/media/plex.png'; ]]]
+          [[[ if (states['media_player.jellyfin_lg_smart_tv'].state != 'idle') return states['media_player.jellyfin_lg_smart_tv'].attributes['entity_picture'];
+          else return '/local/ui/media/jellyfin.png'; ]]]
         styles:
           entity_picture:
             - width: >
-                [[[ if (states['media_player.plex_living_room_tv'].state != 'idle') return '100%';
+                [[[ if (states['media_player.jellyfin_lg_smart_tv'].state != 'idle') return '100%';
                 else return '40%'; ]]]
             - height: 100%
             - clip-path: >
-                [[[ if (states['media_player.plex_living_room_tv'].state != 'idle') return 'circle(42% at 37% 50%)';
+                [[[ if (states['media_player.jellyfin_lg_smart_tv'].state != 'idle') return 'circle(42% at 37% 50%)';
                 else return 'none'; ]]]
 
   - type: conditional
@@ -1082,19 +1005,6 @@ elements:
         styles:
           entity_picture:
             - width: 100%
-
-#  - type: conditional
-#    conditions:
-#      - entity: sensor.living_room_tv_source
-#        state: Swisscom blue TV
-#    elements:
-#      - type: 'custom:button-card'
-#        template: media_sidebar
-#        entity_picture: /local/ui/media/swisscomTV_transparent.png
-#        label: "Blue TV"
-#        styles:
-#          entity_picture:
-#            - height: 100%
 
     #########################   Floor selection    #########################
 

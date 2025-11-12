@@ -11,7 +11,7 @@ tts:
   - platform: google_translate
 
 # logger:
-#   default: warning
+#   default: info
 #   logs:
 #     custom_components.asyncpioneer: debug
 
@@ -64,10 +64,17 @@ media_player:
     host: !secret AVR_Host
     port: !secret AVR_Port
 
-#media_player:
-#  - platform: pioneer
-#    host: !secret AVR_Host
-#    port: !secret AVR_Port
+trakt_tv:
+  language: en
+  timezone: Europe/Zurich
+  sensors:
+    anticipated:
+      movie:
+        exclude_collected: true
+        max_medias: 10
+      show:
+        exclude_collected: true
+        max_medias: 10
 
 wake_on_lan:
 
@@ -76,74 +83,6 @@ frontend:
   extra_module_url:
     - /hacsfiles/hass-hue-icons/hass-hue-icons.js
     - /hacsfiles/lovelace-card-mod/card-mod.js
-
-# google:
-#   client_id: !secret Google_Client_Id
-#   client_secret: !secret Google_Client_Secret
-
-# remote:
-#   - platform: itach
-#     host: !secret itach_host
-#     devices:
-#       - name: swisscom
-#         connaddr: 3
-#         commands:
-#           - name: Power
-#             data: "0000 006D 0000 000C 000B 0017 0017 0017 0017 0017 0017 000B 000B 0017 0017 0017 000B 000B 000B 000B 0017 0017 0017 000B 000B 0017 000B 0D37"
-#           - name: Up
-#             data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 0018 000C 000C 0018 000C 000C 0018 0D64"
-#           - name: Down
-#             data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 0018 000C 000C 0018 0018 0018 000C 0D58"
-#           - name: Left
-#             data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 0018 000C 000C 000C 000C 0018 0018 0D64"
-#           - name: Right
-#             data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 0018 0018 000C 000C 000C 000C 000C 000C 0018 0D64"
-#           - name: Back
-#             data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 0018 000C 000C 000C 000C 0018 0018 0018 000C 0D57"
-#           - name: +30sec
-#             data: "0000 006B 0000 000B 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 0018 0018 000C 000C 0018 0018 000C 000C 0018 0D65"
-#           - name: -10sec
-#             data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 0018 0018 000C 000C 000C 000C 000C 000C 0018 0018 000C 0D58"
-#           - name: Option
-#             data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 0018 000C 0D58"
-#           - name: Menu
-#             data: "0000 006B 0000 000B 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 0D58"
-#           - name: Ok
-#             data: "0000 006B 0000 000D 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 0018 000C 000C 000C 000C 000C 000C 0018 000C 0D58"
-#           - name: Play/Pause
-#             data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 0018 000C 000C 0018 0018 000C 000C 0018 000C 0D58"
-#           - name: Rec
-#             data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 0018 000C 000C 000C 000C 0018 000C 000C 0018 0D65"
-#           - name: Channel+
-#             data: "0000 006B 0000 000B 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 0018 0018 0018 0018 000C 000C 0018 0D64"
-#           - name: Channel-
-#             data: "0000 006B 0000 000B 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 0018 0018 0D64"
-#           - name: Tv guide
-#             data: "0000 006B 0000 000D 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 0018 000C 000C 000C 000C 000C 000C 000C 000C 0018 000C 0D58"
-#           - name: Forward
-#             data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 0018 0018 000C 000C 000C 000C 0018 000C 000C 0018 000C 0D58"
-#           - name: Rewind
-#             data: "0000 006B 0000 000B 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 0018 0018 000C 000C 000C 000C 0018 0018 0018 0D64"
-#           - name: 0
-#             data: "0000 006B 0000 000B 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 0018 0018 0018 0018 0018 0D64"
-#           - name: 1
-#             data: "0000 006B 0000 000D 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 000C 000C 000C 000C 000C 000C 0018 0018 000C 0D58"
-#           - name: 2
-#             data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 000C 000C 000C 000C 0018 0018 0018 0D64"
-#           - name: 3
-#             data: "0000 006B 0000 000D 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 000C 000C 000C 000C 0018 000C 000C 0018 000C 0D58"
-#           - name: 4
-#             data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 000C 000C 0018 0018 000C 000C 0018 0D64"
-#           - name: 5
-#             data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 000C 000C 0018 0018 0018 0018 000C 0D58"
-#           - name: 6
-#             data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 000C 000C 0018 000C 000C 0018 0018 0D64"
-#           - name: 7
-#             data: "0000 006B 0000 000D 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 000C 000C 0018 000C 000C 000C 000C 0018 000C 0D58"
-#           - name: 8
-#             data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 0018 0018 000C 000C 000C 000C 0018 0D64"
-#           - name: 9
-#             data: "0000 006B 0000 000C 000C 0018 0018 0018 0018 0018 0018 000C 000C 0018 0018 0018 000C 000C 000C 000C 0018 0018 000C 000C 0018 0018 000C 0D58"
 
 cover:
   - platform: template
@@ -174,7 +113,6 @@ cover:
           {% endif %}
 
 light:
-
   - platform: switch
     name: Panneau lumineux
     entity_id: switch.panneau_lumineux
@@ -400,3 +338,4 @@ light:
     - light.charles_haut_white
     # - light.spare_switch_1
     # - light.spare_switch_2
+    # - light.spare_switch_3

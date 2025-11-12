@@ -573,7 +573,7 @@ elements:
         --ha-card-border-radius: 0vw 0vw 0vw 0vw
 
   - type: 'custom:decluttering-card'
-    template: now_playing_plex
+    template: now_playing_jellyfin
     style:
         left: 82%
         top: 57%
