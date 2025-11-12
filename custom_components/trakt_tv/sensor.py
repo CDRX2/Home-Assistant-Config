@@ -1,0 +1,319 @@
+"""Platform for sensor integration."""
+
+import logging
+from datetime import timedelta
+
+from homeassistant.helpers.entity import Entity
+
+from .configuration import Configuration
+from .const import DOMAIN
+from .models.kind import ANTICIPATED_KINDS, BASIC_KINDS, NEXT_TO_WATCH_KINDS, TraktKind
+
+LOGGER = logging.getLogger(__name__)
+
+SCAN_INTERVAL = timedelta(minutes=8)
+
+
+async def async_setup_entry(hass, config_entry, async_add_entities):
+    """Set up the sensor platform."""
+    coordinator = hass.data[DOMAIN]["instances"]["coordinator"]
+    configuration = Configuration(hass.data)
+
+    sensors = []
+
+    for trakt_kind in TraktKind:
+        identifier = trakt_kind.value.identifier
+        for all_medias in [False, True]:
+            if configuration.upcoming_identifier_exists(identifier, all_medias):
+                sensor = TraktSensor(
+                    hass=hass,
+                    config_entry=config_entry,
+                    coordinator=coordinator,
+                    trakt_kind=trakt_kind,
+                    source="all_upcoming" if all_medias else "upcoming",
+                    prefix="Trakt All Upcoming" if all_medias else "Trakt Upcoming",
+                    mdi_icon="mdi:calendar",
+                )
+                sensors.append(sensor)
+
+        if trakt_kind not in BASIC_KINDS:
+            continue
+
+        if configuration.recommendation_identifier_exists(identifier):
+            sensor = TraktSensor(
+                hass=hass,
+                config_entry=config_entry,
+                coordinator=coordinator,
+                trakt_kind=trakt_kind,
+                source="recommendation",
+                prefix="Trakt Recommendation",
+                mdi_icon="mdi:movie",
+            )
+            sensors.append(sensor)
+
+    for trakt_kind in TraktKind:
+        if trakt_kind in ANTICIPATED_KINDS:
+            identifier = trakt_kind.value.identifier
+            if configuration.anticipated_identifier_exists(identifier):
+                sensor = TraktSensor(
+                    hass=hass,
+                    config_entry=config_entry,
+                    coordinator=coordinator,
+                    trakt_kind=trakt_kind,
+                    source="anticipated",
+                    prefix="Trakt Anticipated",
+                    mdi_icon=(
+                        "mdi:movie"
+                        if trakt_kind == TraktKind.ANTICIPATED_MOVIE
+                        else "mdi:television"
+                    ),
+                )
+                sensors.append(sensor)
+
+    for trakt_kind in TraktKind:
+        if trakt_kind not in NEXT_TO_WATCH_KINDS:
+            continue
+
+        identifier = trakt_kind.value.identifier
+
+        if configuration.next_to_watch_identifier_exists(identifier):
+            sensor = TraktSensor(
+                hass=hass,
+                config_entry=config_entry,
+                coordinator=coordinator,
+                trakt_kind=trakt_kind,
+                source=identifier,
+                prefix="Trakt Next To Watch",
+                mdi_icon="mdi:calendar",
+            )
+            sensors.append(sensor)
+
+    if configuration.watchlist_identifier_exists("movie"):
+        sensor = TraktSensor(
+            hass=hass,
+            config_entry=config_entry,
+            coordinator=coordinator,
+            trakt_kind=TraktKind.MOVIE,
+            source="watchlist",
+            prefix="Trakt Watchlist",
+            mdi_icon="mdi:movie",
+        )
+        sensors.append(sensor)
+
+    for trakt_kind in TraktKind:
+        if trakt_kind != TraktKind.LIST:
+            continue
+
+        identifier = trakt_kind.value.identifier
+
+        if configuration.source_exists(identifier):
+            for list_entry in configuration.get_sensor_config(identifier):
+                sensor = TraktSensor(
+                    hass=hass,
+                    config_entry=config_entry,
+                    coordinator=coordinator,
+                    trakt_kind=trakt_kind,
+                    source=identifier,
+                    prefix=f"Trakt List {list_entry['friendly_name']}",
+                    mdi_icon="mdi:view-list",
+                    sensor_data=list_entry,
+                    sensor_identifier=list_entry["friendly_name"]
+                    .replace(" ", "_")
+                    .lower(),
+                )
+                sensors.append(sensor)
+
+    # Add sensors for stats
+    if configuration.source_exists("stats"):
+        stats = {}
+        # Check if the coordinator has data
+        if coordinator.data:
+            stats = coordinator.data.get("stats", {})
+
+        # Check if all stats are allowed
+        allow_all = configuration.stats_key_exists("all")
+
+        # Create a sensor for each key in the stats
+        for key, value in stats.items():
+            # Skip the key if it is not a valid state (e.g. rating distribution dict)
+            if isinstance(value, dict):
+                continue
+
+            # Skip if not allowed in config
+            if not allow_all and not configuration.stats_key_exists(key):
+                continue
+
+            # Transform the key to a more readable format
+            title = key.replace("_", " ").title()
+
+            # Create the sensor
+            sensor = TraktStateSensor(
+                hass=hass,
+                coordinator=coordinator,
+                prefix="Trakt Stats",
+                mdi_icon="mdi:chart-line",
+                title=title,
+                state=value,
+            )
+            sensors.append(sensor)
+
+    async_add_entities(sensors)
+
+
+class TraktSensor(Entity):
+    """Representation of a trakt sensor."""
+
+    _attr_has_entity_name = True
+
+    def __init__(
+        self,
+        hass,
+        config_entry,
+        coordinator,
+        trakt_kind: TraktKind,
+        source: str,
+        prefix: str,
+        mdi_icon: str,
+        sensor_data: dict | None = None,
+        sensor_identifier: str | None = None,
+    ):
+        """Initialize the sensor."""
+        self.hass = hass
+        self.config_entry = config_entry
+        self.coordinator = coordinator
+        self.trakt_kind = trakt_kind
+        self.source = source
+        self.prefix = prefix
+        self.mdi_icon = mdi_icon
+        self.sensor_data = sensor_data
+        self._attr_unique_id = f"{self.config_entry.entry_id}_{self.source}_{self.trakt_kind.value.identifier}{f'_{sensor_identifier}' if sensor_identifier else ''}"
+
+    @property
+    def name(self):
+        """Return the name of the sensor."""
+        if not self.trakt_kind.value.name:
+            return f"{self.prefix}"
+        return f"{self.prefix} {self.trakt_kind.value.name}"
+
+    @property
+    def medias(self):
+        if not self.coordinator.data:
+            return None
+
+        if self.trakt_kind == TraktKind.LIST:
+            try:
+                name = self.sensor_data["friendly_name"]
+                return self.coordinator.data[self.source][self.trakt_kind][name]
+            except KeyError:
+                return None
+
+        try:
+            return self.coordinator.data[self.source][self.trakt_kind]
+        except KeyError:
+            return None
+
+    @property
+    def configuration(self):
+        identifier = self.trakt_kind.value.identifier
+        data = self.hass.data[DOMAIN]
+        source = (
+            "next_to_watch" if self.trakt_kind in NEXT_TO_WATCH_KINDS else self.source
+        )
+        return data["configuration"]["sensors"][source][identifier]
+
+    @property
+    def data(self):
+        if not self.medias:
+            return []
+
+        if self.trakt_kind == TraktKind.LIST:
+            sort_by = self.sensor_data["sort_by"]
+            sort_order = self.sensor_data["sort_order"]
+            max_medias = self.sensor_data["max_medias"]
+            return self.medias.to_homeassistant(sort_by, sort_order)[0 : max_medias + 1]
+
+        max_medias = self.configuration["max_medias"]
+        return self.medias.to_homeassistant()[0 : max_medias + 1]
+
+    @property
+    def state(self):
+        """Return the state of the sensor."""
+        return max([len(self.data) - 1, 0])
+
+    @property
+    def icon(self):
+        """Return the icon to use in the frontend, if any."""
+        return self.mdi_icon
+
+    @property
+    def unit_of_measurement(self):
+        """Return the unit of measurement of this entity, if any."""
+        if self.trakt_kind.value.unit:
+            return self.trakt_kind.value.unit
+        return self.trakt_kind.value.path.split("/")[0]
+
+    @property
+    def extra_state_attributes(self):
+        """Return the state attributes of the sensor."""
+        return {"data": self.data}
+
+    @property
+    def has_entity_name(self) -> bool:
+        """Return if the name of the entity is describing only the entity itself."""
+        return True
+
+    async def async_update(self):
+        """Request coordinator to update data."""
+        await self.coordinator.async_request_refresh()
+
+
+class TraktStateSensor(Entity):
+    """Trakt sensor to show data as state"""
+
+    _attr_has_entity_name = True
+
+    def __init__(
+        self,
+        hass,
+        coordinator,
+        prefix: str,
+        mdi_icon: str,
+        title: str,
+        state: str,
+    ):
+        """Initialize the sensor."""
+        self.hass = hass
+        self.coordinator = coordinator
+        self.prefix = prefix
+        self.icon = mdi_icon
+        self.title = title
+        self.state = state
+
+    @property
+    def name(self):
+        """Return the name of the sensor."""
+        return f"{self.prefix} {self.title}"
+
+    @property
+    def unit_of_measurement(self):
+        """Return the unit of measurement of this entity"""
+        units = [
+            "ratings",
+            "minutes",
+            "comments",
+            "friends",
+            "followers",
+            "following",
+            "episodes",
+            "movies",
+            "shows",
+            "seasons",
+        ]
+        for unit in units:
+            if unit in self.title.lower():
+                return unit
+        return None
+
+    async def async_update(self):
+        """Request coordinator to update data."""
+        await self.coordinator.async_request_refresh()

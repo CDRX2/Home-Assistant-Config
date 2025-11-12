@@ -59,15 +59,15 @@ homeassistant:
         10.81.19.94: ae55fdfcf7714f1485058190846c3c8a
       allow_bypass_login: true
 
-#media_player:
-#  - platform: asyncpioneer
-#    host: !secret AVR_Host
-#    port: !secret AVR_Port
-
 media_player:
-  - platform: pioneer
+  - platform: asyncpioneer
     host: !secret AVR_Host
     port: !secret AVR_Port
+
+#media_player:
+#  - platform: pioneer
+#    host: !secret AVR_Host
+#    port: !secret AVR_Port
 
 wake_on_lan:
 
