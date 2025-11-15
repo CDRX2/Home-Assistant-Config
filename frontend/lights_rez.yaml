@@ -756,15 +756,15 @@ elements:
       left: 80%
       top: 54%
 
-#  - type: custom:button-card
-#    template: light_icon_on_off
-#    variables:
-#      entity: light.noel
-#      icon: mdi:pine-tree
-#      title: "Joyeux Noël!"
-#    style:
-#      left: 65%
-#      top: 65%
+  - type: custom:button-card
+    template: light_icon_on_off
+    variables:
+      entity: light.noel
+      icon: mdi:pine-tree
+      title: "Joyeux Noël!"
+    style:
+      left: 65%
+      top: 65%
 
     #########################    NOW PLAYING ON TV IN FLOORPLAN    #########################
 

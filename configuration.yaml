@@ -10,9 +10,10 @@ default_config:
 tts:
   - platform: google_translate
 
-# logger:
-#   default: info
-#   logs:
+logger:
+  default: info
+  logs:
+    custom_components.radarr_upcoming_media: debug
 #     custom_components.asyncpioneer: debug
 
 additional_ca:
@@ -33,12 +34,6 @@ lovelace:
       icon: mdi:remote-tv
       show_in_sidebar: true
       filename: remote-main.yaml
-    # lovelace-dev:
-    #   mode: yaml
-    #   title: Dev
-    #   icon: mdi:github
-    #   show_in_sidebar: true
-    #   filename: dev.yaml
 
 group: !include groups.yaml
 automation: !include automations.yaml
@@ -153,9 +148,9 @@ light:
     name: Spare switch 3
     entity_id: switch.spare_switch_3
 
-  # - platform: switch
-  #   name: Spare switch 4
-  #   entity_id: switch.spare_switch_4
+  - platform: switch
+    name: Spare switch 4
+    entity_id: switch.spare_switch_4
 
   - platform: switch
     name: Manger Lampe
@@ -192,6 +187,18 @@ light:
   - platform: switch
     name: Amis plafonnier
     entity_id: switch.amis_plafonnier
+
+  - platform: switch
+    name: Guirlandes verriere
+    entity_id: switch.salon_guirlandes_verriere
+
+  - platform: switch
+    name: Guirlandes crystal
+    entity_id: switch.salon_guirlandes_crystal
+
+  - platform: switch
+    name: Guirlandes Noel
+    entity_id: switch.salon_guirlandes_noel
 
   - platform: switch
     name: Entrée
@@ -234,10 +241,13 @@ light:
     - light.couleur_rez
     - light.vinyles
     - light.panneau_lumineux
-    - light.guirlandes_salon
+    - light.guirlandes_verriere
+    - light.guirlandes_crystal
     # - light.spare_switch_1
-    # - light.spare_switch_2
-    # - light.spare_switch_3
+    - light.spare_switch_2
+    - light.spare_switch_3
+    # - light.spare_switch_4
+    # - light.guirlandes_noel
 
   - platform: group
     name: Salon déco
@@ -247,17 +257,22 @@ light:
     - light.petit_totem_deco
     - light.vinyles
     - light.bar
-    - light.guirlandes_salon
+    - light.guirlandes_verriere
+    - light.guirlandes_crystal
     # - light.spare_switch_1
-    # - light.spare_switch_2
-    # - light.spare_switch_3
+    - light.spare_switch_2
+    - light.spare_switch_3
+    # - light.spare_switch_4
+    # - light.guirlandes_noel
 
   - platform: group
     name: Noel
     entities:
-      - light.spare_switch_1
+      #- light.spare_switch_1
       - light.spare_switch_2
       - light.spare_switch_3
+      #- light.spare_switch_4
+      #- light.guirlandes_noel
 
   - platform: group
     name: Terrasse
@@ -336,6 +351,10 @@ light:
     - light.chevet_nanne_3
     - light.charles_bas_white
     - light.charles_haut_white
+    - light.guirlandes_crystal
+    - light.guirlandes_verriere
     # - light.spare_switch_1
-    # - light.spare_switch_2
-    # - light.spare_switch_3
+    - light.spare_switch_2
+    - light.spare_switch_3
+    # - light.spare_switch_4
+    # - light.guirlandes_noel
