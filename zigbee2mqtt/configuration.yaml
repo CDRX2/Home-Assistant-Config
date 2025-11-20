@@ -106,8 +106,6 @@ devices:
     friendly_name: movement_bathroom
   '0x001fee00000074ab':
     friendly_name: Jumeaux prises
-  '0x00212effff0300f4':
-    friendly_name: Jumeaux armoires
   '0x001788010b86ddae':
     friendly_name: Couloir 1
   '0x001788010cc5a455':
@@ -198,6 +196,8 @@ devices:
     friendly_name: Charles
   '0xa4c1383faaf8fe19':
     friendly_name: salon guirlandes
+  '0x0cae5ffffe21d0ea':
+    friendly_name: jumeaux armoire
 availability:
   active:
     timeout: 20

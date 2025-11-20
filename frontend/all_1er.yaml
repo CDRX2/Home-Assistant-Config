@@ -98,10 +98,10 @@ elements:
         - type: 'custom:button-card'
           template: dimmable_lights
           variables:
-            entity: light.jumeaux_armoires_blanc
+            entity: light.jumeaux_armoire
             gridarea: '"i . ." "n n n" "slider slider slider"'
           icon: 'mdi:led-strip-variant'
-          name: Jumeaux armoires
+          name: Jumeaux armoire
           view_layout:
             grid-area: j
         - type: 'custom:button-card'

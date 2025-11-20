@@ -11,7 +11,7 @@ tts:
   - platform: google_translate
 
 logger:
-  default: info
+  default: error
   logs:
     custom_components.radarr_upcoming_media: debug
 #     custom_components.asyncpioneer: debug
@@ -260,8 +260,8 @@ light:
     - light.guirlandes_verriere
     - light.guirlandes_crystal
     # - light.spare_switch_1
-    - light.spare_switch_2
-    - light.spare_switch_3
+    # - light.spare_switch_2
+    # - light.spare_switch_3
     # - light.spare_switch_4
     # - light.guirlandes_noel
 

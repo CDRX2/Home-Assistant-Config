@@ -99,13 +99,13 @@ elements:
         'on': /local/ui/floorplan/lights/1er/lit_parents_blanc.png
       tap_action:
         action: none
-      type: image   
+      type: image
     style:
       left: 50%
       mix-blend-mode: lighten
       opacity: "${states['light.lit_parents_blanc'].state === 'on' ? (states['light.lit_parents_blanc'].attributes.brightness / 255) : '0'}"
       top: 50%
-      width: 100% 
+      width: 100%
   - type: 'custom:config-template-card'
     entities:
       - light.plafond_parents_blanc
@@ -119,13 +119,13 @@ elements:
         'on': /local/ui/floorplan/lights/1er/parents_leds.png
       tap_action:
         action: none
-      type: image   
+      type: image
     style:
       left: 50%
       mix-blend-mode: lighten
       opacity: "${states['light.plafond_parents_blanc'].state === 'on' ? (states['light.plafond_parents_blanc'].attributes.brightness / 255) : '0'}"
       top: 50%
-      width: 100% 
+      width: 100%
   - type: 'custom:decluttering-card'
     template: light_overlay
     variables:
@@ -137,7 +137,7 @@ elements:
       - entity: light.chevet_nanne
       - image: 1er/chevet_nanne.png
   - type: 'custom:config-template-card'
-    entities: 
+    entities:
       - light.charles_bas_white
     element:
       action: none
@@ -158,10 +158,10 @@ elements:
       width: 100%
   - type: 'custom:config-template-card'
     entities:
-      - light.jumeaux_armoires_blanc
+      - light.jumeaux_armoire
     element:
       action: none
-      entity: light.jumeaux_armoires_blanc
+      entity: light.jumeaux_armoire
       hold_action:
         action: none
       image: /local/transparent.png
@@ -169,13 +169,13 @@ elements:
         'on': /local/ui/floorplan/lights/1er/twins_armoire.png
       tap_action:
         action: none
-      type: image   
+      type: image
     style:
       left: 50%
       mix-blend-mode: lighten
-      opacity: "${states['light.jumeaux_armoires_blanc'].state === 'on' ? (states['light.jumeaux_armoires_blanc'].attributes.brightness / 255) : '0'}"
+      opacity: "${states['light.jumeaux_armoire'].state === 'on' ? (states['light.jumeaux_armoire'].attributes.brightness / 255) : '0'}"
       top: 50%
-      width: 100% 
+      width: 100%
   - type: 'custom:decluttering-card'
     template: light_overlay
     variables:
@@ -199,7 +199,7 @@ elements:
         'on': /local/ui/floorplan/lights/1er/couloir_1.png
       tap_action:
         action: none
-      type: image   
+      type: image
     style:
       left: 50%
       mix-blend-mode: lighten
@@ -219,7 +219,7 @@ elements:
         'on': /local/ui/floorplan/lights/1er/couloir_2.png
       tap_action:
         action: none
-      type: image   
+      type: image
     style:
       left: 50%
       mix-blend-mode: lighten
@@ -244,14 +244,14 @@ elements:
         'on': /local/ui/floorplan/lights/1er/salle_bains_leds.png
       tap_action:
         action: none
-      type: image   
+      type: image
     style:
       left: 50%
       mix-blend-mode: lighten
       opacity: "${states['light.bathroom_sink_white'].state === 'on' ? (states['light.bathroom_sink_white'].attributes.brightness / 255) : '0'}"
       top: 50%
       width: 100%
-      
+
     #########################    TEMPERATURE CONTROL STATE LABELS    #########################
 
     #  Used to create state labels and popups for each room, referring to temperature sensors
@@ -445,7 +445,7 @@ elements:
 
     #########################    INDIVIDUAL SHUTTER ICONS    #########################
 
-    #  These are the white state icons that appear over the floorplan to control shades, 
+    #  These are the white state icons that appear over the floorplan to control shades,
     #  shutters and window openings.
     #
     #  browser_mod.popup is used for a tap and hold for a custom popup card, custom styling

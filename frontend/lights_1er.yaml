@@ -158,10 +158,10 @@ elements:
       width: 100%
   - type: 'custom:config-template-card'
     entities:
-      - light.jumeaux_armoires_blanc
+      - light.jumeaux_armoire
     element:
       action: none
-      entity: light.jumeaux_armoires_blanc
+      entity: light.jumeaux_armoire
       hold_action:
         action: none
       image: /local/transparent.png
@@ -173,7 +173,7 @@ elements:
     style:
       left: 50%
       mix-blend-mode: lighten
-      opacity: "${states['light.jumeaux_armoires_blanc'].state === 'on' ? (states['light.jumeaux_armoires_blanc'].attributes.brightness / 255) : '0'}"
+      opacity: "${states['light.jumeaux_armoire'].state === 'on' ? (states['light.jumeaux_armoire'].attributes.brightness / 255) : '0'}"
       top: 50%
       width: 100%
   - type: 'custom:decluttering-card'
@@ -574,7 +574,7 @@ elements:
   - type: custom:button-card
     template: light_icon_dim
     variables:
-      entity: light.jumeaux_armoires_blanc
+      entity: light.jumeaux_armoire
       icon: mdi:led-strip-variant
       title: "Chambre jumeaux"
     style:
