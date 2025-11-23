@@ -1,12 +1,18 @@
 from datetime import datetime
 from typing import Any, Dict, List
+from zoneinfo import ZoneInfo, available_timezones
 
-import pytz
 from dateutil.tz import tzlocal
 from homeassistant.helpers import config_validation as cv
 from voluptuous import ALLOW_EXTRA, PREVENT_EXTRA, In, Required, Schema
 
-from .const import DOMAIN, LANGUAGE_CODES, SORT_BY_OPTIONS, SORT_HOW_OPTIONS
+from .const import (
+    DOMAIN,
+    LANGUAGE_CODES,
+    NEXT_TO_WATCH_SORT_BY_OPTIONS,
+    SORT_BY_OPTIONS,
+    SORT_HOW_OPTIONS,
+)
 from .models.kind import ANTICIPATED_KINDS, BASIC_KINDS, NEXT_TO_WATCH_KINDS, TraktKind
 
 
@@ -24,13 +30,13 @@ def dictionary_to_schema(
 
 
 def domain_schema() -> Schema:
+    timezone_default = datetime.now(ZoneInfo("UTC")).astimezone().tzname()
+
     return {
         DOMAIN: {
             "sensors": sensors_schema(),
             Required("language", default="en"): In(LANGUAGE_CODES),
-            Required("timezone", default=datetime.now(tzlocal()).tzname()): In(
-                pytz.all_timezones_set
-            ),
+            Required("timezone", default=timezone_default): In(available_timezones()),
         }
     }
 
@@ -65,6 +71,8 @@ def next_to_watch_schema() -> Dict[str, Any]:
         subschemas[trakt_kind.value.identifier] = {
             Required("max_medias", default=3): cv.positive_int,
             Required("exclude", default=[]): list,
+            Required("sort_by", default="released"): In(NEXT_TO_WATCH_SORT_BY_OPTIONS),
+            Required("sort_order", default="asc"): In(SORT_HOW_OPTIONS),
         }
 
     return subschemas

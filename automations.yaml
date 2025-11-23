@@ -360,7 +360,18 @@
   description: ''
   triggers:
   - trigger: time
-    at: 06:00:00
+    at: 06:30:00
+    weekday:
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+  - trigger: time
+    at: 07:30:00
+    weekday:
+    - sat
+    - sun
   conditions: []
   actions:
   - action: light.turn_on
@@ -375,7 +386,7 @@
   triggers:
   - trigger: sun
     event: sunrise
-    offset: 00:30
+    offset: 01:00
   conditions: []
   actions:
   - action: light.turn_off

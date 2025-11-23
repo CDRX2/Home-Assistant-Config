@@ -247,7 +247,7 @@ light:
     - light.spare_switch_2
     - light.spare_switch_3
     # - light.spare_switch_4
-    # - light.guirlandes_noel
+    - light.guirlandes_noel
 
   - platform: group
     name: Salon déco
@@ -272,7 +272,7 @@ light:
       - light.spare_switch_2
       - light.spare_switch_3
       #- light.spare_switch_4
-      #- light.guirlandes_noel
+      - light.guirlandes_noel
 
   - platform: group
     name: Terrasse
@@ -357,4 +357,4 @@ light:
     - light.spare_switch_2
     - light.spare_switch_3
     # - light.spare_switch_4
-    # - light.guirlandes_noel
+    - light.guirlandes_noel
