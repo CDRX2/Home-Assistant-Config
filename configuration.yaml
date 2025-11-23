@@ -246,7 +246,7 @@ light:
     # - light.spare_switch_1
     - light.spare_switch_2
     - light.spare_switch_3
-    # - light.spare_switch_4
+    - light.spare_switch_4
     - light.guirlandes_noel
 
   - platform: group
@@ -271,7 +271,7 @@ light:
       #- light.spare_switch_1
       - light.spare_switch_2
       - light.spare_switch_3
-      #- light.spare_switch_4
+      - light.spare_switch_4
       - light.guirlandes_noel
 
   - platform: group
@@ -356,5 +356,5 @@ light:
     # - light.spare_switch_1
     - light.spare_switch_2
     - light.spare_switch_3
-    # - light.spare_switch_4
+    - light.spare_switch_4
     - light.guirlandes_noel
