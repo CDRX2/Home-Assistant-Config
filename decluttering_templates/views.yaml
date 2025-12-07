@@ -12,8 +12,8 @@ simple_grid:
   card:
     type: 'custom:mod-card'
     card_mod:
-      style: 
-        layout-card$: 
+      style:
+        layout-card$:
           grid-layout$: |
             :host {
               padding: 0px !important;
@@ -41,8 +41,8 @@ floors:
   card:
     type: 'custom:mod-card'
     card_mod:
-      style: 
-        layout-card$: 
+      style:
+        layout-card$:
           grid-layout$: |
             :host {
               padding: 0px !important;
@@ -81,4 +81,4 @@ floors:
             - entity: input_select.floor
               state: 2e
           card:
-            '[[card_2e]]'   
+            '[[card_2e]]'

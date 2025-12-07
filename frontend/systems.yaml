@@ -151,66 +151,6 @@ elements:
                                 url_path: !secret SABNzbd_URL
                           view_layout:
                             grid-area: d
-                        # - type: 'custom:apexcharts-card'
-                        #   config_templates: default
-                        #   graph_span: 2d
-                        #   update_interval: 1min
-                        #   update_delay: 3s
-                        #   header:
-                        #     show: true
-                        #     show_states: true
-                        #   all_series_config:
-                        #     type: column
-                        #     group_by:
-                        #       func: max
-                        #       duration: 2h
-                        #     show:
-                        #       in_header: raw
-                        #   series:
-                        #     - entity: sensor.swisscom_internet_box_packets_s_received
-                        #       color: "#ffa31a"
-                        #       name: Download
-                        #       unit: Pkts/s
-                        #     - entity: sensor.swisscom_internet_box_packets_s_sent
-                        #       color: "#03a8f4"
-                        #       name: Upload
-                        #       unit: Pkts/s
-                        #       invert: true
-                        #   apex_config:
-                        #     legend:
-                        #       show: false
-                        #   view_layout:
-                        #     grid-area: b
-                        # - type: 'custom:apexcharts-card'
-                        #   config_templates: default
-                        #   graph_span: 2d
-                        #   update_interval: 1min
-                        #   update_delay: 3s
-                        #   header:
-                        #     show: true
-                        #     show_states: true
-                        #   all_series_config:
-                        #     type: column
-                        #     group_by:
-                        #       func: max
-                        #       duration: 2h
-                        #   series:
-                        #     - entity: sensor.swisscom_internet_box_b_received
-                        #       color: "#ffa31a"
-                        #       transform: "return x / 1000000000;"
-                        #       name: Download
-                        #       unit: GB
-                        #     - entity: sensor.swisscom_internet_box_b_sent
-                        #       color: "#03a8f4"
-                        #       transform: "return x / 1000000000;"
-                        #       name: Upload
-                        #       unit: GB
-                        #       invert: true
-                        #   apex_config:
-                        #     legend:
-                        #       show: false
-                        #   view_layout:
-                        #     grid-area: e
                   title: Internet speed
                   size: wide
         series:
@@ -253,6 +193,10 @@ elements:
               padding-bottom: none;
               margin-bottom: none;
             }
+            ha-card {
+              background: rgba(255, 255, 255, 0.1) !important;
+              border-radius: 0.5vw;
+            }
       - type: 'custom:mod-card'
         card:
           type: 'custom:layout-card'
@@ -271,7 +215,6 @@ elements:
                 variables:
                   - title: CDRXStation3
                   - sensor_1: sensor.cdrxstation3_volume_1_volume_used
-                  - name_1: Volume 1
               card_mod:
                 style:
                   decluttering-card$: |
@@ -296,7 +239,6 @@ elements:
                 variables:
                   - title: BackupStation
                   - sensor_1: sensor.backupstation_volume_1_volume_used
-                  - name_1: Volume 1
               card_mod:
                 style:
                   decluttering-card$: |
@@ -324,7 +266,9 @@ elements:
                 }
             .: |
               ha-card {
-                height: 100%;
+                border-radius: 0.5vw !important;
+                overflow: hidden;
+                background: rgba(255, 255, 255, 0.1) !important;
               }
               :host {
                 height: 60%;
@@ -405,6 +349,12 @@ elements:
         title: Batteries
         view_layout:
           column: 2
+        card_mod:
+          style: |
+            ha-card {
+              background: rgba(255, 255, 255, 0.1) !important;
+              border-radius: 0.5vw;
+            }
     style:
       height: 98%
       left: 50%

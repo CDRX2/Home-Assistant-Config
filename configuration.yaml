@@ -10,10 +10,10 @@ default_config:
 tts:
   - platform: google_translate
 
-logger:
-  default: error
-  logs:
-    custom_components.radarr_upcoming_media: debug
+#logger:
+#  default: error
+#  logs:
+#    custom_components.radarr_upcoming_media: debug
 #     custom_components.asyncpioneer: debug
 
 additional_ca:
@@ -38,7 +38,19 @@ lovelace:
 group: !include groups.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml
-sensor: !include_dir_merge_list sensors/
+template: !include_dir_merge_list sensors/
+
+sensor:
+  - platform: time_date
+    display_options:
+      - 'time'
+      - 'date'
+      - 'date_time'
+      - 'date_time_utc'
+      - 'date_time_iso'
+      - 'time_date'
+      - 'time_utc'
+    # - 'beat'
 
 homeassistant:
   customize: !include customize.yaml
@@ -78,34 +90,6 @@ frontend:
   extra_module_url:
     - /hacsfiles/hass-hue-icons/hass-hue-icons.js
     - /hacsfiles/lovelace-card-mod/card-mod.js
-
-cover:
-  - platform: template
-    covers:
-      store_terrasse_reversed:
-        friendly_name: "Store terrasse reversed"
-        position_template: "{{ 100 - state_attr('cover.store_terrasse', 'current_position') | int(100) }}"
-        open_cover:
-          service: cover.close_cover
-          data: {}
-          target:
-            entity_id: cover.store_terrasse
-        close_cover:
-          service: cover.open_cover
-          data: {}
-          target:
-            entity_id: cover.store_terrasse
-        set_cover_position:
-          service: cover.set_cover_position
-          data:
-            position: "{{100-position}}"
-            entity_id: cover.store_terrasse
-        icon_template: >-
-          {% if is_state('cover.store_terrasse', 'closed') %}
-            mdi:awning
-          {% else %}
-            mdi:awning-outline
-          {% endif %}
 
 light:
   - platform: switch

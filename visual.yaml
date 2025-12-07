@@ -138,3 +138,4 @@ views:
         - card: !include frontend/systems.yaml
 
 - !include frontend/screensaver.yaml
+- !include frontend/popups.yaml

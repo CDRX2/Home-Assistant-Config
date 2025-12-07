@@ -1,281 +1,207 @@
-# - platform: template
-#   sensors:
-#     cdrxstation1_security_malware:
-#       value_template: "{{ state_attr('binary_sensor.cdrxstation1_security_status', 'malware') }}"
-#       friendly_name: 'CDRXStation1 malware status'
+- sensor:
+  - default_entity_id: sensor.cdrxstation3_security_malware
+    name: CDRXStation3 malware status
+    state: '{{ state_attr(''binary_sensor.cdrxstation3_security_status'', ''malware'') }}'
 
-# - platform: template
-#   sensors:
-#     cdrxstation1_security_network:
-#       value_template: "{{ state_attr('binary_sensor.cdrxstation1_security_status', 'network') }}"
-#       friendly_name: 'CDRXStation1 network status'
+- sensor:
+  - default_entity_id: sensor.cdrxstation3_security_network
+    name: CDRXStation3 network status
+    state: '{{ state_attr(''binary_sensor.cdrxstation3_security_status'', ''network'') }}'
 
-# - platform: template
-#   sensors:
-#     cdrxstation1_security_setting:
-#       value_template: "{{ state_attr('binary_sensor.cdrxstation1_security_status', 'securitySetting') }}"
-#       friendly_name: 'CDRXStation1 security setting status'
+- sensor:
+  - default_entity_id: sensor.cdrxstation3_security_setting
+    name: CDRXStation3 security setting status
+    state: '{{ state_attr(''binary_sensor.cdrxstation3_security_status'', ''securitySetting'') }}'
 
-# - platform: template
-#   sensors:
-#     cdrxstation1_security_system_check:
-#       value_template: "{{ state_attr('binary_sensor.cdrxstation1_security_status', 'systemCheck') }}"
-#       friendly_name: 'CDRXStation1 security system check'
+- sensor:
+  - default_entity_id: sensor.cdrxstation3_security_system_check
+    name: CDRXStation3 security system check
+    state: '{{ state_attr(''binary_sensor.cdrxstation3_security_status'', ''systemCheck'') }}'
 
-# - platform: template
-#   sensors:
-#     cdrxstation1_security_user_info:
-#       value_template: "{{ state_attr('binary_sensor.cdrxstation1_security_status', 'userInfo') }}"
-#       friendly_name: 'CDRXStation1 security user info'
+- sensor:
+  - default_entity_id: sensor.cdrxstation3_security_user_info
+    name: CDRXStation3 security user info
+    state: '{{ state_attr(''binary_sensor.cdrxstation3_security_status'', ''userInfo'') }}'
 
-# - platform: template
-#   sensors:
-#     cdrxstation2_security_malware:
-#       value_template: "{{ state_attr('binary_sensor.cdrxstation2_security_status', 'malware') }}"
-#       friendly_name: 'CDRXStation2 malware status'
+- sensor:
+  - default_entity_id: sensor.backupstation_security_malware
+    name: BackupStation malware status
+    state: '{{ state_attr(''binary_sensor.backupstation_security_status'', ''malware'') }}'
 
-# - platform: template
-#   sensors:
-#     cdrxstation2_security_network:
-#       value_template: "{{ state_attr('binary_sensor.cdrxstation2_security_status', 'network') }}"
-#       friendly_name: 'CDRXStation2 network status'
+- sensor:
+  - default_entity_id: sensor.backupstation_security_network
+    name: BackupStation network status
+    state: '{{ state_attr(''binary_sensor.backupstation_security_status'', ''network'') }}'
 
-# - platform: template
-#   sensors:
-#     cdrxstation2_security_setting:
-#       value_template: "{{ state_attr('binary_sensor.cdrxstation2_security_status', 'securitySetting') }}"
-#       friendly_name: 'CDRXStation2 security setting status'
+- sensor:
+  - default_entity_id: sensor.backupstation_security_setting
+    name: BackupStation security setting status
+    state: '{{ state_attr(''binary_sensor.backupstation_security_status'', ''securitySetting'') }}'
 
-# - platform: template
-#   sensors:
-#     cdrxstation2_security_system_check:
-#       value_template: "{{ state_attr('binary_sensor.cdrxstation2_security_status', 'systemCheck') }}"
-#       friendly_name: 'CDRXStation2 security system check'
+- sensor:
+  - default_entity_id: sensor.backupstation_security_system_check
+    name: BackupStation security system check
+    state: '{{ state_attr(''binary_sensor.backupstation_security_status'', ''systemCheck'') }}'
 
-# - platform: template
-#   sensors:
-#     cdrxstation2_security_user_info:
-#       value_template: "{{ state_attr('binary_sensor.cdrxstation2_security_status', 'userInfo') }}"
-#       friendly_name: 'CDRXStation2 security user info'
+- sensor:
+  - default_entity_id: sensor.backupstation_security_user_info
+    name: BackupStation security user info
+    state: '{{ state_attr(''binary_sensor.backupstation_security_status'', ''userInfo'') }}'
 
-- platform: template
-  sensors:
-    cdrxstation3_security_malware:
-      value_template: "{{ state_attr('binary_sensor.cdrxstation3_security_status', 'malware') }}"
-      friendly_name: 'CDRXStation3 malware status'
+- sensor:
+  - default_entity_id: sensor.cdrxstation3_alert
+    state: "{{ iif (states('binary_sensor.cdrxstation3_drive_1_below_min_remaining_life') != 'off' or
+            states('binary_sensor.cdrxstation3_drive_1_exceeded_max_bad_sectors') != 'off' or
+            states('sensor.cdrxstation3_drive_1_status') != 'normal' or
+            states('sensor.cdrxstation3_drive_1_status_smart') != 'normal' or
+            states('sensor.cdrxstation3_drive_1_temperature')|float(default=0) > 60 or
+            states('binary_sensor.cdrxstation3_drive_2_below_min_remaining_life') != 'off' or
+            states('binary_sensor.cdrxstation3_drive_2_exceeded_max_bad_sectors') != 'off' or
+            states('sensor.cdrxstation3_drive_2_status') != 'normal' or
+            states('sensor.cdrxstation3_drive_2_status_smart') != 'normal' or
+            states('sensor.cdrxstation3_drive_2_temperature')|float(default=0) > 60 or
+            states('binary_sensor.cdrxstation3_drive_3_below_min_remaining_life') != 'off' or
+            states('binary_sensor.cdrxstation3_drive_3_exceeded_max_bad_sectors') != 'off' or
+            states('sensor.cdrxstation3_drive_3_status') != 'normal' or
+            states('sensor.cdrxstation3_drive_3_status_smart') != 'normal' or
+            states('sensor.cdrxstation3_drive_3_temperature')|float(default=0) > 60 or
+            states('binary_sensor.cdrxstation3_drive_4_below_min_remaining_life') != 'off' or
+            states('binary_sensor.cdrxstation3_drive_4_exceeded_max_bad_sectors') != 'off' or
+            states('sensor.cdrxstation3_drive_4_status') != 'normal' or
+            states('sensor.cdrxstation3_drive_4_status_smart') != 'normal' or
+            states('sensor.cdrxstation3_drive_4_temperature')|float(default=0) > 60 or
+            states('binary_sensor.cdrxstation3_drive_1_rx415_1_below_min_remaining_life') != 'off' or
+            states('binary_sensor.cdrxstation3_drive_1_rx415_1_exceeded_max_bad_sectors') != 'off' or
+            states('sensor.cdrxstation3_drive_1_rx415_1_status') != 'normal' or
+            states('sensor.cdrxstation3_drive_1_rx415_1_status_smart') != 'normal' or
+            states('sensor.cdrxstation3_drive_1_rx415_1_temperature')|float(default=0) > 60 or
+            states('binary_sensor.cdrxstation3_drive_2_rx415_1_below_min_remaining_life') != 'off' or
+            states('binary_sensor.cdrxstation3_drive_2_rx415_1_exceeded_max_bad_sectors') != 'off' or
+            states('sensor.cdrxstation3_drive_2_rx415_1_status') != 'normal' or
+            states('sensor.cdrxstation3_drive_2_rx415_1_status_smart') != 'normal' or
+            states('sensor.cdrxstation3_drive_2_rx415_1_temperature')|float(default=0) > 60 or
+            states('binary_sensor.cdrxstation3_drive_3_rx415_1_below_min_remaining_life') != 'off' or
+            states('binary_sensor.cdrxstation3_drive_3_rx415_1_exceeded_max_bad_sectors') != 'off' or
+            states('sensor.cdrxstation3_drive_3_rx415_1_status') != 'normal' or
+            states('sensor.cdrxstation3_drive_3_rx415_1_status_smart') != 'normal' or
+            states('sensor.cdrxstation3_drive_3_rx415_1_temperature')|float(default=0) > 60 or
+            states('binary_sensor.cdrxstation3_drive_4_rx415_1_below_min_remaining_life') != 'off' or
+            states('binary_sensor.cdrxstation3_drive_4_rx415_1_exceeded_max_bad_sectors') != 'off' or
+            states('sensor.cdrxstation3_drive_4_rx415_1_status') != 'normal' or
+            states('sensor.cdrxstation3_drive_4_rx415_1_status_smart') != 'normal' or
+            states('sensor.cdrxstation3_drive_4_rx415_1_temperature')|float(default=0) > 60 or
+            states('binary_sensor.cdrxstation3_ssd_1_below_min_remaining_life') != 'off' or
+            states('binary_sensor.cdrxstation3_ssd_1_exceeded_max_bad_sectors') != 'off' or
+            states('sensor.cdrxstation3_ssd_1_status') != 'normal' or
+            states('sensor.cdrxstation3_ssd_1_status_smart') != 'normal' or
+            states('sensor.cdrxstation3_ssd_1_temperature')|float(default=0) > 60 or
+            states('binary_sensor.cdrxstation3_ssd_2_below_min_remaining_life') != 'off' or
+            states('binary_sensor.cdrxstation3_ssd_2_exceeded_max_bad_sectors') != 'off' or
+            states('sensor.cdrxstation3_ssd_2_status') != 'normal' or
+            states('sensor.cdrxstation3_ssd_2_status_smart') != 'normal' or
+            states('sensor.cdrxstation3_ssd_2_temperature')|float(default=0) > 60 or
+            states('sensor.cdrxstation3_temperature')|float(default=0) > 60 or
+            states('sensor.cdrxstation3_volume_1_status') != 'normal' or
+            states('sensor.cdrxstation3_volume_1_volume_used')|float(default=0) > 95 or
+            states('sensor.cdrxstation3_volume_1_maximum_disk_temp')|float(default=0) > 60, 'alert', 'normal') }}"
+    name: cdrxstation3_alert
 
-- platform: template
-  sensors:
-    cdrxstation3_security_network:
-      value_template: "{{ state_attr('binary_sensor.cdrxstation3_security_status', 'network') }}"
-      friendly_name: 'CDRXStation3 network status'
+- sensor:
+  - default_entity_id: sensor.backupstation_alert
+    state: "{{ iif (states('binary_sensor.backupstation_drive_1_below_min_remaining_life') != 'off' or
+            states('binary_sensor.backupstation_drive_1_exceeded_max_bad_sectors') != 'off' or
+            states('sensor.backupstation_drive_1_status') != 'normal' or
+            states('sensor.backupstation_drive_1_status_smart') != 'normal' or
+            states('sensor.backupstation_drive_1_temperature')|float(default=0) > 60 or
+            states('binary_sensor.backupstation_drive_2_below_min_remaining_life') != 'off' or
+            states('binary_sensor.backupstation_drive_2_exceeded_max_bad_sectors') != 'off' or
+            states('sensor.backupstation_drive_2_status') != 'normal' or
+            states('sensor.backupstation_drive_2_status_smart') != 'normal' or
+            states('sensor.backupstation_drive_2_temperature')|float(default=0) > 60 or
+            states('binary_sensor.backupstation_drive_3_below_min_remaining_life') != 'off' or
+            states('binary_sensor.backupstation_drive_3_exceeded_max_bad_sectors') != 'off' or
+            states('sensor.backupstation_drive_3_status') != 'normal' or
+            states('sensor.backupstation_drive_3_status_smart') != 'normal' or
+            states('sensor.backupstation_drive_3_temperature')|float(default=0) > 60 or
+            states('binary_sensor.backupstation_drive_4_below_min_remaining_life') != 'off' or
+            states('binary_sensor.backupstation_drive_4_exceeded_max_bad_sectors') != 'off' or
+            states('sensor.backupstation_drive_4_status') != 'normal' or
+            states('sensor.backupstation_drive_4_status_smart') != 'normal' or
+            states('sensor.backupstation_drive_4_temperature')|float(default=0) > 60 or
+            states('binary_sensor.backupstation_drive_1_rx415_1_below_min_remaining_life') != 'off' or
+            states('binary_sensor.backupstation_drive_1_rx415_1_exceeded_max_bad_sectors') != 'off' or
+            states('sensor.backupstation_drive_1_rx415_1_status') != 'normal' or
+            states('sensor.backupstation_drive_1_rx415_1_status_smart') != 'normal' or
+            states('sensor.backupstation_drive_1_rx415_1_temperature')|float(default=0) > 60 or
+            states('binary_sensor.backupstation_drive_2_rx415_1_below_min_remaining_life') != 'off' or
+            states('binary_sensor.backupstation_drive_2_rx415_1_exceeded_max_bad_sectors') != 'off' or
+            states('sensor.backupstation_drive_2_rx415_1_status') != 'normal' or
+            states('sensor.backupstation_drive_2_rx415_1_status_smart') != 'normal' or
+            states('sensor.backupstation_drive_2_rx415_1_temperature')|float(default=0) > 60 or
+            states('binary_sensor.backupstation_drive_3_rx415_1_below_min_remaining_life') != 'off' or
+            states('binary_sensor.backupstation_drive_3_rx415_1_exceeded_max_bad_sectors') != 'off' or
+            states('sensor.backupstation_drive_3_rx415_1_status') != 'normal' or
+            states('sensor.backupstation_drive_3_rx415_1_status_smart') != 'normal' or
+            states('sensor.backupstation_drive_3_rx415_1_temperature')|float(default=0) > 60 or
+            states('binary_sensor.backupstation_drive_4_rx415_1_below_min_remaining_life') != 'off' or
+            states('binary_sensor.backupstation_drive_4_rx415_1_exceeded_max_bad_sectors') != 'off' or
+            states('sensor.backupstation_drive_4_rx415_1_status') != 'normal' or
+            states('sensor.backupstation_drive_4_rx415_1_status_smart') != 'normal' or
+            states('sensor.backupstation_drive_4_rx415_1_temperature')|float(default=0) > 60 or
+            states('sensor.backupstation_temperature')|float(default=0) > 60 or
+            states('sensor.backupstation_volume_1_status') != 'normal' or
+            states('sensor.backupstation_volume_1_volume_used')|float(default=0) > 95 or
+            states('sensor.backupstation_volume_1_maximum_disk_temp')|float(default=0) > 60, 'alert', 'normal') }}"
+    name: backupstation_alert
 
-- platform: template
-  sensors:
-    cdrxstation3_security_setting:
-      value_template: "{{ state_attr('binary_sensor.cdrxstation3_security_status', 'securitySetting') }}"
-      friendly_name: 'CDRXStation3 security setting status'
+- sensor:
+  - default_entity_id: sensor.cdrxstation_alert
+    state: "{{ iif (states('sensor.cdrxstation3_alert') != 'normal' or
+            states('sensor.backupstation_alert') != 'normal', 'alert', 'normal') }}"
+    name: cdrxstation_alert
 
-- platform: template
-  sensors:
-    cdrxstation3_security_system_check:
-      value_template: "{{ state_attr('binary_sensor.cdrxstation3_security_status', 'systemCheck') }}"
-      friendly_name: 'CDRXStation3 security system check'
+- sensor:
+  - default_entity_id: sensor.cdrxstation_update
+    state: "{{ iif (states('update.cdrxstation3_dsm_update') == 'on' or
+            states('update.backupstation_dsm_update') == 'on', 'update', 'normal') }}"
+    name: cdrxstation_update
 
-- platform: template
-  sensors:
-    cdrxstation3_security_user_info:
-      value_template: "{{ state_attr('binary_sensor.cdrxstation3_security_status', 'userInfo') }}"
-      friendly_name: 'CDRXStation3 security user info'
+- sensor:
+  - default_entity_id: sensor.cdrxstation3_volume1_total_space
+    state: '{{ states(''sensor.cdrxstation3_volume_1_total_size'', rounded=True) }}'
+    name: cdrxstation3_volume1_total_space
 
-- platform: template
-  sensors:
-    backupstation_security_malware:
-      value_template: "{{ state_attr('binary_sensor.backupstation_security_status', 'malware') }}"
-      friendly_name: 'BackupStation malware status'
+- sensor:
+  - default_entity_id: sensor.backupstation_volume1_total_space
+    state: '{{ states(''sensor.backupstation_volume_1_total_size'', rounded=True) }}'
+    name: backupstation_volume1_total_space
 
-- platform: template
-  sensors:
-    backupstation_security_network:
-      value_template: "{{ state_attr('binary_sensor.backupstation_security_status', 'network') }}"
-      friendly_name: 'BackupStation network status'
+- sensor:
+  - default_entity_id: sensor.cdrxstation3_total_memory_real
+    state: '{{ states(''sensor.cdrxstation3_memory_total_real'', rounded=True) }}'
+    name: cdrxstation3_total_memory_real
 
-- platform: template
-  sensors:
-    backupstation_security_setting:
-      value_template: "{{ state_attr('binary_sensor.backupstation_security_status', 'securitySetting') }}"
-      friendly_name: 'BackupStation security setting status'
+- sensor:
+  - default_entity_id: sensor.cdrxstation3_total_memory_swap
+    state: '{{ states(''sensor.cdrxstation3_memory_total_swap'', rounded=True) }}'
+    name: cdrxstation3_total_memory_swap
 
-- platform: template
-  sensors:
-    backupstation_security_system_check:
-      value_template: "{{ state_attr('binary_sensor.backupstation_security_status', 'systemCheck') }}"
-      friendly_name: 'BackupStation security system check'
+- sensor:
+  - default_entity_id: sensor.cdrxstation3_total_memory
+    state: '{{ states(''sensor.cdrxstation3_memory_size'', rounded=True) }}'
+    name: cdrxstation3_total_memory
 
-- platform: template
-  sensors:
-    backupstation_security_user_info:
-      value_template: "{{ state_attr('binary_sensor.backupstation_security_status', 'userInfo') }}"
-      friendly_name: 'BackupStation security user info'
+- sensor:
+  - default_entity_id: sensor.backupstation_total_memory_real
+    state: '{{ states(''sensor.backupstation_memory_total_real'', rounded=True) }}'
+    name: backupstation_total_memory_real
 
-- platform: template
-  sensors:
-    cdrxstation3_alert:
-      value_template: >-
-        {{ iif (states('binary_sensor.cdrxstation3_drive_1_below_min_remaining_life') != 'off' or
-          states('binary_sensor.cdrxstation3_drive_1_exceeded_max_bad_sectors') != 'off' or
-          states('sensor.cdrxstation3_drive_1_status') != 'normal' or
-          states('sensor.cdrxstation3_drive_1_status_smart') != 'normal' or
-          states('sensor.cdrxstation3_drive_1_temperature')|float(default=0) > 60 or
-          states('binary_sensor.cdrxstation3_drive_2_below_min_remaining_life') != 'off' or
-          states('binary_sensor.cdrxstation3_drive_2_exceeded_max_bad_sectors') != 'off' or
-          states('sensor.cdrxstation3_drive_2_status') != 'normal' or
-          states('sensor.cdrxstation3_drive_2_status_smart') != 'normal' or
-          states('sensor.cdrxstation3_drive_2_temperature')|float(default=0) > 60 or
-          states('binary_sensor.cdrxstation3_drive_3_below_min_remaining_life') != 'off' or
-          states('binary_sensor.cdrxstation3_drive_3_exceeded_max_bad_sectors') != 'off' or
-          states('sensor.cdrxstation3_drive_3_status') != 'normal' or
-          states('sensor.cdrxstation3_drive_3_status_smart') != 'normal' or
-          states('sensor.cdrxstation3_drive_3_temperature')|float(default=0) > 60 or
-          states('binary_sensor.cdrxstation3_drive_4_below_min_remaining_life') != 'off' or
-          states('binary_sensor.cdrxstation3_drive_4_exceeded_max_bad_sectors') != 'off' or
-          states('sensor.cdrxstation3_drive_4_status') != 'normal' or
-          states('sensor.cdrxstation3_drive_4_status_smart') != 'normal' or
-          states('sensor.cdrxstation3_drive_4_temperature')|float(default=0) > 60 or
-          states('binary_sensor.cdrxstation3_drive_1_rx415_1_below_min_remaining_life') != 'off' or
-          states('binary_sensor.cdrxstation3_drive_1_rx415_1_exceeded_max_bad_sectors') != 'off' or
-          states('sensor.cdrxstation3_drive_1_rx415_1_status') != 'normal' or
-          states('sensor.cdrxstation3_drive_1_rx415_1_status_smart') != 'normal' or
-          states('sensor.cdrxstation3_drive_1_rx415_1_temperature')|float(default=0) > 60 or
-          states('binary_sensor.cdrxstation3_drive_2_rx415_1_below_min_remaining_life') != 'off' or
-          states('binary_sensor.cdrxstation3_drive_2_rx415_1_exceeded_max_bad_sectors') != 'off' or
-          states('sensor.cdrxstation3_drive_2_rx415_1_status') != 'normal' or
-          states('sensor.cdrxstation3_drive_2_rx415_1_status_smart') != 'normal' or
-          states('sensor.cdrxstation3_drive_2_rx415_1_temperature')|float(default=0) > 60 or
-          states('binary_sensor.cdrxstation3_drive_3_rx415_1_below_min_remaining_life') != 'off' or
-          states('binary_sensor.cdrxstation3_drive_3_rx415_1_exceeded_max_bad_sectors') != 'off' or
-          states('sensor.cdrxstation3_drive_3_rx415_1_status') != 'normal' or
-          states('sensor.cdrxstation3_drive_3_rx415_1_status_smart') != 'normal' or
-          states('sensor.cdrxstation3_drive_3_rx415_1_temperature')|float(default=0) > 60 or
-          states('binary_sensor.cdrxstation3_drive_4_rx415_1_below_min_remaining_life') != 'off' or
-          states('binary_sensor.cdrxstation3_drive_4_rx415_1_exceeded_max_bad_sectors') != 'off' or
-          states('sensor.cdrxstation3_drive_4_rx415_1_status') != 'normal' or
-          states('sensor.cdrxstation3_drive_4_rx415_1_status_smart') != 'normal' or
-          states('sensor.cdrxstation3_drive_4_rx415_1_temperature')|float(default=0) > 60 or
-          states('binary_sensor.cdrxstation3_ssd_1_below_min_remaining_life') != 'off' or
-          states('binary_sensor.cdrxstation3_ssd_1_exceeded_max_bad_sectors') != 'off' or
-          states('sensor.cdrxstation3_ssd_1_status') != 'normal' or
-          states('sensor.cdrxstation3_ssd_1_status_smart') != 'normal' or
-          states('sensor.cdrxstation3_ssd_1_temperature')|float(default=0) > 60 or
-          states('binary_sensor.cdrxstation3_ssd_2_below_min_remaining_life') != 'off' or
-          states('binary_sensor.cdrxstation3_ssd_2_exceeded_max_bad_sectors') != 'off' or
-          states('sensor.cdrxstation3_ssd_2_status') != 'normal' or
-          states('sensor.cdrxstation3_ssd_2_status_smart') != 'normal' or
-          states('sensor.cdrxstation3_ssd_2_temperature')|float(default=0) > 60 or
-          states('sensor.cdrxstation3_temperature')|float(default=0) > 60 or
-          states('sensor.cdrxstation3_volume_1_status') != 'normal' or
-          states('sensor.cdrxstation3_volume_1_volume_used')|float(default=0) > 95 or
-          states('sensor.cdrxstation3_volume_1_maximum_disk_temp')|float(default=0) > 60, 'alert', 'normal') }}
+- sensor:
+  - default_entity_id: sensor.backupstation_total_memory_swap
+    state: '{{ states(''sensor.backupstation_memory_total_swap'', rounded=True) }}'
+    name: backupstation_total_memory_swap
 
-- platform: template
-  sensors:
-    backupstation_alert:
-      value_template: >-
-        {{ iif (states('binary_sensor.backupstation_drive_1_below_min_remaining_life') != 'off' or
-          states('binary_sensor.backupstation_drive_1_exceeded_max_bad_sectors') != 'off' or
-          states('sensor.backupstation_drive_1_status') != 'normal' or
-          states('sensor.backupstation_drive_1_status_smart') != 'normal' or
-          states('sensor.backupstation_drive_1_temperature')|float(default=0) > 60 or
-          states('binary_sensor.backupstation_drive_2_below_min_remaining_life') != 'off' or
-          states('binary_sensor.backupstation_drive_2_exceeded_max_bad_sectors') != 'off' or
-          states('sensor.backupstation_drive_2_status') != 'normal' or
-          states('sensor.backupstation_drive_2_status_smart') != 'normal' or
-          states('sensor.backupstation_drive_2_temperature')|float(default=0) > 60 or
-          states('binary_sensor.backupstation_drive_3_below_min_remaining_life') != 'off' or
-          states('binary_sensor.backupstation_drive_3_exceeded_max_bad_sectors') != 'off' or
-          states('sensor.backupstation_drive_3_status') != 'normal' or
-          states('sensor.backupstation_drive_3_status_smart') != 'normal' or
-          states('sensor.backupstation_drive_3_temperature')|float(default=0) > 60 or
-          states('binary_sensor.backupstation_drive_4_below_min_remaining_life') != 'off' or
-          states('binary_sensor.backupstation_drive_4_exceeded_max_bad_sectors') != 'off' or
-          states('sensor.backupstation_drive_4_status') != 'normal' or
-          states('sensor.backupstation_drive_4_status_smart') != 'normal' or
-          states('sensor.backupstation_drive_4_temperature')|float(default=0) > 60 or
-          states('binary_sensor.backupstation_drive_1_rx415_1_below_min_remaining_life') != 'off' or
-          states('binary_sensor.backupstation_drive_1_rx415_1_exceeded_max_bad_sectors') != 'off' or
-          states('sensor.backupstation_drive_1_rx415_1_status') != 'normal' or
-          states('sensor.backupstation_drive_1_rx415_1_status_smart') != 'normal' or
-          states('sensor.backupstation_drive_1_rx415_1_temperature')|float(default=0) > 60 or
-          states('binary_sensor.backupstation_drive_2_rx415_1_below_min_remaining_life') != 'off' or
-          states('binary_sensor.backupstation_drive_2_rx415_1_exceeded_max_bad_sectors') != 'off' or
-          states('sensor.backupstation_drive_2_rx415_1_status') != 'normal' or
-          states('sensor.backupstation_drive_2_rx415_1_status_smart') != 'normal' or
-          states('sensor.backupstation_drive_2_rx415_1_temperature')|float(default=0) > 60 or
-          states('binary_sensor.backupstation_drive_3_rx415_1_below_min_remaining_life') != 'off' or
-          states('binary_sensor.backupstation_drive_3_rx415_1_exceeded_max_bad_sectors') != 'off' or
-          states('sensor.backupstation_drive_3_rx415_1_status') != 'normal' or
-          states('sensor.backupstation_drive_3_rx415_1_status_smart') != 'normal' or
-          states('sensor.backupstation_drive_3_rx415_1_temperature')|float(default=0) > 60 or
-          states('binary_sensor.backupstation_drive_4_rx415_1_below_min_remaining_life') != 'off' or
-          states('binary_sensor.backupstation_drive_4_rx415_1_exceeded_max_bad_sectors') != 'off' or
-          states('sensor.backupstation_drive_4_rx415_1_status') != 'normal' or
-          states('sensor.backupstation_drive_4_rx415_1_status_smart') != 'normal' or
-          states('sensor.backupstation_drive_4_rx415_1_temperature')|float(default=0) > 60 or
-          states('sensor.backupstation_temperature')|float(default=0) > 60 or
-          states('sensor.backupstation_volume_1_status') != 'normal' or
-          states('sensor.backupstation_volume_1_volume_used')|float(default=0) > 95 or
-          states('sensor.backupstation_volume_1_maximum_disk_temp')|float(default=0) > 60, 'alert', 'normal') }}
-
-- platform: template
-  sensors:
-    cdrxstation_alert:
-      value_template: >-
-        {{ iif (states('sensor.cdrxstation3_alert') != 'normal' or
-          states('sensor.backupstation_alert') != 'normal', 'alert', 'normal') }}
-
-- platform: template
-  sensors:
-    cdrxstation_update:
-      value_template: >-
-        {{ iif (states('update.cdrxstation3_dsm_update') == 'on' or
-          states('update.backupstation_dsm_update') == 'on', 'update', 'normal') }}
-
-- platform: template
-  sensors:
-    cdrxstation3_volume1_total_space:
-      value_template: "{{ states('sensor.cdrxstation3_volume_1_total_size', rounded=True) }}"
-
-- platform: template
-  sensors:
-    backupstation_volume1_total_space:
-      value_template: "{{ states('sensor.backupstation_volume_1_total_size', rounded=True) }}"
-
-- platform: template
-  sensors:
-    cdrxstation3_total_memory_real:
-      value_template: "{{ states('sensor.cdrxstation3_memory_total_real', rounded=True) }}"
-
-- platform: template
-  sensors:
-    cdrxstation3_total_memory_swap:
-      value_template: "{{ states('sensor.cdrxstation3_memory_total_swap', rounded=True) }}"
-
-- platform: template
-  sensors:
-    cdrxstation3_total_memory:
-      value_template: "{{ states('sensor.cdrxstation3_memory_size', rounded=True) }}"
-
-- platform: template
-  sensors:
-    backupstation_total_memory_real:
-      value_template: "{{ states('sensor.backupstation_memory_total_real', rounded=True) }}"
-
-- platform: template
-  sensors:
-    backupstation_total_memory_swap:
-      value_template: "{{ states('sensor.backupstation_memory_total_swap', rounded=True) }}"
-
-- platform: template
-  sensors:
-    backupstation_total_memory:
-      value_template: "{{ states('sensor.backupstation_memory_size', rounded=True) }}"
+- sensor:
+  - default_entity_id: sensor.backupstation_total_memory
+    state: '{{ states(''sensor.backupstation_memory_size'', rounded=True) }}'
+    name: backupstation_total_memory

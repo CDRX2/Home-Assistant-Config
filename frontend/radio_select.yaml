@@ -54,7 +54,7 @@ card:
 view_layout:
   grid-area: radio
 card_mod:
-style: |
-  :host {
-    align-self: center;
-  }
+  style: |
+    :host {
+      align-self: center;
+    }
