@@ -1,0 +1,16 @@
+panel: false
+icon: 'mdi:window-restore'
+cards:
+  - type: custom:popup-card
+    target:
+      entity_id:
+        - sensor.cdrxstation3_volume_1_volume_used
+        - sensor.backupstation_volume_1_volume_used
+    card:
+      type: 'custom:swipe-card'
+      cards:
+        - !include ../frontend/station3.yaml
+        - !include ../frontend/stationB.yaml
+    title: Synology NAS
+    size: fullscreen
+    popup_card_all_views: true

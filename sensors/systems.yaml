@@ -1,14 +1,13 @@
-- platform: template
-  sensors:
-    hass_alert:
-      value_template: >-
-        {{ iif (states('update.samba_share_update') != 'off' or
-          states('update.file_editor_update') != 'off' or
-          states('update.ssh_web_terminal_update') != 'off' or
-          states('update.samba_backup_update') != 'off' or
-          states('update.home_assistant_core_update') != 'off' or
-          states('update.home_assistant_operating_system_update') != 'off' or
-          states('update.home_assistant_supervisor_update') != 'off' or
-          states('update.hacs_update') != 'off' or
-          states('update.slzb_06p7_core_firmware') != 'off' or
-          states('update.slzb_06p7_zigbee_firmware') != 'off', 'alert', 'normal') }}
+- sensor:
+  - default_entity_id: sensor.hass_alert
+    state: "{{ iif (states('update.samba_share_update') != 'off' or
+            states('update.file_editor_update') != 'off' or
+            states('update.ssh_web_terminal_update') != 'off' or
+            states('update.samba_backup_update') != 'off' or
+            states('update.home_assistant_core_update') != 'off' or
+            states('update.home_assistant_operating_system_update') != 'off' or
+            states('update.home_assistant_supervisor_update') != 'off' or
+            states('update.hacs_update') != 'off' or
+            states('update.slzb_06p7_core_firmware') != 'off' or
+            states('update.slzb_06p7_zigbee_firmware') != 'off', 'alert', 'normal') }}"
+    name: hass_alert

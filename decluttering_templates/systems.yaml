@@ -518,57 +518,87 @@ Volume_button:
           - bottom: 0%
           - width: 100%
 
+#NAS_Volumes:
+#  card:
+#    type: 'custom:apexcharts-card'
+#    config_templates: radial_bar
+#    header:
+#      show: true
+#      title: '[[title]]'
+#      title_actions:
+#        tap_action:
+#          action: fire-dom-event
+#          browser_mod:
+#            service: browser_mod.popup
+#            data:
+#              content:
+#                type: 'custom:swipe-card'
+#                cards:
+#                  - !include ../frontend/station3.yaml
+#                  - !include ../frontend/stationB.yaml
+#              title: Synology NAS
+#              size: fullscreen
+#    apex_config:
+#      title:
+#        margin: 0
+#      legend:
+#        horizontalAlign: left
+#      plotOptions:
+#        radialBar:
+#          dataLabels:
+#            show: false
+#    series:
+#      - entity: '[[sensor_1]]'
+#        name: '[[name_1]]'
+#        color: '#03a8f4'
+#    card_mod:
+#      style: |
+#        :host {
+#          height: 100%;
+#        }
+#        ha-card {
+#          box-shadow: none !important;
+#          height: 100%;
+#        }
+#        .wrapper.with-header {
+#          height: 100%;
+#        }
+#        .apexcharts-inner.apexcharts-graphical {
+#          transform: translate(-22.5%, -5%);
+#        }
+#        .apexcharts-legend {
+#          width: 50%;
+#        }
+#        div#graph-wrapper {
+#          transform: translate(0, -5%);
+#        }
+
 NAS_Volumes:
   card:
-    type: 'custom:apexcharts-card'
-    config_templates: radial_bar
-    header:
-      show: true
-      title: '[[title]]'
-      title_actions:
-        tap_action:
-          action: fire-dom-event
-          browser_mod:
-            service: browser_mod.popup
-            data:
-              content:
-                type: 'custom:swipe-card'
-                cards:
-                  - !include ../frontend/station3.yaml
-                  - !include ../frontend/stationB.yaml
-              title: Synology NAS
-              size: fullscreen
-    apex_config:
-      title:
-        margin: 0
-      legend:
-        horizontalAlign: left
-      plotOptions:
-        radialBar:
-          dataLabels:
-            show: false
-    series:
-      - entity: '[[sensor_1]]'
-        name: '[[name_1]]'
-        color: '#03a8f4'
+    type: custom:mod-card
+    card:
+      type: custom:custom-gauge-card
+      entity: '[[sensor_1]]'
+      name: '[[title]]'
+      unit: "%"
+      min: 0
+      max: 100
+      leds_count: 500
+      led_size: 20
+      severity:
+        - color: "#03a8f4"
+          value: 75
+        - color: "#ffa31a"
+          value: 95
+        - color: "#ff1a1a"
+          value: 100
+      hide_inactive_leds: true
+      transparent_card_background: true
     card_mod:
-      style: |
-        :host {
-          height: 100%;
-        }
-        ha-card {
-          box-shadow: none !important;
-          height: 100%;
-        }
-        .wrapper.with-header {
-          height: 100%;
-        }
-        .apexcharts-inner.apexcharts-graphical {
-          transform: translate(-22.5%, -5%);
-        }
-        .apexcharts-legend {
-          width: 50%;
-        }
-        div#graph-wrapper {
-          transform: translate(0, -5%);
-        }
+      style:
+        custom-gauge-card$: |
+          #gauge-container {
+            border-radius: 0vw !important;
+            box-shadow: none !important;
+            margin: 0 auto;
+          }

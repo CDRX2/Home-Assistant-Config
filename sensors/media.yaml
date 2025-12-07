@@ -1,57 +1,52 @@
-- platform: template
-  sensors:
-    living_room_tv_now_playing:
-      value_template: >-
-        {% if is_state('media_player.living_room_TV', 'off') %}
-          {{ states('media_player.living_room_TV') }}
-        {% elif is_state('media_player.jellyfin_lg_smart_tv', 'playing') or is_state('media_player.jellyfin_lg_smart_tv', 'paused') %}
-          Jellyfin
-        {% else %}
-          Other
-        {% endif %}
+- sensor:
+  - default_entity_id: sensor.living_room_tv_now_playing
+    state: "{% if is_state('media_player.living_room_TV', 'off') %}
+              {{ states('media_player.living_room_TV') }}
+            {% elif is_state('media_player.jellyfin_lg_smart_tv', 'playing') or is_state('media_player.jellyfin_lg_smart_tv', 'paused') %}
+              Jellyfin
+            {% else %}
+              Other
+            {% endif %}"
+    name: living_room_tv_now_playing
 
-- platform: template
-  sensors:
-    living_room_tv_source:
-      value_template: "{{ state_attr('media_player.living_room_tv', 'source') }}"
-      friendly_name: 'Living Room TV Source'
 
-- platform: template
-  sensors:
-    pioneer_sound_mode:
-      friendly_name: "Mode audio actuel"
-      value_template: "{{ state_attr('media_player.pioneer_avr', 'current_sound_mode')|title }}"
+- sensor:
+  - default_entity_id: sensor.living_room_tv_source
+    name: Living Room TV Source
+    state: '{{ state_attr(''media_player.living_room_tv'', ''source'') }}'
 
-- platform: template
-  sensors:
-    pioneer_volume:
-      value_template: >-
-        {% if is_state_attr('media_player.pioneer_avr', 'is_volume_muted', true) %}
-          MUTE
-        {% else %}
-          {{ states('sensor.pioneer_avr_volume')}}
-        {% endif %}
+- sensor:
+  - default_entity_id: sensor.pioneer_sound_mode
+    name: Mode audio actuel
+    state: '{{ state_attr(''media_player.pioneer_avr'', ''current_sound_mode'')|title }}'
 
-- platform: template
-  sensors:
-    remote_select:
-      value_template: >-
-        {% if is_state('media_player.pioneer_avr', 'off') and is_state('media_player.living_room_tv', 'off') %}
-          off
-        {% elif is_state_attr('media_player.pioneer_avr', 'source', 'MEDIA SERVER') and (states('media_player.sc_lx78') != 'off' or states('media_player.sc_lx78') != 'unavailable') %}
-          music
-        {% else %}
-          other
-        {% endif %}
+- sensor:
+  - default_entity_id: sensor.pioneer_volume
+    state: "{% if is_state_attr('media_player.pioneer_avr', 'is_volume_muted', true) %}
+              MUTE
+            {% else %}
+              {{ states('sensor.pioneer_avr_volume')}}
+            {% endif %}"
+    name: pioneer_volume
 
-- platform: template
-  sensors:
-    pioneer_avr_volume:
-      value_template: >-
-        {% set volume = state_attr('media_player.pioneer_avr', 'volume_level') | float(0) %}
-        {% if volume > 0 %}
-          {{ ((volume * 92.5) - 80.5) | round(1) }}
-        {% else %}
-          -∞
-        {% endif %}
-      unit_of_measurement: "dB"
+- sensor:
+  - default_entity_id: sensor.remote_select
+    state: "{% if is_state('media_player.pioneer_avr', 'off') and is_state('media_player.living_room_tv', 'off') %}
+              off
+            {% elif is_state_attr('media_player.pioneer_avr', 'source', 'MEDIA SERVER') and (states('media_player.sc_lx78') != 'off' or states('media_player.sc_lx78') != 'unavailable') %}
+              music
+            {% else %}
+              other
+            {% endif %}"
+    name: remote_select
+
+- sensor:
+  - unit_of_measurement: dB
+    default_entity_id: sensor.pioneer_avr_volume
+    state: "{% set volume = state_attr('media_player.pioneer_avr', 'volume_level') | float(0) %}
+            {% if volume > 0 %}
+              {{ ((volume * 92.5) - 80.5) | round(1) }}
+            {% else %}
+              -∞
+            {% endif %}"
+    name: pioneer_avr_volume
