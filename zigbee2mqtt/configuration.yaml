@@ -176,8 +176,6 @@ devices:
     friendly_name: Petit totem deco
   '0x00212effff00f294':
     friendly_name: Vinyles
-  '0x84b4dbfffe96e892':
-    friendly_name: Spare switch 4
   '0x680ae2fffe41f474':
     friendly_name: Grand totem
   '0xb40ecfd112990000':

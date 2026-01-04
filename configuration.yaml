@@ -227,11 +227,11 @@ light:
     - light.panneau_lumineux
     - light.guirlandes_verriere
     - light.guirlandes_crystal
-    # - light.spare_switch_1
-    - light.spare_switch_2
-    - light.spare_switch_3
-    - light.spare_switch_4
-    - light.guirlandes_noel
+#    - light.spare_switch_1
+#    - light.spare_switch_2
+#    - light.spare_switch_3
+#    - light.spare_switch_4
+#    - light.guirlandes_noel
 
   - platform: group
     name: Salon déco
@@ -249,14 +249,14 @@ light:
     # - light.spare_switch_4
     # - light.guirlandes_noel
 
-  - platform: group
-    name: Noel
-    entities:
-      #- light.spare_switch_1
-      - light.spare_switch_2
-      - light.spare_switch_3
-      - light.spare_switch_4
-      - light.guirlandes_noel
+#  - platform: group
+#    name: Noel
+#    entities:
+#      - light.spare_switch_1
+#      - light.spare_switch_2
+#      - light.spare_switch_3
+#      - light.spare_switch_4
+#      - light.guirlandes_noel
 
   - platform: group
     name: Terrasse
@@ -337,8 +337,8 @@ light:
     - light.charles_haut_white
     - light.guirlandes_crystal
     - light.guirlandes_verriere
-    # - light.spare_switch_1
-    - light.spare_switch_2
-    - light.spare_switch_3
-    - light.spare_switch_4
-    - light.guirlandes_noel
+#   - light.spare_switch_1
+#   - light.spare_switch_2
+#   - light.spare_switch_3
+#   - light.spare_switch_4
+#    - light.guirlandes_noel

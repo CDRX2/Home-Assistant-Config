@@ -21,6 +21,7 @@ from homeassistant.core import (
     DOMAIN as HADOMAIN,
     Event as HAEvent,
     split_entity_id,
+    ServiceResponse,
 )
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.template import Template, render_complex
@@ -61,8 +62,8 @@ from homeassistant.const import (
     Platform,
 )
 
+from .util import is_none, TD_ZERO
 from .history import IUHistory
-
 from .const import (
     ATTR_ADJUSTED_DURATION,
     ATTR_ADJUSTMENT,
@@ -81,7 +82,11 @@ from .const import (
     ATTR_INDEX,
     ATTR_IU_ID,
     ATTR_NAME,
+    ATTR_RUN,
     ATTR_SCHEDULE,
+    ATTR_SCHEDULE_ID,
+    ATTR_SEQUENCE,
+    ATTR_SEQUENCE_ID,
     ATTR_START,
     ATTR_STATUS,
     ATTR_SUSPENDED,
@@ -125,6 +130,8 @@ from .const import (
     CONF_FOUND,
     CONF_FROM,
     CONF_FUTURE_SPAN,
+    CONF_GLOBAL_SEQUENCE_IDS,
+    CONF_GLOBAL_ZONE_IDS,
     CONF_GRANULARITY,
     CONF_INCREASE,
     CONF_INDEX,
@@ -148,11 +155,8 @@ from .const import (
     CONF_RESULTS,
     CONF_RESYNC,
     CONF_RETRIES,
-    CONF_RUN,
-    CONF_SCHEDULE,
     CONF_SCHEDULES,
     CONF_SCHEDULE_ID,
-    CONF_SEQUENCE,
     CONF_SEQUENCES,
     CONF_SEQUENCE_ID,
     CONF_SEQUENCE_ZONES,
@@ -180,7 +184,6 @@ from .const import (
     CONF_ZONE,
     CONF_ZONES,
     CONF_ZONE_ID,
-    CONF_ZONE_IDS,
     COORDINATOR,
     DEFAULT_GRANULARITY,
     DEFAULT_MAX_LOG_ENTRIES,
@@ -1134,19 +1137,20 @@ class IUVolume:
         self._flow_rate_scale: float = None
         # Private variables
         self._callback_remove: CALLBACK_TYPE = None
-        self._start_volume: Decimal = None
         self._total_volume: Decimal = None
+        self._total_readings: int = 0
         self._start_time: datetime = None
         self._end_time: datetime = None
-        self._listeners: dict[
-            str, Callable[[datetime, "IUZone", Decimal, Decimal], None]
-        ] = {}
+        self._listeners: dict[str, Callable[[datetime, "IUZone", Decimal], None]] = {}
         self._flow_rates: list[Decimal] = []
         self._flow_rate_sum: Decimal = None
         self._flow_rate_sma: Decimal = None
+        self._flow_rate_avg: Decimal = None
         self._sensor_readings: list[IUVolumeSensorReading] = []
-        self.reset_config()
-        self.reset_readings()
+        self._first_reading: IUVolumeSensorReading = None
+        self._last_reading: IUVolumeSensorReading = None
+        self._reset_config()
+        self._reset_readings()
 
     @property
     def total(self) -> float | None:
@@ -1158,11 +1162,11 @@ class IUVolume:
     @property
     def flow_rate(self) -> float | None:
         """Return the flow rate"""
-        if self._flow_rate_sma is not None:
-            return float(self._flow_rate_sma)
+        if self._flow_rate_avg is not None:
+            return float(self._flow_rate_avg)
         return None
 
-    def reset_config(self) -> None:
+    def _reset_config(self) -> None:
         """Reset this object"""
         self.end_record(None)
         self._sensor_id = None
@@ -1171,15 +1175,18 @@ class IUVolume:
         self._flow_rate_precision = 3
         self._flow_rate_scale = 3600
 
-    def reset_readings(self) -> None:
+    def _reset_readings(self) -> None:
         """Reset reading parameters"""
-        self._start_volume = None
         self._total_volume = None
+        self._total_readings = 0
         self._start_time = None
+        self._first_reading = None
+        self._last_reading = None
         self._sensor_readings.clear()
         self._flow_rates.clear()
         self._flow_rate_sum = 0
         self._flow_rate_sma = None
+        self._flow_rate_avg = None
 
     def load(self, config: OrderedDict, all_zones: OrderedDict) -> "IUSwitch":
         """Load volume data from the configuration"""
@@ -1199,13 +1206,13 @@ class IUVolume:
                 CONF_FLOW_RATE_SCALE, self._flow_rate_scale
             )
 
-        self.reset_config()
-        self.reset_readings()
+        self._reset_config()
+        self._reset_readings()
         if all_zones is not None:
             load_params(all_zones.get(CONF_VOLUME))
         load_params(config.get(CONF_VOLUME))
 
-    def read_sensor(self, stime: datetime) -> Decimal:
+    def _read_sensor(self, stime: datetime) -> None:
         """Read the sensor data"""
         sensor = self._hass.states.get(self._sensor_id)
         if sensor is None:
@@ -1214,13 +1221,15 @@ class IUVolume:
         if value < 0:
             raise ValueError(f"Negative sensor value: {sensor.state}")
 
-        volume = Decimal(f"{value * self._volume_scale:.{self._volume_precision}f}")
+        current_reading = IUVolumeSensorReading(
+            stime, Decimal(f"{value * self._volume_scale:.{self._volume_precision}f}")
+        )
 
         if len(self._sensor_readings) > 0:
-            last_reading = self._sensor_readings[-1]
-            volume_delta = volume - last_reading.value
+            self._last_reading = self._sensor_readings[-1]
+            volume_delta = current_reading.value - self._last_reading.value
             time_delta = Decimal(
-                f"{(stime - last_reading.timestamp).total_seconds():.6f}"
+                f"{(stime - self._last_reading.timestamp).total_seconds():.6f}"
             )
 
             if time_delta == 0:
@@ -1228,34 +1237,49 @@ class IUVolume:
             if time_delta < 0:
                 raise ValueError(
                     "Sensor time has gone backwards: "
-                    f"previous: {last_reading.timestamp}, "
+                    f"previous: {self._last_reading.timestamp}, "
                     f"current: {stime}"
                 )
             if volume_delta < 0:
                 raise ValueError(
                     "Sensor value has gone backwards: "
-                    f"previous: {last_reading.value}, "
-                    f"current: {volume}"
+                    f"previous: {self._last_reading.value}, "
+                    f"current: {current_reading.value}"
                 )
 
-            # Update moving average of the rate. Ignore initial reading.
-            if len(self._sensor_readings) > 1:
-                rate = volume_delta * Decimal(self._flow_rate_scale) / time_delta
-                self._flow_rate_sum += rate
-                self._flow_rates.append(rate)
-                if len(self._flow_rates) > IUVolume.SMA_WINDOW:
-                    self._flow_rate_sum -= self._flow_rates.pop(0)
-                # pylint: disable=invalid-unary-operand-type
-                self._flow_rate_sma = (
-                    self._flow_rate_sum / len(self._flow_rates)
+            # Total
+            self._total_volume = current_reading.value - self._first_reading.value
+            total_time = current_reading.timestamp - self._first_reading.timestamp
+
+            # SMA
+            rate = volume_delta * Decimal(self._flow_rate_scale) / time_delta
+            self._flow_rate_sum += rate
+            self._flow_rates.append(rate)
+            if len(self._flow_rates) > IUVolume.SMA_WINDOW:
+                self._flow_rate_sum -= self._flow_rates.pop(0)
+            # pylint: disable=invalid-unary-operand-type
+            self._flow_rate_sma = (
+                self._flow_rate_sum / len(self._flow_rates)
+            ).quantize(Decimal(10) ** -self._flow_rate_precision)
+
+            # AVG
+            if (secs := total_time.total_seconds()) > 0:
+                self._flow_rate_avg = (
+                    self._total_volume * Decimal(self._flow_rate_scale) / Decimal(secs)
                 ).quantize(Decimal(10) ** -self._flow_rate_precision)
+        else:
+            self._first_reading = current_reading
+            self._total_volume = 0
+            self._flow_rate_sma = 0
+            self._flow_rate_avg = 0
 
         # Update bookkeeping
-        self._sensor_readings.append(IUVolumeSensorReading(stime, volume))
+        self._total_readings += 1
+        self._sensor_readings.append(current_reading)
         if len(self._sensor_readings) > IUVolume.MAX_READINGS:
             self._sensor_readings.pop(0)
 
-        return volume
+        return
 
     def event_hook(self, event: HAEvent) -> HAEvent:
         """A pass through place for testing to patch and update
@@ -1267,51 +1291,51 @@ class IUVolume:
         event = self.event_hook(event)
         stime = event.time_fired
         try:
-            value = self.read_sensor(stime)
+            self._read_sensor(stime)
         except ValueError as e:
             self._coordinator.logger.log_invalid_meter_value(stime, e)
         except IUVolumeSensorError:
             self._coordinator.logger.log_invalid_meter_id(stime, self._sensor_id)
         else:
-            self._total_volume = value - self._start_volume
-
             # Notifiy our trackers
             for listener in list(self._listeners.values()):
                 await listener(
                     stime,
                     self._zone,
                     self._total_volume,
-                    self._flow_rate_sma,
                 )
 
     def start_record(self, stime: datetime) -> None:
         """Start recording volume information"""
-        self.reset_readings()
+        self._reset_readings()
         if self._sensor_id is None:
             return
 
-        try:
-            self._start_volume = self.read_sensor(stime)
-        except ValueError as e:
-            self._coordinator.logger.log_invalid_meter_value(stime, e)
-        except IUVolumeSensorError:
-            self._coordinator.logger.log_invalid_meter_id(stime, self._sensor_id)
-        else:
-            self._callback_remove = async_track_state_change_event(
-                self._hass, self._sensor_id, self.sensor_state_change
-            )
-            IUVolume.trackers += 1
+        self._start_time = stime
+        self._callback_remove = async_track_state_change_event(
+            self._hass, self._sensor_id, self.sensor_state_change
+        )
+        IUVolume.trackers += 1
 
-    def end_record(self, stime: datetime) -> None:
+    def end_record(self, stime: datetime | None) -> None:
         """Finish recording volume information"""
         self._end_time = stime
+        if (
+            self._start_time is not None
+            and self._end_time is not None
+            and self._total_volume is not None
+        ):
+            if (secs := (self._end_time - self._start_time).total_seconds()) > 0:
+                self._flow_rate_avg = (
+                    self._total_volume * Decimal(self._flow_rate_scale) / Decimal(secs)
+                ).quantize(Decimal(10) ** -self._flow_rate_precision)
         if self._callback_remove is not None:
             self._callback_remove()
             self._callback_remove = None
             IUVolume.trackers -= 1
 
     def track_volume_change(
-        self, uid: int, action: Callable[[datetime, "IUZone", float, float], None]
+        self, uid: int, action: Callable[[datetime, "IUZone", float], None]
     ) -> CALLBACK_TYPE:
         """Track the volume"""
 
@@ -1570,7 +1594,7 @@ class IURun(IUBase):
             duration: timedelta = self._end_time - self._start_time
             elapsed: timedelta = stime - self._start_time
             self._percent_complete = (
-                int((elapsed / duration) * 100) if duration > timedelta(0) else 0
+                int((elapsed / duration) * 100) if duration > TD_ZERO else 0
             )
             return True
         return False
@@ -1606,7 +1630,7 @@ class IURun(IUBase):
 def calc_on_time(runs: list[IURun]) -> timedelta:
     """Return the total time this list of runs is on. Accounts for
     overlapping time periods"""
-    result = timedelta(0)
+    result = TD_ZERO
     period_start: datetime = None
     period_end: datetime = None
 
@@ -1756,7 +1780,7 @@ class IURunQueue(list[IURun]):
         """Remove any expired runs from the queue"""
         modified: bool = False
         if postamble is None:
-            postamble = timedelta(0)
+            postamble = TD_ZERO
         i = len(self) - 1
         while i >= 0:
             run = self[i]
@@ -1844,7 +1868,7 @@ class IURunQueue(list[IURun]):
             status |= IURQStatus.UPDATED
         if self._current_run is None:
             for run in self:
-                if run.running and run.duration != timedelta(0):
+                if run.running and run.duration != TD_ZERO:
                     self._current_run = run
                     self._next_run = None
                     status |= IURQStatus.UPDATED
@@ -1856,7 +1880,7 @@ class IURunQueue(list[IURun]):
             status |= IURQStatus.UPDATED
         if self._next_run is None:
             for run in self:
-                if run.future and run.duration != timedelta(0):
+                if run.future and run.duration != TD_ZERO:
                     self._next_run = run
                     status |= IURQStatus.UPDATED
                     break
@@ -1905,7 +1929,7 @@ class IUScheduleQueue(IURunQueue):
         if self._maximum is not None:
             duration = min(duration, self._maximum)
         if self._threshold is not None and duration < self._threshold:
-            duration = timedelta(0)
+            duration = TD_ZERO
         return duration
 
     def clear_runs(self) -> bool:
@@ -2083,7 +2107,10 @@ class IUZone(IUBase):
 
     @property
     def entity_id(self) -> str:
-        """Return the HA entity_id for the zone"""
+        """Return the HA entity_id for the zone. During the registion
+        HA may rename the entity"""
+        if self._zone_sensor is not None:
+            return self._zone_sensor.entity_id
         return f"{BINARY_SENSOR}.{DOMAIN}_{self.entity_base}"
 
     @property
@@ -2105,6 +2132,11 @@ class IUZone(IUBase):
     def volume(self) -> IUVolume:
         """Return the volume for this zone"""
         return self._volume
+
+    @property
+    def switch(self) -> IUSwitch:
+        """Return the switch for this zone"""
+        return self._switch
 
     @property
     def zone_id(self) -> str:
@@ -2189,9 +2221,14 @@ class IUZone(IUBase):
         return self._show_timeline
 
     @property
-    def today_total(self) -> timedelta:
+    def today_total_duration(self) -> timedelta:
         """Return the total on time for today"""
-        return self._coordinator.history.today_total(self.entity_id)
+        return self._coordinator.history.today_total_duration(self.entity_id)
+
+    @property
+    def today_total_volume(self) -> float:
+        """Return the total volume time for today"""
+        return self._coordinator.history.today_total_volume(self.entity_id)
 
     @property
     def icon(self) -> str:
@@ -2215,11 +2252,6 @@ class IUZone(IUBase):
     def user(self) -> dict:
         """Return the arbitrary user information"""
         return self._user
-
-    @property
-    def switch(self) -> IUSwitch:
-        """Return the switch"""
-        return self._switch
 
     def _is_setup(self) -> bool:
         """Check if this object is setup"""
@@ -2284,9 +2316,9 @@ class IUZone(IUBase):
         """Add a manual run."""
         if self._allow_manual or (self.is_enabled and self._controller.is_enabled):
             duration = wash_td(data.get(CONF_TIME))
-            delay = wash_td(data.get(CONF_DELAY, timedelta(0)))
+            delay = wash_td(data.get(CONF_DELAY, TD_ZERO))
             queue = data.get(CONF_QUEUE, self._controller.queue_manual)
-            if duration is None or duration == timedelta(0):
+            if duration is None or duration == TD_ZERO:
                 duration = self._duration
                 if duration is None:
                     return
@@ -2374,7 +2406,7 @@ class IUZone(IUBase):
             if self.runs.current_run is not None:
                 current_duration = self.runs.current_run.duration
             else:
-                current_duration = timedelta(0)
+                current_duration = TD_ZERO
             result[CONF_ICON] = self.icon
             result[CONF_ZONE_ID] = self._zone_id
             result[CONF_ENTITY_BASE] = self.entity_base
@@ -2392,7 +2424,7 @@ class IUZone(IUBase):
             run[TIMELINE_STATUS] = RES_TIMELINE_HISTORY
 
         for run in self._run_queue:
-            if run.duration == timedelta(0):
+            if run.duration == TD_ZERO:
                 continue
             dct = run.as_dict()
             if run.running:
@@ -2627,11 +2659,6 @@ class IUSequenceZone(IUBase):
         """Returns the number of repeats for this sequence zone"""
         return self._repeat
 
-    @repeat.setter
-    def repeat(self, value: int) -> None:
-        """Set the number of repeats for this sequence zone"""
-        self._repeat = value
-
     @property
     def volume(self) -> float:
         """Return the volume limit for this sequence zone"""
@@ -2844,14 +2871,14 @@ class IUSequenceRun(IUBase):
         self._current_zone: IUSequenceZoneRun = None
         self._start_time: datetime = None
         self._end_time: datetime = None
-        self._accumulated_duration = timedelta(0)
+        self._accumulated_duration = TD_ZERO
         self._first_zone: IUZone = None
         self._status = IURunStatus.UNKNOWN
         self._paused: datetime = None
         self._last_pause: datetime = None
         self._volume_trackers: list[CALLBACK_TYPE] = []
         self._volume_stats: dict[IUSequenceZoneRun, dict[IUZone, Decimal]] = {}
-        self._remaining_time = timedelta(0)
+        self._remaining_time = TD_ZERO
         self._percent_complete: int = 0
 
     def __str__(self) -> str:
@@ -2956,9 +2983,6 @@ class IUSequenceRun(IUBase):
             if self._schedule is not None and self._schedule.duration is not None:
                 return self._sequence.total_time_final(self._schedule.duration, self)
             return self.sequence.total_time_final(None, self)
-
-        if self._schedule is not None:
-            return self._sequence.total_time_final(total_time, self)
         return total_time
 
     def build(self, duration_factor: float) -> timedelta:
@@ -2973,7 +2997,7 @@ class IUSequenceRun(IUBase):
                 duration = self._sequence.zone_duration_final(
                     sequence_zone, duration_factor, self
                 )
-                duration_max = timedelta(0)
+                duration_max = TD_ZERO
                 delay = self._sequence.zone_delay(sequence_zone, self)
                 for zone in sequence_zone.zones:
                     if self.zone_enabled(zone):
@@ -2987,7 +3011,7 @@ class IUSequenceRun(IUBase):
                             duration_adjusted = zone.runs.constrain(duration_adjusted)
                         else:
                             duration_adjusted = duration
-                        if duration_adjusted == timedelta(0):
+                        if duration_adjusted == TD_ZERO:
                             continue
 
                         zone_run_time = next_run
@@ -3067,8 +3091,6 @@ class IUSequenceRun(IUBase):
         """Return the next sequence zone run in the run queue"""
         found = False
         for szr in self.runs.values():
-            if szr is None:
-                continue
             if not found and szr == sequence_zone_run:
                 found = True
             if found and szr.sequence_zone != sequence_zone_run.sequence_zone:
@@ -3081,8 +3103,6 @@ class IUSequenceRun(IUBase):
         """Return the next sequence run in the queue"""
         found = False
         for szr in self.runs.values():
-            if szr is None:
-                continue
             if not found and szr == sequence_zone_run:
                 found = True
                 continue
@@ -3119,7 +3139,7 @@ class IUSequenceRun(IUBase):
         def update_run(stime: datetime, duration: timedelta, run: IURun) -> None:
             if run.expired:
                 return
-            if duration > timedelta(0):
+            if duration > TD_ZERO:
                 if run.running:
                     if shift_start:
                         run.start_time += duration
@@ -3177,12 +3197,12 @@ class IUSequenceRun(IUBase):
                     next_end = run.end_time
             duration = next_start - stime
             if self._active_zone is not None:
-                delay = max(next_start - current_end, timedelta(0))
+                delay = max(next_start - current_end, TD_ZERO)
             else:
-                delay = max(current_start - stime, timedelta(0))
+                delay = max(current_start - stime, TD_ZERO)
         else:
             duration = current_end - stime
-            delay = timedelta(0)
+            delay = TD_ZERO
 
         # Next zone is overlapped with current
         if next_start is not None and next_start < current_end:
@@ -3227,7 +3247,7 @@ class IUSequenceRun(IUBase):
             return 0
 
         def split_run(
-            run: IURun, szr: IUSequenceZoneRun, start: datetime, duration=timedelta(0)
+            run: IURun, szr: IUSequenceZoneRun, start: datetime, duration=TD_ZERO
         ) -> None:
             split = run.zone.runs.add(
                 stime,
@@ -3243,7 +3263,7 @@ class IUSequenceRun(IUBase):
             return
         runs = self._runs.copy()
         pause_list = self._runs.copy()
-        over_run = timedelta(0)
+        over_run = TD_ZERO
         for run, szr in runs.items():
             state = run_state(run)
             if state == 2:
@@ -3252,7 +3272,7 @@ class IUSequenceRun(IUBase):
                 # Create a master postamble run out
                 if (
                     self._controller.postamble is not None
-                    and self._controller.postamble < timedelta(0)
+                    and self._controller.postamble < TD_ZERO
                 ):
                     over_run = -self._controller.postamble
                     run.master_run.start_time = stime + over_run
@@ -3268,7 +3288,7 @@ class IUSequenceRun(IUBase):
                 split_run(
                     run, szr, run.master_run.end_time - self._controller.postamble
                 )
-        if over_run != timedelta(0):
+        if over_run != TD_ZERO:
             self.advance(stime, -over_run, runs)
         pause_run(stime, pause_list)
         self._paused = stime
@@ -3298,7 +3318,7 @@ class IUSequenceRun(IUBase):
             offset = stime - next_start
             if (
                 self._controller.preamble is not None
-                and self._controller.preamble > timedelta(0)
+                and self._controller.preamble > TD_ZERO
             ):
                 offset += self._controller.preamble
             self.advance(stime, offset, self._runs, shift_start=True)
@@ -3308,7 +3328,7 @@ class IUSequenceRun(IUBase):
         self.advance(stime, -(self._end_time - stime))
 
     async def update_volume(
-        self, stime: datetime, zone: IUZone, volume: Decimal, rate: Decimal
+        self, stime: datetime, zone: IUZone, volume: Decimal
     ) -> None:
         """Notification for when the volume has changed"""
         # pylint: disable=unused-argument
@@ -3419,7 +3439,7 @@ class IUSequenceRun(IUBase):
         elapsed = stime - self._start_time
         duration = self._end_time - self._start_time
         self._percent_complete = (
-            int((elapsed / duration) * 100) if duration > timedelta(0) else 0
+            int((elapsed / duration) * 100) if duration > TD_ZERO else 0
         )
         return True
 
@@ -3538,7 +3558,7 @@ class IUSequenceQueue(list[IUSequenceRun]):
         """Return the current active duration"""
         if self._current_run is not None:
             return self._current_run.total_time
-        return timedelta(0)
+        return TD_ZERO
 
     @property
     def active_zone(self) -> IUSequenceZoneRun | None:
@@ -3552,7 +3572,7 @@ class IUSequenceQueue(list[IUSequenceRun]):
         if self._current_run is not None:
             for run in self._current_run.zone_runs(sequence_zone):
                 return run.duration
-        return timedelta(0)
+        return TD_ZERO
 
     def add(self, run: IUSequenceRun) -> IUSequenceRun:
         """Add a sequence run to the queue"""
@@ -3602,7 +3622,7 @@ class IUSequenceQueue(list[IUSequenceRun]):
     def remove_expired(self, stime: datetime, postamble: timedelta) -> bool:
         """Remove any expired sequence runs from the queue"""
         if postamble is None:
-            postamble = timedelta(0)
+            postamble = TD_ZERO
         modified: bool = False
         i = len(self) - 1
         while i >= 0:
@@ -3618,10 +3638,10 @@ class IUSequenceQueue(list[IUSequenceRun]):
         # pylint: disable=too-many-branches
 
         def valid_current(run: IUSequenceRun) -> bool:
-            return (run.running or run.paused) and run.on_time() != timedelta(0)
+            return (run.running or run.paused) and run.on_time() != TD_ZERO
 
         def valid_next(run: IUSequenceRun) -> bool:
-            return run.future and run.on_time() != timedelta(0)
+            return run.future and run.on_time() != TD_ZERO
 
         status = IURQStatus(0)
 
@@ -3727,7 +3747,10 @@ class IUSequence(IUBase):
 
     @property
     def entity_id(self) -> str:
-        """Return the HA entity_id for the sequence"""
+        """Return the HA entity_id for the sequence. During the registion
+        HA may rename the entity"""
+        if self._sequence_sensor is not None:
+            return self._sequence_sensor.entity_id
         return f"{BINARY_SENSOR}.{DOMAIN}_{self.entity_base}"
 
     @property
@@ -3925,7 +3948,7 @@ class IUSequence(IUBase):
         else:
             delay = self._delay
         if delay is None:
-            delay = timedelta(0)
+            delay = TD_ZERO
         return delay
 
     def zone_delay(
@@ -3934,11 +3957,11 @@ class IUSequence(IUBase):
         """Return the delay for the specified zone"""
         if self.zone_enabled(sequence_zone, sqr):
             return self.zone_delay_config(sequence_zone)
-        return timedelta(0)
+        return TD_ZERO
 
     def total_delay(self, sqr: IUSequenceRun) -> timedelta:
         """Return the total delay for all the zones"""
-        delay = timedelta(0)
+        delay = TD_ZERO
         last_zone: IUSequenceZone = None
         if len(self._zones) > 0:
             for zone in self._zones:
@@ -3966,7 +3989,7 @@ class IUSequence(IUBase):
         """Return the base duration for the specified zone"""
         if self.zone_enabled(sequence_zone, sqr):
             return self.zone_duration_config(sequence_zone)
-        return timedelta(0)
+        return TD_ZERO
 
     def zone_duration(
         self, sequence_zone: IUSequenceZone, sqr: IUSequenceRun
@@ -3977,7 +4000,7 @@ class IUSequence(IUBase):
             duration = self.zone_duration_base(sequence_zone, sqr)
             duration = sequence_zone.adjustment.adjust(duration)
             return self.constrain(sequence_zone, duration)
-        return timedelta(0)
+        return TD_ZERO
 
     def zone_duration_final(
         self,
@@ -3992,7 +4015,7 @@ class IUSequence(IUBase):
 
     def total_duration(self, sqr: IUSequenceRun) -> timedelta:
         """Return the total duration for all the zones"""
-        duration = timedelta(0)
+        duration = TD_ZERO
         for zone in self._zones:
             duration += self.zone_duration(zone, sqr) * zone.repeat
         duration *= self._repeat
@@ -4004,7 +4027,7 @@ class IUSequence(IUBase):
             total_duration = self.total_duration(sqr)
         if self.has_adjustment(False):
             total_duration = self.adjustment.adjust(total_duration)
-            total_duration = max(total_duration, timedelta(0))
+            total_duration = max(total_duration, TD_ZERO)
         return total_duration
 
     def total_time_final(self, total_time: timedelta, sqr: IUSequenceRun) -> timedelta:
@@ -4024,7 +4047,7 @@ class IUSequence(IUBase):
         zone duration. Final time will be approximate as the new durations must
         be rounded to internal boundaries"""
         total_duration = self.total_duration(sqr)
-        if total_time is not None and total_duration != timedelta(0):
+        if total_time is not None and total_duration != TD_ZERO:
             total_delay = self.total_delay(sqr)
             if total_time > total_delay:
                 return (total_time - total_delay) / total_duration
@@ -4278,9 +4301,9 @@ class IUSequence(IUBase):
     def service_manual_run(self, data: MappingProxyType, stime: datetime) -> None:
         """Service handler for manual_run"""
         duration = wash_td(data.get(CONF_TIME))
-        delay = wash_td(data.get(CONF_DELAY, timedelta(0)))
+        delay = wash_td(data.get(CONF_DELAY, TD_ZERO))
         queue = data.get(CONF_QUEUE, self._controller.queue_manual)
-        if duration is not None and duration == timedelta(0):
+        if duration is not None and duration == TD_ZERO:
             duration = None
         self._controller.muster_sequence(
             stime,
@@ -4413,7 +4436,10 @@ class IUController(IUBase):
 
     @property
     def entity_id(self) -> str:
-        """Return the HA entity_id for the controller entity"""
+        """Return the HA entity_id for the controller. During the registion
+        HA may rename the entity"""
+        if self._master_sensor is not None:
+            return self._master_sensor.entity_id
         return f"{BINARY_SENSOR}.{DOMAIN}_{self.entity_base}"
 
     @property
@@ -4799,7 +4825,7 @@ class IUController(IUBase):
         duration_factor = sequence.duration_factor(total_time, sequence_run)
 
         total_time = sequence_run.build(duration_factor)
-        if total_time > timedelta(0):
+        if total_time > TD_ZERO:
             start_time = init_run_time(
                 earliest, sequence, schedule, sequence_run.first_zone(), total_time
             )
@@ -4918,8 +4944,8 @@ class IUController(IUBase):
         # Handle off zones before master
         for zone in (self._zones[i] for i in zones_changed):
             if not zone.is_on:
-                zone.call_switch(zone.is_on, stime)
                 zone.volume.end_record(stime)
+                zone.call_switch(zone.is_on, stime)
 
         # Check if master has changed and update
         if state_changed:
@@ -4940,6 +4966,7 @@ class IUController(IUBase):
             if zone.is_on:
                 zone.call_switch(zone.is_on, stime)
                 zone.volume.start_record(stime)
+        for zone in self._zones:
             if zone.runs.check_last_run():
                 self._coordinator.notify_valve(
                     3, stime, True, zone.switch.switch_entity_id, self, zone
@@ -5096,7 +5123,7 @@ class IUController(IUBase):
             nst += granularity_time()
         if (
             self.preamble is not None
-            and self.preamble > timedelta(0)
+            and self.preamble > TD_ZERO
             and not self.is_on
         ):
             nst += self.preamble
@@ -5527,7 +5554,7 @@ class IUTester:
     @property
     def total_virtual_duration(self) -> timedelta:
         """Returns the real time duration of the tests"""
-        result = timedelta(0)
+        result = TD_ZERO
         for test in self._tests:
             result += test.virtual_duration
         return result
@@ -6301,7 +6328,9 @@ class IUCoordinator:
         self._rename_entities = False
         self._extended_config = False
         self._restore_from_entity: bool = True
-        self._show_config = True
+        self._show_config = False
+        self._global_zone_ids = False
+        self._global_sequence_ids = False
         # Private variables
         self._controllers: list[IUController] = []
         self._is_on: bool = False
@@ -6328,7 +6357,10 @@ class IUCoordinator:
 
     @property
     def entity_id(self) -> str:
-        """Return the entity_id for the coordinator"""
+        """Return the HA entity_id for the coorinator. During the registion
+        HA may rename the entity"""
+        if self._component is not None:
+            return self._component.entity_id
         return f"{DOMAIN}.{COORDINATOR}"
 
     @property
@@ -6473,7 +6505,10 @@ class IUCoordinator:
         self.request_update(False)
         self._logger.log_load(config)
         self._history.load(config, self._clock.is_fixed)
-
+        self._global_sequence_ids = config.get(
+            CONF_GLOBAL_SEQUENCE_IDS, self._global_sequence_ids
+        )
+        self._global_zone_ids = config.get(CONF_GLOBAL_ZONE_IDS, self._global_zone_ids)
         self.check_links()
 
         return self
@@ -6523,8 +6558,17 @@ class IUCoordinator:
                 result = False
 
         schedule_ids = set()
+        zone_ids = set()
+        sequence_ids = set()
         for controller in self._controllers:
             for zone in controller.zones:
+                if self._global_zone_ids:
+                    if zone.zone_id in zone_ids:
+                        self.logger.log_duplicate_id(controller, zone, None, None)
+                        result = False
+                    else:
+                        zone_ids.add(zone.zone_id)
+
                 for schedule in zone.schedules:
                     if schedule.schedule_id is not None:
                         if schedule.schedule_id in schedule_ids:
@@ -6534,7 +6578,15 @@ class IUCoordinator:
                             result = False
                         else:
                             schedule_ids.add(schedule.schedule_id)
+
             for sequence in controller.sequences:
+                if self._global_sequence_ids:
+                    if sequence.sequence_id in sequence_ids:
+                        self.logger.log_duplicate_id(controller, None, sequence, None)
+                        result = False
+                    else:
+                        sequence_ids.add(sequence.sequence_id)
+
                 for schedule in sequence.schedules:
                     if schedule.schedule_id is not None:
                         if schedule.schedule_id in schedule_ids:
@@ -6674,39 +6726,60 @@ class IUCoordinator:
         """Send out a notification for start/finish to a sequence"""
         # pylint: disable=too-many-arguments
 
-        def zone_ids(sqr: IUSequenceRun) -> list[str]:
-            result: set[str] = set()
-            for run in sqr.runs:
-                if run.duration > timedelta(0):
-                    result.add(run.zone.zone_id)
-            return sorted(result)
+        zone_summary: dict[IUZone, dict] = {}
+        for run in sequence_run.runs:
+            if not (z := run.zone) in zone_summary:
+                zone_summary[z] = {ATTR_DURATION: 0, ATTR_VOLUME: None}
+            zone_summary[z][ATTR_DURATION] += run.duration.total_seconds()
+        for sqz in sequence_run._volume_stats.values():
+            for z, v in sqz.items():
+                zone_summary[z][ATTR_VOLUME] = is_none(
+                    zone_summary[z][ATTR_VOLUME], 0
+                ) + float(v)
+
+        zone_ids = sorted(
+            [z.zone_id for z, d in zone_summary.items() if d[ATTR_DURATION] > 0]
+        )
 
         data = {
-            CONF_ENTITY_ID: sequence.entity_id,
-            CONF_CONTROLLER: {
-                CONF_INDEX: controller.index,
-                CONF_CONTROLLER_ID: controller.controller_id,
-                CONF_NAME: controller.name,
+            ATTR_IU_ID: sequence.unique_id,
+            ATTR_ID: controller.controller_id + "_" + sequence.sequence_id,
+            ATTR_ENTITY_ID: sequence.entity_id,
+            ATTR_VOLUME: sequence.volume,
+            ATTR_CONTROLLER: {
+                ATTR_INDEX: controller.index,
+                ATTR_CONTROLLER_ID: controller.controller_id,
+                ATTR_NAME: controller.name,
             },
-            CONF_SEQUENCE: {
-                CONF_INDEX: sequence.index,
-                CONF_SEQUENCE_ID: sequence.sequence_id,
-                CONF_NAME: sequence.name,
+            ATTR_SEQUENCE: {
+                ATTR_INDEX: sequence.index,
+                ATTR_SEQUENCE_ID: sequence.sequence_id,
+                ATTR_NAME: sequence.name,
             },
-            CONF_RUN: {CONF_DURATION: round(sequence_run.total_time.total_seconds())},
-            CONF_ZONE_IDS: zone_ids(sequence_run),
+            ATTR_ZONES: [
+                {
+                    ATTR_INDEX: zone.index,
+                    ATTR_ZONE_ID: zone.zone_id,
+                    ATTR_NAME: zone.name,
+                    ATTR_DURATION: round(data[ATTR_DURATION]),
+                    ATTR_VOLUME: data[ATTR_VOLUME],
+                }
+                for zone, data in zone_summary.items()
+            ],
+            ATTR_RUN: {ATTR_DURATION: round(sequence_run.total_time.total_seconds())},
+            ATTR_ZONE_IDS: zone_ids,
         }
         if schedule is not None:
-            data[CONF_SCHEDULE] = {
-                CONF_INDEX: schedule.index,
-                CONF_SCHEDULE_ID: schedule.schedule_id,
-                CONF_NAME: schedule.name,
+            data[ATTR_SCHEDULE] = {
+                ATTR_INDEX: schedule.index,
+                ATTR_SCHEDULE_ID: schedule.schedule_id,
+                ATTR_NAME: schedule.name,
             }
         else:
-            data[CONF_SCHEDULE] = {
-                CONF_INDEX: None,
-                CONF_SCHEDULE_ID: None,
-                CONF_NAME: RES_MANUAL,
+            data[ATTR_SCHEDULE] = {
+                ATTR_INDEX: None,
+                ATTR_SCHEDULE_ID: None,
+                ATTR_NAME: RES_MANUAL,
             }
         self._hass.bus.fire(f"{DOMAIN}_{event_type}", data)
 
@@ -6728,7 +6801,7 @@ class IUCoordinator:
 
         event_type = EVENT_VALVE_ON if state else EVENT_VALVE_OFF
 
-        duration = timedelta(0)
+        duration = TD_ZERO
         volume: float
         flow_rate: float
         iu_id: str
@@ -6880,7 +6953,7 @@ class IUCoordinator:
         zone: IUZone,
         sequence: IUSequence,
         data: MappingProxyType,
-    ) -> None:
+    ) -> ServiceResponse:
         """Entry point for all service calls."""
         # pylint: disable=too-many-branches,too-many-arguments,too-many-statements
         changed = True
@@ -6955,7 +7028,7 @@ class IUCoordinator:
             render_positive_time_period(data1, CONF_DURATION)
             self.service_load_schedule(data1)
         else:
-            return
+            return None
 
         if changed:
             self._last_tick = stime
@@ -6967,6 +7040,7 @@ class IUCoordinator:
             self._logger.log_service_call(
                 service, stime, controller, zone, sequence, data1, DEBUG
             )
+        return None
 
     def service_history(self, entity_ids: set[str]) -> None:
         """History service call entry point. The history has changed
