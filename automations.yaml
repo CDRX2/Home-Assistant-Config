@@ -858,9 +858,11 @@
         data: {}
         target:
           entity_id: cover.store_terrasse
+        enabled: true
       button_2_and_4_pressed:
       - action: cover.close_cover
         metadata: {}
         data: {}
         target:
           entity_id: cover.store_terrasse
+        enabled: true
