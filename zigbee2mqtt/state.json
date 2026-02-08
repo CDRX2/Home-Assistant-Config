@@ -5,14 +5,16 @@
         "state_l2": "OFF",
         "power_on_behavior_l1": "previous",
         "power_on_behavior_l2": "previous",
+        "energy": 0.45,
+        "linkquality": 72,
+        "last_seen": "2026-02-06T16:35:46.470Z",
         "update": {
             "state": "idle",
             "installed_version": 39847008,
-            "latest_version": 39847008
-        },
-        "energy": 0,
-        "linkquality": 65,
-        "last_seen": "2026-01-19T15:06:55.435Z"
+            "latest_version": 39847008,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Ubisys/10F2-7B33-0000-0006-02600460-spo-fms2.ota.zigbee",
+            "latest_release_notes": null
+        }
     },
     "0x000000000175ba48": {
         "linkquality": 58,
@@ -20,90 +22,102 @@
     },
     "0x001fee000000770b": {
         "power": 0,
-        "update": {
-            "state": "idle",
-            "installed_version": 39847008,
-            "latest_version": 39847008
-        },
         "power_on_behavior_l1": "previous",
         "power_on_behavior_l2": "previous",
         "state_l1": "OFF",
         "state_l2": "OFF",
-        "energy": 0.02,
-        "linkquality": 40,
-        "last_seen": "2026-01-19T15:06:55.487Z"
+        "energy": 0.76,
+        "linkquality": 87,
+        "last_seen": "2026-02-06T16:35:47.600Z",
+        "update": {
+            "state": "idle",
+            "installed_version": 39847008,
+            "latest_version": 39847008,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Ubisys/10F2-7B33-0000-0006-02600460-spo-fms2.ota.zigbee",
+            "latest_release_notes": null
+        }
     },
     "0x001fee0000006fd3": {
         "state": "OFF",
         "power_on_behavior": "previous",
         "power": 0,
+        "energy": 0.93,
+        "last_seen": "2026-02-06T16:35:47.543Z",
+        "linkquality": 112,
         "update": {
             "state": "idle",
             "installed_version": 39847008,
-            "latest_version": 39847008
-        },
-        "energy": 0.01,
-        "last_seen": "2026-01-19T15:06:55.299Z",
-        "linkquality": 105
+            "latest_version": 39847008,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Ubisys/10F2-7B32-0002-0007-02600460-spo-fms.ota.zigbee",
+            "latest_release_notes": null
+        }
     },
     "0x00178801085629ed": {
-        "last_seen": "2026-01-19T15:06:04.863Z",
-        "linkquality": 65,
+        "last_seen": "2026-02-06T16:26:52.258Z",
+        "linkquality": 69,
+        "state": "OFF",
+        "brightness": 8,
         "update": {
             "state": "idle",
             "installed_version": 16787202,
-            "latest_version": 16787202
-        },
-        "state": "OFF",
-        "brightness": 8
+            "latest_version": 16787202,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Hue/100B-011D-01002702-ConfLight-ModuLumV2-EFR32MG13.zigbee",
+            "latest_release_notes": null
+        }
     },
     "0x0017880106492966": {
-        "battery": 61,
+        "battery": 59.5,
         "occupancy_timeout": 0,
         "occupancy": false,
-        "temperature": 3.39,
-        "illuminance": 1,
+        "temperature": 3.54,
+        "illuminance": 911,
         "motion_sensitivity": "medium",
-        "last_seen": "2026-01-19T14:13:54.491Z",
-        "linkquality": 83,
+        "last_seen": "2026-02-06T16:32:54.373Z",
+        "linkquality": 109,
         "update": {
             "state": "idle",
             "installed_version": 1124102917,
-            "latest_version": 1124102917
+            "latest_version": 1124102917,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Hue/Sensor-ATmega_0012.sbl-ota",
+            "latest_release_notes": null
         }
     },
     "0x001fee0000006e9e": {
         "state": "OFF",
         "power_on_behavior": "previous",
         "power": 0,
+        "energy": 0.62,
+        "last_seen": "2026-02-06T16:35:47.548Z",
+        "linkquality": 131,
         "update": {
             "state": "idle",
             "installed_version": 39847008,
-            "latest_version": 39847008
-        },
-        "energy": 0.02,
-        "last_seen": "2026-01-19T15:06:55.363Z",
-        "linkquality": 134
+            "latest_version": 39847008,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Ubisys/10F2-7B32-0002-0007-02600460-spo-fms.ota.zigbee",
+            "latest_release_notes": null
+        }
     },
     "0x001fee00000073a1": {
+        "power": 0,
+        "state_l1": "OFF",
+        "state_l2": "OFF",
+        "energy": 1.45,
+        "last_seen": "2026-02-06T16:35:46.491Z",
+        "linkquality": 91,
         "update": {
             "state": "idle",
             "installed_version": 39847008,
-            "latest_version": 39847008
-        },
-        "power": 24,
-        "state_l1": "OFF",
-        "state_l2": "ON",
-        "energy": 0.03,
-        "last_seen": "2026-01-19T15:06:55.563Z",
-        "linkquality": 80
+            "latest_version": 39847008,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Ubisys/10F2-7B33-0000-0006-02600460-spo-fms2.ota.zigbee",
+            "latest_release_notes": null
+        }
     },
     "0x00212effff00a0a1": {
-        "last_seen": "2026-01-19T15:06:30.773Z",
-        "linkquality": 105,
+        "last_seen": "2026-02-06T16:37:27.273Z",
+        "linkquality": 80,
         "state_rgb": "ON",
-        "state_white": "ON",
-        "brightness_white": 127,
+        "state_white": "OFF",
+        "brightness_white": 38,
         "brightness_rgb": 112,
         "color_mode_rgb": "xy",
         "color_temp_rgb": 500,
@@ -120,59 +134,60 @@
     "0xa4c138e5a9195155": {
         "battery": 1,
         "voltage": 2400,
-        "occupancy": true,
+        "occupancy": false,
         "battery_low": false,
-        "last_seen": "2026-01-19T13:08:03.509Z",
+        "last_seen": "2026-02-06T15:46:48.722Z",
         "linkquality": 76,
         "keep_time": 60,
         "sensitivity": "medium"
     },
     "0x001fee00000074ab": {
         "power": 0,
-        "update": {
-            "state": "idle",
-            "installed_version": 39847008,
-            "latest_version": 39847008
-        },
-        "energy": 0.03,
-        "last_seen": "2026-01-19T15:06:55.577Z",
-        "linkquality": 72,
+        "energy": 0.64,
+        "last_seen": "2026-02-06T16:36:49.545Z",
+        "linkquality": 58,
         "state_l1": "OFF",
         "state_l2": "OFF",
         "power_on_behavior_l1": "previous",
-        "power_on_behavior_l2": "previous"
+        "power_on_behavior_l2": "previous",
+        "update": {
+            "state": "idle",
+            "installed_version": 39847008,
+            "latest_version": 39847008,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Ubisys/10F2-7B33-0000-0006-02600460-spo-fms2.ota.zigbee",
+            "latest_release_notes": null
+        }
     },
     "0x001788010b86ddae": {
         "state": "OFF",
         "power_on_behavior": "previous",
         "brightness": 78,
+        "last_seen": "2026-02-06T16:27:52.999Z",
+        "linkquality": 102,
         "update": {
             "state": "idle",
             "installed_version": 16788226,
-            "latest_version": 16788226
-        },
-        "last_seen": "2026-01-19T15:06:04.749Z",
-        "linkquality": 76
+            "latest_version": 16788226,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Hue/100B-0112-01002B02-ConfLightBLE-Lamps-EFR32MG13.zigbee",
+            "latest_release_notes": null
+        }
     },
     "0x001788010cc5a455": {
         "state": "OFF",
-        "brightness": 107,
+        "brightness": 87,
+        "last_seen": "2026-02-06T16:36:09.359Z",
+        "linkquality": 123,
         "update": {
             "state": "idle",
             "installed_version": 16787202,
-            "latest_version": 16787202
-        },
-        "last_seen": "2026-01-19T15:06:14.179Z",
-        "linkquality": 127
+            "latest_version": 16787202,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Hue/100B-0114-01002702-ConfLightBLE-Lamps-EFR32MG21.zigbee",
+            "latest_release_notes": null
+        }
     },
     "0x001fee0000008c0c": {
-        "update": {
-            "state": "idle",
-            "installed_version": 39847008,
-            "latest_version": 39847008
-        },
-        "last_seen": "2026-01-19T15:06:23.243Z",
-        "linkquality": 51,
+        "last_seen": "2026-02-06T16:24:00.236Z",
+        "linkquality": 65,
         "configure_device_setup": {
             "input_configurations": [
                 0,
@@ -254,25 +269,29 @@
                     3
                 ]
             ]
+        },
+        "update": {
+            "state": "idle",
+            "installed_version": 39847008,
+            "latest_version": 39847008,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Ubisys/10F2-7B39-0000-0004-02600460-spo-fmi4.ota.zigbee",
+            "latest_release_notes": null
         }
     },
     "0x680ae2fffe88a7c5": {
-        "linkquality": 51,
+        "linkquality": 98,
+        "last_seen": "2026-02-06T16:25:24.678Z",
         "update": {
             "state": "idle",
             "installed_version": 587753009,
-            "latest_version": 587753009
-        },
-        "last_seen": "2026-01-19T15:06:16.381Z"
+            "latest_version": 587753009,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/IKEA/tradfri-signal-repeater_release_prod_v587753009_3ce8f096-bd12-4b2c-b66e-51dc9f2637dc.ota",
+            "latest_release_notes": "https://ww8.ikea.com/ikeahomesmart/releasenotes/releasenotes.html"
+        }
     },
     "0x001fee0000002afb": {
-        "update": {
-            "state": "idle",
-            "installed_version": 39847008,
-            "latest_version": 39847008
-        },
-        "last_seen": "2026-01-19T15:05:59.196Z",
-        "linkquality": 61,
+        "last_seen": "2026-02-06T16:30:01.504Z",
+        "linkquality": 65,
         "configure_device_setup": {
             "input_configurations": [
                 0,
@@ -354,6 +373,13 @@
                     3
                 ]
             ]
+        },
+        "update": {
+            "state": "idle",
+            "installed_version": 39847008,
+            "latest_version": 39847008,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Ubisys/10F2-7B39-0000-0004-02600460-spo-fmi4.ota.zigbee",
+            "latest_release_notes": null
         }
     },
     "0x00212effff0cbf36": {
@@ -366,8 +392,8 @@
             "x": 0.328,
             "y": 0.348
         },
-        "last_seen": "2026-01-19T15:06:20.599Z",
-        "linkquality": 21,
+        "last_seen": "2026-02-06T15:55:57.389Z",
+        "linkquality": 65,
         "color_mode_rgb": "xy",
         "color_rgb": {
             "x": 0.4703029380721214,
@@ -375,70 +401,76 @@
         }
     },
     "0x00212effff015520": {
-        "state_rgb": "ON",
-        "state_white": "ON",
-        "brightness_white": 182,
+        "state_rgb": "OFF",
+        "state_white": "OFF",
+        "brightness_white": 218,
         "color_mode_white": "xy",
         "color_white": {
             "x": 0.327,
             "y": 0.319
         },
-        "brightness_rgb": 172,
+        "brightness_rgb": 223,
         "color_mode_rgb": "xy",
         "color_rgb": {
-            "x": 0.16659999999999997,
-            "y": 0.0089
+            "x": 0.208,
+            "y": 0.073
         },
-        "last_seen": "2026-01-19T15:06:22.781Z",
+        "last_seen": "2026-02-06T16:37:25.887Z",
         "linkquality": 91,
         "color_temp_rgb": 388
     },
     "0x804b50fffe41d1be": {
         "state": "OFF",
         "power_on_behavior": "previous",
+        "last_seen": "2026-02-06T16:32:44.174Z",
+        "linkquality": 69,
         "update": {
             "state": "idle",
             "installed_version": 587765297,
-            "latest_version": 587765297
-        },
-        "last_seen": "2026-01-19T15:06:25.519Z",
-        "linkquality": 72
+            "latest_version": 587765297,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/IKEA/tradfri-control-outlet_release_prod_v587765297_20061876-85d6-4b39-8c9c-eb95620baa97.ota",
+            "latest_release_notes": "https://ww8.ikea.com/ikeahomesmart/releasenotes/releasenotes.html"
+        }
     },
     "0x804b50fffe433987": {
         "state": "OFF",
         "power_on_behavior": "previous",
-        "last_seen": "2026-01-19T15:06:27.707Z",
-        "linkquality": 54,
+        "last_seen": "2026-02-06T16:31:46.035Z",
+        "linkquality": 69,
         "update": {
             "state": "idle",
             "installed_version": 587765297,
-            "latest_version": 587765297
+            "latest_version": 587765297,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/IKEA/tradfri-control-outlet_release_prod_v587765297_20061876-85d6-4b39-8c9c-eb95620baa97.ota",
+            "latest_release_notes": "https://ww8.ikea.com/ikeahomesmart/releasenotes/releasenotes.html"
         }
     },
     "0x000000000170713a": {
-        "last_seen": "2026-01-19T05:01:56.917Z",
-        "linkquality": 123
+        "last_seen": "2026-02-05T21:13:03.298Z",
+        "linkquality": 98
     },
     "0x000d6ffffe7c1eee": {
-        "linkquality": 72,
+        "linkquality": 98,
+        "last_seen": "2026-02-06T16:33:36.279Z",
         "update": {
             "state": "idle",
             "installed_version": 587753009,
-            "latest_version": 587753009
-        },
-        "last_seen": "2026-01-19T15:06:27.743Z"
+            "latest_version": 587753009,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/IKEA/tradfri-signal-repeater_release_prod_v587753009_3ce8f096-bd12-4b2c-b66e-51dc9f2637dc.ota",
+            "latest_release_notes": "https://ww8.ikea.com/ikeahomesmart/releasenotes/releasenotes.html"
+        }
     },
     "0x00212effff007650": {
         "state_rgb": "OFF",
         "state_white": "OFF",
-        "brightness_white": 87,
+        "brightness_white": 97,
         "color_mode_white": "xy",
         "color_white": {
             "x": 0.323,
             "y": 0.329
         },
-        "last_seen": "2026-01-19T15:06:31.907Z",
-        "linkquality": 61,
+        "last_seen": "2026-02-06T16:20:21.576Z",
+        "linkquality": 58,
         "brightness_rgb": 15,
         "color_mode": "xy",
         "color": {
@@ -454,47 +486,47 @@
             "x": 0.323,
             "y": 0.326
         },
-        "last_seen": "2026-01-19T15:06:34.029Z",
-        "linkquality": 58,
+        "last_seen": "2026-02-06T16:31:16.685Z",
+        "linkquality": 61,
         "state_rgb": "OFF",
         "brightness_rgb": 105
     },
     "0x0000000001708a2a": {
-        "last_seen": "2026-01-19T11:53:09.110Z",
-        "linkquality": 102
+        "last_seen": "2026-02-06T08:33:50.130Z",
+        "linkquality": 123
     },
     "0x00158d0008ce4ab0": {
-        "temperature": 23.33,
-        "humidity": 35.99,
-        "pressure": 926.6,
+        "temperature": 22.59,
+        "humidity": 41.27,
+        "pressure": 914.7,
         "voltage": 2985,
         "battery": 90,
         "power_outage_count": 28573,
-        "last_seen": "2026-01-19T14:13:32.859Z",
-        "linkquality": 105
+        "last_seen": "2026-02-06T16:31:23.648Z",
+        "linkquality": 98
     },
     "0x00158d0006f91a68": {
-        "temperature": 22.64,
-        "humidity": 42.3,
-        "pressure": 928.7,
-        "last_seen": "2026-01-19T13:46:54.486Z",
-        "linkquality": 76,
+        "temperature": 22.2,
+        "humidity": 43.39,
+        "pressure": 917.3,
+        "last_seen": "2026-02-06T16:36:09.198Z",
+        "linkquality": 65,
         "voltage": 3015,
         "battery": 100,
-        "power_outage_count": 58
+        "power_outage_count": 63
     },
     "0xbc33acfffe5d30c9": {
-        "temperature": 23.2,
-        "humidity": 42.7,
-        "last_seen": "2026-01-19T12:39:53.181Z",
-        "linkquality": 102,
-        "battery": 30,
-        "voltage": 2500
+        "temperature": 23,
+        "humidity": 43.8,
+        "last_seen": "2026-02-06T14:52:56.054Z",
+        "linkquality": 91,
+        "battery": 10,
+        "voltage": 2400
     },
     "0xbc33acfffe47a6f8": {
-        "temperature": 23.2,
-        "humidity": 32.5,
-        "last_seen": "2026-01-19T10:34:18.740Z",
+        "temperature": 22.5,
+        "humidity": 34.9,
+        "last_seen": "2026-02-06T14:27:23.509Z",
         "linkquality": 112,
         "battery": 50,
         "voltage": 2600
@@ -509,20 +541,20 @@
     },
     "0xbc33acfffe5d2fa7": {
         "temperature": 20.6,
-        "humidity": 39.1,
-        "last_seen": "2026-01-19T12:57:44.316Z",
-        "linkquality": 91,
+        "humidity": 41.3,
+        "last_seen": "2026-02-06T13:16:06.978Z",
+        "linkquality": 123,
         "battery": 50,
         "voltage": 2600
     },
     "0x00158d0007e3b8f0": {
-        "last_seen": "2026-01-18T10:57:22.099Z",
+        "last_seen": "2026-02-06T07:57:55.769Z",
         "linkquality": 167,
-        "temperature": 22.32,
-        "humidity": 29.29,
-        "pressure": 925.4,
-        "voltage": 2975,
-        "battery": 83,
+        "temperature": 22.67,
+        "humidity": 34.21,
+        "pressure": 913.3,
+        "voltage": 2985,
+        "battery": 90,
         "power_outage_count": 33890
     },
     "0x0017880100d21a74": {
@@ -538,11 +570,6 @@
     "0x680ae2fffe3fed68": {
         "state": "ON",
         "power_on_behavior": "previous",
-        "update": {
-            "state": "idle",
-            "installed_version": 587765297,
-            "latest_version": 587765297
-        },
         "last_seen": "2026-01-03T19:05:58.418Z",
         "linkquality": 51
     },
@@ -550,21 +577,11 @@
         "state": "OFF",
         "power_on_behavior": "previous",
         "last_seen": "2026-01-04T08:53:31.221Z",
-        "linkquality": 36,
-        "update": {
-            "state": "idle",
-            "installed_version": 587765297,
-            "latest_version": 587765297
-        }
+        "linkquality": 36
     },
     "0x842e14fffe65c5e3": {
         "state": "OFF",
         "power_on_behavior": "previous",
-        "update": {
-            "state": "idle",
-            "installed_version": 587765297,
-            "latest_version": 587765297
-        },
         "last_seen": "2026-01-04T09:53:58.151Z",
         "linkquality": 87
     },
@@ -577,34 +594,31 @@
         },
         "brightness_white": 254,
         "state_rgb": "OFF",
-        "last_seen": "2026-01-19T14:04:14.116Z",
-        "linkquality": 32
+        "last_seen": "2026-02-06T16:16:58.372Z",
+        "linkquality": 58
     },
     "0x001fee000000584a": {
         "power": 0,
+        "state_l1": "OFF",
+        "energy": 0.65,
+        "state_l2": "OFF",
+        "last_seen": "2026-02-06T16:35:46.488Z",
+        "linkquality": 47,
         "update": {
             "state": "idle",
             "installed_version": 39847008,
-            "latest_version": 39847008
-        },
-        "state_l1": "OFF",
-        "energy": 0.02,
-        "state_l2": "OFF",
-        "last_seen": "2026-01-19T15:06:55.691Z",
-        "linkquality": 76
+            "latest_version": 39847008,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Ubisys/10F2-7B33-0000-0006-02600460-spo-fms2.ota.zigbee",
+            "latest_release_notes": null
+        }
     },
     "0x001fee0000004547": {
-        "energy": 0.01,
+        "energy": 0.25,
         "brightness": 104,
         "state": "OFF",
-        "update": {
-            "state": "idle",
-            "installed_version": 39847008,
-            "latest_version": 39847008
-        },
         "power": 0,
-        "last_seen": "2026-01-19T15:06:55.875Z",
-        "linkquality": 51,
+        "last_seen": "2026-02-06T16:35:46.478Z",
+        "linkquality": 69,
         "configure_device_setup": {
             "input_configurations": [
                 0,
@@ -684,67 +698,82 @@
                     7
                 ]
             ]
+        },
+        "update": {
+            "state": "idle",
+            "installed_version": 39847008,
+            "latest_version": 39847008,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Ubisys/10F2-7B31-0000-0006-02600460-spo-fmd.ota.zigbee",
+            "latest_release_notes": null
         }
     },
     "0x7cb03eaa00ab300c": {
         "state": "OFF",
-        "last_seen": "2026-01-19T14:14:13.017Z",
-        "linkquality": 47,
+        "last_seen": "2026-02-06T16:19:49.210Z",
+        "linkquality": 87,
         "update": {
             "state": "idle",
             "installed_version": 16909577,
-            "latest_version": 16909577
+            "latest_version": 16909577,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Osram/ZLL_Plug01_OnOff_MK_0x01020509.ota",
+            "latest_release_notes": null
         }
     },
     "0x001fee00000026fd": {
         "power": 0,
+        "energy": 0.21,
+        "last_seen": "2026-02-06T16:35:46.474Z",
+        "linkquality": 91,
+        "state": "OFF",
+        "brightness": 51,
         "update": {
             "state": "idle",
             "installed_version": 39847008,
-            "latest_version": 39847008
-        },
-        "energy": 0,
-        "last_seen": "2026-01-19T15:06:55.947Z",
-        "linkquality": 54,
-        "state": "OFF",
-        "brightness": 51
+            "latest_version": 39847008,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Ubisys/10F2-7B31-0000-0006-02600460-spo-fmd.ota.zigbee",
+            "latest_release_notes": null
+        }
     },
     "0x001fee00000052e0": {
         "power": 0,
+        "energy": 0,
+        "position": 0,
+        "last_seen": "2026-02-06T16:35:46.485Z",
+        "linkquality": 76,
         "update": {
             "state": "idle",
             "installed_version": 39847010,
-            "latest_version": 39847010
-        },
-        "energy": 0,
-        "position": 0,
-        "last_seen": "2026-01-19T15:06:55.729Z",
-        "linkquality": 105
+            "latest_version": 39847010,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Ubisys/10F2-7B34-0000-0007-02600462-spo-fmsh.ota.zigbee",
+            "latest_release_notes": null
+        }
     },
     "0x001fee0000004282": {
         "state": "OFF",
         "power": 0,
-        "last_seen": "2026-01-19T15:06:55.859Z",
-        "linkquality": 127,
+        "last_seen": "2026-02-06T16:35:47.573Z",
+        "linkquality": 69,
+        "energy": 0,
         "update": {
             "state": "idle",
             "installed_version": 39847008,
-            "latest_version": 39847008
-        },
-        "energy": 0
+            "latest_version": 39847008,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/Ubisys/10F2-7B31-0000-0006-02600460-spo-fmd.ota.zigbee",
+            "latest_release_notes": null
+        }
     },
     "0xb40ecfd0822e0000": {
         "color_power_on_behavior": "previous",
         "do_not_disturb": true,
         "state": "OFF",
-        "brightness": 253,
+        "brightness": 252,
         "color": {
             "x": 0.136,
             "y": 0.04
         },
         "color_mode": "xy",
-        "last_seen": "2026-01-19T13:58:58.191Z",
-        "linkquality": 94,
+        "last_seen": "2026-02-06T16:29:15.803Z",
+        "linkquality": 76,
         "color_temp": 575
     },
     "0x00212effff00f294": {
@@ -756,19 +785,21 @@
             "x": 0.136,
             "y": 0.04
         },
-        "last_seen": "2026-01-19T14:09:59.382Z",
+        "last_seen": "2026-02-06T16:24:17.728Z",
         "linkquality": 91
     },
     "0x680ae2fffe41f474": {
         "state": "OFF",
         "power_on_behavior": "off",
+        "last_seen": "2026-02-06T16:32:08.324Z",
+        "linkquality": 120,
         "update": {
             "state": "idle",
             "installed_version": 587765297,
-            "latest_version": 587765297
-        },
-        "last_seen": "2026-01-19T14:10:13.982Z",
-        "linkquality": 65
+            "latest_version": 587765297,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/IKEA/tradfri-control-outlet_release_prod_v587765297_20061876-85d6-4b39-8c9c-eb95620baa97.ota",
+            "latest_release_notes": "https://ww8.ikea.com/ikeahomesmart/releasenotes/releasenotes.html"
+        }
     },
     "0xb40ecfd112990000": {
         "state": "OFF",
@@ -784,23 +815,23 @@
         },
         "color_temp": 575,
         "do_not_disturb": true,
-        "last_seen": "2026-01-19T13:58:10.564Z",
-        "linkquality": 54
+        "last_seen": "2026-02-06T16:28:26.384Z",
+        "linkquality": 120
     },
     "0x00212effff007534": {
         "state_rgb": "OFF",
-        "color_mode_rgb": "xy",
+        "color_mode_rgb": "color_temp",
         "color_rgb": {
-            "x": 0.23585254580331563,
-            "y": 0.04015568164754467,
+            "x": 0.3716300502610273,
+            "y": 0.10143600578582537,
             "hue": 0,
             "saturation": 100
         },
         "brightness_rgb": 254,
-        "last_seen": "2026-01-19T14:11:21.750Z",
+        "last_seen": "2026-02-06T16:18:43.183Z",
         "linkquality": 65,
         "state_white": "OFF",
-        "color_temp_rgb": 167,
+        "color_temp_rgb": 491,
         "color_mode_white": "xy",
         "color_white": {
             "x": 0.3112035217413579,
@@ -808,52 +839,56 @@
         }
     },
     "0x000000000170c480": {
-        "last_seen": "2026-01-19T06:15:38.497Z",
-        "linkquality": 65
+        "last_seen": "2026-02-05T06:37:23.034Z",
+        "linkquality": 102
     },
     "0x385b44fffee33cd2": {
         "state": "OFF",
         "power_on_behavior": "off",
+        "last_seen": "2026-02-06T16:32:36.706Z",
+        "linkquality": 76,
         "update": {
             "state": "idle",
             "installed_version": 587765297,
-            "latest_version": 587765297
-        },
-        "last_seen": "2026-01-19T14:09:32.692Z",
-        "linkquality": 83
+            "latest_version": 587765297,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/IKEA/tradfri-control-outlet_release_prod_v587765297_20061876-85d6-4b39-8c9c-eb95620baa97.ota",
+            "latest_release_notes": "https://ww8.ikea.com/ikeahomesmart/releasenotes/releasenotes.html"
+        }
     },
     "0xbc33acfffe6a0672": {
         "state": "OFF",
         "power_on_behavior": "off",
+        "last_seen": "2026-02-06T16:31:36.880Z",
+        "linkquality": 98,
         "update": {
             "state": "idle",
             "installed_version": 587765297,
-            "latest_version": 587765297
-        },
-        "last_seen": "2026-01-19T14:08:34.272Z",
-        "linkquality": 98
+            "latest_version": 587765297,
+            "latest_source": "https://raw.githubusercontent.com/Koenkk/zigbee-OTA/master/images/IKEA/tradfri-control-outlet_release_prod_v587765297_20061876-85d6-4b39-8c9c-eb95620baa97.ota",
+            "latest_release_notes": "https://ww8.ikea.com/ikeahomesmart/releasenotes/releasenotes.html"
+        }
     },
     "0x00158d0006ed66e0": {
-        "temperature": 23.54,
-        "humidity": 35.66,
-        "pressure": 926.1,
-        "last_seen": "2026-01-19T14:11:18.224Z",
-        "linkquality": 65,
-        "voltage": 3015,
+        "temperature": 22.96,
+        "humidity": 39.33,
+        "pressure": 914.9,
+        "last_seen": "2026-02-06T16:36:50.122Z",
+        "linkquality": 80,
+        "voltage": 3005,
         "battery": 100,
         "power_outage_count": 477
     },
     "0x847127fffeca7e72": {
-        "temperature": 21.7,
-        "humidity": 43.8,
-        "last_seen": "2026-01-19T13:31:52.478Z",
-        "linkquality": 54,
+        "temperature": 21,
+        "humidity": 46.5,
+        "last_seen": "2026-02-06T15:58:04.966Z",
+        "linkquality": 61,
         "battery": 100,
         "voltage": 3000
     },
     "0xa4c1383faaf8fe19": {
-        "last_seen": "2026-01-19T14:07:36.570Z",
-        "linkquality": 69,
+        "last_seen": "2026-02-06T16:31:03.948Z",
+        "linkquality": 87,
         "state_l1": "OFF",
         "countdown_l1": 0,
         "power_on_behavior_l1": "previous",
@@ -864,9 +899,9 @@
     },
     "0x0cae5ffffe21d0ea": {
         "state": "OFF",
-        "brightness": 180,
-        "last_seen": "2026-01-19T14:09:46.218Z",
-        "linkquality": 61,
+        "brightness": 31,
+        "last_seen": "2026-02-06T16:23:19.843Z",
+        "linkquality": 69,
         "color_mode": "color_temp",
         "color": {
             "x": 0,

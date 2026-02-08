@@ -1,4 +1,4 @@
-version: 5
+version: 4
 homeassistant:
   enabled: true
   experimental_event_entities: true
