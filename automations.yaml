@@ -628,241 +628,321 @@
           topic: zigbee2mqtt/Charles haut/set
           payload: '{"brightness_move_white": 0}'
           retain: false
-- id: '1752158271828'
-  alias: Interrupteur amis
+- id: '1781204639108'
+  alias: Lit parents interrupteur
   description: ''
   use_blueprint:
-    path: chris-1243/PTM_21xZ_ZE.yaml
+    path: MajorLazer2142/z2m_EnOcean_PTM_215Z_(Friends_of_Hue)_switch_with_Hold_Loop.yaml
     input:
-      controller:
-      - amis_lit
-      button_1_pressed: []
-      button_1_held: []
-      button_2_pressed: []
-      button_2_held: []
-      button_1_released:
-      - action: light.toggle
-        metadata: {}
-        data: {}
-        target:
-          entity_id: light.amis_plafonnier
-      button_2_released: []
-      button_3_pressed: []
-      button_4_pressed: []
-      button_3_held: []
-      button_3_released:
-      - action: light.toggle
-        metadata: {}
-        data: {}
-        target:
-          entity_id: light.amis_prises
-      button_4_held: []
-      button_4_released: []
-- id: '1752159086658'
-  alias: Interrupteur lit parents
-  description: ''
-  use_blueprint:
-    path: chris-1243/PTM_21xZ_ZE.yaml
-    input:
-      controller:
-      - Lit parents interrupteur
+      controller: Lit parents interrupteur
+      held_state_helper: input_text.switch_held_state
       button_1_pressed:
       - action: light.toggle
         metadata: {}
-        data: {}
         target:
           entity_id: light.chevet_cdrx
-      button_1_held: []
+        data: {}
       button_2_pressed:
       - action: light.turn_on
         metadata: {}
-        data: {}
         target:
           entity_id: light.plafond_parents_blanc
+        data: {}
       button_2_held:
       - action: mqtt.publish
         metadata: {}
         data:
           evaluate_payload: false
           qos: '0'
+          retain: false
           topic: zigbee2mqtt/Plafond parents/set
           payload: '{"brightness_move_white": 50}'
-          retain: false
-      button_1_released: []
       button_2_released:
       - action: mqtt.publish
         metadata: {}
         data:
           evaluate_payload: false
           qos: '0'
+          retain: false
           topic: zigbee2mqtt/Plafond parents/set
           payload: '{"brightness_move_white": 0}'
-          retain: false
       button_3_pressed:
       - action: light.toggle
         metadata: {}
-        data: {}
         target:
           entity_id: light.chevet_nanne
+        data: {}
       button_4_pressed:
       - action: light.turn_off
         metadata: {}
-        data: {}
         target:
           entity_id:
           - light.plafond_parents_blanc
           - light.plafond_parents_couleur
-      button_3_held: []
-      button_3_released: []
+        data: {}
       button_4_held:
       - action: mqtt.publish
         metadata: {}
         data:
           evaluate_payload: false
           qos: '0'
+          retain: false
           topic: zigbee2mqtt/Plafond parents/set
           payload: '{"brightness_move_white": -50}'
-          retain: false
       button_4_released:
       - action: mqtt.publish
         metadata: {}
         data:
           evaluate_payload: false
           qos: '0'
+          retain: false
           topic: zigbee2mqtt/Plafond parents/set
           payload: '{"brightness_move_white": 0}'
-          retain: false
+      button_1_and_3_pressed:
+      - action: light.turn_on
+        metadata: {}
+        target:
+          entity_id:
+          - light.lit_parents_blanc
+          - light.lit_parents_couleur
+        data: {}
       button_1_and_3_held:
       - action: mqtt.publish
         metadata: {}
         data:
           evaluate_payload: false
           qos: '0'
+          retain: false
           topic: zigbee2mqtt/Lit parents/set
           payload: "{\n  \"brightness_move_white\": 50,\n  \"brightness_move_rgb\":
             50  \n}"
-          retain: false
       button_1_and_3_released:
       - action: mqtt.publish
         metadata: {}
         data:
           evaluate_payload: false
           qos: '0'
-          topic: zigbee2mqtt/Lit parents/set
+          retain: false
           payload: "{\n  \"brightness_move_white\": 0,\n  \"brightness_move_rgb\":
             0  \n}"
-          retain: false
+          topic: zigbee2mqtt/Lit parents/set
+      button_2_and_4_pressed:
+      - action: light.turn_off
+        metadata: {}
+        target:
+          entity_id:
+          - light.lit_parents_blanc
+          - light.lit_parents_couleur
+        data: {}
       button_2_and_4_held:
       - action: mqtt.publish
         metadata: {}
         data:
           evaluate_payload: false
           qos: '0'
-          topic: zigbee2mqtt/Lit parents/set
+          retain: false
           payload: "{\n  \"brightness_move_white\": -50,\n  \"brightness_move_rgb\":
             -50  \n}"
-          retain: false
+          topic: zigbee2mqtt/Lit parents/set
       button_2_and_4_released:
       - action: mqtt.publish
         metadata: {}
         data:
           evaluate_payload: false
           qos: '0'
+          retain: false
           topic: zigbee2mqtt/Lit parents/set
           payload: "{\n  \"brightness_move_white\": 0,\n  \"brightness_move_rgb\":
             0  \n}"
-          retain: false
+- id: '1781204982269'
+  alias: Interrupteur amis
+  description: ''
+  use_blueprint:
+    path: MajorLazer2142/z2m_EnOcean_PTM_215Z_(Friends_of_Hue)_switch_with_Hold_Loop.yaml
+    input:
+      controller: amis_lit
+      held_state_helper: input_text.switch_held_state
+      button_1_pressed:
+      - action: light.toggle
+        metadata: {}
+        target:
+          entity_id: light.amis_plafonnier
+        data: {}
+      button_3_pressed:
+      - action: light.toggle
+        metadata: {}
+        target:
+          entity_id: light.amis_prises
+        data: {}
+- id: '1781206096607'
+  alias: Interrupteur salon
+  description: ''
+  use_blueprint:
+    path: MajorLazer2142/z2m_EnOcean_PTM_215Z_(Friends_of_Hue)_switch_with_Hold_Loop.yaml
+    input:
+      controller: Salon interrupteur
+      held_state_helper: input_text.switch_held_state
+      button_1_pressed:
+      - action: light.toggle
+        metadata: {}
+        target:
+          entity_id: light.salon_deco
+        data: {}
+      button_2_pressed:
+      - action: cover.open_cover
+        metadata: {}
+        target:
+          entity_id: cover.velux_store
+        data: {}
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 5
+          milliseconds: 0
+      - action: cover.open_cover
+        metadata: {}
+        target:
+          entity_id: cover.velux
+        data: {}
+      button_3_pressed:
+      - action: light.toggle
+        metadata: {}
+        target:
+          entity_id: light.totems_blanc
+        data: {}
+      button_4_pressed:
+      - action: cover.close_cover
+        metadata: {}
+        target:
+          entity_id: cover.velux
+        data: {}
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 5
+          milliseconds: 0
+      - action: cover.close_cover
+        metadata: {}
+        target:
+          entity_id: cover.velux_store
+        data: {}
       button_1_and_3_pressed:
+      - action: cover.open_cover
+        metadata: {}
+        target:
+          entity_id: cover.store_terrasse
+        data: {}
+      button_2_and_4_pressed:
+      - action: cover.close_cover
+        metadata: {}
+        target:
+          entity_id: cover.store_terrasse
+        data: {}
+- id: '1781206770783'
+  alias: Interrupteur Charles
+  description: ''
+  use_blueprint:
+    path: MajorLazer2142/z2m_EnOcean_PTM_215Z_(Friends_of_Hue)_switch_with_Hold_Loop.yaml
+    input:
+      controller: Chambre Charles
+      held_state_helper: input_text.switch_held_state
+      button_1_pressed:
       - action: light.turn_on
         metadata: {}
+        target:
+          entity_id: light.charles_bas_white
         data: {}
+      button_1_held:
+      - action: mqtt.publish
+        metadata: {}
+        data:
+          evaluate_payload: false
+          qos: '0'
+          retain: false
+          topic: zigbee2mqtt/Charles bas/set
+          payload: '{ "brightness_move_white": 50}'
+      button_1_released:
+      - action: mqtt.publish
+        metadata: {}
+        data:
+          evaluate_payload: false
+          qos: '0'
+          retain: false
+          topic: zigbee2mqtt/Charles bas/set
+          payload: '{ "brightness_move_white": 0}'
+      button_2_pressed:
+      - action: light.turn_off
+        metadata: {}
         target:
           entity_id:
-          - light.lit_parents_blanc
-          - light.lit_parents_couleur
-      button_2_and_4_pressed:
+          - light.charles_bas_white
+          - light.charles_bas_color
+        data: {}
+      button_2_held:
+      - action: mqtt.publish
+        metadata: {}
+        data:
+          evaluate_payload: false
+          qos: '0'
+          retain: false
+          payload: '{ "brightness_move_white": -50}'
+          topic: zigbee2mqtt/Charles bas/set
+      button_2_released:
+      - action: mqtt.publish
+        metadata: {}
+        data:
+          evaluate_payload: false
+          qos: '0'
+          retain: false
+          payload: '{ "brightness_move_white": 0}'
+          topic: zigbee2mqtt/Charles bas/set
+      button_3_pressed:
+      - action: light.turn_on
+        metadata: {}
+        target:
+          entity_id: light.charles_haut_white
+        data: {}
+      button_3_held:
+      - action: mqtt.publish
+        metadata: {}
+        data:
+          evaluate_payload: false
+          qos: '0'
+          retain: false
+          topic: zigbee2mqtt/Charles haut/set
+          payload: '{ "brightness_move_white": 50}'
+      button_3_released:
+      - action: mqtt.publish
+        metadata: {}
+        data:
+          evaluate_payload: false
+          qos: '0'
+          retain: false
+          topic: zigbee2mqtt/Charles haut/set
+          payload: '{ "brightness_move_white": 0}'
+      button_4_pressed:
       - action: light.turn_off
         metadata: {}
         data: {}
         target:
           entity_id:
-          - light.lit_parents_blanc
-          - light.lit_parents_couleur
-- id: '1752160051745'
-  alias: Interrupteur salon
-  description: ''
-  use_blueprint:
-    path: chris-1243/PTM_21xZ_ZE.yaml
-    input:
-      controller:
-      - Salon interrupteur
-      button_1_pressed:
-      - action: light.toggle
+          - light.charles_haut_color
+          - light.charles_haut_white
+      button_4_held:
+      - action: mqtt.publish
         metadata: {}
-        data: {}
-        target:
-          entity_id: light.salon_deco
-      button_1_held: []
-      button_2_pressed:
-      - action: cover.open_cover
+        data:
+          evaluate_payload: false
+          qos: '0'
+          retain: false
+          payload: '{ "brightness_move_white": -50}'
+          topic: zigbee2mqtt/Charles haut/set
+      button_4_released:
+      - action: mqtt.publish
         metadata: {}
-        data: {}
-        target:
-          entity_id: cover.velux_store
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 5
-          milliseconds: 0
-      - action: cover.open_cover
-        metadata: {}
-        data: {}
-        target:
-          entity_id: cover.velux
-      button_2_held: []
-      button_1_released: []
-      button_2_released: []
-      button_3_pressed:
-      - action: light.toggle
-        metadata: {}
-        data: {}
-        target:
-          entity_id: light.totems_blanc
-      button_4_pressed:
-      - action: cover.close_cover
-        metadata: {}
-        data: {}
-        target:
-          entity_id: cover.velux
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 5
-          milliseconds: 0
-      - action: cover.close_cover
-        metadata: {}
-        data: {}
-        target:
-          entity_id: cover.velux_store
-      button_3_held: []
-      button_3_released: []
-      button_4_held: []
-      button_4_released: []
-      button_1_and_3_held: []
-      button_1_and_3_released: []
-      button_2_and_4_held: []
-      button_2_and_4_released: []
-      button_1_and_3_pressed:
-      - action: cover.open_cover
-        metadata: {}
-        data: {}
-        target:
-          entity_id: cover.store_terrasse
-        enabled: true
-      button_2_and_4_pressed:
-      - action: cover.close_cover
-        metadata: {}
-        data: {}
-        target:
-          entity_id: cover.store_terrasse
-        enabled: true
+        data:
+          evaluate_payload: false
+          qos: '0'
+          retain: false
+          payload: '{ "brightness_move_white": 0}'
+          topic: zigbee2mqtt/Charles haut/set
