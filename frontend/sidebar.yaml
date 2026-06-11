@@ -736,49 +736,109 @@ elements:
 
     #########################    Mini Weather card    #########################
 
-  - backdrop: false
-    entity: weather.openweathermap
-    name: ' '
+#  - backdrop: false
+#    entity: weather.openweathermap
+#    name: ' '
+#    card_mod:
+#      style: |
+#        :host {
+#          left: 48.5%;
+#          top:  84%;
+#          width: 69%;
+#          height: 7% !important;
+#          overflow: hidden;
+#          background: none  !important;
+#          box-shadow: none !important;
+#          font-size: 1vw !important;
+#        }
+#        ha-card {
+#          background: none  !important;
+#          box-shadow: none !important;
+#          flex-flow: row-reverse !important;
+#          padding: 0 !important;
+#          height: 100%;
+#        }
+#        .weather__info--add{
+#          display: none !important;
+#        }
+#        .weather__info{
+#          flex-grow: 1;
+#          min-height: 0 !important;
+#          height: 2.4vw;
+#          line-height: 1vw;
+#          margin-left: 0.6vw;
+#        }
+#        .weather__icon{
+#          margin-right: 0.5% !important;
+#          margin-top: -3%;
+#          width: 2vw !important;
+#          height: 2vw !important;
+#          flex: 0 0 2vw !important;
+#        }
+#    tap_action:
+#      action: navigate
+#      navigation_path: /lovelace-visual/weather
+#    type: 'custom:simple-weather-card'
+
+  - type: custom:atmospheric-weather-card
+    weather_entity: weather.openweathermap
+    sun_entity: sun.sun
+    theme_entity: sun.sun
+    card_height: 7vw
+    card_padding: 0px
+    celestial_size: 0.1vw
+    celestial_position: fixed
+    celestial_alignment: right
+    celestial_x: 0
+    celestial_y: center
+    chip_area_position: bottom-left
+    chip_text_size: 0.6vw
+    chip_padding: 0.1vw 0.2vw
+    chip_gap: 0.1vw
+    chip_area_background: true
+    card_tap_action:
+      action: navigate
+      navigation_path: /lovelace-visual/weather
+    custom_cards_position: bottom-center
+    chips:
+      - entity: weather.openweathermap
+        attribute: temperature
+        position: custom
+        position_anchor: top-left
+        position_x: 0
+        position_y: 0
+        text_size: 3vw
+        background: false
+        padding: 0px 0.2vw
+        hide_icon: true
+        hide_label: true
+        fancy_unit: true
+        value_weight: "600"
+        behind_effects: true
+      - entity: weather.openweathermap
+        attribute: humidity
+        name: HMD
+        background: false
+      - entity: weather.openweathermap
+        attribute: wind_speed
+        name: Wind
+        background: false
+      - entity: sensor.openweathermap_pressure
+        background: false
+      - forecast: daily
+        attribute: temperature
+        entity: weather.openweathermap
+        forecast_offset: 1
+        background: false
+    grid_options:
+      rows: auto
     card_mod:
       style: |
         :host {
-          left: 48.5%;
-          top:  84%;
-          width: 69%;
-          height: 7% !important;
-          overflow: hidden;
-          background: none  !important;
-          box-shadow: none !important;
-          font-size: 1vw !important;
+          left: 50%;
+          top: 80%;
         }
-        ha-card {
-          background: none  !important;
-          box-shadow: none !important;
-          flex-flow: row-reverse !important;
-          padding: 0 !important;
-          height: 100%;
-        }
-        .weather__info--add{
-          display: none !important;
-        }
-        .weather__info{
-          flex-grow: 1;
-          min-height: 0 !important;
-          height: 2.4vw;
-          line-height: 1vw;
-          margin-left: 0.6vw;
-        }
-        .weather__icon{
-          margin-right: 0.5% !important;
-          margin-top: -3%;
-          width: 2vw !important;
-          height: 2vw !important;
-          flex: 0 0 2vw !important;
-        }
-    tap_action:
-      action: navigate
-      navigation_path: /lovelace-visual/weather
-    type: 'custom:simple-weather-card'
+
 
     #########################    Overlay shadow images    #########################
 

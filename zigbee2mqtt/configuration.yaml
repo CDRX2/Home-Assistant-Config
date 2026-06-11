@@ -181,7 +181,7 @@ devices:
   '0xb40ecfd112990000':
     friendly_name: Grand totem deco
   '0x00212effff007534':
-    friendly_name: Bar
+    friendly_name: Charles kallax
   '0x000000000170c480':
     friendly_name: Salon interrupteur
   '0x385b44fffee33cd2':
@@ -196,6 +196,8 @@ devices:
     friendly_name: salon guirlandes
   '0x0cae5ffffe21d0ea':
     friendly_name: jumeaux armoire
+  '0x0cae5ffffe221d02':
+    friendly_name: Bar
 availability:
   active:
     timeout: 20

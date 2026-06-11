@@ -1,5 +1,6 @@
 """API for TraktTV bound to Home Assistant OAuth."""
 
+import asyncio
 import logging
 from asyncio import gather, sleep
 from datetime import datetime
@@ -37,6 +38,7 @@ class TraktApi:
         self.host = API_HOST
         self.oauth_session = oauth_session
         self.hass = hass
+        self._semaphore = asyncio.Semaphore(4)
 
     def cache(self) -> Dict[str, Any]:
         return self.hass.data[DOMAIN].get("cache", {})
@@ -86,15 +88,25 @@ class TraktApi:
             if response.ok:
                 text = await response.text()
                 return deserialize_json(text)
+
             elif response.status == 429:
-                wait_time = (
-                    int(response.headers["Retry-After"]) + 20
-                )  # Arbitrary value to have a security
-                await self.retry_request(
-                    wait_time, response, method, url, retry, **kwargs
+                wait_time = int(response.headers.get("Retry-After", 60))
+
+                if wait_time > 30:
+                    raise TraktException(
+                        f"Rate limit (429) reached on {url}. "
+                        f"Requested wait time of {wait_time}s is too long for initialization."
+                    )
+
+                return await self.retry_request(
+                    wait_time + 2, response, method, url, retry, **kwargs
                 )
+
             else:
-                await self.retry_request(300, response, method, url, retry, **kwargs)
+                content = await response.text()
+                raise TraktException(
+                    f"HTTP {response.status} API Error on {url}. Content: {content}"
+                )
 
     async def fetch_calendar(
         self, path: str, from_date: str, nb_days: int, all_medias: bool
@@ -166,54 +178,76 @@ class TraktApi:
         raw_shows = await self.request("get", f"sync/watched/shows?extended=noseasons")
         raw_medias = []
 
-        for show in raw_shows or []:
-            try:
-                ids = extract_value_from(show, ["show", "ids"])
-                identifier = extract_value_from(ids, ["slug"])
-            except Exception as e:
-                LOGGER.warning(f"Raw show {show} can't be extracted because: {e}")
-                continue
+        # Semaphore to avoid hammering Trakt API and triggering 429s.
+        # 5 concurrent requests is a safe ceiling given Trakt's rate limits.
+        semaphore = asyncio.Semaphore(5)
 
-            try:
-                is_excluded = self.is_show_excluded(show, excluded_shows, hidden_shows)
+        async def process_show(show):
+            async with semaphore:
+                try:
+                    ids = extract_value_from(show, ["show", "ids"])
+                    identifier = extract_value_from(ids, ["slug"])
+                except Exception as e:
+                    LOGGER.warning(f"Raw show {show} can't be extracted because: {e}")
+                    return None
 
-                if is_excluded:
-                    continue
+                try:
+                    is_excluded = self.is_show_excluded(
+                        show, excluded_shows, hidden_shows
+                    )
 
-                trakt_identifier = extract_value_from(ids, ["trakt"])
+                    if is_excluded:
+                        return None
 
-                raw_show_progress = await self.fetch_show_progress(trakt_identifier)
-                is_finished = self.is_show_finished(raw_show_progress)
+                    trakt_identifier = extract_value_from(ids, ["trakt"])
 
-                """aired date and completed date will always be the same for next to watch tvshows if you're up-to-date"""
-                if excluded_finished and is_finished:
-                    continue
+                    raw_show_progress = await self.fetch_show_progress(trakt_identifier)
+                    is_finished = self.is_show_finished(raw_show_progress)
 
-                raw_next_episode = await self.fetch_show_informations(
-                    trakt_identifier,
-                    extract_value_from(raw_show_progress, ["next_episode", "season"]),
-                    extract_value_from(raw_show_progress, ["next_episode", "number"]),
-                )
+                    """aired date and completed date will always be the same for next to watch tvshows if you're up-to-date"""
+                    if excluded_finished and is_finished:
+                        return None
 
-                show["episode"] = raw_next_episode
+                    raw_next_episode = await self.fetch_show_informations(
+                        trakt_identifier,
+                        extract_value_from(
+                            raw_show_progress, ["next_episode", "season"]
+                        ),
+                        extract_value_from(
+                            raw_show_progress, ["next_episode", "number"]
+                        ),
+                    )
 
-                if raw_next_episode.get("first_aired") is not None:
-                    show["first_aired"] = raw_next_episode["first_aired"]
+                    show["episode"] = raw_next_episode
 
-                raw_medias.append(show)
-            except IndexError:
-                LOGGER.warning(f"Show {identifier} doesn't contain any trakt ID")
-                continue
-            except TraktException as e:
-                LOGGER.warning(f"Show {identifier} can't be extracted because: {e}")
-                continue
-            except TypeError as e:
-                LOGGER.warning(f"Show {identifier} can't be extracted because: {e}")
-                continue
-            except KeyError as e:
-                LOGGER.warning(f"Show {identifier} can't be extracted because: {e}")
-                continue
+                    if (
+                        raw_next_episode
+                        and raw_next_episode.get("first_aired") is not None
+                    ):
+                        show["first_aired"] = raw_next_episode["first_aired"]
 
+                    return show
+                except IndexError:
+                    LOGGER.warning(f"Show {identifier} doesn't contain any trakt ID")
+                    return None
+                except TraktException as e:
+                    LOGGER.warning(f"Show {identifier} can't be extracted because: {e}")
+                    return None
+                except TypeError as e:
+                    LOGGER.warning(f"Show {identifier} can't be extracted because: {e}")
+                    return None
+                except KeyError as e:
+                    LOGGER.warning(f"Show {identifier} can't be extracted because: {e}")
+                    return None
+
+        async def process_show_with_limit(show):
+            async with self._semaphore:
+                return await process_show(show)
+
+        results = await gather(
+            *[process_show_with_limit(show) for show in raw_shows or []]
+        )
+        raw_medias = [r for r in results if r is not None]
         return raw_medias
 
     async def fetch_show_progress(self, id: str):
@@ -233,10 +267,21 @@ class TraktApi:
     async def fetch_show_informations(
         self, show_id: str, season_nbr: str, episode_nbr: str
     ):
-        return await self.request(
+        cache_key = f"show_info_{show_id}_{season_nbr}_{episode_nbr}"
+
+        maybe_answer = cache_retrieve(self.cache(), cache_key)
+        if maybe_answer is not None:
+            return maybe_answer
+
+        response = await self.request(
             "get",
             f"shows/{show_id}/seasons/{season_nbr}/episodes/{episode_nbr}?extended=full",
         )
+
+        if response is not None:
+            cache_insert(self.cache(), cache_key, response)
+
+        return response
 
     async def fetch_upcoming(
         self,
@@ -632,6 +677,92 @@ class TraktApi:
 
         return {TraktKind.MOVIE: Medias(medias)}
 
+    async def fetch_watchlist_shows(self):
+        configuration = Configuration(data=self.hass.data)
+        language = configuration.get_language()
+
+        identifier = "show"
+        sort_by = configuration.get_watchlist_sort_by(identifier)
+        sort_order = configuration.get_watchlist_sort_order(identifier)
+
+        # The API does not support sorting by rating, so we handle it manually later
+        api_sort_by = sort_by if sort_by != "rating" else "released"
+
+        raw_medias = await self.request(
+            "get", f"users/me/watchlist/shows/{api_sort_by}?extended=full"
+        )
+
+        if raw_medias is None:
+            return {}
+
+        medias = [
+            TraktKind.SHOW.value.model.from_trakt(media["show"]) for media in raw_medias
+        ]
+
+        # Filtering for "only_unwatched"
+        only_unwatched = configuration.is_watchlist_only_unwatched(identifier)
+        if only_unwatched:
+            watched_shows = await self.request(
+                "get", "sync/watched/shows?extended=noseasons"
+            )
+            collected_shows = await self.request("get", "sync/collection/shows")
+
+            watched_ids = (
+                {show["show"]["ids"]["trakt"] for show in watched_shows}
+                if watched_shows
+                else set()
+            )
+            collected_ids = (
+                {show["show"]["ids"]["trakt"] for show in collected_shows}
+                if collected_shows
+                else set()
+            )
+
+            if watched_ids or collected_ids:
+                unwatched_medias = []
+                for media in medias:
+                    if (
+                        media.ids.trakt not in watched_ids
+                        and media.ids.trakt not in collected_ids
+                    ):
+                        unwatched_medias.append(media)
+                medias = unwatched_medias
+
+        # Filtering for "only_released"
+        only_released = configuration.is_watchlist_only_released(identifier)
+        if only_released:
+            timezone = ZoneInfo(configuration.get_timezone())
+            now = datetime.now(timezone)
+            medias = [
+                media for media in medias if media.released and media.released <= now
+            ]
+
+        # Manual sorting for "rating" or applying sort_order for API-sorted results
+        if sort_by == "rating":
+            medias.sort(key=lambda m: m.rating or 0, reverse=(sort_order == "desc"))
+        elif sort_order == "desc":
+            medias.reverse()
+
+        # Slicing to max_medias
+        max_medias = configuration.get_watchlist_max_medias(identifier)
+        medias = medias[:max_medias]
+
+        await gather(*[media.get_more_information(language) for media in medias])
+
+        return {TraktKind.SHOW: Medias(medias)}
+
+    async def fetch_watchlist(self):
+        configuration = Configuration(data=self.hass.data)
+        res = {}
+
+        if configuration.watchlist_identifier_exists("movie"):
+            res.update(await self.fetch_watchlist_movies())
+
+        if configuration.watchlist_identifier_exists("show"):
+            res.update(await self.fetch_watchlist_shows())
+
+        return res
+
     async def retrieve_data(self):
         async with timeout(1800):
             configuration = Configuration(data=self.hass.data)
@@ -685,7 +816,7 @@ class TraktApi:
 
             if configuration.source_exists("watchlist"):
                 sources.append("watchlist")
-                coroutine_sources_data.append(self.fetch_watchlist_movies())
+                coroutine_sources_data.append(self.fetch_watchlist())
 
             """Then, let's add the next to watch sensors if needed"""
             for sub_source in [
