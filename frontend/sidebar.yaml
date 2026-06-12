@@ -672,130 +672,23 @@ elements:
   #   hold_action:
   #     action: none
 
-    #########################    Minigraph to show temperature inside and out    #########################
-  - color_thresholds:
-      - color: '#03a8f4'
-        value: 10
-      - color: '#ffa31a'
-        value: 20
-      - color: '#ff1a1a'
-        value: 30
-    entities:
-      - sensor.temperature_salon
-      - sensor.openweathermap_temperature
-    icon: 'mdi:home-thermometer-outline'
-    show:
-      icon: true
-      legend: false
-      name: false
-    hour24: true
-    points_per_hour: 1
-    card_mod:
-      style: |
-        :host {
-          left: 50%;
-          top:  92.9%;
-          width: 100%;
-          overflow: hidden;
-          height: 15%;
-          background: none  !important;
-          box-shadow: none !important;
-        }
-        .header {
-          font-size: 1vw;
-          position: absolute !important;
-          width: 5% !important;
-          padding: 0 !important;
-          right: 20% !important;
-          top: 15% !important;
-        }
-        ha-card {
-          background: none  !important;
-          padding: 0 !important;
-        }
-        .icon > ha-icon {
-          width:1.8vw !important;
-          height:1.8vw !important;
-        }
-        .state__time{
-          font-size:0.9vw !important;
-          margin-top: 0.2vw;
-          font-weight: 300 !important;
-          opacity: 0.4 !important;
-        }
-        .states {
-          font-size: 0.5vw !important;
-          padding: 1vw 0vw 0vw 0vw  !important;
-          margin: auto !important;
-          width: 68%;
-        }
-    tap_action:
-      action: navigate
-      navigation_path: /lovelace-visual/weather
-    type: 'custom:mini-graph-card'
-
     #########################    Mini Weather card    #########################
-
-#  - backdrop: false
-#    entity: weather.openweathermap
-#    name: ' '
-#    card_mod:
-#      style: |
-#        :host {
-#          left: 48.5%;
-#          top:  84%;
-#          width: 69%;
-#          height: 7% !important;
-#          overflow: hidden;
-#          background: none  !important;
-#          box-shadow: none !important;
-#          font-size: 1vw !important;
-#        }
-#        ha-card {
-#          background: none  !important;
-#          box-shadow: none !important;
-#          flex-flow: row-reverse !important;
-#          padding: 0 !important;
-#          height: 100%;
-#        }
-#        .weather__info--add{
-#          display: none !important;
-#        }
-#        .weather__info{
-#          flex-grow: 1;
-#          min-height: 0 !important;
-#          height: 2.4vw;
-#          line-height: 1vw;
-#          margin-left: 0.6vw;
-#        }
-#        .weather__icon{
-#          margin-right: 0.5% !important;
-#          margin-top: -3%;
-#          width: 2vw !important;
-#          height: 2vw !important;
-#          flex: 0 0 2vw !important;
-#        }
-#    tap_action:
-#      action: navigate
-#      navigation_path: /lovelace-visual/weather
-#    type: 'custom:simple-weather-card'
 
   - type: custom:atmospheric-weather-card
     weather_entity: weather.openweathermap
     sun_entity: sun.sun
     theme_entity: sun.sun
-    card_height: 7vw
+    card_height: 10vw
     card_padding: 0px
     celestial_size: 0.1vw
     celestial_position: fixed
-    celestial_alignment: right
-    celestial_x: 0
+    celestial_alignment: left
+    celestial_x: 45
     celestial_y: center
-    chip_area_position: bottom-left
+    chip_area_position: top-left
     chip_text_size: 0.6vw
-    chip_padding: 0.1vw 0.2vw
+    chip_padding: 0.8vw 0.2vw
     chip_gap: 0.1vw
-    chip_area_background: true
     card_tap_action:
       action: navigate
       navigation_path: /lovelace-visual/weather
@@ -804,7 +697,7 @@ elements:
       - entity: weather.openweathermap
         attribute: temperature
         position: custom
-        position_anchor: top-left
+        position_anchor: left
         position_x: 0
         position_y: 0
         text_size: 3vw
@@ -814,7 +707,7 @@ elements:
         hide_label: true
         fancy_unit: true
         value_weight: "600"
-        behind_effects: true
+        behind_effects: false
       - entity: weather.openweathermap
         attribute: humidity
         name: HMD
@@ -832,11 +725,38 @@ elements:
         background: false
     grid_options:
       rows: auto
+    custom_cards:
+        - type: custom:mini-graph-card
+          entities:
+            - sensor.openweathermap_temperature
+#           - sensor.temperature_salon
+          show:
+            icon: false
+            legend: false
+            name: false
+            state: false
+            points: false
+          decimals: 1
+          color_thresholds:
+            - color: '#03a8f4'
+              value: 10
+            - color: '#ffa31a'
+              value: 20
+            - color: '#ff1a1a'
+              value: 30
+          hour24: true
+          points_per_hour: 1
+          custom_width: 100%
+          card_mod:
+            style: |
+              ha-card {
+                background: none !important;
+              }
     card_mod:
       style: |
         :host {
           left: 50%;
-          top: 80%;
+          top: 92%;
         }
 
 
