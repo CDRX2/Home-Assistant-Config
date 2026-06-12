@@ -58,7 +58,7 @@ class RadarrApi():
         if api.status_code == 200:
             if self._days == 1:
                 in_cinemas = list(filter(
-                    lambda x: x['inCidemas'][:-10] == str(start), api.json()
+                    lambda x: x['inCinemas'][:-10] == str(start), api.json()
                     ))
                 digital_release = list(filter(
                     lambda x: x['digitalRelease'][:-10] == str(start), api.json()
@@ -68,7 +68,7 @@ class RadarrApi():
                     ))
                 return {
                     'online': True,
-                    'data': parse_data((in_cinemas + digital_release + physical_release)[:self._max], tz, self._host, self._port, self._ssl, self._theaters)
+                    'data': parse_data((in_cinemas + digital_release + physical_release)[:self._max], tz, self._host, self._port, self._ssl, self._theaters, self._urlbase)
                 }
 
             return {
