@@ -69,8 +69,8 @@
         "battery": 55.5,
         "occupancy_timeout": 58550,
         "occupancy": true,
-        "temperature": 20.63,
-        "illuminance": 2616,
+        "temperature": 21.33,
+        "illuminance": 2315,
         "motion_sensitivity": "medium",
         "last_seen": "2026-06-12T11:00:26.218Z",
         "linkquality": 122,
@@ -453,7 +453,7 @@
         "linkquality": 0
     },
     "0x000d6ffffe7c1eee": {
-        "linkquality": 86,
+        "linkquality": 72,
         "last_seen": "2026-06-12T10:59:07.731Z",
         "update": {
             "state": "idle",
@@ -558,8 +558,8 @@
     "0x00158d0007e3b8f0": {
         "last_seen": "2026-06-12T10:34:00.277Z",
         "linkquality": 200,
-        "temperature": 22.95,
-        "humidity": 41.05,
+        "temperature": 22.94,
+        "humidity": 41.06,
         "pressure": 935.4,
         "voltage": 2995,
         "battery": 97,
