@@ -93,6 +93,9 @@ cards:
                 font-size: 3vw;
                 font-weight: 600;
               }
+              div.forecast-item {
+                width: 18%;
+              }
               .forecast-image-icon > * {
                 width: 80% !important;
                 height: 80% !important;
