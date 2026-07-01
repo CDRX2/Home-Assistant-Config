@@ -548,6 +548,15 @@ elements:
     style:
       left: 31%
       top: 56%
+  - type: custom:button-card
+    template: light_icon_dim
+    variables:
+      entity: light.charles_kallax_white
+      icon: mdi:led-strip-variant
+      title: "Charles Kallax"
+    style:
+      left: 18%
+      top: 43%
 
   #chambre parents
   - type: custom:button-card

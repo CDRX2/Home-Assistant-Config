@@ -81,6 +81,10 @@ groups:
     friendly_name: upstairs_stairs
   '15':
     friendly_name: parking
+  '100':
+    friendly_name: Charles_room
+  '1111':
+    friendly_name: dummy.group
 devices:
   '0x001fee000000727a':
     friendly_name: amis
@@ -198,6 +202,8 @@ devices:
     friendly_name: jumeaux armoire
   '0x0cae5ffffe221d02':
     friendly_name: Bar
+  '0x000d6f000e11066e':
+    friendly_name: Charles kallax switch
 availability:
   active:
     timeout: 20

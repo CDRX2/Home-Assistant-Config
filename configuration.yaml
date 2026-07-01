@@ -280,6 +280,7 @@ light:
     entities:
     - light.charles_bas_white
     - light.charles_haut_white
+    - light.charles_kallax_white
 
   - platform: group
     name: Couleur Rez
@@ -336,6 +337,7 @@ light:
     - light.chevet_nanne_3
     - light.charles_bas_white
     - light.charles_haut_white
+    - light.charles_kallax_white
     - light.guirlandes_crystal
     - light.guirlandes_verriere
 #   - light.spare_switch_1
