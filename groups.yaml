@@ -49,6 +49,7 @@ Chambre_Charles:
   entities:
   - light.charles_bas_white
   - light.charles_haut_white
+  - light.charles_kallax_white
 
 Salon_couleur:
   name: Salon couleur
@@ -107,6 +108,7 @@ Lumieres_maison:
   - light.chevet_nanne
   - light.charles_bas_white
   - light.charles_haut_white
+  - light.charles_kallax_white
   - light.guirlandes_salon
 
 temp_sensors_battery:
