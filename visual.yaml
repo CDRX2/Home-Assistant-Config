@@ -1,11 +1,3 @@
-title: Home
-
-button_card_templates: !include_dir_merge_named button_templates/
-
-decluttering_templates: !include_dir_merge_named decluttering_templates/
-
-apexcharts_card_templates: !include_dir_merge_named apexcharts_templates/
-
 wallpanel:
   enabled: true
   idle_time: 20
@@ -24,6 +16,14 @@ wallpanel:
       width: 100%
     wallpanel-screensaver-info-box-pos-x:
       align-content: center
+
+title: Home
+
+button_card_templates: !include_dir_merge_named button_templates/
+
+decluttering_templates: !include_dir_merge_named decluttering_templates/
+
+apexcharts_card_templates: !include_dir_merge_named apexcharts_templates/
 
 views:
 
