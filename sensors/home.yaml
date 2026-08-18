@@ -27,6 +27,17 @@
             {% endif %}"
     name: trash
 
+- device_tracker:
+    - name: "Pet Charlie"
+      unique_id: pet_charlie
+      default_entity_id: device_tracker.pet_charlie
+      in_zones: >
+        {% if is_state('binary_sensor.charlie', 'on') %}
+          {{ ['zone.home'] }}
+        {% else %}
+          {{ [] }}
+        {% endif %}
+
 - cover:
   - open_cover:
     - target:
