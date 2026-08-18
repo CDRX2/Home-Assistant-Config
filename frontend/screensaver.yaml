@@ -12,7 +12,7 @@ background:
   size: cover
   repeat: repeat
   attachment: fixed
-  image: /local/ui/sidebarBG.png
+  image: /local/ui/sidebar/sidebarBG.png
 cards:
   - type: custom:mod-card
     card:
@@ -53,8 +53,9 @@ cards:
             style: |
               ha-card {
                 background: none !important;
-                width: 80%;
-                padding-top: 15% !important;
+                width: 90%;
+                padding: 0px !important;
+                display: flow !important;
               }
               div.icon-image {
                 opacity: 0.3;
@@ -87,6 +88,10 @@ cards:
                 font-weight: 600;
                 opacity: 0.1;
                 color: var(--primary-text-color) !important;
+              }
+              div.forecast {
+                mask-image: none;
+                webkit-mask-image: none;
               }
               div.forecast > div > div:nth-child(1) {
                 opacity: 0.1;
@@ -142,7 +147,7 @@ cards:
               .: |
                 ha-card {
                   background: none !important;
-                  width: 80%;
+                  width: 90%;
                   opacity: 0.1;
                   padding-top: 10%;
                   --state-icon-color: var(--primary-text-color);
