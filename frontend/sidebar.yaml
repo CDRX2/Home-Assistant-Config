@@ -729,7 +729,7 @@ elements:
         - type: custom:mini-graph-card
           entities:
             - sensor.openweathermap_temperature
-            - sensor.temperature_salon
+#            - sensor.temperature_salon
           show:
             icon: false
             legend: false
