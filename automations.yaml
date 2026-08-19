@@ -397,13 +397,15 @@
   alias: carport lights
   description: ''
   triggers:
-  - entity_id: binary_sensor.carport_movement_occupancy
+  - entity_id: 
+    - binary_sensor.carport_movement_occupancy
     to: 'on'
     trigger: state
   conditions:
   - condition: state
     entity_id: sun.sun
     state: below_horizon
+    enabled: true
   actions:
   - action: light.turn_on
     metadata: {}
