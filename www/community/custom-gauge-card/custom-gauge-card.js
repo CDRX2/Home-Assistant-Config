@@ -1,7 +1,26 @@
 /**
- * Custom Gauge Card v2.2.0
+ * Custom Gauge Card v2.4.0
  * Home Assistant custom card — LED gauge with arc control, bidirectional mode,
  * scale ticks, 4 buttons and full shadow support.
+ *
+ * Changelog v2.4 vs v2.3:
+ *   - NEW  led_shape: round | rect — `rect` draws radial segments (hi-fi VU
+ *          meter look), sized by led_length / led_corner_radius
+ *   - NEW  severity_mode: steps | gradient | gradient_arc — RGB blend between
+ *          severity thresholds, for the whole bar or along it
+ *   - KEEP defaults (round, steps) render exactly as 2.3
+ *
+ * Changelog v2.3 vs v2.2:
+ *   - CHG  buttons now sit in a centered bar under the title, above a hairline
+ *          separator derived from the theme — no more absolute corner placement
+ *   - CHG  buttons are 44 × 44 px (touch target) instead of 36 × 36
+ *   - CHG  default icons are MDI (<ha-icon>) instead of emojis; a custom `icon`
+ *          in `prefix:name` form renders as <ha-icon>, anything else (emoji,
+ *          plain text) keeps the pre-2.3 innerHTML behaviour
+ *   - NEW  buttons_layout: bar | corners — `corners` restores the 2.2 placement
+ *          and honours each button's `position`
+ *   - NEW  buttons are configurable in the visual editor (entity, MDI icon
+ *          picker, icon size), capped at 4
  *
  * Changelog v2.2 vs v2.1:
  *   - NEW  alarms: [] — multiple alarms, each watching any entity (not just the
@@ -24,7 +43,7 @@
 !function () {
   "use strict";
 
-  const CARD_VERSION = '2.2.0';
+  const CARD_VERSION = '2.4.0';
 
   // ── Themes ──────────────────────────────────────────────────────────────────
   const THEMES = {
@@ -44,6 +63,7 @@
 .value{font-size:var(--value-font-size);font-family:var(--value-font-family);font-weight:var(--value-font-weight);color:var(--value-font-color);transition:all .3s ease}
 .unit{font-size:var(--unit-font-size);font-weight:var(--unit-font-weight);color:var(--unit-font-color)}
 .title{margin-top:10px;font-size:var(--title-font-size);font-family:var(--title-font-family);font-weight:var(--title-font-weight);color:var(--title-font-color);text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.gauge-card.has-button-bar .trend-indicator{bottom:calc(var(--button-bar-height,72px) + 10px)}
 .trend-indicator{position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,.6);padding:4px 8px;border-radius:12px;display:flex;align-items:center;gap:5px;font-size:12px;color:white;z-index:5}
 .trend-arrow{font-size:14px;font-weight:bold}
 .marker{position:absolute;width:4px;height:12px;background:#fff;border-radius:2px;z-index:2;box-shadow:0 0 5px rgba(0,0,0,.5)}
@@ -52,11 +72,15 @@
 .dynamic-marker{position:relative;border:2px solid rgba(255,255,255,.8);box-shadow:0 0 8px rgba(0,0,0,.6),0 0 12px currentColor;transition:background .3s ease-in-out,box-shadow .3s ease-in-out;z-index:3}
 .dynamic-marker-label{position:absolute;left:15px;font-size:11px;font-weight:600;color:#fff;background:rgba(0,0,0,.7);padding:2px 6px;border-radius:4px;white-space:nowrap;text-shadow:0 1px 2px rgba(0,0,0,.8);box-shadow:0 2px 4px rgba(0,0,0,.3);z-index:4}
 .dynamic-marker-value{position:absolute;left:15px;top:18px;font-size:10px;font-weight:500;color:#fff;background:rgba(0,0,0,.7);padding:1px 5px;border-radius:3px;white-space:nowrap;text-shadow:0 1px 2px rgba(0,0,0,.8);box-shadow:0 2px 4px rgba(0,0,0,.3);z-index:4}
-.switch-button{position:absolute;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:3;transition:all .3s ease;box-shadow:var(--button-shadow);font-size:var(--icon-size,var(--button-icon-size));font-family:system-ui,-apple-system,"Segoe UI","Segoe UI Emoji","Apple Color Emoji",sans-serif;line-height:1;font-weight:normal;border:2px solid rgba(255,255,255,.2)}
+.button-bar{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:12px;padding-top:12px;width:100%;border-top:1px solid var(--button-bar-border)}
+.switch-button{width:44px;height:44px;flex-shrink:0;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:3;transition:all .3s ease;box-shadow:var(--button-shadow);font-size:var(--icon-size,var(--button-icon-size));font-family:system-ui,-apple-system,"Segoe UI","Segoe UI Emoji","Apple Color Emoji",sans-serif;line-height:1;font-weight:normal;border:2px solid rgba(255,255,255,.2)}
+.switch-button ha-icon{--mdc-icon-size:var(--icon-size,var(--button-icon-size));display:flex;align-items:center;justify-content:center;line-height:0}
 .switch-button:hover{transform:scale(1.1);box-shadow:var(--button-hover-shadow)}
 .switch-button:active{transform:scale(.95)}
 .switch-button.on{background:linear-gradient(135deg,#4caf50,#2e7d32);color:#fff;opacity:1;text-shadow:0 0 10px rgba(76,175,80,1),0 0 20px rgba(76,175,80,.6);filter:brightness(1.2)}
-.switch-button.off{background:linear-gradient(135deg,#666,#333);color:#333;opacity:.4;text-shadow:none;filter:grayscale(.5)}
+.switch-button.on ha-icon{filter:drop-shadow(0 0 6px rgba(76,175,80,.9))}
+.switch-button.off{background:linear-gradient(135deg,#666,#333);color:#9aa0a3;opacity:.55;text-shadow:none;filter:grayscale(.5)}
+.switch-button.corner{position:absolute;width:36px;height:36px}
 .switch-button.top-left{top:30px;left:30px}
 .switch-button.top-right{top:30px;right:30px}
 .switch-button.bottom-left{bottom:40px;left:30px}
@@ -82,17 +106,161 @@
   }
 
   function getDefaultIcon(type) {
-    const map = { switch:'●', light:'💡', scene:'🎬', script:'▶', input_boolean:'●', automation:'🤖', fan:'🌀', cover:'🪟', climate:'🌡️', lock:'🔒', vacuum:'🤖' };
-    return map[type] || '●';
+    const map = {
+      switch:'mdi:toggle-switch', light:'mdi:lightbulb', scene:'mdi:palette', script:'mdi:play',
+      input_boolean:'mdi:toggle-switch-outline', automation:'mdi:robot', fan:'mdi:fan',
+      cover:'mdi:window-shutter', climate:'mdi:thermostat', lock:'mdi:lock', vacuum:'mdi:robot-vacuum'
+    };
+    return map[type] || 'mdi:toggle-switch';
   }
 
+  /**
+   * `mdi:water-pump` / `hass:foo` → <ha-icon>. Anything else (emoji, plain text)
+   * keeps the pre-2.3 behaviour and is injected as innerHTML, so existing configs
+   * that use emojis are untouched.
+   */
+  const ICON_NAME_RE = /^[a-z0-9_-]+:[a-z0-9_-]+$/i;
+
+  function renderButtonIcon(el, icon) {
+    if (ICON_NAME_RE.test(String(icon))) {
+      el.innerHTML = '';
+      const i = document.createElement('ha-icon');
+      i.setAttribute('icon', icon);
+      el.appendChild(i);
+    } else {
+      el.innerHTML = icon;
+    }
+  }
+
+  /**
+   * Rough luminance test on a hex background. Gradients, `transparent` and named
+   * colors are treated as dark — the safe default for this card's themes.
+   */
+  function isLightBackground(bg) {
+    const m = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(String(bg).trim());
+    if (!m) return false;
+    let h = m[1];
+    if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+    const r = parseInt(h.slice(0, 2), 16), g = parseInt(h.slice(2, 4), 16), b = parseInt(h.slice(4, 6), 16);
+    return (0.299 * r + 0.587 * g + 0.114 * b) > 140;
+  }
+
+  const DEFAULT_SEVERITY = [{ color:'#4caf50', value:20 }, { color:'#ffeb3b', value:50 }, { color:'#f44336', value:100 }];
+  const SEVERITY_MODES   = ['steps', 'gradient', 'gradient_arc'];
+
+  /**
+   * Steps color. `value` is normalized (0–100 % of min…max), thresholds are real
+   * sensor units. Zones are walked in config order — the first threshold ≥ value
+   * wins — which is what existing, possibly unsorted, configurations rely on.
+   */
   function getLedColor(value, severity, min = 0, max = 100) {
-    const cfg = severity || [{ color:'#4caf50', value:20 }, { color:'#ffeb3b', value:50 }, { color:'#f44336', value:100 }];
+    const cfg = severity || DEFAULT_SEVERITY;
     for (const zone of cfg) {
       const threshold = ((zone.value - min) / (max - min)) * 100;
       if (value <= threshold) return zone.color;
     }
     return '#555';
+  }
+
+  /** Severity thresholds sorted by ascending value, green/yellow/red fallback. */
+  function getSeverityStops(severity) {
+    return (Array.isArray(severity) ? severity : DEFAULT_SEVERITY)
+      .filter(z => z && z.color && !isNaN(parseFloat(z.value)))
+      .map(z => ({ color: z.color, value: parseFloat(z.value) }))
+      .sort((a, b) => a.value - b.value);
+  }
+
+  const RGB_CACHE = new Map();
+  let colorCtx;   // lazily created 2D context, null when unavailable
+
+  /** Canvas-normalized fillStyle (#rrggbb or rgba(r, g, b, a)) → [r, g, b]. */
+  function parseNormalizedColor(s) {
+    const hex = /^#([0-9a-f]{6})$/i.exec(s);
+    if (hex) return [0, 2, 4].map(k => parseInt(hex[1].slice(k, k + 2), 16));
+    const fn = /^rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)/i.exec(s);
+    return fn ? [fn[1], fn[2], fn[3]].map(Number) : null;
+  }
+
+  /**
+   * Any CSS color → [r, g, b], or null when it cannot be resolved without
+   * layout (var(--x), typos). Hex is parsed directly; names, rgb() and hsl()
+   * go through a canvas, which normalizes fillStyle.
+   */
+  function parseColorToRgb(color) {
+    if (typeof color !== 'string') return null;
+    const key = color.trim();
+    if (RGB_CACHE.has(key)) return RGB_CACHE.get(key);
+    let rgb = null;
+    const m = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(key);
+    if (m) {
+      let h = m[1];
+      if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+      rgb = parseNormalizedColor(`#${h}`);
+    } else {
+      if (colorCtx === undefined) {
+        try { colorCtx = document.createElement('canvas').getContext('2d'); } catch (e) { colorCtx = null; }
+      }
+      if (colorCtx) {
+        // A rejected value is ignored silently and fillStyle keeps the previous
+        // one, so parse from two different sentinels: a color the canvas
+        // accepted reads back the same both times.
+        colorCtx.fillStyle = '#000001'; colorCtx.fillStyle = key; const a = colorCtx.fillStyle;
+        colorCtx.fillStyle = '#000002'; colorCtx.fillStyle = key; const b = colorCtx.fillStyle;
+        if (a === b) rgb = parseNormalizedColor(a);
+      }
+    }
+    RGB_CACHE.set(key, rgb);
+    return rgb;
+  }
+
+  /**
+   * Color linearly blended in RGB between the two thresholds around `value`
+   * (normalized, like getLedColor). Out of range → the extreme threshold color.
+   * null when one of the two colors cannot be parsed.
+   */
+  function getGradientColor(value, severity, min = 0, max = 100) {
+    const stops = getSeverityStops(severity);
+    if (!stops.length) return null;
+    const pct  = z => ((z.value - min) / (max - min)) * 100;
+    const last = stops[stops.length - 1];
+    if (stops.length === 1 || value <= pct(stops[0])) return stops[0].color;
+    if (value >= pct(last)) return last.color;
+    let i = 1;
+    while (i < stops.length - 1 && pct(stops[i]) < value) i++;
+    const a = stops[i - 1], b = stops[i];
+    const ca = parseColorToRgb(a.color), cb = parseColorToRgb(b.color);
+    if (!ca || !cb) return null;
+    const span = pct(b) - pct(a);
+    const t    = span > 0 ? (value - pct(a)) / span : 1;
+    const [r, g, bl] = ca.map((v, k) => Math.round(v + (cb[k] - v) * t));
+    return `rgb(${r}, ${g}, ${bl})`;
+  }
+
+  /**
+   * Severity color for a normalized value. Any mode but `steps` blends; a blend
+   * that cannot be computed (a var(--theme) color) falls back to the steps color.
+   */
+  function getSeverityColor(config, value, min, max, mode = config.severity_mode) {
+    if (mode && mode !== 'steps') {
+      const c = getGradientColor(value, config.severity, min, max);
+      if (c) return c;
+    }
+    return getLedColor(value, config.severity, min, max);
+  }
+
+  /**
+   * LED ring geometry. Each LED is centered `radius` px from the gauge center,
+   * `length` px along the radius and `size` px along the arc, so its outer edge
+   * always sits size/2 inside the gauge edge. Round LEDs have length === size,
+   * which gives exactly the pre-2.4 radius: gaugeSize/2 - led_size.
+   */
+  function ledGeometry(config) {
+    const gaugeSize = config.gauge_size || 200;
+    const size      = config.led_size   || 8;
+    const rect      = config.led_shape === 'rect';
+    const length    = rect ? config.led_length : size;
+    const margin    = length / 2 + size / 2;
+    return { gaugeSize, size, length, rect, radius: gaugeSize / 2 - margin };
   }
 
   /**
@@ -176,6 +344,10 @@
     'center_shadow_pulse', 'center_shadow_pulse_min', 'center_shadow_pulse_max',
     'center_shadow_pulse_duration', 'center_shadow_pulse_intensity',
   ];
+
+  // Pre-2.2 single-button config, superseded by `buttons[]`
+  const LEGACY_BUTTON_KEYS = ['show_switch_button', 'switch_entity', 'switch_button_position'];
+  const MAX_BUTTONS = 4;
 
   function normalizeAlarm(a, config) {
     const num = (v, fallback) => (v !== undefined && v !== null && v !== '' && !isNaN(Number(v)) ? Number(v) : fallback);
@@ -296,6 +468,7 @@
       smooth_transitions:           config.smooth_transitions !== false,
       animation_duration:           config.animation_duration || 800,
       buttons:                      config.buttons || [],
+      buttons_layout:               config.buttons_layout === 'corners' ? 'corners' : 'bar',
       title_font_family:            config.title_font_family  || 'inherit',
       title_font_size:              config.title_font_size    || '16px',
       title_font_weight:            config.title_font_weight  || 'normal',
@@ -332,6 +505,12 @@
       scale_labels: config.scale_labels !== false,
       // ── v2.0: tap_action ──────────────────────────────────────────────────
       tap_action:   config.tap_action   || { action: 'more-info' },
+      // ── v2.4: LED shape & severity blending ───────────────────────────────
+      led_shape:         config.led_shape === 'rect' ? 'rect' : 'round',
+      led_length:        Number(config.led_length) > 0 ? Number(config.led_length) : (config.led_size || 8) * 2,
+      led_corner_radius: Number(config.led_corner_radius) >= 0 && config.led_corner_radius !== null && config.led_corner_radius !== ''
+                           ? Number(config.led_corner_radius) : 1,
+      severity_mode:     SEVERITY_MODES.includes(config.severity_mode) ? config.severity_mode : 'steps',
     };
 
     // Backward compat: show_switch_button → buttons
@@ -459,18 +638,45 @@
     if (!ctx._hass || !ctx.config.buttons?.length) return;
     const container = ctx.shadowRoot.getElementById('gauge-container');
     if (!container) return;
+    const corners = ctx.config.buttons_layout === 'corners';
+
+    // Bar mode: .button-bar is created lazily by the first button that actually
+    // renders, so a list that is empty -- or whose entities are all missing --
+    // leaves no bar, no separator and no reserved space.
+    let bar = null;
+    const parentFor = () => {
+      if (corners) return container;
+      if (!bar) {
+        bar = document.createElement('div');
+        bar.className = 'button-bar';
+        container.appendChild(bar);
+      }
+      return bar;
+    };
+
     ctx.config.buttons.forEach((btn, idx) => {
       if (!btn.entity || ctx.shadowRoot.getElementById(`button-${idx}`)) return;
       const s = ctx._hass.states[btn.entity];
       if (!s) { console.warn(`custom-gauge-card: entity ${btn.entity} not found`); return; }
       const b = document.createElement('div');
       b.id        = `button-${idx}`;
-      b.className = `switch-button ${btn.position || 'bottom-right'}`;
-      b.innerHTML = btn.icon || getDefaultIcon(getEntityType(btn.entity));
+      b.className = corners
+        ? `switch-button corner ${btn.position || 'bottom-right'}`
+        : 'switch-button';
+      renderButtonIcon(b, btn.icon || getDefaultIcon(getEntityType(btn.entity)));
       if (btn.icon_size) b.style.setProperty('--icon-size', `${btn.icon_size}px`);
       b.addEventListener('click', e => { e.stopPropagation(); handleButtonClick(ctx, btn.entity); });
-      container.appendChild(b);
+      parentFor().appendChild(b);
     });
+
+    if (bar) {
+      // Lets .trend-indicator lift itself above the bar instead of landing on a
+      // button. offsetHeight is 0 while the card is not laid out yet (editor
+      // preview) — the CSS fallback covers that case.
+      container.classList.add('has-button-bar');
+      const barH = bar.offsetHeight;
+      if (barH) container.style.setProperty('--button-bar-height', `${barH + 12}px`);
+    }
     updateButtonsState(ctx);
   }
 
@@ -593,6 +799,12 @@
 
   function generateCSSVariables(theme, config) {
     const hs = config.hide_shadows;
+    // Separator above the button bar: invisible when the card has no chrome to
+    // sit on (hidden shadows, transparent background), otherwise a hairline
+    // contrasting with the theme background.
+    const barBorder = (hs || config.transparent_card_background)
+      ? 'transparent'
+      : (isLightBackground(theme.background) ? 'rgba(0,0,0,.1)' : 'rgba(255,255,255,.08)');
     const csBlur   = config.center_shadow_blur   || 30;
     const csSpread = config.center_shadow_spread  || 15;
     const csColor  = (Array.isArray(config.severity) && config.severity[0]?.color) || '#4caf50';
@@ -614,6 +826,7 @@
       --unit-font-size:${config.unit_font_size};--unit-font-weight:${config.unit_font_weight};--unit-font-color:${config.unit_font_color||theme.secondaryTextColor};
       --title-font-size:${config.title_font_size};--title-font-family:${config.title_font_family};--title-font-weight:${config.title_font_weight};--title-font-color:${config.title_font_color||theme.textColor};
       --button-icon-size:${config.button_icon_size}px;
+      --button-bar-border:${barBorder};
     `;
   }
 
@@ -621,15 +834,20 @@
     ctx.ledsCount = optimizeLEDs(ctx.config.leds_count);
     const n         = ctx.ledsCount;
     const theme     = getTheme(ctx.config.theme || 'default', ctx.config);
-    const gaugeSize = ctx.config.gauge_size || 200;
-    const ledSize   = ctx.config.led_size   || 8;
+    const geo       = ledGeometry(ctx.config);
+    const gaugeSize = geo.gaugeSize;
     const arcStart  = ctx.config.arc_start;  // v2.0: degrees from top, clockwise
     const arcSweep  = ctx.config.arc_sweep;  // v2.0: total arc degrees
+    // v2.4: once rotated, the LED's x axis is the radius — width = length makes
+    // the long side of a rect segment point outward. Round LEDs keep the CSS size.
+    const shapeCss  = geo.rect
+      ? `width:${geo.length}px;height:${geo.size}px;border-radius:${ctx.config.led_corner_radius}px;`
+      : '';
 
     const leds = Array.from({ length: n }, (_, i) => {
       // cssAngle: subtract 90 because CSS 0° points right, we want 0° to point top
       const cssAngle = (arcStart + (i / n) * arcSweep - 90).toFixed(3);
-      return `<div class="led" id="led-${i}" style="transform:rotate(${cssAngle}deg) translate(${gaugeSize/2-ledSize}px)"></div>`;
+      return `<div class="led" id="led-${i}" style="${shapeCss}transform:rotate(${cssAngle}deg) translate(${geo.radius}px)"></div>`;
     }).join('');
 
     // When scale_ticks is enabled the SVG overlay extends PAD=38px beyond the gauge
@@ -717,6 +935,8 @@
     const { gauge_size:gSz=200, arc_start:arcStart=0, arc_sweep:arcSweep=360,
             scale_steps:steps=5, scale_labels=true, min=0, max=100,
             led_size:ledSize=8, decimals=0 } = ctx.config;
+    // Anchored on the LEDs' outer edge (see ledGeometry), which led_length does
+    // not move — rect segments grow inward, the ticks stay put.
     const ledR   = gSz / 2 - ledSize;
     const PAD    = 38;
     const svgSz  = gSz + PAD * 2;
@@ -788,7 +1008,9 @@
   function updateLeds(ctx, value, ledsCount, min, max) {
     const cfg       = ctx.config;
     const ledInfo   = calculateBidirectionalLeds(value, min, max, ledsCount, cfg.bidirectional);
-    const color     = getLedColor(ledInfo.normalizedValue, cfg.severity, min, max);
+    // Card and center shadows keep the color of the current value, whatever the mode.
+    const color     = getSeverityColor(cfg, ledInfo.normalizedValue, min, max);
+    const perLed    = cfg.severity_mode === 'gradient_arc';
 
     const gc = ctx.shadowRoot.getElementById('gauge-container');
     if (gc) gc.style.boxShadow = cfg.enable_shadow ? `0 0 30px 2px ${color}` : '';
@@ -813,9 +1035,12 @@
       }
 
       if (isActive) {
+        // gradient_arc: each LED shows the color of its own position on the scale,
+        // i.e. the value min + ((i + 0.5) / n) * (max - min), normalized here.
+        const c = perLed ? getSeverityColor(cfg, ((i + 0.5) / ledsCount) * 100, min, max, 'gradient') : color;
         led.style.display    = '';
-        led.style.background = `radial-gradient(circle,rgba(255,255,255,.8),${color})`;
-        led.style.boxShadow  = `0 0 8px ${color}`;
+        led.style.background = `radial-gradient(circle,rgba(255,255,255,.8),${c})`;
+        led.style.boxShadow  = `0 0 8px ${c}`;
         led.classList.add('active');
       } else {
         if (cfg.hide_inactive_leds) {
@@ -839,7 +1064,7 @@
       if (cs) cs.style.boxShadow = 'none';
       return;
     }
-    const color  = getLedColor(value, ctx.config.severity, min, max);
+    const color  = getSeverityColor(ctx.config, value, min, max);
     const blur   = ctx.config.center_shadow_blur   || 30;
     const spread = ctx.config.center_shadow_spread || 15;
     ctx.currentShadowColor = color;
@@ -923,7 +1148,7 @@
       // because _change() updates _config immediately before HA calls setConfig.
       // `alarms` is deliberately absent: the alarms editor redraws itself, a full
       // rebuild on every keystroke would steal focus.
-      const STRUCTURAL = ['theme', 'center_shadow', 'entity'];
+      const STRUCTURAL = ['theme', 'center_shadow', 'entity', 'led_shape'];
       if (STRUCTURAL.some(k => (this._builtConfig || {})[k] !== config[k])) this._build();
     }
 
@@ -1096,11 +1321,26 @@
     }
 
     /**
-     * ha-selector bound to one key of one alarm.
+     * Write the buttons list to the config and drop the pre-2.2 single-button
+     * keys, so a migrated card never carries two sources of truth.
+     */
+    _commitButtons(buttons) {
+      const cfg = { ...this._config, buttons: buttons.map(b => ({ ...b })) };
+      LEGACY_BUTTON_KEYS.forEach(k => delete cfg[k]);
+      this._config = cfg;
+      this.dispatchEvent(new CustomEvent('config-changed', {
+        detail: { config: cfg }, bubbles: true, composed: true,
+      }));
+    }
+
+    /**
+     * ha-selector bound to one key of one entry of a config list (alarms,
+     * buttons, dynamic markers). `commit` writes the mutated list back.
+     *
      * No data-key attribute: the `set hass` re-sync loop only re-syncs top-level
      * config keys and would otherwise overwrite this value with the whole array.
      */
-    _alarmSel(alarms, idx, key, selector, label, defaultVal, onChange) {
+    _listSel(list, idx, key, selector, label, defaultVal, commit, onChange) {
       const wrap = document.createElement('div');
       wrap.className = 'field';
       if (label) {
@@ -1112,21 +1352,25 @@
       const el = document.createElement('ha-selector');
       el.setAttribute('data-sel', '');
       el.selector = selector;
-      const cur = alarms[idx][key];
+      const cur = list[idx][key];
       el.value = cur !== undefined && cur !== null ? cur : (defaultVal !== undefined ? defaultVal : '');
       if (this._hass) el.hass = this._hass;
       el.addEventListener('value-changed', e => {
         e.stopPropagation();
         const v = e.detail.value;
-        alarms[idx][key] = (v === '' || v === undefined) ? null : v;
-        this._commitAlarms(alarms);
+        list[idx][key] = (v === '' || v === undefined) ? null : v;
+        commit(list);
         if (onChange) onChange();
       });
       wrap.appendChild(el);
       return wrap;
     }
 
-    _alarmColorField(alarms, idx) {
+    /**
+     * Color picker bound to `list[idx].color`. The clear button resets it to
+     * null; what null means is per-list, hence the opts.
+     */
+    _listColorField(list, idx, opts) {
       const wrap = document.createElement('div');
       wrap.className = 'field';
       const lbl = document.createElement('label');
@@ -1136,41 +1380,235 @@
 
       const row = document.createElement('div');
       row.className = 'color-field-row';
-      const cur   = alarms[idx].color || '';
+      const cur   = list[idx].color || '';
       const isHex = /^#[0-9a-fA-F]{6}$/.test(cur);
 
       const picker = document.createElement('input');
       picker.type = 'color';
-      picker.value = isHex ? cur : '#f44336';
+      picker.value = isHex ? cur : opts.defaultHex;
       picker.className = 'color-field-picker';
-      picker.title = 'Choose an alarm color';
+      picker.title = opts.pickerTitle;
 
       const valTxt = document.createElement('span');
       valTxt.className = 'color-field-val';
-      valTxt.textContent = cur || '(gauge color)';
+      valTxt.textContent = cur || opts.emptyText;
 
       const clearBtn = document.createElement('button');
-      clearBtn.textContent = '✕';
+      clearBtn.textContent = '\u2715';
       clearBtn.className = 'color-field-clear';
-      clearBtn.title = 'Reset (follow the gauge severity color)';
+      clearBtn.title = opts.clearTitle;
       clearBtn.style.visibility = cur ? 'visible' : 'hidden';
 
       picker.addEventListener('input', e => {
         valTxt.textContent = e.target.value;
         clearBtn.style.visibility = 'visible';
-        alarms[idx].color = e.target.value;
-        this._commitAlarms(alarms);
+        list[idx].color = e.target.value;
+        opts.commit(list);
       });
       clearBtn.addEventListener('click', () => {
-        picker.value = '#f44336';
-        valTxt.textContent = '(gauge color)';
+        picker.value = opts.defaultHex;
+        valTxt.textContent = opts.emptyText;
         clearBtn.style.visibility = 'hidden';
-        alarms[idx].color = null;
-        this._commitAlarms(alarms);
+        list[idx].color = null;
+        opts.commit(list);
       });
 
       row.append(picker, valTxt, clearBtn);
       wrap.appendChild(row);
+      return wrap;
+    }
+
+    _buttonSel(buttons, idx, key, selector, label, defaultVal, onChange) {
+      return this._listSel(buttons, idx, key, selector, label, defaultVal,
+        l => this._commitButtons(l), onChange);
+    }
+
+    _buildButtonsEditor() {
+      const wrap = document.createElement('div');
+      wrap.className = 'alarms-editor';
+
+      // Seed from `buttons`, falling back to the legacy show_switch_button pair
+      // so an existing card opens in the editor with its button already listed.
+      let buttons = Array.isArray(this._config.buttons)
+        ? this._config.buttons.map(b => ({ ...b }))
+        : [];
+      if (!buttons.length && this._config.show_switch_button && this._config.switch_entity) {
+        buttons = [{ entity: this._config.switch_entity, icon: null }];
+      }
+
+      const redraw = () => {
+        wrap.innerHTML = '';
+
+        buttons.forEach((btn, idx) => {
+          const box = document.createElement('div');
+          box.className = 'alarm-box';
+
+          const head = document.createElement('div');
+          head.className = 'alarm-head';
+          const title = document.createElement('span');
+          title.textContent = `Button ${idx + 1}`;
+          const delBtn = document.createElement('button');
+          delBtn.textContent = '\u2715';
+          delBtn.className = 'alarm-del';
+          delBtn.title = 'Delete this button';
+          delBtn.addEventListener('click', () => {
+            buttons.splice(idx, 1);
+            this._commitButtons(buttons);
+            redraw();
+          });
+          head.append(title, delBtn);
+          box.appendChild(head);
+
+          // redraw on entity change: the default-icon hint follows the domain
+          box.appendChild(this._buttonSel(buttons, idx, 'entity', { entity: {} },
+            'Entity', undefined, redraw));
+
+          box.appendChild(this._buttonSel(buttons, idx, 'icon', { icon: {} },
+            'Icon (empty = default for the entity type)'));
+
+          if (btn.entity && !btn.icon) {
+            box.appendChild(this._info(
+              `Default icon for this entity: ${getDefaultIcon(getEntityType(btn.entity))}`));
+          }
+
+          box.appendChild(this._buttonSel(buttons, idx, 'icon_size',
+            { number: { min: 8, max: 44, step: 1, mode: 'box', unit_of_measurement: 'px' } },
+            'Icon size', this._config.button_icon_size || 22));
+
+          wrap.appendChild(box);
+        });
+
+        if (!buttons.length) {
+          wrap.appendChild(this._info(
+            'No button configured. Buttons appear in a bar under the title \u2014 with none, ' +
+            'neither the bar nor its separator is drawn.'));
+        }
+
+        const addBtn = document.createElement('button');
+        addBtn.textContent = '+ Add button';
+        addBtn.className = 'alarm-add';
+        addBtn.disabled = buttons.length >= MAX_BUTTONS;
+        if (addBtn.disabled) addBtn.title = `${MAX_BUTTONS} buttons maximum`;
+        addBtn.addEventListener('click', () => {
+          if (buttons.length >= MAX_BUTTONS) return;
+          buttons.push({ entity: null, icon: null });
+          this._commitButtons(buttons);
+          redraw();
+        });
+        wrap.appendChild(addBtn);
+      };
+
+      redraw();
+      return wrap;
+    }
+
+    _alarmSel(alarms, idx, key, selector, label, defaultVal, onChange) {
+      return this._listSel(alarms, idx, key, selector, label, defaultVal,
+        l => this._commitAlarms(l), onChange);
+    }
+
+    _alarmColorField(alarms, idx) {
+      return this._listColorField(alarms, idx, {
+        defaultHex:  '#f44336',
+        pickerTitle: 'Choose an alarm color',
+        emptyText:   '(gauge color)',
+        clearTitle:  'Reset (follow the gauge severity color)',
+        commit:      l => this._commitAlarms(l),
+      });
+    }
+
+    // ── Dynamic markers ─────────────────────────────────────────────────────
+
+    _commitDynamicMarkers(markers) {
+      this._config = { ...this._config, dynamic_markers: markers.map(m => ({ ...m })) };
+      this.dispatchEvent(new CustomEvent('config-changed', {
+        detail: { config: this._config }, bubbles: true, composed: true,
+      }));
+    }
+
+    _dynMarkerSel(markers, idx, key, selector, label, defaultVal, onChange) {
+      return this._listSel(markers, idx, key, selector, label, defaultVal,
+        l => this._commitDynamicMarkers(l), onChange);
+    }
+
+    _buildDynamicMarkersEditor() {
+      const wrap = document.createElement('div');
+      wrap.className = 'alarms-editor';
+
+      const markers = Array.isArray(this._config.dynamic_markers)
+        ? this._config.dynamic_markers.map(m => ({ ...m }))
+        : [];
+
+      const redraw = () => {
+        wrap.innerHTML = '';
+
+        markers.forEach((mk, idx) => {
+          const box = document.createElement('div');
+          box.className = 'alarm-box';
+
+          const head = document.createElement('div');
+          head.className = 'alarm-head';
+          const title = document.createElement('span');
+          title.textContent = mk.label || `Marker ${idx + 1}`;
+          const delBtn = document.createElement('button');
+          delBtn.textContent = '✕';
+          delBtn.className = 'alarm-del';
+          delBtn.title = 'Delete this marker';
+          delBtn.addEventListener('click', () => {
+            markers.splice(idx, 1);
+            this._commitDynamicMarkers(markers);
+            redraw();
+          });
+          head.append(title, delBtn);
+          box.appendChild(head);
+
+          // redraw: picking an entity reveals its attribute selector
+          box.appendChild(this._dynMarkerSel(markers, idx, 'entity', { entity: {} },
+            'Tracked entity', undefined, redraw));
+
+          if (mk.entity) {
+            box.appendChild(this._dynMarkerSel(markers, idx, 'attribute',
+              { attribute: { entity_id: mk.entity } }, 'Attribute (optional, defaults to the state)'));
+          }
+
+          box.appendChild(this._dynMarkerSel(markers, idx, 'label', { text: {} },
+            'Label (optional, shown next to the dot)'));
+
+          box.appendChild(this._row(2,
+            this._dynMarkerSel(markers, idx, 'size',
+              { number: { min: 4, max: 30, step: 1, mode: 'box', unit_of_measurement: 'px' } }, 'Dot size', 8),
+            this._dynMarkerSel(markers, idx, 'show_value', { boolean: {} }, 'Show value', false),
+          ));
+
+          box.appendChild(this._listColorField(markers, idx, {
+            defaultHex:  '#4caf50',
+            pickerTitle: 'Choose a marker color',
+            emptyText:   '(auto — by entity domain)',
+            clearTitle:  'Reset (automatic color, based on the entity domain)',
+            commit:      l => this._commitDynamicMarkers(l),
+          }));
+
+          wrap.appendChild(box);
+        });
+
+        if (!markers.length) {
+          wrap.appendChild(this._info(
+            'No dynamic marker configured. A marker is a dot that rides along the gauge ' +
+            'to track another entity in real time.'));
+        }
+
+        const addBtn = document.createElement('button');
+        addBtn.textContent = '+ Add dynamic marker';
+        addBtn.className = 'alarm-add';
+        addBtn.addEventListener('click', () => {
+          markers.push({ entity: null, color: null, size: 8, show_value: false });
+          this._commitDynamicMarkers(markers);
+          redraw();
+        });
+        wrap.appendChild(addBtn);
+      };
+
+      redraw();
       return wrap;
     }
 
@@ -1297,6 +1735,28 @@
       return wrap;
     }
 
+    /** Color mode select + a help text that follows the selected mode. */
+    _buildSeverityModeField() {
+      const BLEND_NOTE = ' Colors must be resolvable (hex, name, rgb(), hsl()) — a var(--…) color falls back to steps.';
+      const HELP = {
+        steps:        'Each zone paints the lit LEDs with a flat color: the first zone whose threshold ≥ the current value applies.',
+        gradient:     'The whole lit bar takes a single color, blended between the two thresholds around the current value.' + BLEND_NOTE,
+        gradient_arc: 'Each LED takes the color of its own position on the scale, so the lit part shows the full gradient.' + BLEND_NOTE,
+      };
+      const field = this._sel('severity_mode', { select: { mode: 'dropdown', options: [
+        { value: 'steps',        label: 'Steps' },
+        { value: 'gradient',     label: 'Gradient — whole bar blended by value' },
+        { value: 'gradient_arc', label: 'Gradient — blended along the bar' },
+      ]}}, 'Color mode', 'steps');
+      const help = this._info(HELP[this._config.severity_mode] || HELP.steps);
+      field.querySelector('ha-selector').addEventListener('value-changed', e => {
+        help.textContent = HELP[e.detail.value] || HELP.steps;
+      });
+      const frag = document.createDocumentFragment();
+      frag.append(field, help);
+      return frag;
+    }
+
     _buildSeverityEditor() {
       const wrap = document.createElement('div');
       wrap.className = 'severity-editor';
@@ -1419,6 +1879,7 @@
         .sev-add, .alarm-add { margin-top: 4px; padding: 7px 12px; border: 1px dashed var(--primary-color);
                    border-radius: 6px; background: none; color: var(--primary-color);
                    cursor: pointer; font-size: 13px; width: 100%; }
+        .sev-add:disabled, .alarm-add:disabled { opacity: 0.4; cursor: not-allowed; }
         .alarms-editor { display: flex; flex-direction: column; gap: 10px; }
         .alarm-box { display: flex; flex-direction: column; gap: 10px; padding: 12px;
                      border: 1px solid var(--divider-color); border-radius: 8px; }
@@ -1474,6 +1935,14 @@
           this._sel('leds_count',   { number: { min: 20, max: 300, step: 5, mode: 'slider' } }, 'LED count', 100),
           this._sel('bidirectional', { boolean: {} }, 'Bidirectional mode', false),
         ),
+        this._sel('led_shape', { select: { mode: 'dropdown', options: [
+          { value: 'round', label: 'Round (LED)' },
+          { value: 'rect',  label: 'Rectangle (VU meter)' },
+        ]}}, 'LED shape', 'round'),
+        cfg.led_shape === 'rect' ? this._row(2,
+          this._sel('led_length',        { number: { min: 2, max: 40, step: 1,   mode: 'slider', unit_of_measurement: 'px' } }, 'Segment length', (cfg.led_size || 8) * 2),
+          this._sel('led_corner_radius', { number: { min: 0, max: 10, step: 0.5, mode: 'slider', unit_of_measurement: 'px' } }, 'Corner radius',  1),
+        ) : null,
       ));
 
       // ── Arc ─────────────────────────────────────────────────────────────────
@@ -1561,7 +2030,8 @@
 
       // ── Severity ─────────────────────────────────────────────────────────────
       root.appendChild(this._section('Severity (LED colors)',
-        this._info('Define color zones by value. The first zone whose threshold ≥ the current value applies.'),
+        this._buildSeverityModeField(),
+        this._info('Define color zones by value, in the sensor unit.'),
         this._buildSeverityEditor(),
       ));
 
@@ -1569,6 +2039,13 @@
       root.appendChild(this._section('Alarms',
         this._info('Each alarm watches an entity — the gauge one by default, or any other — and applies a visual effect while its condition is met.'),
         this._buildAlarmsEditor(),
+      ));
+
+      // ── Dynamic markers ────────────────────────────────────────────────────
+      root.appendChild(this._section('Dynamic markers',
+        this._info('Dots that ride along the gauge to track other entities in real time. ' +
+                   'A value outside min…max is clamped to the nearest end of the scale.'),
+        this._buildDynamicMarkersEditor(),
       ));
 
       // ── Scale ticks ──────────────────────────────────────────────────────────
@@ -1591,6 +2068,13 @@
           this._sel('hide_shadows',       { boolean: {} }, 'Hide shadows',        false),
           this._sel('hide_inactive_leds', { boolean: {} }, 'Hide inactive LEDs',  false),
         ),
+      ));
+
+      // ── Buttons ──────────────────────────────────────────────────────────────
+      root.appendChild(this._section('Buttons',
+        this._info('Up to 4 entity buttons, laid out in a bar under the title. ' +
+                   'With an empty list the bar and its separator are not drawn at all.'),
+        this._buildButtonsEditor(),
       ));
 
       // ── Trend & Action ───────────────────────────────────────────────────────
@@ -1623,7 +2107,7 @@
       root.appendChild(this._section('Advanced options (YAML only)',
         this._info(
           'The following options can only be configured via the code editor (button at the bottom of the page): ' +
-          'markers, zones, dynamic_markers, buttons. ' +
+          'markers, zones, buttons_layout. ' +
           'They remain fully functional when edited in YAML.'
         ),
       ));
@@ -1762,7 +2246,7 @@
   window.customCards.push({
     type:        'custom-gauge-card',
     name:        'Custom Gauge Card',
-    description: 'LED gauge with arc_sweep/arc_start, bidirectional, scale ticks, up to 4 buttons, shadows.'
+    description: 'LED gauge with arc_sweep/arc_start, bidirectional, scale ticks, up to 4 MDI buttons, shadows.'
   });
 
   console.info(

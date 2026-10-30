@@ -19,7 +19,7 @@ card:
           variables:
             name: Jellyfin
             service: script.watch_jellyfin
-            picture: /local/ui/btns/plex_off.png
+            picture: /local/ui/btns/jellyfin_off.png
           view_layout:
             grid-area: jellyfin
         - type: 'custom:button-card'
@@ -84,7 +84,7 @@ card:
           variables:
             name: Jellyfin
             service: script.watch_jellyfin
-            picture: /local/ui/btns/plex_off.png
+            picture: /local/ui/btns/jellyfin_off.png
           view_layout:
             grid-area: jellyfin
         - type: 'custom:button-card'
@@ -328,7 +328,7 @@ card:
           variables:
             name: Jellyfin
             service: media_player.select_source
-            picture: "[[[ return states['media_player.living_room_tv'].attributes['source'] == 'Plex' ? '/local/ui/btns/plex_on.png' : '/local/ui/btns/plex_off.png'; ]]]"
+            picture: "[[[ return states['media_player.living_room_tv'].attributes['source'] == 'Jellyfin' ? '/local/ui/btns/jellyfin_on.png' : '/local/ui/btns/jellyfin_off.png'; ]]]"
           view_layout:
             grid-area: Jellyfin
           tap_action:
