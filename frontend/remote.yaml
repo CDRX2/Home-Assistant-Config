@@ -330,7 +330,7 @@ card:
             service: media_player.select_source
             picture: "[[[ return states['media_player.living_room_tv'].attributes['source'] == 'Jellyfin' ? '/local/ui/btns/jellyfin_on.png' : '/local/ui/btns/jellyfin_off.png'; ]]]"
           view_layout:
-            grid-area: Jellyfin
+            grid-area: jellyfin
           tap_action:
             service_data:
               entity_id: media_player.living_room_tv
@@ -364,7 +364,7 @@ card:
           variables:
             name: Musique
             service: script.music_assistant_source
-            picture: /local/ui/btns/music_on.png
+            picture: /local/ui/btns/music_off.png
           view_layout:
             grid-area: music
         - type: 'custom:button-card'
