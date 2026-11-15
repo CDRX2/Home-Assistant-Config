@@ -316,7 +316,7 @@ card:
           "menu stereo surround volup"
           "play up back volup"
           "left enter right voldown"
-          ". down . voldown"
+          "keyboard down . voldown"
           "vol vol vol vol"
           "title title title title"
           "home home home home"
@@ -328,25 +328,25 @@ card:
           variables:
             name: Jellyfin
             service: media_player.select_source
-            picture: "[[[ return states['media_player.living_room_tv'].attributes['source'] == 'Jellyfin' ? '/local/ui/btns/jellyfin_on.png' : '/local/ui/btns/jellyfin_off.png'; ]]]"
+            picture: "[[[ return states['media_player.living_room_tv'].attributes['source'] == 'Moonfin' ? '/local/ui/btns/jellyfin_on.png' : '/local/ui/btns/jellyfin_off.png'; ]]]"
           view_layout:
             grid-area: jellyfin
           tap_action:
             service_data:
               entity_id: media_player.living_room_tv
-              source: Jellyfin
+              source: Moonfin
         - type: 'custom:button-card'
           template: media_service
           variables:
             name: YouTube
             service: media_player.select_source
-            picture: "[[[ return states['media_player.living_room_tv'].attributes['source'] == 'YouTube' ? '/local/ui/btns/youtube_on.png' : '/local/ui/btns/youtube_off.png'; ]]]"
+            picture: "[[[ return states['media_player.living_room_tv'].attributes['source'] == 'YouTube AdFree' ? '/local/ui/btns/youtube_on.png' : '/local/ui/btns/youtube_off.png'; ]]]"
           view_layout:
             grid-area: youtube
           tap_action:
             service_data:
               entity_id: media_player.living_room_tv
-              source: YouTube
+              source: YouTube AdFree
         - type: 'custom:button-card'
           template: media_service
           variables:
@@ -428,7 +428,7 @@ card:
             name: ''
             service: media_player.media_play_pause
             picture: >
-              [[[ var play = (states['media_player.plex_plex_for_lg_lg_oled77w7v_z'].state);
+              [[[ var play = states['media_player.living_room_tv'].state;
               return play == 'playing' ? '/local/ui/btns/pause.png' : play == 'paused' ? '/local/ui/btns/play.png' : '/local/ui/btns/play_pause.png'; ]]]
           view_layout:
             grid-area: play
@@ -499,6 +499,22 @@ card:
           template: media_service
           variables:
             name: ''
+            service: ''
+            picture: /local/ui/btns/keyboard.png
+          view_layout:
+            grid-area: keyboard
+          tap_action:
+            action: fire-dom-event
+            browser_mod:
+              service: browser_mod.popup
+              data:
+                title: Touchpad TV
+                size: normal
+                content: !include keyboard_popup.yaml
+        - type: 'custom:button-card'
+          template: media_service
+          variables:
+            name: ''
             service: webostv.button
             picture: /local/ui/btns/down.png
           view_layout:
@@ -540,7 +556,7 @@ card:
           elements:
             - type: 'custom:button-card'
               template: media_state_title
-              entity: media_player.plex_living_room_tv
+              entity: media_player.lg_smart_tv_moonfin
               state_display: >
                 [[[
                   if (entity) {
@@ -552,13 +568,13 @@ card:
                       episode_title = ` - ` + entity.attributes.media_title,
                       tvshow = series_title + series_season + series_episode + episode_title,
                       movie = entity.attributes.media_title,
-                      output = states['sensor.living_room_tv_source'].state == 'Plex' && entity.attributes.media_content_type == 'tvshow'
+                      output = states['sensor.living_room_tv_source'].state == 'Moonfin' && entity.attributes.media_content_type == 'tvshow'
                         ? `${tvshow}`
-                        : states['sensor.living_room_tv_source'].state == 'Plex' && entity.attributes.media_content_type == 'movie'
+                        : states['sensor.living_room_tv_source'].state == 'Moonfin' && entity.attributes.media_content_type == 'movie'
                           ? `${movie}`
-                          : states['sensor.living_room_tv_source'].state == 'Plex' && entity.attributes.media_content_type != 'movie' && entity.attributes.media_content_type != 'tvshow'
-                            ? `Plex`
-                            : states['sensor.living_room_tv_source'].state == 'YouTube'
+                          : states['sensor.living_room_tv_source'].state == 'Moonfin' && entity.attributes.media_content_type != 'movie' && entity.attributes.media_content_type != 'tvshow'
+                            ? `Jellyfin`
+                            : states['sensor.living_room_tv_source'].state == 'YouTube AdFree'
                               ? `YouTube`
                               : states['sensor.living_room_tv_source'].state == 'YouTube Kids'
                                 ? `YouTube Kids`

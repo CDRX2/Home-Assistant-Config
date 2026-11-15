@@ -1,0 +1,100 @@
+type: custom:touchpad-card
+storage_id: tp_mwi1rl9e_27nwim4t
+theme_mode: auto
+wsUrl: ws://REDACTED_IP:8777
+controls_profile: webos
+show_lock: false
+show_speed_buttons: false
+show_status_text: true
+show_audio_controls: true
+show_keyboard_button: true
+show_fullscreen_button: true
+show_shortcut_launcher: false
+hide_shortcut_launcher_after_selection: false
+auto_focus_keyboard: true
+show_device_bar_single: false
+audio_controls:
+  mode: home_assistant
+  volume_up:
+    tap:
+      action: perform-action
+      perform_action: media_player.volume_up
+      target:
+        entity_id: media_player.pioneer_avr
+    hold:
+      action: none
+  volume_down:
+    tap:
+      action: perform-action
+      perform_action: media_player.volume_down
+      target:
+        entity_id: media_player.pioneer_avr
+    hold:
+      action: none
+  volume_mute:
+    tap:
+      action: perform-action
+      perform_action: script.avr_mute
+      target: {}
+    hold:
+      action: none
+shortcuts:
+  - type: webos_app
+    name: Moonfin
+    app_id: Moonfin
+    icon: mdi:netflix
+  - type: webos_app
+    name: Disney+
+    app_id: com.disney.disneyplus-prod
+    icon: mdi:movie-open-star
+  - type: webos_app
+    name: YouTube
+    app_id: youtube.leanback.v4
+    icon: mdi:youtube
+  - type: webos_app
+    name: Prime Video
+    app_id: amazon
+    icon: mdi:play-circle
+gesture_mode:
+  show_button: false
+  invert_swipes: false
+  swipe_left: arrow_left
+  swipe_right: arrow_right
+  swipe_up: arrow_up
+  swipe_down: arrow_down
+  tap: enter
+  double_tap: none
+  hold: back
+  two_finger_tap: none
+  two_finger_swipe_left: none
+  two_finger_swipe_right: none
+  two_finger_swipe_up: none
+  two_finger_swipe_down: none
+card_mod:
+  style: |
+    ha-card {
+      background: none !important;
+      box-shadow: none !important;
+      --tp-panel-bg: #1E2022 !important;
+      --tp-surface-bg: #1E2022 !important;
+      --tp-surface-inset: rgba(211, 211, 211, 0.06) !important;
+      --tp-text: #D3D3D3 !important;
+      --tp-strong-text: #D3D3D3 !important;
+      --tp-muted-text: rgba(211, 211, 211, 0.6) !important;
+      --tp-subtle-text: rgba(211, 211, 211, 0.7) !important;
+      --tp-control-bg: #1E2022 !important;
+      --tp-control-bg-strong: #1E2022 !important;
+      --tp-control-hover-bg: #2B2E30 !important;
+      --tp-border-subtle: rgba(211, 211, 211, 0.10) !important;
+      --tp-border-medium: rgba(211, 211, 211, 0.14) !important;
+      --tp-border-strong: rgba(211, 211, 211, 0.24) !important;
+      --tp-divider: rgba(211, 211, 211, 0.06) !important;
+      --tp-input-bg: #1E2022 !important;
+      --tp-input-border: rgba(211, 211, 211, 0.14) !important;
+      --tp-input-focus-ring: rgba(211, 211, 211, 0.10) !important;
+      --tp-accent: #D3D3D3 !important;
+      --tp-accent-soft: #D3D3D3 !important;
+      --tp-accent-border: rgba(211, 211, 211, 0.35) !important;
+      --tp-accent-bg: #2B2E30 !important;
+      --tp-accent-ring: rgba(211, 211, 211, 0.15) !important;
+    }

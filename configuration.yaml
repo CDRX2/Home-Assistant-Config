@@ -19,6 +19,12 @@ tts:
 additional_ca:
   my_private_ca: !secret SSL_Certificate
 
+rest_command:
+  lg_devmode_extend:
+    url: !secret lg_devmode_extend_url
+    method: get
+    timeout: 30
+
 lovelace:
   mode: storage
   dashboards:

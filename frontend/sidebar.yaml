@@ -874,7 +874,7 @@ elements:
   - type: conditional
     conditions:
       - entity: sensor.living_room_tv_source
-        state: Jellyfin
+        state: Moonfin
     elements:
       - type: image
         image: /local/ui/sidebar/sidebarBG.png
@@ -885,7 +885,7 @@ elements:
           top: 35%
       - type: 'custom:button-card'
         template: media_sidebar_state
-        entity: 'media_player.jellyfin_lg_smart_tv'
+        entity: 'media_player.lg_smart_tv_moonfin'
         state_display: >
           [[[
             if (entity) {
@@ -897,11 +897,11 @@ elements:
                 episode_title = ` - ` + entity.attributes.media_title,
                 tvshow = series_title + series_season + series_episode + episode_title,
                 movie = entity.attributes.media_title,
-                output = states['sensor.living_room_tv_source'].state == 'Jellyfin' && entity.attributes.media_content_type == 'tvshow'
+                output = states['sensor.living_room_tv_source'].state == 'Moonfin' && entity.attributes.media_content_type == 'tvshow'
                   ? `${tvshow}`
-                  : states['sensor.living_room_tv_source'].state == 'Jellyfin' && entity.attributes.media_content_type == 'movie'
+                  : states['sensor.living_room_tv_source'].state == 'Moonfin' && entity.attributes.media_content_type == 'movie'
                     ? `${movie}`
-                    : states['sensor.living_room_tv_source'].state == 'Jellyfin' && entity.attributes.media_content_type != 'movie' && entity.attributes.media_content_type != 'tvshow'
+                    : states['sensor.living_room_tv_source'].state == 'Moonfin' && entity.attributes.media_content_type != 'movie' && entity.attributes.media_content_type != 'tvshow'
                       ? `Jellyfin`
                       : variables.translate_idle;
               function marquee() {
@@ -947,23 +947,24 @@ elements:
           }
       - type: 'custom:button-card'
         template: media_sidebar_picture
+        variables:
+          active: "[[[ return ['playing', 'paused'].includes(states['media_player.lg_smart_tv_moonfin'].state); ]]]"
         entity_picture: >
-          [[[ if (states['media_player.jellyfin_lg_smart_tv'].state != 'idle') return states['media_player.jellyfin_lg_smart_tv'].attributes['entity_picture'];
-          else return '/local/ui/media/jellyfin.png'; ]]]
+          [[[ return variables.active
+                ? states['media_player.lg_smart_tv_moonfin'].attributes['entity_picture']
+                : '/local/ui/media/jellyfin.png'; ]]]
         styles:
           entity_picture:
-            - width: >
-                [[[ if (states['media_player.jellyfin_lg_smart_tv'].state != 'idle') return '100%';
-                else return '40%'; ]]]
-            - height: 100%
-            - clip-path: >
-                [[[ if (states['media_player.jellyfin_lg_smart_tv'].state != 'idle') return 'circle(42% at 37% 50%)';
-                else return 'none'; ]]]
+            - width: "[[[ return variables.active ? '100%' : '40%'; ]]]"
+            - height: "[[[ return variables.active ? '100%' : 'auto'; ]]]"
+            - aspect-ratio: "[[[ return variables.active ? 'auto' : '1 / 1'; ]]]"
+            - object-fit: "[[[ return variables.active ? 'fill' : 'contain'; ]]]"
+            - clip-path: "[[[ return variables.active ? 'circle(42% at 37% 50%)' : 'none'; ]]]"
 
   - type: conditional
     conditions:
       - entity: sensor.living_room_tv_source
-        state: YouTube
+        state: YouTube AdFree
     elements:
       - type: 'custom:button-card'
         template: media_sidebar

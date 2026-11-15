@@ -37,18 +37,21 @@
 - id: '1601113499442'
   alias: Refresh visual on Plex status
   description: ''
-  trigger:
-  - platform: state
-    entity_id: media_player.plex_plex_for_lg_lg_oled77w7v_z
-    from: idle
-  - platform: state
-    entity_id:
-    - media_player.plex_plex_for_lg_lg_oled77w7v_z
-    to: idle
-  condition: []
-  action:
-  - service: browser_mod.refresh
-    data: {}
+  triggers:
+  - entity_id:
+    - media_player.lg_smart_tv_moonfin
+    from:
+    - idle
+    trigger: state
+  - entity_id:
+    - media_player.lg_smart_tv_moonfin
+    to:
+    - idle
+    trigger: state
+  conditions: []
+  actions:
+  - data: {}
+    action: browser_mod.refresh
   mode: single
 - id: '1601189043362'
   alias: Refresh visual on source change
@@ -397,7 +400,7 @@
   alias: carport lights
   description: ''
   triggers:
-  - entity_id: 
+  - entity_id:
     - binary_sensor.carport_movement_occupancy
     to: 'on'
     trigger: state
@@ -917,3 +920,31 @@
           retain: false
           payload: '{ "brightness_move_white": 0}'
           topic: zigbee2mqtt/Charles haut/set
+- id: '1794752314278'
+  alias: Extend LG devmode
+  description: ''
+  triggers:
+  - trigger: time
+    at: '23:50:00'
+    weekday:
+    - sun
+  conditions: []
+  actions:
+  - action: rest_command.lg_devmode_extend
+    response_variable: lg_resp
+    continue_on_error: true
+  - if:
+    - condition: template
+      value_template: "{{ lg_resp is not defined or lg_resp.status != 200\n  or '\"result\":\"success\"'
+        not in (lg_resp.content | string) }}"
+    then:
+      action: persistent_notification.create
+      data:
+        title: LG Developer mode
+        message: 'Session extend failed (status {{ lg_resp.status if lg_resp is defined
+          else ''no response'' }}, {{ lg_resp.content if lg_resp is defined else ''''
+          }}). Check the token, or Moonfin and the Homebrew Channel will be removed
+          when the Developer Mode expires.
+
+          '
+  mode: single

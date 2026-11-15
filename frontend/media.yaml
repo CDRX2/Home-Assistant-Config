@@ -60,7 +60,7 @@ elements:
                     background: none;
                     box-shadow: none !important;
                     padding: 0px !important;
-                    overflox: visible !important;
+                    overflow: visible !important;
                   }
                   .card-header {
                     font-size: 1.5vw;
@@ -147,7 +147,7 @@ elements:
                     background: none;
                     box-shadow: none !important;
                     padding: 0px !important;
-                    overflox: visible !important;
+                    overflow: visible !important;
                   }
                   .card-header {
                     font-size: 1.5vw;
@@ -183,7 +183,7 @@ elements:
                     background: none;
                     box-shadow: none !important;
                     padding: 0px !important;
-                    overflox: visible !important;
+                    overflow: visible !important;
                   }
                   .card-header {
                     font-size: 1.5vw;
@@ -363,7 +363,7 @@ elements:
   - type: conditional
     conditions:
       - entity: sensor.living_room_tv_source
-        state: 'Jellyfin'
+        state: 'Moonfin'
     elements:
       - type: 'custom:mod-card'
         card:
@@ -406,7 +406,7 @@ elements:
                     background: none;
                     box-shadow: none !important;
                     padding: 0px !important;
-                    overflox: visible !important;
+                    overflow: visible !important;
                   }
                   .card-header {
                     font-size: 1.5vw;
@@ -501,7 +501,7 @@ elements:
                     background: none;
                     box-shadow: none !important;
                     padding: 0px !important;
-                    overflox: visible !important;
+                    overflow: visible !important;
                   }
                   .card-header {
                     font-size: 1.5vw;
@@ -537,7 +537,7 @@ elements:
                     background: none;
                     box-shadow: none !important;
                     padding: 0px !important;
-                    overflox: visible !important;
+                    overflow: visible !important;
                   }
                   .card-header {
                     font-size: 1.5vw;
@@ -714,7 +714,7 @@ elements:
   - type: conditional
     conditions:
       - entity: sensor.living_room_tv_source
-        state: 'YouTube'
+        state: 'YouTube AdFree'
     elements:
       - type: 'custom:mod-card'
         card:
