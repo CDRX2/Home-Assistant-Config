@@ -1,14 +1,99 @@
 CDRX:
   modes:
     dark:
+      #############################################################################
+      #  CDRX palette — two tiers                                                 #
+      #  1. cdrx-color-*  raw colours, named by hue. Only used by tier 2 and by   #
+      #     chart series that have no role of their own.                         #
+      #  2. cdrx-<area>-<role>  what views and templates use. Change a value      #
+      #     here and every view that uses the role follows.                       #
+      #  HA adds the "--" prefix: use var(--cdrx-text) in views. For each hex     #
+      #  value HA also creates an "r, g, b" variant, e.g.                         #
+      #  rgba(var(--rgb-cdrx-color-silver), 0.5).                                 #
+      #  Dark mode only, on purpose (wall panels: less power, less light).       #
+      #############################################################################
+
+      # ---- Tier 1: base colours -------------------------------------------------
+      # Neutrals, darkest to lightest
+      cdrx-color-black: '#000000'
+      cdrx-color-graphite: '#1E2022'     # button disc "off" (www/ui/btns PNGs)
+      cdrx-color-slate: '#2B2E30'        # button disc "on"; view cards
+      cdrx-color-charcoal: '#333333'     # chart tracks
+      cdrx-color-steel: '#9DA0A2'        # muted icons and text
+      cdrx-color-silver: '#D3D3D3'       # text and icons (= CSS lightgrey)
+      cdrx-color-white: '#FFFFFF'
+      # White veils, laid over a card
+      cdrx-color-white-10: 'rgba(255, 255, 255, 0.1)'
+      cdrx-color-white-20: 'rgba(255, 255, 255, 0.2)'
+      cdrx-color-white-30: 'rgba(255, 255, 255, 0.3)'
+      cdrx-color-white-40: 'rgba(255, 255, 255, 0.4)'
+      # Hues
+      cdrx-color-blue: '#03A9F4'         # = HA primary/accent colour
+      cdrx-color-orange: '#FFA31A'
+      cdrx-color-red: '#FF1A1A'
+      cdrx-color-yellow: '#F5D442'
+      cdrx-color-navy: '#0B0385'
+      cdrx-color-indigo: '#424F96'
+      cdrx-color-vermilion: '#FF5401'
+      cdrx-color-green: '#30F403'
+      cdrx-color-violet: '#C703F4'
+
+      # ---- Tier 2: roles --------------------------------------------------------
+      # Page and surfaces
+      cdrx-view-background: 'var(--cdrx-color-black)'
+      cdrx-card-background: 'var(--cdrx-color-slate)'
+      cdrx-popup-background: 'var(--cdrx-color-graphite)'
+      cdrx-button-off-background: 'var(--cdrx-color-graphite)'
+      cdrx-button-on-background: 'var(--cdrx-color-slate)'
+      cdrx-media-caption-background: 'rgba(44, 45, 67, 0.3)'   # blurred strip on posters
+      # Layers inside a card
+      cdrx-chart-background: 'var(--cdrx-color-white-10)'
+      cdrx-tile-background: 'var(--cdrx-color-white-20)'
+      cdrx-control-background: 'var(--cdrx-color-white-30)'   # sliders, icon buttons, cover pad
+      cdrx-badge-background: 'var(--cdrx-color-white-40)'     # round icon badges (sidebar)
+      cdrx-chart-track: 'var(--cdrx-color-charcoal)'
+      # Toggles (the iif 'on' / 'off' pattern)
+      cdrx-toggle-on-background: 'var(--cdrx-accent)'
+      cdrx-toggle-off-background: 'var(--cdrx-color-white-40)'
+      # Text, icons, lines
+      cdrx-text: 'var(--cdrx-color-silver)'
+      cdrx-text-muted: 'var(--cdrx-color-steel)'
+      cdrx-icon: 'var(--cdrx-color-silver)'
+      cdrx-icon-muted: 'var(--cdrx-color-steel)'
+      cdrx-icon-active: 'var(--cdrx-color-black)'             # icon on a lit/active control
+      cdrx-divider: 'var(--cdrx-color-silver)'
+      # Accent and devices
+      cdrx-accent: 'var(--cdrx-color-blue)'
+      cdrx-light-on: 'var(--cdrx-color-yellow)'               # lit light without rgb_color
+      cdrx-slider-track: 'var(--cdrx-color-silver)'
+      cdrx-climate-heating: 'var(--cdrx-color-red)'
+      cdrx-climate-ventilation: 'var(--cdrx-accent)'
+      # Status (single-state indicators)
+      cdrx-status-ok: 'var(--cdrx-color-blue)'
+      cdrx-status-warning: 'var(--cdrx-color-orange)'         # e.g. trash tomorrow
+      cdrx-status-alert: 'var(--cdrx-color-red)'              # e.g. trash today, battery
+      # Levels (thresholds, severities, gradients: low → high)
+      cdrx-level-low: 'var(--cdrx-color-blue)'
+      cdrx-level-medium: 'var(--cdrx-color-orange)'
+      cdrx-level-high: 'var(--cdrx-color-red)'
+      # Chart series with a fixed meaning
+      cdrx-chart-temperature: 'var(--cdrx-color-orange)'
+      cdrx-chart-humidity: 'var(--cdrx-color-blue)'
+      cdrx-chart-sun: 'var(--cdrx-color-steel)'
+
+      #########################################################################
+      #  Existing settings, unchanged — review/delete as views are revamped.  #
+      #  Hard-coded colours in the views are not listed here; they go away     #
+      #  when each view switches to the cdrx-* roles above.                    #
+      #########################################################################
       ha-card-border-width: 0px
       ha-card-border-radius: 0px
       paper-item-icon-color: '#9da0a2'
       app-header-background-color: "var(--card-background-color)"
-      accent-color: "var(--primary-color)"
+      accent-color: "var(--primary-color)"          # used by current views (27x, toggle "on")
       state-lock-locked-color: "var(--primary-color)"
       state-lock-unlocked-color: '#ff9800'
-      state-cover-active-color: "var(--primary-color)"
+      state-cover-active-color: "var(--primary-color)" # overridden in button_templates/climate.yaml
       # Dialogs
       dialog-backdrop-filter: blur(17px)
       mdc-dialog-box-shadow: 0 0 1vw 0 black

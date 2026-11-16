@@ -20,11 +20,6 @@ zigbee2mqtt/log/
 ip_bans.yaml
 secrets.yaml
 known_devices.yaml
-tests.yaml
-mobile.yaml
-remote-main.yaml
-slate-compact-header.yaml
-dev.yaml
 google_calendars.yaml
 home-assistant_v2.db
 home-assistant_v2.db-wal
@@ -39,3 +34,9 @@ Nanne_home.png
 Nanne_not_home.png
 CDRX_home.png
 CDRX_not_home.png
+
+# Test/dev dashboards
+tests.yaml
+mobile.yaml
+remote-main.yaml
+dev.yaml
