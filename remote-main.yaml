@@ -1,0 +1,78 @@
+title: Remote
+
+button_card_templates: !include_dir_merge_named button_templates/
+
+views:
+  - icon: 'mdi:remote-tv'
+    background: '#000000'
+    type: custom:grid-layout
+    layout:
+      grid-template-columns: auto
+      grid-template-rows: auto
+      grid-template-areas: |
+        "remote player"
+      mediaquery:
+        "(orientation: portrait)":
+          grid-template-columns: 100%
+          grid-template-areas: |
+            "remote"
+            "player"
+    panel: false
+    path: remote
+    theme: ''
+    title: Remote
+    badges: []
+    cards:
+      - !include frontend/remote.yaml
+      - type: 'custom:state-switch'
+#        entity: sensor.now_playing
+        entity: sensor.remote_select
+        transition: flip
+        states:
+          other:
+            entity: media_player.lg_smart_tv_moonfin
+            group: false
+            hide:
+              controls: true
+              name: true
+              power: true
+              source: true
+              volume: true
+              icon: true
+              state_label: true
+              info: true
+            card_mod:
+              style: |
+                ha-card {
+                  box-shadow: none;
+                }
+                .mmp__bg {
+                  background: none !important;
+                }
+            artwork: full-cover
+            type: 'custom:mini-media-player'
+          music:
+            entity: media_player.sc_lx78
+            group: false
+            hide:
+              controls: true
+              name: true
+              power: true
+              volume: true
+              icon: true
+              info: true
+              state_label: true
+            card_mod:
+              style: |
+                ha-card {
+                  box-shadow: none;
+                }
+                .mmp__bg {
+                  background: none !important;
+                }
+            artwork: full-cover
+            type: 'custom:mini-media-player'
+#          radio:
+#            !include frontend/radio_select.yaml
+        view_layout:
+          grid-area: player

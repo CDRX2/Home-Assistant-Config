@@ -1,42 +1,49 @@
-# You can whitelist files/folders with !, these will not be ignored.
-!*.yaml
-!.gitignore
-!*.md
+# Home Assistant config: what is NOT versioned (the repo is public).
+# Comments must be on their own line; "#" after a pattern is not a comment.
+# Ignoring a file that is already tracked also needs: git rm --cached <path>
 
-# Ignore folders.
-.storage
-.cloud
-.google.token
-.google_maps_location_sharing.cookies.cdrxtracker_gmail_com
-.HA_VERSION
-.vscode
-image/
-tts/
-archive/
-deps/
-zigbee2mqtt/log/
-
-# Ensure these YAML files are ignored, otherwise your secret data/credentials will leak.
-ip_bans.yaml
+# ---- Secrets and credentials: never commit ----
 secrets.yaml
+ip_bans.yaml
 known_devices.yaml
 google_calendars.yaml
-home-assistant_v2.db
-home-assistant_v2.db-wal
-home-assistant_v2.db-shm
-home-assistant.log
-home-assistant.log.fault
-home-assistant.log.1
+.google.token
+.google_maps_location_sharing.cookies.*
 sabnzbd.conf
 webostv.conf
+.cloud/
+.storage/
+# Zigbee network key + MQTT login, and runtime state (in HA backups)
+zigbee2mqtt/
+
+# ---- Runtime state, databases, logs, caches ----
+home-assistant_v2.db*
+home-assistant.log*
+.ha_run.lock
+.HA_VERSION
+.cache/
+deps/
+tts/
+image/
+__pycache__/
+www/upcoming-media-card-images/
+
+# ---- Installed by HACS (reinstallable; HACS keeps the list in .storage) ----
+custom_components/
+www/community/
+
+# ---- Personal photos ----
 CDRX.png
-Nanne_home.png
-Nanne_not_home.png
 CDRX_home.png
 CDRX_not_home.png
+Nanne_home.png
+Nanne_not_home.png
 
-# Test/dev dashboards
+# ---- Legacy and dev dashboards ----
+archive/
+dev.yaml
 tests.yaml
 mobile.yaml
-remote-main.yaml
-dev.yaml
+
+# ---- Editor ----
+.vscode/
