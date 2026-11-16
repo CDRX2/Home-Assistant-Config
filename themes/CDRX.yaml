@@ -81,6 +81,35 @@ CDRX:
       cdrx-chart-humidity: 'var(--cdrx-color-blue)'
       cdrx-chart-sun: 'var(--cdrx-color-steel)'
 
+      # ---- Typography, shape, effects ------------------------------------------
+      # Sizes in vw so they scale with the wall panel, like the views do today.
+      # Font sizes, light to heavy use: 0.8 → 1 → 1.4 → 2 → 3 → 4 vw
+      cdrx-font-size-caption: 0.8vw      # slider %, small labels (was 0.7–0.8)
+      cdrx-font-size-body: 1vw           # default label and state text
+      cdrx-font-size-title: 1.4vw        # card and button names (was 1.2–1.5)
+      cdrx-font-size-heading: 2vw        # media titles, screensaver info (was 1.6–2)
+      cdrx-font-size-display: 3vw        # big values
+      cdrx-font-size-clock: 4vw          # sidebar clock (stations use 5vw)
+      cdrx-font-weight-thin: 200         # clock
+      cdrx-font-weight-light: 300
+      cdrx-font-weight-regular: 400
+      cdrx-font-weight-semibold: 600
+      cdrx-font-weight-bold: 700         # (was bold / 800)
+      # Icons
+      cdrx-icon-size-small: 1vw
+      cdrx-icon-size: 1.4vw
+      # Corners
+      cdrx-radius-tile: 0.2vw            # systems tiles, stations
+      cdrx-radius-card: 0.5vw            # chart cards
+      cdrx-radius-control: 1vw           # sliders, cover pad, buttons (was 0.75–1)
+      cdrx-radius-round: 50%             # round badges and icon buttons
+      # Effects
+      cdrx-blur: blur(10px)              # media caption strip
+      cdrx-blur-light: blur(5px)
+      cdrx-transition-fast: 150ms
+      cdrx-transition: 200ms
+      cdrx-shadow-popup: '0 4px 8px rgba(0, 0, 0, 0.3)'   # tooltips (card-mod-root)
+
       #########################################################################
       #  Existing settings, unchanged — review/delete as views are revamped.  #
       #  Hard-coded colours in the views are not listed here; they go away     #
