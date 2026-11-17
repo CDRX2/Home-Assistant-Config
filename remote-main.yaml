@@ -1,6 +1,6 @@
 title: Remote
 
-button_card_templates: !include_dir_merge_named button_templates/
+button_card_templates: !include_dir_merge_named templates/button/
 
 views:
   - icon: 'mdi:remote-tv'
@@ -23,7 +23,7 @@ views:
     title: Remote
     badges: []
     cards:
-      - !include frontend/remote.yaml
+      - !include frontend/shared/remote.yaml
       - type: 'custom:state-switch'
 #        entity: sensor.now_playing
         entity: sensor.remote_select

@@ -19,11 +19,11 @@ wallpanel:
 
 title: Home
 
-button_card_templates: !include_dir_merge_named button_templates/
+button_card_templates: !include_dir_merge_named templates/button/
 
-decluttering_templates: !include_dir_merge_named decluttering_templates/
+decluttering_templates: !include_dir_merge_named templates/decluttering/
 
-apexcharts_card_templates: !include_dir_merge_named apexcharts_templates/
+apexcharts_card_templates: !include_dir_merge_named templates/apexcharts/
 
 views:
 
@@ -41,10 +41,10 @@ views:
     - type: 'custom:decluttering-card'
       template: floors
       variables:
-        - sidebar: !include frontend/sidebar.yaml
-        - card_rez: !include frontend/lights_rez.yaml
-        - card_1er: !include frontend/lights_1er.yaml
-        - card_2e: !include frontend/lights_2e.yaml
+        - sidebar: !include frontend/landscape/sidebar.yaml
+        - card_rez: !include frontend/landscape/lights_rez.yaml
+        - card_1er: !include frontend/landscape/lights_1er.yaml
+        - card_2e: !include frontend/landscape/lights_2e.yaml
 
   #############################################################################################################################################
   #                                                                                                                                           #
@@ -60,10 +60,10 @@ views:
     - type: 'custom:decluttering-card'
       template: floors
       variables:
-        - sidebar: !include frontend/sidebar.yaml
-        - card_rez: !include frontend/climate_rez.yaml
-        - card_1er: !include frontend/climate_1er.yaml
-        - card_2e: !include frontend/climate_2e.yaml
+        - sidebar: !include frontend/landscape/sidebar.yaml
+        - card_rez: !include frontend/landscape/climate_rez.yaml
+        - card_1er: !include frontend/landscape/climate_1er.yaml
+        - card_2e: !include frontend/landscape/climate_2e.yaml
 
 
   #############################################################################################################################################
@@ -80,10 +80,10 @@ views:
     - type: 'custom:decluttering-card'
       template: floors
       variables:
-        - sidebar: !include frontend/sidebar.yaml
-        - card_rez: !include frontend/all_rez.yaml
-        - card_1er: !include frontend/all_1er.yaml
-        - card_2e: !include frontend/all_2e.yaml
+        - sidebar: !include frontend/landscape/sidebar.yaml
+        - card_rez: !include frontend/landscape/all_rez.yaml
+        - card_1er: !include frontend/landscape/all_1er.yaml
+        - card_2e: !include frontend/landscape/all_2e.yaml
 
   #############################################################################################################################################
   #                                                                                                                                           #
@@ -99,8 +99,8 @@ views:
     - type: 'custom:decluttering-card'
       template: simple_grid
       variables:
-        - sidebar: !include frontend/sidebar.yaml
-        - card: !include frontend/media.yaml
+        - sidebar: !include frontend/landscape/sidebar.yaml
+        - card: !include frontend/landscape/media.yaml
 
   #############################################################################################################################################
   #                                                                                                                                           #
@@ -116,8 +116,8 @@ views:
     - type: 'custom:decluttering-card'
       template: simple_grid
       variables:
-        - sidebar: !include frontend/sidebar.yaml
-        - card: !include frontend/weather.yaml
+        - sidebar: !include frontend/landscape/sidebar.yaml
+        - card: !include frontend/landscape/weather.yaml
 
 
   #############################################################################################################################################
@@ -134,8 +134,8 @@ views:
     - type: 'custom:decluttering-card'
       template: simple_grid
       variables:
-        - sidebar: !include frontend/sidebar.yaml
-        - card: !include frontend/systems.yaml
+        - sidebar: !include frontend/landscape/sidebar.yaml
+        - card: !include frontend/landscape/systems.yaml
 
-- !include frontend/screensaver.yaml
-- !include frontend/popups.yaml
+- !include frontend/landscape/screensaver.yaml
+- !include frontend/shared/popups.yaml
