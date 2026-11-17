@@ -140,34 +140,6 @@ stateicon:
       transform: scale(1.2)
       width: 2.1vw
 
-icons_ciboulette_popup:
-  element:
-    type: icon
-    icon: 'mdi:[[icon]]'
-    style:
-      '--mdc-icon-size': 1vw
-      color: '[[color]]'
-      align-items: center
-      display: flex
-      height: 2.1vw
-      justify-content: center
-      left: 78%
-      margin-left: '-1.5vw'
-      margin-top: '-1.5vw'
-      top: 74%
-      transform: scale(1.2)
-      width: 2.1vw
-    tap_action:
-      action: fire-dom-event
-      browser_mod:
-        service: browser_mod.popup
-        data:
-          content: !include ../frontend/ciboulette.yaml
-          title: Ciboulette
-          size: fullscreen
-    hold_action:
-      action: none
-
 cats_popup:
   card:
     type: entities
