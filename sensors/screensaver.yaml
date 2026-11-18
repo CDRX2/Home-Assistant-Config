@@ -1,0 +1,429 @@
+################################################################################
+# Screensaver helpers (wall panels, frontend/landscape/screensaver.yaml)
+################################################################################
+
+# Weather forecasts, refreshed every 15 min.
+#   hourly: next 5 even hours (every 2 h)          -> [{h, c, t, p}]
+#   daily:  5 days starting tomorrow               -> [{wd, c, hi, lo, p}]
+# Both have 5 slots so the two rows line up column by column.
+#   today:  today's high / low                     -> {hi, lo}
+# c = HA condition, t/hi/lo = °C (rounded), p = precipitation mm, wd = 0 (Mon)..6
+- triggers:
+    - trigger: time_pattern
+      minutes: /15
+    - trigger: homeassistant
+      event: start
+    - trigger: event              # "Template entities" reload doesn't fire `start`
+      event_type: event_template_reloaded
+  actions:
+    - action: weather.get_forecasts
+      target:
+        entity_id: weather.openweathermap
+      data:
+        type: hourly
+      response_variable: hourly_raw
+    - action: weather.get_forecasts
+      target:
+        entity_id: weather.openweathermap
+      data:
+        type: daily
+      response_variable: daily_raw
+  sensor:
+    - name: Screensaver forecast
+      unique_id: screensaver_forecast
+      default_entity_id: sensor.screensaver_forecast
+      icon: mdi:weather-partly-cloudy
+      state: "{{ now().isoformat() }}"
+      attributes:
+        hourly: >
+          {% set ns = namespace(items=[]) %}
+          {% for f in hourly_raw['weather.openweathermap'].forecast %}
+            {% set t = as_local(as_datetime(f.datetime)) %}
+            {% if t > now() and t.hour % 2 == 0 and ns.items | count < 5 %}
+              {% set ns.items = ns.items + [{
+                'h': t.hour,
+                'c': f.condition,
+                't': f.temperature | round(0) | int,
+                'p': f.precipitation | default(0, true) | float(0) | round(1)
+              }] %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.items }}
+        daily: >
+          {% set ns = namespace(items=[]) %}
+          {% for f in daily_raw['weather.openweathermap'].forecast %}
+            {% set t = as_local(as_datetime(f.datetime)) %}
+            {% if t.date() > now().date() and ns.items | count < 5 %}
+              {% set ns.items = ns.items + [{
+                'wd': t.weekday(),
+                'c': f.condition,
+                'hi': f.temperature | round(0) | int,
+                'lo': (f.templow if f.templow is not none else f.temperature) | round(0) | int,
+                'p': f.precipitation | default(0, true) | float(0) | round(1)
+              }] %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.items }}
+        today: >
+          {% set ns = namespace(v={}) %}
+          {% for f in daily_raw['weather.openweathermap'].forecast %}
+            {% if as_local(as_datetime(f.datetime)).date() == now().date() %}
+              {% set ns.v = {'hi': f.temperature | round(0) | int,
+                             'lo': (f.templow if f.templow is not none else f.temperature) | round(0) | int} %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.v }}
+
+# Minutes until the next bus, from the TIMETABLE time (delay shown separately).
+# now() makes these re-render every minute.
+- sensor:
+    - name: Bus VCLB minutes
+      unique_id: bus_vclb_minutes
+      default_entity_id: sensor.bus_vclb_minutes
+      unit_of_measurement: min
+      icon: mdi:bus
+      availability: "{{ states('sensor.dir_vclb_departure') | as_datetime(none) is not none }}"
+      state: >
+        {% set d = states('sensor.dir_vclb_departure') | as_datetime(none) %}
+        {{ [((d - now()).total_seconds() / 60) | round(0, 'floor') | int, 0] | max }}
+    - name: Bus Croisettes minutes
+      unique_id: bus_croisettes_minutes
+      default_entity_id: sensor.bus_croisettes_minutes
+      unit_of_measurement: min
+      icon: mdi:bus
+      availability: "{{ states('sensor.dir_metro_departure') | as_datetime(none) is not none }}"
+      state: >
+        {% set d = states('sensor.dir_metro_departure') | as_datetime(none) %}
+        {{ [((d - now()).total_seconds() / 60) | round(0, 'floor') | int, 0] | max }}
+
+# Minutes left for the washer / dryer while a programme runs (from Home Connect's finish time).
+# Unavailable when the machine is off or the programme is done. now() -> re-rendered every minute.
+- sensor:
+    - name: Washer minutes left
+      unique_id: washer_minutes_left
+      default_entity_id: sensor.washer_minutes_left
+      unit_of_measurement: min
+      icon: mdi:washing-machine
+      availability: >
+        {% set f = states('sensor.basement_washing_machine_programme_finish_time') | as_datetime(none) %}
+        {{ f is not none and f > now()
+           and states('sensor.basement_washing_machine_programme_progress') | float(100) < 100 }}
+      state: >
+        {% set f = states('sensor.basement_washing_machine_programme_finish_time') | as_datetime(none) %}
+        {{ ((f - now()).total_seconds() / 60) | round(0, 'ceil') | int }}
+    - name: Dryer minutes left
+      unique_id: dryer_minutes_left
+      default_entity_id: sensor.dryer_minutes_left
+      unit_of_measurement: min
+      icon: mdi:tumble-dryer
+      availability: >
+        {% set f = states('sensor.basement_dryer_programme_finish_time') | as_datetime(none) %}
+        {{ f is not none and f > now()
+           and states('sensor.basement_dryer_programme_progress') | float(100) < 100 }}
+      state: >
+        {% set f = states('sensor.basement_dryer_programme_finish_time') | as_datetime(none) %}
+        {{ ((f - now()).total_seconds() / 60) | round(0, 'ceil') | int }}
+
+# Appliance "done" latches. Home Connect's events are PULSES: "present" for 1–6 s, then "off"
+# (seen 18.11: preheat 6 s, programme finished 1 s). These binary sensors switch on at the
+# pulse and off on the event that means "taken care of". Trigger-based, so they keep their state
+# over a restart. Events missed while HA was down never fire afterwards, so a "check" re-evaluates
+# the off-condition at start / template reload / when the appliance comes back from unavailable
+# (e.g. dryer switched off during a restart). A pulse missed during a restart is lost — accepted.
+- triggers:
+    - trigger: state
+      entity_id: [sensor.oven_pre_heat_finished, sensor.oven_regular_pre_heat_finished]
+      to: present
+      id: "on"
+    - trigger: state                # door opened: food goes in
+      entity_id: sensor.kitchen_oven_door
+      to: open
+      id: "off"
+    - trigger: state                # programme no longer running (finished, stopped, switched off)
+      entity_id: sensor.kitchen_oven_operation_state
+      not_to: [run, pause, unavailable, unknown]
+      id: "off"
+    - trigger: state                # appliance back after a restart / Wi-Fi drop
+      entity_id: sensor.kitchen_oven_operation_state
+      from: [unavailable, unknown]
+      id: check
+    - trigger: homeassistant
+      event: start
+      id: check
+    - trigger: event
+      event_type: event_template_reloaded
+      id: check
+  binary_sensor:
+    - name: Oven preheated
+      unique_id: oven_preheated
+      default_entity_id: binary_sensor.oven_preheated
+      icon: mdi:thermometer-check
+      # check: off if the programme is known to be no longer running; unknown/unavailable = keep
+      state: >
+        {% if trigger.id == 'check' %}
+          {% set op = states('sensor.kitchen_oven_operation_state') %}
+          {{ this.state == 'on' and (op in ['run', 'pause', 'unknown', 'unavailable']) }}
+        {% else %}
+          {{ trigger.id == 'on' }}
+        {% endif %}
+- triggers:
+    - trigger: state
+      entity_id: [sensor.steamer_pre_heat_finished, sensor.steamer_regular_pre_heat_finished]
+      to: present
+      id: "on"
+    - trigger: state
+      entity_id: sensor.kitchen_steamer_door
+      to: open
+      id: "off"
+    - trigger: state                # programme no longer running (finished, stopped, switched off)
+      entity_id: sensor.kitchen_steamer_operation_state
+      not_to: [run, pause, unavailable, unknown]
+      id: "off"
+    - trigger: state                # appliance back after a restart / Wi-Fi drop
+      entity_id: sensor.kitchen_steamer_operation_state
+      from: [unavailable, unknown]
+      id: check
+    - trigger: homeassistant
+      event: start
+      id: check
+    - trigger: event
+      event_type: event_template_reloaded
+      id: check
+  binary_sensor:
+    - name: Steamer preheated
+      unique_id: steamer_preheated
+      default_entity_id: binary_sensor.steamer_preheated
+      icon: mdi:thermometer-check
+      # check: off if the programme is known to be no longer running; unknown/unavailable = keep
+      state: >
+        {% if trigger.id == 'check' %}
+          {% set op = states('sensor.kitchen_steamer_operation_state') %}
+          {{ this.state == 'on' and (op in ['run', 'pause', 'unknown', 'unavailable']) }}
+        {% else %}
+          {{ trigger.id == 'on' }}
+        {% endif %}
+- triggers:
+    - trigger: state
+      entity_id: sensor.washing_machine_programme_finished
+      to: present
+      id: "on"
+    - trigger: state                # switched off
+      entity_id: binary_sensor.basement_washing_machine_connectivity
+      to: "off"
+      id: "off"
+    - trigger: template             # relaunched: a new programme is running
+      value_template: "{{ states('sensor.basement_washing_machine_programme_progress') | float(100) < 100 }}"
+      id: "off"
+    - trigger: homeassistant
+      event: start
+      id: check
+    - trigger: event
+      event_type: event_template_reloaded
+      id: check
+    - trigger: state                # machine back after a restart / Wi-Fi drop
+      entity_id: binary_sensor.basement_washing_machine_connectivity
+      from: [unavailable, unknown]
+      id: check
+  binary_sensor:
+    - name: Washer done
+      unique_id: washer_done
+      default_entity_id: binary_sensor.washer_done
+      icon: mdi:washing-machine
+      # check: off if the machine is known to be off or running a new programme
+      state: >
+        {% if trigger.id == 'check' %}
+          {{ this.state == 'on'
+             and not is_state('binary_sensor.basement_washing_machine_connectivity', 'off')
+             and not states('sensor.basement_washing_machine_programme_progress') | float(100) < 100 }}
+        {% else %}
+          {{ trigger.id == 'on' }}
+        {% endif %}
+- triggers:
+    - trigger: state                # the 2nd event (after anti-crease), not drying_process_finished
+      entity_id: sensor.dryer_programme_finished
+      to: present
+      id: "on"
+    - trigger: state
+      entity_id: binary_sensor.basement_dryer_connectivity
+      to: "off"
+      id: "off"
+    - trigger: template
+      value_template: "{{ states('sensor.basement_dryer_programme_progress') | float(100) < 100 }}"
+      id: "off"
+    - trigger: homeassistant
+      event: start
+      id: check
+    - trigger: event
+      event_type: event_template_reloaded
+      id: check
+    - trigger: state                # machine back after a restart / Wi-Fi drop
+      entity_id: binary_sensor.basement_dryer_connectivity
+      from: [unavailable, unknown]
+      id: check
+  binary_sensor:
+    - name: Dryer done
+      unique_id: dryer_done
+      default_entity_id: binary_sensor.dryer_done
+      icon: mdi:tumble-dryer
+      # check: off if the machine is known to be off or running a new programme
+      state: >
+        {% if trigger.id == 'check' %}
+          {{ this.state == 'on'
+             and not is_state('binary_sensor.basement_dryer_connectivity', 'off')
+             and not states('sensor.basement_dryer_programme_progress') | float(100) < 100 }}
+        {% else %}
+          {{ trigger.id == 'on' }}
+        {% endif %}
+
+# Alerts. State = number of alerts, attribute `items` = [{icon, text, line}] (French, shown as-is).
+# line 1 = household (kitchen, laundry, bins), line 2 = maintenance (batteries).
+# Item `level`: none = orange (line 1) / text colour (line 2), 'info' = grey, 'alert' = red.
+# Refreshed hourly and on start.
+# Bins: always Wednesday, sometimes with glass (never glass alone).
+#   day before from 12:00 -> "Poubelles (+ verre) demain"; on the day until 11:00 -> "... aujourd'hui".
+- triggers:
+    - trigger: time_pattern
+      minutes: 0
+    - trigger: homeassistant
+      event: start
+    - trigger: event              # "Template entities" reload doesn't fire `start`
+      event_type: event_template_reloaded
+    - trigger: state              # appliances: update right away
+      entity_id:
+        - sensor.kitchen_oven_operation_state
+        - sensor.kitchen_oven_door
+        - binary_sensor.oven_preheated
+        - sensor.kitchen_steamer_operation_state
+        - sensor.kitchen_steamer_door
+        - binary_sensor.steamer_preheated
+        - binary_sensor.washer_done
+        - binary_sensor.dryer_done
+        - sensor.washer_minutes_left
+        - sensor.dryer_minutes_left
+  actions:
+    - action: calendar.get_events
+      target:
+        entity_id:
+          - calendar.garbage
+          - calendar.glass
+      data:
+        # today or tomorrow, depending on the time of day (see the bins block below)
+        start_date_time: "{{ (today_at() + timedelta(days=0 if now().hour < 12 else 1)).isoformat() }}"
+        end_date_time: "{{ (today_at() + timedelta(days=1 if now().hour < 12 else 2)).isoformat() }}"
+      response_variable: bin_day
+    - variables:
+        # Battery sensors to watch: every battery sensor except phones and wall tablets.
+        # French names for the front; unknown devices fall back to their device name.
+        # Room names = the temperature/humidity sensor in that room.
+        battery_names:
+          sensor.office_battery: Bureau
+          sensor.twins_battery: Jumeaux
+          sensor.bathroom_battery: Salle de bain
+          sensor.guest_bathroom_battery: Salle de bain rez
+          sensor.entrance_battery: Entrée
+          sensor.guest_battery: Chambre d'amis
+          sensor.bottom_stairs_battery: Escalier cave
+          sensor.salon_battery: Salon
+          sensor.temperature_charles_battery_level: Chambre Charles
+          sensor.entree_battery_level: Chatière
+          sensor.movement_bathroom_battery: Détecteur salle de bain
+          sensor.charles_kallax_switch_battery: Interrupteur chevet Charles
+          sensor.carport_movement_battery: Détecteur carport
+        battery_threshold: 10   # below: "Piles faibles" (normal colour)
+        battery_urgent: 5       # below, or offline: "Piles à changer" (red)
+        offline_minutes: 30     # unknown/unavailable this long = offline (skips HA/MQTT restarts)
+    - variables:
+        items: >
+          {% set ns = namespace(items=[], low=[], urgent=[]) %}
+          {# --- Kitchen: oven + steamer ---
+             Preheat done: latch binary_sensor.*_preheated (see above).
+             Programme done: operation state "finished" (stays until the oven is switched off
+                           or relaunched), shown until the door is opened.
+             After an HA restart both clear (last_changed reset) — accepted. #}
+          {% for a in [
+               {'name': 'four', 'op': 'sensor.kitchen_oven_operation_state', 'door': 'sensor.kitchen_oven_door',
+                'pre': 'binary_sensor.oven_preheated'},
+               {'name': 'steamer', 'op': 'sensor.kitchen_steamer_operation_state', 'door': 'sensor.kitchen_steamer_door',
+                'pre': 'binary_sensor.steamer_preheated'}] %}
+            {% set op = expand(a.op) | first %}
+            {% set door = expand(a.door) | first %}
+            {% if op and door %}
+              {% if op.state == 'finished' and door.last_changed < op.last_changed %}
+                {% set ns.items = ns.items + [{'icon': 'mdi:stove', 'line': 1,
+                                               'text': 'Programme ' ~ a.name ~ ' terminé'}] %}
+              {% elif is_state(a.pre, 'on') %}
+                {% set ns.items = ns.items + [{'icon': 'mdi:thermometer-check', 'line': 1,
+                                               'text': 'Préchauffage ' ~ a.name ~ ' terminé'}] %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+          {# --- Laundry: done (orange) = latch binary_sensor.*_done (on until switched off or
+             relaunched), otherwise minutes left (grey) while running. #}
+          {% for a in [
+               {'name': 'Lave-linge', 'icon': 'mdi:washing-machine',
+                'done': 'binary_sensor.washer_done', 'left': 'sensor.washer_minutes_left'},
+               {'name': 'Sèche-linge', 'icon': 'mdi:tumble-dryer',
+                'done': 'binary_sensor.dryer_done', 'left': 'sensor.dryer_minutes_left'}] %}
+            {% if is_state(a.done, 'on') %}
+              {% set ns.items = ns.items + [{'icon': a.icon, 'line': 1, 'text': a.name ~ ' terminé'}] %}
+            {% elif is_number(states(a.left)) %}
+              {% set m = states(a.left) | int %}
+              {% set left = (m // 60) ~ ' h ' ~ '%02d' % (m % 60) if m >= 60 else m ~ ' min' %}
+              {% set ns.items = ns.items + [{'icon': a.icon, 'line': 1, 'level': 'info',
+                                             'text': a.name ~ ' : ' ~ left}] %}
+            {% endif %}
+          {% endfor %}
+          {% if now().hour < 11 or now().hour >= 12 %}
+            {% set bins = bin_day['calendar.garbage'].events | count > 0 %}
+            {% set glass = bin_day['calendar.glass'].events | count > 0 %}
+            {% if bins %}
+              {% set when = 'aujourd\'hui' if now().hour < 11 else 'demain' %}
+              {% set ns.items = ns.items + [{'icon': 'mdi:trash-can-outline', 'line': 1,
+                                             'text': ('Poubelles + verre ' if glass else 'Poubelles ') ~ when}] %}
+            {% endif %}
+          {% endif %}
+          {% set excluded = integration_entities('mobile_app') + integration_entities('fully_kiosk') %}
+          {% for s in states.sensor
+               | selectattr('attributes.device_class', 'defined')
+               | selectattr('attributes.device_class', 'eq', 'battery')
+               | rejectattr('entity_id', 'in', excluded) %}
+            {% set name = battery_names.get(s.entity_id)
+                          or device_attr(s.entity_id, 'name_by_user')
+                          or device_attr(s.entity_id, 'name')
+                          or s.name %}
+            {% if s.state in ['unknown', 'unavailable']
+                  and now() - s.last_changed > timedelta(minutes=offline_minutes) %}
+              {% set ns.urgent = ns.urgent + [name] %}
+            {% elif is_number(s.state) and s.state | float < battery_urgent %}
+              {% set ns.urgent = ns.urgent + [name] %}
+            {% elif is_number(s.state) and s.state | float < battery_threshold %}
+              {% set ns.low = ns.low + [name] %}
+            {% endif %}
+          {% endfor %}
+          {# Line 2: urgent batteries (offline or < battery_urgent) take priority, in red;
+             low batteries then only as a count.
+             At most 3 names, then "+N" — keeps it on one line without scrolling. #}
+          {% if ns.urgent %}
+            {% set names = ns.urgent | sort %}
+            {% set shown = names[:3] | join(', ') ~ ((' +' ~ (names | count - 3)) if names | count > 3 else '') %}
+            {% set ns.items = ns.items + [{'icon': 'mdi:battery-alert-variant-outline', 'line': 2, 'level': 'alert',
+                                           'text': 'Piles à changer : ' ~ shown}] %}
+            {% if ns.low %}
+              {% set n = ns.low | count %}
+              {% set ns.items = ns.items + [{'icon': 'mdi:battery-low', 'line': 2,
+                                             'text': n ~ (' pile faible' if n == 1 else ' piles faibles')}] %}
+            {% endif %}
+          {% elif ns.low %}
+            {% set names = ns.low | sort %}
+            {% set shown = names[:3] | join(', ') ~ ((' +' ~ (names | count - 3)) if names | count > 3 else '') %}
+            {% set ns.items = ns.items + [{'icon': 'mdi:battery-low', 'line': 2, 'text': 'Piles faibles : ' ~ shown}] %}
+          {% endif %}
+          {{ ns.items }}
+  sensor:
+    - name: Screensaver alerts
+      unique_id: screensaver_alerts
+      default_entity_id: sensor.screensaver_alerts
+      icon: mdi:alert-circle-outline
+      state: "{{ items | count }}"
+      attributes:
+        items: "{{ items }}"

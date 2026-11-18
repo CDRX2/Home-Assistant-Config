@@ -1,176 +1,386 @@
+################################################################################
+# Screensaver view — shown by wallpanel (visual.yaml) on the wall panels.
+#
+# Layout (all heights fixed, so nothing moves when content changes):
+#   ┌──────────────┬────────────────────┐
+#   │ clock        │ weather: current   │
+#   │              │          next hours│
+#   │              │          4 days    │
+#   │ date         │ buses              │
+#   ├──────────────┴────────────────────┤
+#   │   alerts line 1: household        │
+#   │   alerts line 2: batteries        │
+#   └───────────────────────────────────┘
+# Alignment: the word clock's height follows its WIDTH (cqw fonts, height ≈ 0.79 × width),
+# while the rows are in vh. So the clock column is sized in vh too:
+#   rows 1–3 = 12 + 19 + 17 + 2 × 3 (gaps) = 54vh  ->  clock width = 54 / 0.79 ≈ 68vh
+# Date and buses share row 4 and are both centred vertically in it.
+# That keeps clock and weather the same height on any screen shape.
+#
+# Data: sensors/screensaver.yaml (forecasts, bus countdowns, alerts).
+################################################################################
 type: panel
-style:
-  height: 100%
-  width: 100%
 title: Screensaver
-icon: 'mdi:monitor-screenshot'
+icon: mdi:monitor-screenshot
 path: screensaver
 theme: CDRX
-background:
-  opacity: 100
-  alignment: center
-  size: cover
-  repeat: repeat
-  attachment: fixed
-  image: /local/ui/sidebar/sidebarBG.png
+background: var(--cdrx-view-background)   # black, same as under wallpanel
 cards:
   - type: custom:mod-card
     card:
       type: custom:layout-card
       layout_type: custom:grid-layout
       layout:
-        height: 100%
-        align-items: center
-        grid-template-rows: 50% 50%
-        grid-template-columns: 50% 50%
+        # #root is content-box: 86vh + 2 × 7vh padding = full screen
+        height: 86vh
+        padding: 7vh 4vw
+        margin: 0
+        card_margin: 0
+        grid-template-columns: 68vh 1fr
+        # current | next hours | 5 days | buses | alerts (2 lines)
+        grid-template-rows: 12vh 19vh 17vh 16vh 10vh
+        grid-column-gap: 4vw
+        grid-row-gap: 3vh
         grid-template-areas: |
-          "clock weather"
-          "clock transport"
+          "clock   weather"
+          "clock   weather"
+          "clock   weather"
+          "date    buses"
+          "alerts  alerts"
       cards:
+
+        ##### Clock (stays English, the French version looks bad) #####
         - type: custom:gcclock-words
-          show_highlight_glow: false
           language: en-GB
+          show_highlight_glow: false
+          highlight_text_color: var(--cdrx-accent)
           view_layout:
             grid-area: clock
-            align-self: center
+            align-self: start
           card_mod:
             style: |
               ha-card {
                 background: none !important;
-                padding-top: 10% !important;
-                --mdc-theme-primary: #03a8f4;
+                border: none !important;
+                padding: 0 !important;
               }
-        - show_current: true
-          show_forecast: true
-          type: weather-forecast
+
+        ##### Date (French) #####
+        - type: custom:button-card
+          entity: sensor.date
+          show_name: false
+          show_icon: false
+          show_state: false
+          tap_action: {action: none}
+          hold_action: {action: none}
+          view_layout:
+            grid-area: date
+          custom_fields:
+            date: |
+              [[[
+                const t = new Date().toLocaleDateString('fr-CH', {weekday: 'long', day: 'numeric', month: 'long'});
+                return t.charAt(0).toUpperCase() + t.slice(1);
+              ]]]
+          styles:
+            card:
+              - background: none
+              - border: none
+              - padding: 0
+              - height: 100%
+            grid:
+              - grid-template-areas: '"date"'
+              - height: 100%
+            custom_fields:
+              date:
+                - justify-self: start
+                - align-self: center      # same vertical centre as the bus block
+                - font-size: 2.5vw
+                - font-weight: var(--cdrx-font-weight-semibold)
+                - color: var(--cdrx-text)
+                - opacity: var(--ss-mid)
+
+        ##### Weather: current + next hours + 4 days #####
+        - type: custom:button-card
           entity: weather.openweathermap
-          forecast_type: daily
-          name: " "
+          triggers_update:
+            - sensor.screensaver_forecast
+          show_name: false
+          show_icon: false
+          show_state: false
+          tap_action: {action: none}
+          hold_action: {action: none}
           view_layout:
             grid-area: weather
-            align-self: center
-          card_mod:
-            style: |
-              ha-card {
-                background: none !important;
-                width: 90%;
-                padding: 0px !important;
-                display: flow !important;
-              }
-              div.icon-image {
-                opacity: 0.3;
-                min-width: 20%;
-              }
-              div.forecast-image-icon {
-                opacity: 0.3;
-              }
-              div.state {
-                font-size: 3vw;
-                font-weight: 800;
-                opacity: 0.1;
-              }
-              div.attribute {
-                color: var(--primary-text-color) !important;
-                font-size: 2vw%;
-                font-weight: 600;
-                opacity: 0.1;
-              }
-              div.temp {
-                font-size: 3vw;
-                font-weight: 800;
-                opacity: 0.1;
-              }
-              .forecast .temp {
-                font-size: 2vw !important;
-              }
-              div.templow {
-                font-size: 2vw;
-                font-weight: 600;
-                opacity: 0.1;
-                color: var(--primary-text-color) !important;
-              }
-              div.forecast {
-                mask-image: none;
-                webkit-mask-image: none;
-              }
-              div.forecast > div > div:nth-child(1) {
-                opacity: 0.1;
-                font-size: 3vw;
-                font-weight: 600;
-              }
-              div.forecast-item {
-                width: 18%;
-              }
-              .forecast-image-icon > * {
-                width: 80% !important;
-                height: 80% !important;
-                --mdc-icon-size: 80%;
-              }
-              .icon-image > * {
-                height: 60% !important;
-                flex: 0 0 120% !important;
-                margin-inline-end: 5%;
-              }
-        - type: entities
-          entities:
-            - entity: sensor.dir_vclb_3
-              name: Vers-chez-les-Blanc
-              type: custom:multiple-entity-row
-              entities:
-                - entity: sensor.dir_vclb_1
-                  name: false
-                - entity: sensor.dir_vclb_2
-                  name: false
-            - entity: sensor.depuis_maison_3
-              name: Croisettes
-              type: custom:multiple-entity-row
-              entities:
-                - entity: sensor.depuis_maison_1
-                  name: false
-                - entity: sensor.depuis_maison_2
-                  name: false
-          title: Prochains départs
+          variables:
+            icons: |
+              [[[ return {
+                'clear-night': 'mdi:weather-night', 'cloudy': 'mdi:weather-cloudy',
+                'exceptional': 'mdi:alert-circle-outline', 'fog': 'mdi:weather-fog',
+                'hail': 'mdi:weather-hail', 'lightning': 'mdi:weather-lightning',
+                'lightning-rainy': 'mdi:weather-lightning-rainy', 'partlycloudy': 'mdi:weather-partly-cloudy',
+                'pouring': 'mdi:weather-pouring', 'rainy': 'mdi:weather-rainy',
+                'snowy': 'mdi:weather-snowy', 'snowy-rainy': 'mdi:weather-snowy-rainy',
+                'sunny': 'mdi:weather-sunny', 'windy': 'mdi:weather-windy',
+                'windy-variant': 'mdi:weather-windy-variant'
+              }; ]]]
+            labels: |
+              [[[ return {
+                'clear-night': 'Dégagé', 'cloudy': 'Nuageux', 'exceptional': 'Exceptionnel',
+                'fog': 'Brouillard', 'hail': 'Grêle', 'lightning': 'Orage',
+                'lightning-rainy': 'Orage et pluie', 'partlycloudy': 'Éclaircies',
+                'pouring': 'Averses', 'rainy': 'Pluie', 'snowy': 'Neige',
+                'snowy-rainy': 'Pluie et neige', 'sunny': 'Ensoleillé', 'windy': 'Venteux',
+                'windy-variant': 'Venteux'
+              }; ]]]
+            days: "[[[ return ['lun', 'mar', 'mer', 'jeu', 'ven', 'sam', 'dim']; ]]]"
+          custom_fields:
+            current: |
+              [[[
+                const f = states['sensor.screensaver_forecast']?.attributes || {};
+                const today = f.today || {};
+                const t = Math.round(entity.attributes.temperature);
+                const c = entity.state;
+                return `<div class="current">
+                  <ha-icon icon="${variables.icons[c] || 'mdi:weather-cloudy'}"></ha-icon>
+                  <span class="temp">${t}°</span>
+                  <span class="cond">${variables.labels[c] || c}</span>
+                  <span class="hilo">${today.lo ?? '–'}° / ${today.hi ?? '–'}°</span>
+                </div>`;
+              ]]]
+            hourly: |
+              [[[
+                const items = states['sensor.screensaver_forecast']?.attributes?.hourly || [];
+                return `<div class="row">` + items.map(i => `
+                  <div class="slot">
+                    <span class="label">${i.h}h</span>
+                    <ha-icon icon="${variables.icons[i.c] || 'mdi:weather-cloudy'}"></ha-icon>
+                    <span class="value">${i.t}°</span>
+                    <span class="rain">${i.p > 0 ? i.p + ' mm' : ''}</span>
+                  </div>`).join('') + `</div>`;
+              ]]]
+            daily: |
+              [[[
+                const items = states['sensor.screensaver_forecast']?.attributes?.daily || [];
+                return `<div class="row">` + items.map(i => `
+                  <div class="slot">
+                    <span class="label">${variables.days[i.wd]}</span>
+                    <ha-icon icon="${variables.icons[i.c] || 'mdi:weather-cloudy'}"></ha-icon>
+                    <span class="value">${i.hi}° <span class="low">${i.lo}°</span></span>
+                    <span class="rain">${i.p > 0 ? i.p + ' mm' : ''}</span>
+                  </div>`).join('') + `</div>`;
+              ]]]
+          styles:
+            card:
+              - background: none
+              - border: none
+              - padding: 0
+              - height: 100%
+              - overflow: visible
+            grid:
+              - height: 100%
+              - grid-template-areas: '"current" "hourly" "daily"'
+              # same heights as the first three page rows (12 / 19 / 17 vh, gaps 3 vh)
+              - grid-template-rows: 12vh 19vh 17vh
+              - row-gap: 3vh
+            custom_fields:
+              current: [justify-self: stretch, align-self: start]
+              hourly: [justify-self: stretch, align-self: center]
+              daily: [justify-self: stretch, align-self: center]
+          extra_styles: |
+            .current {
+              display: flex; align-items: center; gap: 1.5vw;
+              color: var(--cdrx-text);
+            }
+            .current ha-icon { --mdc-icon-size: 5vw; opacity: var(--ss-mid); }
+            .current .temp {
+              font-size: var(--cdrx-font-size-display); font-weight: var(--cdrx-font-weight-bold);
+              opacity: var(--ss-mid);
+            }
+            .current .cond {
+              flex: 1; text-align: left;
+              font-size: var(--cdrx-font-size-heading); font-weight: var(--cdrx-font-weight-semibold);
+              opacity: var(--ss-low);
+            }
+            .current .hilo {
+              font-size: var(--cdrx-font-size-heading); font-weight: var(--cdrx-font-weight-semibold);
+              opacity: var(--ss-low);
+            }
+            .row {
+              /* fixed-width slots spread edge to edge, content centred;
+                 both rows (5 slots each) share the same column centres */
+              display: flex; justify-content: space-between;
+              color: var(--cdrx-text); opacity: var(--ss-low);
+            }
+            .slot {
+              display: flex; flex-direction: column; align-items: center; gap: 0.6vh;
+              width: 7vw;
+            }
+            .slot .label { font-size: var(--cdrx-font-size-heading); font-weight: var(--cdrx-font-weight-semibold); }
+            .slot ha-icon { --mdc-icon-size: 3vw; width: var(--mdc-icon-size); }
+            .slot .value { font-size: var(--cdrx-font-size-heading); font-weight: var(--cdrx-font-weight-bold); }
+            .slot .low { font-weight: var(--cdrx-font-weight-regular); }
+            .slot .rain { font-size: var(--cdrx-font-size-title); min-height: 1.2em; color: var(--cdrx-accent); }
+
+        ##### Buses: next one as a countdown (timetable) + delay, then the two following #####
+        - type: custom:button-card
+          entity: sensor.bus_vclb_minutes
+          triggers_update:
+            - sensor.bus_croisettes_minutes
+            - sensor.lausanne_haute_combe_lausanne_chalet_a_gobet_delay
+            - sensor.lausanne_haute_combe_epalinges_croisettes_delay
+            - sensor.dir_vclb_2
+            - sensor.dir_vclb_3
+            - sensor.depuis_maison_2
+            - sensor.depuis_maison_3
+          show_name: false
+          show_icon: false
+          show_state: false
+          tap_action: {action: none}
+          hold_action: {action: none}
           view_layout:
-            grid-area: transport
+            grid-area: buses
+          variables:
+            walk_minutes: 4     # jacket + door + walk to the stop: a bus leaving sooner is dimmed, not hidden
+            min_delay: 2        # delays below this aren't shown
+            lines: |
+              [[[ return [
+                {name: 'Vers-chez-les-Blanc', minutes: 'sensor.bus_vclb_minutes',
+                 delay: 'sensor.lausanne_haute_combe_lausanne_chalet_a_gobet_delay',
+                 next: ['sensor.dir_vclb_2', 'sensor.dir_vclb_3']},
+                {name: 'Croisettes', minutes: 'sensor.bus_croisettes_minutes',
+                 delay: 'sensor.lausanne_haute_combe_epalinges_croisettes_delay',
+                 next: ['sensor.depuis_maison_2', 'sensor.depuis_maison_3']},
+              ]; ]]]
+          custom_fields:
+            buses: |
+              [[[
+                const num = (id) => { const v = parseFloat(states[id]?.state); return isNaN(v) ? null : v; };
+                const txt = (id) => { const s = states[id]?.state; return (!s || s === 'unknown' || s === 'unavailable') ? '' : s; };
+                return variables.lines.map(l => {
+                  const m = num(l.minutes);
+                  const d = num(l.delay) ?? 0;
+                  const missed = m !== null && (m + d) < variables.walk_minutes;
+                  return `<div class="line">
+                    <ha-icon icon="mdi:bus"></ha-icon>
+                    <span class="name">${l.name}</span>
+                    <span class="minutes ${missed ? 'missed' : ''}">${m === null ? '—' : m + ' min'}</span>
+                    <span class="delay">${d >= variables.min_delay ? '+' + d : ''}</span>
+                    <span class="next">${txt(l.next[0])}</span>
+                    <span class="next">${txt(l.next[1])}</span>
+                  </div>`;
+                }).join('');
+              ]]]
+          styles:
+            card:
+              - background: none
+              - border: none
+              - padding: 0
+              - overflow: visible
+              - height: 100%
+            grid:
+              - grid-template-areas: '"buses"'
+              - height: 100%
+            custom_fields:
+              buses: [justify-self: stretch, align-self: center]
+          extra_styles: |
+            .line {
+              display: grid;
+              /* icon | name (shrinks) | countdown | delay | next | next — identical on both lines */
+              grid-template-columns: 3vw minmax(0, 1fr) 6.5vw 3.5vw 6.5vw 6.5vw;
+              align-items: baseline;
+              color: var(--cdrx-text);
+              font-size: var(--cdrx-font-size-heading);
+              font-weight: var(--cdrx-font-weight-semibold);
+              line-height: 1.8;
+              text-align: left;
+            }
+            .line ha-icon {
+              --mdc-icon-size: 2vw; width: var(--mdc-icon-size);   /* not stretched to the 3vw cell */
+              margin-left: -0.2vw;                                  /* glyph's own left padding */
+              opacity: var(--ss-low); align-self: center; justify-self: start;
+            }
+            .name { opacity: var(--ss-low); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            .minutes { text-align: right; font-weight: var(--cdrx-font-weight-bold); opacity: var(--ss-high); }
+            .minutes.missed { opacity: var(--ss-low); }
+            .delay { color: var(--cdrx-status-warning); font-weight: var(--cdrx-font-weight-bold); opacity: var(--ss-high); padding-left: 0.6vw; }
+            .next { text-align: right; opacity: var(--ss-low); font-weight: var(--cdrx-font-weight-regular); }
+
+        ##### Alerts: one centred line, empty when nothing to say #####
+        - type: custom:button-card
+          entity: sensor.screensaver_alerts
+          show_name: false
+          show_icon: false
+          show_state: false
+          tap_action: {action: none}
+          hold_action: {action: none}
+          view_layout:
+            grid-area: alerts
             align-self: center
-          card_mod:
-            style:
-              multiple-entity-row$:
-                hui-generic-entity-row$: |
-                  state-badge {
-                    display: none;
-                  }
-                  div {
-                    margin-left: 0px !important;
-                    margin-inline-start: 0px !important;
-                  }
-              .: |
-                ha-card {
-                  background: none !important;
-                  width: 90%;
-                  opacity: 0.1;
-                  padding-top: 10%;
-                  --state-icon-color: var(--primary-text-color);
-                }
-                ha-card > h1 {
-                  font-size: 3vw;
-                  font-weight: 800;
-                  height: 20%;
-                }
-                #states > div {
-                  font-size: 2vw;
-                  font-weight: 600;
-                  height: 20%;
-                }
+          variables:
+            # Line 1 longer than this (characters, icons and separators count ~3) scrolls;
+            # shorter stays still and centred. ~82 characters fit at this font size.
+            # Line 2 (batteries) never scrolls: capped at 3 names, cut with … if ever too long.
+            max_chars: 76
+            seconds_per_char: 0.25   # scroll speed
+          custom_fields:
+            alerts: |
+              [[[
+                const items = entity?.attributes?.items || [];
+                const line = (n) => {
+                  const its = items.filter(i => (i.line || 1) === n);
+                  const html = its.map(i =>
+                    `<span class="alert ${i.level ? 'lvl-' + i.level : ''}"><ha-icon icon="${i.icon}"></ha-icon>${i.text}</span>`
+                  ).join('<span class="sep">·</span>');
+                  const len = its.reduce((t, i) => t + i.text.length + 3, 0) + Math.max(its.length - 1, 0) * 3;
+                  if (n !== 1 || len <= variables.max_chars) return `<div class="l${n}">${html}</div>`;
+                  // too long: content twice + gap, moved by -50% in a loop = seamless scroll
+                  const dur = Math.round(len * variables.seconds_per_char);
+                  return `<div class="l${n} marquee"><div class="track" style="animation-duration: ${dur}s">` +
+                         `${html}<span class="gap"></span>${html}<span class="gap"></span></div></div>`;
+                };
+                // both lines always rendered (empty or not) so nothing moves
+                return line(1) + line(2);
+              ]]]
+          styles:
+            card:
+              - background: none
+              - border: none
+              - padding: 0
+            grid:
+              - grid-template-areas: '"alerts"'
+            custom_fields:
+              alerts:
+                - justify-self: stretch
+                - min-width: 0
+                - font-weight: var(--cdrx-font-weight-semibold)
+          extra_styles: |
+            .l1, .l2 {
+              min-height: 1.5em; line-height: 1.5; text-align: center;
+              font-size: var(--cdrx-font-size-heading);
+              white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            }
+            .marquee { text-align: left; }
+            .marquee .track { display: inline-block; animation: ss-marquee linear infinite; }
+            .marquee .gap { display: inline-block; width: 8vw; }
+            @keyframes ss-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+            .l1 { color: var(--cdrx-status-warning); opacity: var(--ss-high); }   /* household */
+            .l2 { color: var(--cdrx-text); opacity: var(--ss-high); }             /* batteries: like the bus countdown */
+            .alert { display: inline-flex; align-items: center; gap: 0.8vw; }
+            .alert ha-icon { --mdc-icon-size: 1.1em; }
+            .alert.lvl-alert { color: var(--cdrx-status-alert); }                    /* urgent batteries: red */
+            .alert.lvl-info { color: var(--cdrx-text); }                             /* laundry time left: grey */
+            .sep { margin: 0 1.5vw; }
+
     card_mod:
       style:
-        layout-card$:
-          grid-layout$: |
-            #root {
-               height: 100%;
-            }
         .: |
           ha-card {
-            height: 100%;
+            background: none !important;
+            border: none !important;
+            height: 100vh;
             width: 100%;
+            /* Light levels: everything on the screensaver is a fraction of the theme text colour */
+            --ss-low: 0.12;
+            --ss-mid: 0.2;
+            --ss-high: 0.35;
           }
