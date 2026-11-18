@@ -948,3 +948,34 @@
 
           '
   mode: single
+- id: '1795013027774'
+  alias: Wall panels day / night brightness
+  triggers:
+  - trigger: time
+    at: '22:00:00'
+  - trigger: time
+    at: 06:00:00
+  - trigger: homeassistant
+    event: start
+  - trigger: state
+    entity_id:
+    - number.lenovo_rez_screen_brightness
+    - number.lenovo_tab_1st_floor_screen_brightness
+    from: unavailable
+  actions:
+  - repeat:
+      for_each: '{{ panels }}'
+      sequence:
+      - action: number.set_value
+        continue_on_error: true
+        target:
+          entity_id: '{{ repeat.item }}'
+        data:
+          value: '{{ brightness }}'
+  mode: restart
+  variables:
+    night: '{{ now().hour >= 22 or now().hour < 6 }}'
+    brightness: '{{ 10 if night else 128 }}'
+    panels:
+    - number.lenovo_rez_screen_brightness
+    - number.lenovo_tab_1st_floor_screen_brightness
