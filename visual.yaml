@@ -2,6 +2,9 @@ wallpanel:
   enabled: true
   idle_time: 20
   show_images: false
+  touch_zone_size_next_image: 0
+  touch_zone_size_previous_image: 0
+  control_reactivation_time: 2
   cards: []
   badges: []
   views:
