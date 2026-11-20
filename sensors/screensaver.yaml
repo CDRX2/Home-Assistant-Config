@@ -275,19 +275,22 @@
           {{ trigger.id == 'on' }}
         {% endif %}
 
-# Alerts. State = number of alerts, attribute `items` = [{icon, text, line}] (French, shown as-is).
-# line 1 = household (kitchen, laundry, bins), line 2 = maintenance (batteries).
+# Alerts. State = number of alerts, attribute `items` = [{icon, text, line, level, names}]
+# (French, shown as-is; `names` optional = list shown as "text : a, b, c", paged by the card).
+# line 1 = household (kitchen, laundry, bins), line 2 = maintenance (system, then batteries).
 # Item `level`: none = orange (line 1) / text colour (line 2), 'info' = grey, 'alert' = red.
-# Refreshed hourly and on start.
+# Refreshed every 5 minutes (system delays: Zigbee 5 min, batteries 30 min) and on start.
 # Bins: always Wednesday, sometimes with glass (never glass alone).
 #   day before from 12:00 -> "Poubelles (+ verre) demain"; on the day until 11:00 -> "... aujourd'hui".
 - triggers:
     - trigger: time_pattern
-      minutes: 0
+      minutes: "/5"
     - trigger: homeassistant
       event: start
     - trigger: event              # "Template entities" reload doesn't fire `start`
       event_type: event_template_reloaded
+    - trigger: state              # Raspberry Pi undervoltage: right away
+      entity_id: binary_sensor.rpi_power_status
     - trigger: state              # appliances: update right away
       entity_id:
         - sensor.kitchen_oven_operation_state
@@ -331,7 +334,36 @@
           sensor.carport_movement_battery: Détecteur carport
         battery_threshold: 10   # below: "Piles faibles" (normal colour)
         battery_urgent: 5       # below, or offline: "Piles à changer" (red)
-        offline_minutes: 30     # unknown/unavailable this long = offline (skips HA/MQTT restarts)
+        offline_minutes: 5      # unknown/unavailable this long (bridge connected) = offline
+        zigbee_minutes: 5       # Zigbee bridge not connected this long = alert (skips restarts)
+        # Servers: Ping integration (UI), one entry per host. Not created yet = ignored.
+        servers:
+          binary_sensor.ping_docker_vm: VM Docker
+          binary_sensor.ping_cdrxstation3: CDRXStation3
+          binary_sensor.ping_backupstation: BackupStation
+          binary_sensor.ping_pbs: PBS
+          binary_sensor.ping_pve: PVE
+        docker_vm: binary_sensor.ping_docker_vm
+        # Docker containers. Down = unavailable (integrations) or off (web checks,
+        # command_line.yaml), for docker_minutes (skips the nightly 02:30 restart, ~1 min).
+        # direct: reached on the VM's own address, not through Nginx Proxy Manager.
+        #   All direct ones down while the VM answers = Docker itself isn't running.
+        # Through NPM (public domain names): unknowable while NPM is down -> not listed then.
+        docker_minutes: 10
+        docker_direct:
+          binary_sensor.web_npm: Nginx Proxy Manager
+          binary_sensor.web_dockge: Dockge
+          binary_sensor.web_jellyfin: Jellyfin
+        docker_via_npm:
+          sensor.sabnzbd_status: SABnzbd
+          sensor.deluge_status: Deluge
+          binary_sensor.web_sonarr: Sonarr
+          binary_sensor.web_radarr: Radarr
+          binary_sensor.web_calibre: Calibre
+          binary_sensor.web_prowlarr: Prowlarr
+          binary_sensor.web_seerr: Seerr
+        docker_other:           # host network, through Music Assistant
+          media_player.aes67_zone: Bridge AES67
     - variables:
         items: >
           {% set ns = namespace(items=[], low=[], urgent=[]) %}
@@ -382,17 +414,99 @@
                                              'text': ('Poubelles + verre ' if glass else 'Poubelles ') ~ when}] %}
             {% endif %}
           {% endif %}
-          {% set excluded = integration_entities('mobile_app') + integration_entities('fully_kiosk') %}
+          {# --- Line 2, system (red, before the batteries) --- #}
+          {# Servers: ping off/unavailable for docker_minutes. #}
+          {% set sys = namespace(down=[], stacks=[], vm_down=false) %}
+          {% for e, label in servers.items() %}
+            {% set s = expand(e) | first %}
+            {% if s and s.state in ['off', 'unavailable']
+                  and now() - s.last_changed > timedelta(minutes=docker_minutes) %}
+              {% set sys.down = sys.down + [label] %}
+              {% set sys.vm_down = sys.vm_down or e == docker_vm %}
+            {% endif %}
+          {% endfor %}
+          {% if sys.down %}
+            {% set ns.items = ns.items + [{'icon': 'mdi:server-network-off', 'line': 2, 'level': 'alert',
+                                           'text': 'Serveur injoignable' if sys.down | count == 1
+                                                   else 'Serveurs injoignables',
+                                           'names': sys.down}] %}
+          {% endif %}
+          {# Docker: skipped while the VM itself is down (already "Serveur injoignable"). #}
+          {% if not sys.vm_down %}
+            {% set ns2 = namespace(direct_down=[]) %}
+            {# groups in order: 1 = direct (checked first), 2 = through NPM, 3 = other #}
+            {% for group in [docker_direct, docker_via_npm, docker_other] %}
+              {% set gi = loop.index %}
+              {% for e, label in group.items() %}
+                {% set s = expand(e) | first %}
+                {% if s and (s.state == 'unavailable' or (e.startswith('binary_sensor.') and s.state == 'off'))
+                      and now() - s.last_changed > timedelta(minutes=docker_minutes) %}
+                  {% if gi == 1 %}
+                    {% set ns2.direct_down = ns2.direct_down + [e] %}
+                  {% endif %}
+                  {% if not (gi == 2 and 'binary_sensor.web_npm' in ns2.direct_down) %}
+                    {% set sys.stacks = sys.stacks + [label] %}
+                  {% endif %}
+                {% endif %}
+              {% endfor %}
+            {% endfor %}
+            {% if ns2.direct_down | count == docker_direct | count %}
+              {% set ns.items = ns.items + [{'icon': 'mdi:docker', 'line': 2, 'level': 'alert',
+                                             'text': 'Docker injoignable'}] %}
+            {% elif sys.stacks %}
+              {% set ns.items = ns.items + [{'icon': 'mdi:docker', 'line': 2, 'level': 'alert',
+                                             'text': 'Docker arrêté', 'names': sys.stacks}] %}
+            {% endif %}
+          {% endif %}
+          {% set zb = expand('binary_sensor.zigbee2mqtt_bridge_connection_state') | first %}
+          {% if zb and zb.state != 'on' and now() - zb.last_changed > timedelta(minutes=zigbee_minutes) %}
+            {% set ns.items = ns.items + [{'icon': 'mdi:zigbee', 'line': 2, 'level': 'alert',
+                                           'text': 'Zigbee hors ligne'}] %}
+          {% endif %}
+          {% if is_state('binary_sensor.rpi_power_status', 'on') %}
+            {% set ns.items = ns.items + [{'icon': 'mdi:flash-alert-outline', 'line': 2, 'level': 'alert',
+                                           'text': 'Alimentation Raspberry Pi'}] %}
+          {% endif %}
+          {# NAS disks and cache SSDs (both Synology): status or SMART not "normal", or a
+             bad-sectors / remaining-life warning. unavailable = NAS unreachable, not a disk
+             failure -> ignored. One name per disk, e.g. "CDRXStation3 disque 2 (RX415-1)". #}
+          {% set disks = namespace(names=[]) %}
+          {% for e in integration_entities('synology_dsm')
+               | select('match', '(sensor|binary_sensor)\.\w+_(drive|ssd)_\w*?(status|status_smart|below_min_remaining_life|exceeded_max_bad_sectors)$') %}
+            {% set s = states(e) %}
+            {% if (e.startswith('binary_sensor.') and s == 'on')
+                  or (e.startswith('sensor.') and s not in ['normal', 'unknown', 'unavailable']) %}
+              {% set dn = (device_attr(e, 'name_by_user') or device_attr(e, 'name') or e)
+                          | regex_replace('^(\S+) \((.*)\)$', '\\1 \\2')
+                          | replace('Drive', 'disque') | replace('Cache device', 'SSD cache') %}
+              {% if dn not in disks.names %}
+                {% set disks.names = disks.names + [dn] %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+          {% if disks.names %}
+            {% set ns.items = ns.items + [{'icon': 'mdi:harddisk', 'line': 2, 'level': 'alert',
+                                           'text': 'Disque NAS' if disks.names | count == 1
+                                                   else 'Disques NAS',
+                                           'names': disks.names | sort}] %}
+          {% endif %}
+          {# Phones and wall tablets excluded by the integration in the entity registry:
+             integration_entities() misses a device whose integration isn't loaded
+             (e.g. Tab office switched off -> Fully Kiosk entry not set up). #}
           {% for s in states.sensor
                | selectattr('attributes.device_class', 'defined')
-               | selectattr('attributes.device_class', 'eq', 'battery')
-               | rejectattr('entity_id', 'in', excluded) %}
+               | selectattr('attributes.device_class', 'eq', 'battery') %}
+            {% set ce = config_entry_id(s.entity_id) %}
+            {% if ce and config_entry_attr(ce, 'domain') in ['mobile_app', 'fully_kiosk'] %}
+              {% continue %}
+            {% endif %}
             {% set name = battery_names.get(s.entity_id)
                           or device_attr(s.entity_id, 'name_by_user')
                           or device_attr(s.entity_id, 'name')
                           or s.name %}
             {% if s.state in ['unknown', 'unavailable']
-                  and now() - s.last_changed > timedelta(minutes=offline_minutes) %}
+                  and now() - s.last_changed > timedelta(minutes=offline_minutes)
+                                    and (zb and zb.state == 'on' or not ce or config_entry_attr(ce, 'domain') != 'mqtt') %}
               {% set ns.urgent = ns.urgent + [name] %}
             {% elif is_number(s.state) and s.state | float < battery_urgent %}
               {% set ns.urgent = ns.urgent + [name] %}
@@ -400,23 +514,15 @@
               {% set ns.low = ns.low + [name] %}
             {% endif %}
           {% endfor %}
-          {# Line 2: urgent batteries (offline or < battery_urgent) take priority, in red;
-             low batteries then only as a count.
-             At most 3 names, then "+N" — keeps it on one line without scrolling. #}
+          {# Line 2, batteries: urgent (offline or < battery_urgent) in red first, then low.
+             All names listed; the card pages line 2 when it doesn't fit. #}
           {% if ns.urgent %}
-            {% set names = ns.urgent | sort %}
-            {% set shown = names[:3] | join(', ') ~ ((' +' ~ (names | count - 3)) if names | count > 3 else '') %}
             {% set ns.items = ns.items + [{'icon': 'mdi:battery-alert-variant-outline', 'line': 2, 'level': 'alert',
-                                           'text': 'Piles à changer : ' ~ shown}] %}
-            {% if ns.low %}
-              {% set n = ns.low | count %}
-              {% set ns.items = ns.items + [{'icon': 'mdi:battery-low', 'line': 2,
-                                             'text': n ~ (' pile faible' if n == 1 else ' piles faibles')}] %}
-            {% endif %}
-          {% elif ns.low %}
-            {% set names = ns.low | sort %}
-            {% set shown = names[:3] | join(', ') ~ ((' +' ~ (names | count - 3)) if names | count > 3 else '') %}
-            {% set ns.items = ns.items + [{'icon': 'mdi:battery-low', 'line': 2, 'text': 'Piles faibles : ' ~ shown}] %}
+                                           'text': 'Piles à changer', 'names': ns.urgent | sort}] %}
+          {% endif %}
+          {% if ns.low %}
+            {% set ns.items = ns.items + [{'icon': 'mdi:battery-low', 'line': 2,
+                                           'text': 'Piles faibles', 'names': ns.low | sort}] %}
           {% endif %}
           {{ ns.items }}
   sensor:

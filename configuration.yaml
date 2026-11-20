@@ -45,6 +45,7 @@ group: !include groups.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml
 template: !include_dir_merge_list sensors/
+command_line: !include command_line.yaml
 
 sensor:
   - platform: time_date

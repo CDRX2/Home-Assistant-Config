@@ -1,0 +1,93 @@
+# Web checks of Docker containers on the Docker VM, used by the screensaver alerts
+# (sensors/screensaver.yaml, docker_direct / docker_via_npm).
+# The commands (with addresses) are in secrets.yaml: web_check_<name>. Repo is public.
+# on  = the service answered with an HTTP status below 500 (a login page or 401 counts as up)
+# off = no answer, or 5xx (NPM returns 502 when the container behind it is down)
+
+# Nginx Proxy Manager, direct (admin UI)
+- binary_sensor:
+    name: Web NPM
+    unique_id: web_check_npm
+    command: !secret web_check_npm
+    value_template: "{{ 'on' if 0 < value | int(0) < 500 else 'off' }}"
+    payload_on: "on"
+    payload_off: "off"
+    device_class: connectivity
+    scan_interval: 60
+
+# direct
+- binary_sensor:
+    name: Web Dockge
+    unique_id: web_check_dockge
+    command: !secret web_check_dockge
+    value_template: "{{ 'on' if 0 < value | int(0) < 500 else 'off' }}"
+    payload_on: "on"
+    payload_off: "off"
+    device_class: connectivity
+    scan_interval: 60
+
+# direct (host network)
+- binary_sensor:
+    name: Web Jellyfin
+    unique_id: web_check_jellyfin
+    command: !secret web_check_jellyfin
+    value_template: "{{ 'on' if 0 < value | int(0) < 500 else 'off' }}"
+    payload_on: "on"
+    payload_off: "off"
+    device_class: connectivity
+    scan_interval: 60
+
+# through NPM
+- binary_sensor:
+    name: Web Calibre
+    unique_id: web_check_calibre
+    command: !secret web_check_calibre
+    value_template: "{{ 'on' if 0 < value | int(0) < 500 else 'off' }}"
+    payload_on: "on"
+    payload_off: "off"
+    device_class: connectivity
+    scan_interval: 60
+
+# through NPM
+- binary_sensor:
+    name: Web Prowlarr
+    unique_id: web_check_prowlarr
+    command: !secret web_check_prowlarr
+    value_template: "{{ 'on' if 0 < value | int(0) < 500 else 'off' }}"
+    payload_on: "on"
+    payload_off: "off"
+    device_class: connectivity
+    scan_interval: 60
+
+# through NPM
+- binary_sensor:
+    name: Web Seerr
+    unique_id: web_check_seerr
+    command: !secret web_check_seerr
+    value_template: "{{ 'on' if 0 < value | int(0) < 500 else 'off' }}"
+    payload_on: "on"
+    payload_off: "off"
+    device_class: connectivity
+    scan_interval: 60
+
+# through NPM
+- binary_sensor:
+    name: Web Sonarr
+    unique_id: web_check_sonarr
+    command: !secret web_check_sonarr
+    value_template: "{{ 'on' if 0 < value | int(0) < 500 else 'off' }}"
+    payload_on: "on"
+    payload_off: "off"
+    device_class: connectivity
+    scan_interval: 60
+
+# through NPM
+- binary_sensor:
+    name: Web Radarr
+    unique_id: web_check_radarr
+    command: !secret web_check_radarr
+    value_template: "{{ 'on' if 0 < value | int(0) < 500 else 'off' }}"
+    payload_on: "on"
+    payload_off: "off"
+    device_class: connectivity
+    scan_interval: 60

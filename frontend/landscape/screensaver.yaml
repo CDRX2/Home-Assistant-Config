@@ -317,29 +317,75 @@ cards:
             grid-area: alerts
             align-self: center
           variables:
-            # Line 1 longer than this (characters, icons and separators count ~3) scrolls;
-            # shorter stays still and centred. ~82 characters fit at this font size.
-            # Line 2 (batteries) never scrolls: capped at 3 names, cut with … if ever too long.
+            # A line longer than this (characters, icons and separators count ~3) doesn't fit.
+            # ~82 characters fit at this font size.
+            # Line 1 (household) then scrolls; line 2 (system, batteries) shows pages instead:
+            # each page fits, they take turns with a fade, every item appears once per cycle.
             max_chars: 76
-            seconds_per_char: 0.25   # scroll speed
+            seconds_per_char: 0.25   # line 1 scroll speed
+            seconds_per_page: 10      # line 2 time per page
           custom_fields:
             alerts: |
               [[[
                 const items = entity?.attributes?.items || [];
-                const line = (n) => {
-                  const its = items.filter(i => (i.line || 1) === n);
-                  const html = its.map(i =>
-                    `<span class="alert ${i.level ? 'lvl-' + i.level : ''}"><ha-icon icon="${i.icon}"></ha-icon>${i.text}</span>`
-                  ).join('<span class="sep">·</span>');
-                  const len = its.reduce((t, i) => t + i.text.length + 3, 0) + Math.max(its.length - 1, 0) * 3;
-                  if (n !== 1 || len <= variables.max_chars) return `<div class="l${n}">${html}</div>`;
-                  // too long: content twice + gap, moved by -50% in a loop = seamless scroll
-                  const dur = Math.round(len * variables.seconds_per_char);
-                  return `<div class="l${n} marquee"><div class="track" style="animation-duration: ${dur}s">` +
-                         `${html}<span class="gap"></span>${html}<span class="gap"></span></div></div>`;
+                const max = variables.max_chars;
+                const T = variables.seconds_per_page;
+                const SEP = '<span class="sep">·</span>';
+                const span = (i, text) =>
+                  `<span class="alert ${i.level ? 'lvl-' + i.level : ''}"><ha-icon icon="${i.icon}"></ha-icon>${text}</span>`;
+                // Pieces: an item without names = 1 piece; with names = "text : a, b" split into
+                // as many pieces as needed so each one fits on its own.
+                const pieces = (its) => its.flatMap(i => {
+                  if (!i.names?.length) return [{html: span(i, i.text), len: i.text.length + 3}];
+                  const len = (ns) => i.text.length + 6 + ns.join(', ').length;
+                  const out = [];
+                  let cur = [];
+                  for (const n of i.names) {
+                    if (cur.length && len([...cur, n]) > max) { out.push(cur); cur = []; }
+                    cur.push(n);
+                  }
+                  out.push(cur);
+                  return out.map(ns => ({html: span(i, `${i.text} : ${ns.join(', ')}`), len: len(ns)}));
+                });
+                // Pages: consecutive pieces joined with · as long as they fit.
+                const pages = (ps) => {
+                  const out = [];
+                  let cur = [], l = 0;
+                  for (const p of ps) {
+                    if (cur.length && l + 3 + p.len > max) { out.push(cur); cur = []; l = 0; }
+                    l += (cur.length ? 3 : 0) + p.len;
+                    cur.push(p);
+                  }
+                  if (cur.length) out.push(cur);
+                  return out.map(pg => pg.map(p => p.html).join(SEP));
                 };
+                const of = (n) => pieces(items.filter(i => (i.line || 1) === n));
+
+                // Line 1: still if it fits, otherwise content twice + gap, moved by -50% in a loop
+                const p1 = of(1);
+                const html1 = p1.map(p => p.html).join(SEP);
+                const len1 = p1.reduce((t, p) => t + p.len, 0) + Math.max(p1.length - 1, 0) * 3;
+                const l1 = len1 <= max
+                  ? `<div class="l1">${html1}</div>`
+                  : `<div class="l1 marquee"><div class="track" style="animation-duration: ${Math.round(len1 * variables.seconds_per_char)}s">` +
+                    `${html1}<span class="gap"></span>${html1}<span class="gap"></span></div></div>`;
+
+                // Line 2: one page = still; several = stacked, each visible for T s in turn
+                const pg = pages(of(2));
+                let l2;
+                if (pg.length <= 1) {
+                  l2 = `<div class="l2">${pg[0] || ''}</div>`;
+                } else {
+                  const n = pg.length, slot = 100 / n, fade = slot * 0.08;
+                  const kf = `ss-page-${n}`;
+                  l2 = `<style>@keyframes ${kf} { 0% { opacity: 0; } ${fade}% { opacity: 1; } ` +
+                       `${slot - fade}% { opacity: 1; } ${slot}% { opacity: 0; } 100% { opacity: 0; } }</style>` +
+                       `<div class="l2 pages">` +
+                       pg.map((h, k) => `<div class="page" style="animation: ${kf} ${n * T}s linear ${k * T}s infinite both">${h}</div>`).join('') +
+                       `</div>`;
+                }
                 // both lines always rendered (empty or not) so nothing moves
-                return line(1) + line(2);
+                return l1 + l2;
               ]]]
           styles:
             card:
@@ -363,11 +409,13 @@ cards:
             .marquee .track { display: inline-block; animation: ss-marquee linear infinite; }
             .marquee .gap { display: inline-block; width: 8vw; }
             @keyframes ss-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+            .pages { position: relative; }
+            .pages .page { position: absolute; inset: 0; overflow: hidden; text-overflow: ellipsis; }
             .l1 { color: var(--cdrx-status-warning); opacity: var(--ss-high); }   /* household */
-            .l2 { color: var(--cdrx-text); opacity: var(--ss-high); }             /* batteries: like the bus countdown */
+            .l2 { color: var(--cdrx-text); opacity: var(--ss-high); }             /* system, batteries: like the bus countdown */
             .alert { display: inline-flex; align-items: center; gap: 0.8vw; }
             .alert ha-icon { --mdc-icon-size: 1.1em; }
-            .alert.lvl-alert { color: var(--cdrx-status-alert); }                    /* urgent batteries: red */
+            .alert.lvl-alert { color: var(--cdrx-status-alert); }                    /* system, urgent batteries: red */
             .alert.lvl-info { color: var(--cdrx-text); }                             /* laundry time left: grey */
             .sep { margin: 0 1.5vw; }
 
