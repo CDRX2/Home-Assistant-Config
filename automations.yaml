@@ -950,6 +950,7 @@
   mode: single
 - id: '1795013027774'
   alias: Wall panels day / night brightness
+  description: ''
   triggers:
   - trigger: time
     at: '22:00:00'
@@ -975,7 +976,7 @@
   mode: restart
   variables:
     night: '{{ now().hour >= 22 or now().hour < 6 }}'
-    brightness: '{{ 10 if night else 128 }}'
+    brightness: '{{ 15 if night else 175 }}'
     panels:
     - number.lenovo_rez_screen_brightness
     - number.lenovo_tab_1st_floor_screen_brightness
