@@ -822,7 +822,7 @@ elements:
     elements:
     - type: 'custom:hui-element'
       card_type: iframe
-      url: http://REDACTED_IP:8095
+      url: !include ../../private/music_assistant_url.yaml
       aspect_ratio: 50%
       style:
         left: 50%

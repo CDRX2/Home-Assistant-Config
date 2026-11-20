@@ -1,6 +1,6 @@
 music_assistant:
   card:
     type: iframe
-    url: http://REDACTED_IP:8095
+    url: !include ../../private/music_assistant_url.yaml
     aspect_ratio: 50%
 

@@ -1,7 +1,7 @@
 type: custom:touchpad-card
 storage_id: tp_mwi1rl9e_27nwim4t
 theme_mode: auto
-wsUrl: ws://REDACTED_IP:8777
+wsUrl: !include ../../private/touchpad_ws_url.yaml
 controls_profile: webos
 show_lock: false
 show_speed_buttons: false

@@ -64,13 +64,8 @@ homeassistant:
   auth_providers:
     - type: homeassistant
     - type: trusted_networks
-      trusted_networks:
-        - REDACTED_IP/24
-      trusted_users:
-        REDACTED_IP: b10394b57f24478ba674a837f57158be
-        REDACTED_IP: e73940ee9cb640aaa6f08ba02e88a54c
-        REDACTED_IP: b10394b57f24478ba674a837f57158be
-        REDACTED_IP: ae55fdfcf7714f1485058190846c3c8a
+      trusted_networks: !secret trusted_networks
+      trusted_users: !secret trusted_users
       allow_bypass_login: true
 
 media_player:
