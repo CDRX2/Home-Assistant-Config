@@ -218,28 +218,6 @@
     target:
       entity_id: light.entree
   mode: single
-- id: '1683140700552'
-  alias: Bathroom 45 min
-  description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - light.bathroom_door
-    - light.bathroom_mirror
-    to: 'on'
-    for:
-      hours: 0
-      minutes: 45
-      seconds: 0
-  condition: []
-  action:
-  - service: light.turn_off
-    data: {}
-    target:
-      entity_id:
-      - light.bathroom_door
-      - light.bathroom_mirror
-  mode: single
 - id: '1684744858875'
   alias: Turn on TV
   description: ''
@@ -254,39 +232,6 @@
     data:
       broadcast_port: 9
       mac: 7C:64:6C:A8:20:A8
-  mode: single
-- id: '1699095882288'
-  alias: Bathroom sink on with bathroom door
-  description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - light.bathroom_door
-    to: 'on'
-  condition: []
-  action:
-  - service: light.turn_on
-    data: {}
-    target:
-      entity_id:
-      - light.bathroom_sink_white
-  mode: single
-- id: '1699096406867'
-  alias: Bathroom sink off with bathroom door
-  description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - light.bathroom_door
-    to: 'off'
-  condition: []
-  action:
-  - service: light.turn_off
-    data: {}
-    target:
-      entity_id:
-      - light.bathroom_sink_white
-      - light.bathroom_sink
   mode: single
 - id: '1705760430224'
   alias: Update bus departures every 4 minutes
@@ -806,12 +751,14 @@
         target:
           entity_id: cover.store_terrasse
         data: {}
+        enabled: false
       button_2_and_4_pressed:
       - action: cover.close_cover
         metadata: {}
         target:
           entity_id: cover.store_terrasse
         data: {}
+        enabled: false
 - id: '1781206770783'
   alias: Interrupteur Charles
   description: ''
