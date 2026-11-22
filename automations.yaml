@@ -927,3 +927,18 @@
     panels:
     - number.lenovo_rez_screen_brightness
     - number.lenovo_tab_1st_floor_screen_brightness
+- id: '1795294893912'
+  alias: Terrasse sol – relire l'état après l'interrupteur
+  triggers:
+  - trigger: state
+    entity_id: light.terrasse_3
+    to:
+    - 'on'
+    - 'off'
+  actions:
+  - delay: 2
+  - action: mqtt.publish
+    data:
+      topic: zigbee2mqtt/Terrasse sol/get
+      payload: '{"state": ""}'
+  mode: restart
