@@ -258,7 +258,7 @@ elements:
             gridarea: '"i . ." "n n n" ". . ."'
           entity: light.guirlandes_noel
           icon: 'mdi:pine-tree'
-          name: Sapin dedans
+          name: Petit sapin
           view_layout:
             grid-area: x
       style:
