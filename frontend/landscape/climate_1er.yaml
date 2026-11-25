@@ -355,29 +355,29 @@ elements:
   - type: 'custom:decluttering-card'
     template: climate_image_v2
     variables:
-      - temp: sensor.temperature_twins
-      - humidity: sensor.humidity_twins
-      - pressure: sensor.pressure_twins
+      - temp: sensor.twins_temperature
+      - humidity: sensor.twins_humidity
+      - pressure: sensor.twins_pressure
       - title: Jumeaux
       - top: 24%
       - left: 28%
   - type: 'custom:decluttering-card'
     template: climate_state_label_v2
     variables:
-      - sensor: sensor.temperature_twins
-      - temp: sensor.temperature_twins
-      - humidity: sensor.humidity_twins
-      - pressure: sensor.pressure_twins
+      - sensor: sensor.twins_temperature
+      - temp: sensor.twins_temperature
+      - humidity: sensor.twins_humidity
+      - pressure: sensor.twins_pressure
       - title: Jumeaux
       - top: 24%
       - left: 25.75%
   - type: 'custom:decluttering-card'
     template: climate_state_label_v2
     variables:
-      - sensor: sensor.humidity_twins
-      - temp: sensor.temperature_twins
-      - humidity: sensor.humidity_twins
-      - pressure: sensor.pressure_twins
+      - sensor: sensor.twins_humidity
+      - temp: sensor.twins_temperature
+      - humidity: sensor.twins_humidity
+      - pressure: sensor.twins_pressure
       - title: Jumeaux
       - top: 24%
       - left: 31.75%

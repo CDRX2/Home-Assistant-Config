@@ -333,29 +333,29 @@ elements:
   - type: 'custom:decluttering-card'
     template: climate_image_v2
     variables:
-      - temp: sensor.temperature_salon
-      - humidity: sensor.humidity_salon
-      - pressure: sensor.pressure_salon
+      - temp: sensor.salon_temperature
+      - humidity: sensor.salon_humidity
+      - pressure: sensor.salon_pressure
       - title: Salon
       - top: 52%
       - left: 68%
   - type: 'custom:decluttering-card'
     template: climate_state_label_v2
     variables:
-      - sensor: sensor.temperature_salon
-      - temp: sensor.temperature_salon
-      - humidity: sensor.humidity_salon
-      - pressure: sensor.pressure_salon
+      - sensor: sensor.salon_temperature
+      - temp: sensor.salon_temperature
+      - humidity: sensor.salon_humidity
+      - pressure: sensor.salon_pressure
       - title: Salon
       - top: 52%
       - left: 65.75%
   - type: 'custom:decluttering-card'
     template: climate_state_label_v2
     variables:
-      - sensor: sensor.humidity_salon
-      - temp: sensor.temperature_salon
-      - humidity: sensor.humidity_salon
-      - pressure: sensor.pressure_salon
+      - sensor: sensor.salon_humidity
+      - temp: sensor.salon_temperature
+      - humidity: sensor.salon_humidity
+      - pressure: sensor.salon_pressure
       - title: Salon
       - top: 52%
       - left: 71.75%
