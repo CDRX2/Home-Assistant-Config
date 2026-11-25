@@ -22,7 +22,7 @@
 - sensor:
   - unit_of_measurement: '%'
     default_entity_id: sensor.battery_phone_cdrx
-    icon: "{% if is_state('sensor.pixel_8_pro_cdrx_attery_state', 'unknown') %}
+    icon: "{% if is_state('sensor.pixel_8_pro_cdrx_battery_state', 'unknown') %}
             mdi:battery-unknown
           {% elif is_state('sensor.pixel_8_pro_cdrx_battery_state', 'charging') %}
             mdi:battery-charging
