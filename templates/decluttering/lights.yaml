@@ -2,88 +2,88 @@
 
 # glance card showing which lights are currently on, tap to turn off
 
-lights_glance:
-  card:
-    card:
-      title: Lumières allumées
-      type: glance
-    entities:
-      - entity: light.bar
-        tap_action:
-          action: toggle
-      - entity: light.grand_totem_deco
-        tap_action:
-          action: toggle
-      - entity: light.petit_totem_deco
-        tap_action:
-          action: toggle
-      - entity: light.vinyles
-        tap_action:
-          action: toggle
-      - entity: light.tv
-        tap_action:
-          action: toggle
-      - entity: switch.panneau_lumineux
-        tap_action:
-          action: toggle
-      - entity: light.grand_totem
-        tap_action:
-          action: toggle
-      - entity: light.petit_totem
-        tap_action:
-          action: toggle
-      - entity: light.salon_plafonnier
-        tap_action:
-          action: toggle
-      - entity: light.manger_plafonnier
-        tap_action:
-          action: toggle
-      - entity: switch.manger_lampe
-        tap_action:
-          action: toggle
-      - entity: light.cuisine_deco
-        tap_action:
-          action: toggle
-      - entity: switch.cuisine_plafonnier
-        tap_action:
-          action: toggle
-      - entity: switch.terrasse_sol
-        tap_action:
-          action: toggle
-      - entity: light.terrasse_3
-        tap_action:
-          action: toggle
-      - entity: light.lit_parents_couleur
-        tap_action:
-          action: toggle
-      - entity: light.lit_parents_blanc
-        tap_action:
-          action: toggle
-      - entity: switch.chevet_cdrx
-        tap_action:
-          action: toggle
-      - entity: switch.chevet_nanne
-        tap_action:
-          action: toggle
-      - entity: light.plafond_enfant_exterieur
-        tap_action:
-          action: toggle
-      - entity: light.plafond_enfant_interieur
-        tap_action:
-          action: toggle
-      - entity: switch.guirlandes_salon
-        tap_action:
-          action: toggle
-      - entity: switch.spare_switch_1
-        tap_action:
-          action: toggle
-      - entity: switch.spare_switch_2
-        tap_action:
-          action: toggle
-    show_empty: false
-    state_filter:
-      - 'on'
-    type: entity-filter
+#lights_glance:
+#  card:
+#    card:
+#      title: Lumières allumées
+#      type: glance
+#    entities:
+#      - entity: light.bar
+#        tap_action:
+#          action: toggle
+#      - entity: light.grand_totem_deco
+#        tap_action:
+#          action: toggle
+#      - entity: light.petit_totem_deco
+#        tap_action:
+#          action: toggle
+#      - entity: light.vinyles
+#        tap_action:
+#          action: toggle
+#      - entity: light.tv
+#        tap_action:
+#          action: toggle
+#      - entity: switch.panneau_lumineux
+#        tap_action:
+#          action: toggle
+#      - entity: light.grand_totem
+#        tap_action:
+#          action: toggle
+#      - entity: light.petit_totem
+#        tap_action:
+#          action: toggle
+#      - entity: light.salon_plafonnier
+#        tap_action:
+#          action: toggle
+#      - entity: light.manger_plafonnier
+#        tap_action:
+#          action: toggle
+#      - entity: switch.manger_lampe
+#        tap_action:
+#          action: toggle
+#      - entity: light.cuisine_deco
+#        tap_action:
+#          action: toggle
+#      - entity: switch.cuisine_plafonnier
+#        tap_action:
+#          action: toggle
+#      - entity: switch.terrasse_sol
+#        tap_action:
+#          action: toggle
+#      - entity: light.terrasse_3
+#        tap_action:
+#          action: toggle
+#      - entity: light.lit_parents_couleur
+#        tap_action:
+#          action: toggle
+#      - entity: light.lit_parents_blanc
+#        tap_action:
+#          action: toggle
+#      - entity: switch.chevet_cdrx
+#        tap_action:
+#          action: toggle
+#      - entity: switch.chevet_nanne
+#        tap_action:
+#          action: toggle
+#      - entity: light.plafond_enfant_exterieur
+#        tap_action:
+#          action: toggle
+#      - entity: light.plafond_enfant_interieur
+#        tap_action:
+#          action: toggle
+#      - entity: switch.guirlandes_salon
+#        tap_action:
+#          action: toggle
+#      - entity: switch.spare_switch_1
+#        tap_action:
+#          action: toggle
+#      - entity: switch.spare_switch_2
+#        tap_action:
+#          action: toggle
+#    show_empty: false
+#    state_filter:
+#      - 'on'
+#    type: entity-filter
 
 #########################    ROOM/GROUP CONTROL TRANSPARENT IMAGES    #########################
 
