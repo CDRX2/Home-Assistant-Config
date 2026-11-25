@@ -112,10 +112,6 @@ light:
     entity_id: switch.chevet_cdrx
 
   - platform: switch
-    name: Guirlandes salon
-    entity_id: switch.guirlandes_salon
-
-  - platform: switch
     name: Grand totem
     entity_id: switch.grand_totem
 
@@ -134,10 +130,6 @@ light:
   - platform: switch
     name: Spare switch 3
     entity_id: switch.spare_switch_3
-
-  - platform: switch
-    name: Spare switch 4
-    entity_id: switch.spare_switch_4
 
   - platform: switch
     name: Manger Lampe
@@ -233,7 +225,6 @@ light:
     - light.spare_switch_1
     - light.spare_switch_2
     - light.spare_switch_3
-#    - light.spare_switch_4
     - light.guirlandes_noel
 
   - platform: group
@@ -249,7 +240,6 @@ light:
     # - light.spare_switch_1
     # - light.spare_switch_2
     # - light.spare_switch_3
-    # - light.spare_switch_4
     # - light.guirlandes_noel
 
   - platform: group
@@ -258,7 +248,6 @@ light:
       - light.spare_switch_1
       - light.spare_switch_2
       - light.spare_switch_3
-#      - light.spare_switch_4
       - light.guirlandes_noel
 
   - platform: group
@@ -301,7 +290,7 @@ light:
     name: Jumeaux
     entities:
     - light.jumeaux_prises
-    - light.jumeaux_armoires_blanc
+    - light.jumeaux_armoire
 
   - platform: group
     name: Salle de bains
@@ -312,9 +301,15 @@ light:
   - platform: group
     name: Couloir 1er
     entities:
-    - light.escalier_haut
+    - light.escalier_1er
     - light.couloir_1
     - light.couloir_2
+
+  - platform: group
+    name: Guirlandes salon
+    entities:
+    - light.guirlandes_verriere
+    - light.guirlandes_crystal
 
   - platform: group
     name: All lights
@@ -335,8 +330,8 @@ light:
     - light.terrasse_3
     - light.lit_parents_blanc
     - light.lit_parents_couleur
-    - light.chevet_cdrx_4
-    - light.chevet_nanne_3
+    - light.chevet_cdrx
+    - light.chevet_nanne
     - light.charles_bas_white
     - light.charles_haut_white
     - light.charles_kallax_white
@@ -345,5 +340,4 @@ light:
     - light.spare_switch_1
     - light.spare_switch_2
     - light.spare_switch_3
-#   - light.spare_switch_4
     - light.guirlandes_noel
