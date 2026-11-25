@@ -97,7 +97,7 @@ elements:
           variables:
             gridarea: '"i consumption ." "n n n" ". . ."'
             consumption: sensor.consumption_manger_cuisine
-          entity: light.lampe_salle_a_manger
+          entity: light.manger_lampe
           icon: 'hue:bulb-filament-alt'
           name: Table
           view_layout:
